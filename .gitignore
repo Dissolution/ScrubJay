@@ -1,0 +1,9 @@
+# MSBuild
+[Bb]in/
+[Oo]bj/
+
+# JetBrains
+.idea/
+
+# Git
+.git/
