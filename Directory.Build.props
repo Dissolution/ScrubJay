@@ -1,0 +1,45 @@
+<Project>
+    <PropertyGroup>
+        <!-- Generate XML documentation files -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <!-- Suppress Warnings -->
+        <NoWarn>$(NoWarn);
+            CS1591; <!-- undocumented members -->
+            CS8981; <!-- `text` -->
+        </NoWarn>
+    </PropertyGroup>
+
+    <!-- Special Release configurations -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- Create NuGet Package -->
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <!-- Validate -->
+        <EnablePackageValidation>false</EnablePackageValidation>
+        <!-- Set common output path for Packages -->
+        <PackageOutputPath>..\packages\</PackageOutputPath>
+    </PropertyGroup>
+
+    <!-- global usings -->
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations"/>
+        <Using Include="System.Collections"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Runtime.CompilerServices"/>
+        <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Numerics"/>
+
+        <!-- Aliases -->
+        <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
+    </ItemGroup>
+
+    <!-- global packages -->
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.4">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
+

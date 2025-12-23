@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+
+        <!--
+        This template uses native xUnit.net command line options when using 'dotnet run' and
+        VSTest by default when using 'dotnet test'. For more information on how to enable support
+        for Microsoft Testing Platform, please visit:
+          https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
+        -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
+        <PackageReference Include="xunit.v3" Version="3.2.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Update="xunit.runner.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Diagnostics"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
+      <ProjectReference Include="..\ScrubJay.Functional\tests\ScrubJay.Functional.Tests.csproj" />
+      <ProjectReference Include="..\ScrubJay.Interpolated\src\ScrubJay.Interpolated.csproj" />
+      <ProjectReference Include="..\ScrubJay.Interpolated\tests\ScrubJay.Interpolated.Tests.csproj" />
+      <ProjectReference Include="..\ScrubJay.Testing\src\ScrubJay.Testing.csproj" />
+      <ProjectReference Include="..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
+      <ProjectReference Include="..\ScrubJay.Universal\tests\ScrubJay.Universal.Tests.csproj" />
+    </ItemGroup>
+
+</Project>
