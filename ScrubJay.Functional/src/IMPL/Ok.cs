@@ -35,6 +35,6 @@ public readonly ref struct Ok<T>
 
     public override string ToString()
     {
-        return $"Ok({Value.Stringify()})";
+        return Build($"Ok({Value})");
     }
 }

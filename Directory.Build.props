@@ -41,5 +41,12 @@
         </PackageReference>
     </ItemGroup>
 
+    <!-- global attributes -->
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>ScrubJay.ConsoleSandbox</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 </Project>
 

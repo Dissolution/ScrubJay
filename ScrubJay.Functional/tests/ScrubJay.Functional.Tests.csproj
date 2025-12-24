@@ -30,4 +30,9 @@
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Testing\src\ScrubJay.Testing.csproj" />
+      <ProjectReference Include="..\src\ScrubJay.Functional.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -16,7 +16,7 @@ public static partial class Any
     public static int CompareTo<T>(T? value, T? other)
     {
         if (value is IComparable<T> comparable)
-            return comparable.CompareTo(other);
+            return comparable.CompareTo(other!);
         return Comparer<T>.Default.Compare(value!, other!);
     }
     
@@ -30,7 +30,7 @@ public static partial class Any
     public static bool Equals<T>(T? value, T? other)
     {
         if (value is IEquatable<T> equatable)
-            return equatable.Equals(other);
+            return equatable.Equals(other!);
         return EqualityComparer<T>.Default.Equals(value!, other!);
     }
 

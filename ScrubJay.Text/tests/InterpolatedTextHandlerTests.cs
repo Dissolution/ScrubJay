@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using NaughtyStrings;
 using ScrubJay.Testing;
+using ScrubJay.Text;
 
 namespace ScrubJay.Interpolated.Tests;
 

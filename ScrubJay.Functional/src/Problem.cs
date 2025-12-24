@@ -7,6 +7,7 @@ namespace ScrubJay.Functional;
 /// A generic Problem for use as a non-<see cref="Exception"/> Error in a <see cref="Result{T,E}"/>.<br/>
 /// This is a rough approximation of <see href="https://www.rfc-editor.org/rfc/rfc9457.html">Problem Details</see> without the overhead of any ASP or Web related properties.<br/>
 /// </summary>
+[PublicAPI]
 public class Problem : IEnumerable
 {
     public string? Details { get; set; }
@@ -28,7 +29,7 @@ public class Problem : IEnumerable
         this.Details = exception.Message;
         foreach (DictionaryEntry data in exception.Data)
         {
-            this.Data[data.Key.Stringify()] = data.Value;
+            this.Data[data.Key.ToString()!] = data.Value;
         }
     }
 

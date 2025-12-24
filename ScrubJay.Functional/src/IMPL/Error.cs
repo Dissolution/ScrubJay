@@ -29,6 +29,6 @@ public readonly ref struct Error<E>
 
     public override string ToString()
     {
-        return $"Error({Value.Stringify()})";
+        return Build($"Error({Value})");
     }
 }

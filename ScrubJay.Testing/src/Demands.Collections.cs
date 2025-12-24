@@ -27,7 +27,7 @@ partial class Demands
             if (actual.Value is null)
                 throw new ActualException(actual.Realize(), $"was null");
 
-            if (actual.Value.Length == 0)
+            if (actual.Value!.Length == 0)
                 return actual;
 
             throw new ActualException(actual.Realize(), $"was not empty");
@@ -47,9 +47,9 @@ partial class Demands
             if (actual.Value is null)
                 return actual;
 
-            foreach (var value in actual.Value)
+            foreach (var value in actual.Value!)
             {
-                if (!EqualityComparer<T>.Default.Equals(value, other))
+                if (!EqualityComparer<T>.Default.Equals(value, other!))
                 {
                     throw new ActualException(actual.Realize(), $"items were not all equal to {other}");
                 }

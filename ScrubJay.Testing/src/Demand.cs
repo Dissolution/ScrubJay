@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using ScrubJay.Universal;
+
 namespace ScrubJay.Testing;
 
 [PublicAPI]
@@ -10,4 +13,34 @@ public static partial class Demand
     {
         return new Actual<T>(value, valueName);
     }
+
+    public static ExpressionActual<T> That<T>(
+        Expression<Func<T>> expression,
+        [CallerArgumentExpression(nameof(expression))]
+        string? expressionName = null)
+    {
+        var actual = new ExpressionActual<T>()
+        {
+            Expression = expression,
+            ValueName = expressionName,
+            Value = expression.Compile().Invoke(),
+        };
+        return actual;
+    }
+}
+
+
+public class ExpressionActual<T> : IActual<T>
+{
+    public Expression Expression { get; init; }
+
+    public string? ValueName { get; init; }
+
+    public Type? ValueType => Any.GetType(Value);
+    
+    public T Value { get; init; }
+    
+    public string? ValueString => Value?.ToString();
+
+    public IActual Realize() => this;
 }

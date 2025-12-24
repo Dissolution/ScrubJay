@@ -308,7 +308,7 @@ public readonly ref struct RefOption<T>
     {
         if (_isSome)
         {
-            return $"Some({_value.Stringify()})";
+            return Build($"Some({_value})");
         }
 
         return nameof(None);

@@ -6,16 +6,16 @@
     <Project Path="ScrubJay.Functional/src/ScrubJay.Functional.csproj" />
     <Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
   </Folder>
-  <Folder Name="/ScrubJay.Interpolated/">
-    <Project Path="ScrubJay.Interpolated/src/ScrubJay.Interpolated.csproj" />
-    <Project Path="ScrubJay.Interpolated/tests/ScrubJay.Interpolated.Tests.csproj" />
-  </Folder>
   <Folder Name="/ScrubJay.Testing/">
     <Project Path="ScrubJay.Testing/src/ScrubJay.Testing.csproj" />
+  </Folder>
+  <Folder Name="/ScrubJay.Text/">
+    <Project Path="ScrubJay.Text\src\ScrubJay.Text.csproj" />
+    <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Universal/">
     <Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
     <Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
   </Folder>
-  <Project Path="ConsoleSandbox/ConsoleSandbox.csproj" />
+  <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj" />
 </Solution>

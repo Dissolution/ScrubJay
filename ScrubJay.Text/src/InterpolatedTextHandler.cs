@@ -7,7 +7,7 @@ using ScrubJay.Universal;
 
 // ReSharper disable MergeCastWithTypeCheck
 
-namespace ScrubJay.Interpolated;
+namespace ScrubJay.Text;
 
 [PublicAPI]
 [InterpolatedStringHandler]
@@ -171,6 +171,12 @@ public ref struct InterpolatedTextHandler : IDisposable
             return;
         }
 
+        if (value is Type type)
+        {
+            AppendLiteral(TypeName.For(type));
+            return;
+        }
+
         string? str;
 
         if (value is IFormattable)
@@ -229,7 +235,7 @@ public ref struct InterpolatedTextHandler : IDisposable
         {
             return;
         }
-
+        
         string? str;
 
         if (value is IFormattable)

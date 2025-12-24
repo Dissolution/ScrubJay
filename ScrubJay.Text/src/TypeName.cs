@@ -1,12 +1,10 @@
-using System.Text;
-#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-#endif
+using System.Text;
 
-namespace ScrubJay.Interpolated;
+namespace ScrubJay.Text;
 
 [PublicAPI]
-public static class TypeName
+public static partial class TypeName
 {
     // We have a few local dictionaries we're going to create and reference, but never expand
 
@@ -111,10 +109,21 @@ public static class TypeName
         if (type.IsArray)
         {
             int rank = type.GetArrayRank();
-            Debug.Assert(type.GetGenericArguments().Length == 0);
             underType = type.GetElementType()!;
             Debug.Assert(underType is not null);
 
+            if (underType.IsArray)
+            {
+                var baseType = underType.GetElementType();
+                while (baseType is not null && baseType.IsArray)
+                    baseType = baseType.GetElementType();
+                builder.AppendType(baseType)
+                    .Append('[')
+                    .Append(',', repeatCount: rank - 1)
+                    .Append(']')
+                    .AppendType(underType);
+            }
+            
             return builder
                 .AppendType(underType)
                 .Append('[')

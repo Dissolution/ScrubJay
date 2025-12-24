@@ -354,7 +354,8 @@ public readonly struct Result<T> :
             }
             else
             {
-                return Comparer<Exception>.Default.Compare(_error!, other._error!);
+                // Exceptions are not comparable
+                return 0;
             }
         }
     }
@@ -394,7 +395,9 @@ public readonly struct Result<T> :
             }
             else
             {
-                return EqualityComparer<Exception>.Default.Equals(_error!, other._error!);
+                // exceptions cannot be compared
+                // so we will assume the same behavior here
+                return true;
             }
         }
     }
@@ -419,7 +422,7 @@ public readonly struct Result<T> :
         return false;
     }
 
-    public bool Equals(bool isOk) => _isOk;
+    public bool Equals(bool isOk) => isOk == _isOk;
 
     public override bool Equals([NotNullWhen(true)] object? obj)
         => obj switch

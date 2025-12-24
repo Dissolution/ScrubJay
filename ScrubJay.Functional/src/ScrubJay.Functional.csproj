@@ -11,6 +11,7 @@
     <ItemGroup>
         <!-- Consume my own Prelude -->
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Interpolated.Prelude" Static="true"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -20,6 +21,10 @@
         </PackageReference>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory" Version="4.6.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Interpolated\src\ScrubJay.Interpolated.csproj" />
     </ItemGroup>
 
 </Project>

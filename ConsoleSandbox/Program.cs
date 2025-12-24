@@ -1,26 +1,37 @@
 ﻿
 using System.Diagnostics;
+using System.Reflection;
+using ConsoleSandbox;
 using ScrubJay.Functional;
+using ScrubJay.Interpolated;
+using ScrubJay.Testing;
 using ScrubJay.Universal;
-using ScrubJay.Universal.Tests;
 
-TestRefStruct trs = new TestRefStruct(147, "TRJ");
 
-TestRefStruct otherA = new(147, "OTHER_147");
-TestRefStruct otherB = new(13, "OTHER_13");
 
-bool eqA = Any.Equals(trs, otherA);
-bool eqB = Any.Equals(trs, otherB);
-int compA = Any.CompareTo(trs, otherA);
-int compB = Any.CompareTo(trs, otherB);
-
-string strA = Any.ToString(otherA);
-string strB = Any.ToString(otherB);
-int hcA = Any.GetHashCode(otherA);
-int hcB = Any.GetHashCode(otherB);
-Type typeA = Any.GetType(otherA);
-Type typeB = Any.GetType(otherB);
+//
+// var elementType = type.GetElementType();
+// var elementTypeAttributes = Attribute.GetCustomAttributes(elementType!, true);
+// var elementTypeNullable = elementType.Nullability;
+// var elementTypeGenericTypes = elementType!.GetGenericArguments();
 
 Debugger.Break();
 
 
+return;
+
+static class Util
+{
+    
+    
+    public static bool IsGenericArgumentNullable(Type genericType, int argumentIndex)
+    {
+        var attr = genericType.GetCustomAttribute<NullableAttribute>();
+        if (attr?.NullableFlags != null && attr.NullableFlags.Length > argumentIndex + 1)
+        {
+            return attr.NullableFlags[argumentIndex + 1] == 2;
+        }
+
+        return false; // Unable to determine, assume not nullable
+    }
+}

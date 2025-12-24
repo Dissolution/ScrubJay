@@ -4,7 +4,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
-        <RootNamespace>ScrubJay.Interpolated.Tests</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <!--
         This template uses native xUnit.net command line options when using 'dotnet run' and
@@ -31,7 +30,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\ScrubJay.Testing\src\ScrubJay.Testing.csproj" />
-      <ProjectReference Include="..\src\ScrubJay.Interpolated.csproj" />
+      <ProjectReference Include="..\src\ScrubJay.Text.csproj" />
     </ItemGroup>
 
 </Project>

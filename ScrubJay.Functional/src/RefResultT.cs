@@ -381,11 +381,11 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return $"Ok({_value.Stringify()})";
+            return Build($"Ok({_value})");
         }
         else
         {
-            return $"Error({_error.Stringify()})";
+            return Build($"Error({_error})");
         }
     }
 }

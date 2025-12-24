@@ -7,11 +7,13 @@
         <Nullable>enable</Nullable>
 
         <PolyStringInterpolation>true</PolyStringInterpolation>
+        <PolyNullability>true</PolyNullability>
     </PropertyGroup>
 
     <!-- Global Usings -->
     <ItemGroup>
-
+        <!-- Consume my own Prelude -->
+        <Using Include="ScrubJay.Interpolated.Prelude" Static="true"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -33,7 +35,7 @@
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>ScrubJay.Interpolated.Tests</_Parameter1>
+            <_Parameter1>ScrubJay.Text.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 </Project>

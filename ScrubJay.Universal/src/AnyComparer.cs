@@ -11,7 +11,7 @@ public sealed class AnyComparer<T> : IEqualityComparer<T>, IComparer<T>
     public bool Equals(T? x, T? y) => EqualityComparer<T>.Default.Equals(x!, y!);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetHashCode([DisallowNull] T value) => EqualityComparer<T>.Default.GetHashCode(value);
+    public int GetHashCode(T value) => EqualityComparer<T>.Default.GetHashCode(value!);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Compare(T? x, T? y) => Comparer<T>.Default.Compare(x!, y!);

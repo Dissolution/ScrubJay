@@ -1,0 +1,264 @@
+﻿namespace ScrubJay.Text.Building;
+
+public partial class TextBuilder
+{
+#region Contains
+
+    public bool Contains(char ch)
+    {
+#if NETSTANDARD2_1
+        return Written.Contains(ch, null);
+#else
+        return Written.Contains(ch);
+#endif
+    }
+
+    public bool Contains(char ch, IEqualityComparer<char>? comparer)
+    {
+        return Written.Contains(ch, comparer);
+    }
+
+    public bool Contains(scoped text text, StringComparison comparison = StringComparison.Ordinal)
+    {
+        return Written.Contains(text, comparison);
+    }
+
+#endregion /Contains
+
+#region TryFindIndex
+
+    /// <summary>
+    /// Try to find the index of the first occurrence of a given <see cref="char"/> in this <see cref="TextBuilder"/>.
+    /// </summary>
+    /// <param name="ch">
+    /// The <see cref="char"/> to search for.
+    /// </param>
+    /// <param name="firstToLast">
+    /// Whether to search from 0 to ^1 (default) or from ^1 to 0.
+    /// </param>
+    /// <param name="startIndex">
+    /// An optional starting index for the search.<br/>
+    /// A first-to-last search will start at this index to ^1 and a last-to-first search will start at this index to 0.
+    /// </param>
+    /// <returns>
+    /// An <see cref="Option{int}"/>:<br/>
+    /// <see cref="Some{int}"/>: The index of the matching <see cref="char"/> in this <see cref="TextBuilder"/>.<br/>
+    /// <see cref="None"/>: No matching <see cref="char"/> was found.
+    /// </returns>
+    public Option<int> TryFindIndex(
+        char ch,
+        bool firstToLast = true,
+        Index? startIndex = null)
+    {
+        int pos = _position;
+        int end = pos - 1;
+
+        // starting index?
+        int offset;
+        if (startIndex.TryGetValue(out Index idx))
+        {
+            if (!Validate.Index(idx, pos).IsOk(out offset))
+                return None;
+        }
+        else
+        {
+            // first-to-last: start at first item
+            // last-to-first: start at the last item
+            offset = firstToLast ? 0 : pos - 1;
+        }
+
+        // search
+        var span = Written;
+        if (firstToLast)
+        {
+            // we can scan until the last item
+            for (; offset <= end; offset++)
+            {
+                if (span[offset] == ch)
+                {
+                    return Some(offset);
+                }
+            }
+        }
+        else
+        {
+            // we can scan until the first item
+            for (; offset >= 0; offset--)
+            {
+                if (span[offset] == ch)
+                {
+                    return Some(offset);
+                }
+            }
+        }
+
+        // no match
+        return None;
+    }
+
+    public Option<int> TryFindIndex(
+        char ch,
+        StringComparison comparison,
+        bool firstToLast = true,
+        Index? index = null
+    )
+    {
+        int pos = _position;
+        int end = pos - 1;
+
+        // starting index?
+        int offset;
+        if (index.TryGetValue(out Index idx))
+        {
+            if (!Validate.Index(idx, pos).IsOk(out offset))
+                return None;
+        }
+        else
+        {
+            // first-to-last: start at first item
+            // last-to-first: start at the last item
+            offset = firstToLast ? 0 : pos - 1;
+        }
+
+        // search
+        var span = Written;
+        var charSpan = ch.AsSpan();
+        if (firstToLast)
+        {
+            for (; offset <= end; offset++)
+            {
+                if (span.Slice(offset, 1).Equate(charSpan, comparison))
+                    return Some(offset);
+            }
+        }
+        else
+        {
+            for (; offset >= 0; offset--)
+            {
+                if (span.Slice(offset, 1).Equate(charSpan, comparison))
+                    return Some(offset);
+            }
+        }
+
+        // no match
+        return None;
+    }
+
+
+    public Option<int> TryFindIndex(
+        scoped text text,
+        bool firstToLast = true,
+        Index? index = null,
+        StringComparison comparison = StringComparison.Ordinal)
+    {
+        int len = text.Length;
+        int pos = _position;
+
+        // nothing to find or thing to find is bigger than we are
+        if ((len == 0) || (len > pos))
+            return None;
+
+        // we can only scan until a certain ending item
+        // any further and there wouldn't be enough characters to match
+        int end = pos - len;
+
+        // starting index?
+        int offset;
+        if (index.TryGetValue(out Index idx))
+        {
+            if (!Validate.Index(idx, pos).IsOk(out offset))
+                return None;
+        }
+        else
+        {
+            // first-to-last: start at first item
+            // last-to-first: start at the last item
+            offset = firstToLast ? 0 : pos - 1;
+        }
+
+        // clamp offset to what we can match on
+        offset = offset.Clamp(0, end);
+
+        // search
+        var span = Written;
+        if (firstToLast)
+        {
+            for (; offset <= end; offset++)
+            {
+                if (span.Slice(offset, len).Equate(text, comparison))
+                    return Some(offset);
+            }
+        }
+        else
+        {
+            for (; offset >= 0; offset--)
+            {
+                if (span.Slice(offset, len).Equate(text, comparison))
+                    return Some(offset);
+            }
+        }
+
+        // no match
+        return None;
+    }
+
+    public Option<int> TryFindIndex(string? str, bool firstToLast = true, Index? index = null,
+        StringComparison comparison = StringComparison.Ordinal)
+        => TryFindIndex(str.AsSpan(), firstToLast, index, comparison);
+
+    public Option<(int Index, char Char)> TryFindIndex(
+        Func<char, bool>? charPredicate,
+        bool firstToLast = true,
+        Index? index = null)
+    {
+        if (charPredicate is null)
+            return None;
+
+        int pos = _position;
+        int end = pos - 1;
+
+        // starting index?
+        int offset;
+        if (index.TryGetValue(out Index idx))
+        {
+            if (!Validate.Index(idx, pos).IsOk(out offset))
+                return None;
+        }
+        else
+        {
+            // first-to-last: start at first item
+            // last-to-first: start at the last item
+            offset = firstToLast ? 0 : pos - 1;
+        }
+
+        // search
+        var span = Written;
+        if (firstToLast)
+        {
+            // we can scan until the last item
+            for (; offset <= end; offset++)
+            {
+                if (charPredicate(span[offset]))
+                {
+                    return Some((offset, span[offset]));
+                }
+            }
+        }
+        else
+        {
+            // we can scan until the first item
+            for (; offset >= 0; offset--)
+            {
+                if (charPredicate(span[offset]))
+                {
+                    return Some((offset, span[offset]));
+                }
+            }
+        }
+
+        // no match
+        return None;
+    }
+
+#endregion
+}
