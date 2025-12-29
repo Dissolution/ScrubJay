@@ -2,6 +2,7 @@
 // Do not declare static methods on generic types
 // Do not catch Exception
 
+
 #pragma warning disable CA1715, CA1000, CA1031
 
 
@@ -381,11 +382,15 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return Build($"Ok({_value})");
+#if NET9_0_OR_GREATER
+            return $"Ok({Any.ToString(_value)})";
+#else
+            return $"Ok({_value})";
+#endif
         }
         else
         {
-            return Build($"Error({_error})");
+            return $"Error({_error})";
         }
     }
 }

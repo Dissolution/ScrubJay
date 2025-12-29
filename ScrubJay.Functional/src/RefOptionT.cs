@@ -43,7 +43,7 @@ public readonly ref struct RefOption<T>
             return None;
         return Some(value);
     }
-    
+
     // Is this Option.Some?
     // if someone does default(RefOption), this will be false, so default(RefOption) == None
     private readonly bool _isSome;
@@ -308,7 +308,11 @@ public readonly ref struct RefOption<T>
     {
         if (_isSome)
         {
-            return Build($"Some({_value})");
+#if NET9_0_OR_GREATER
+            return $"Some({Any.ToString(_value)})";
+#else
+            return $"Some({_value})";
+#endif
         }
 
         return nameof(None);

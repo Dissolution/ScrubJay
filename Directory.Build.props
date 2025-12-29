@@ -32,6 +32,8 @@
 
         <!-- Aliases -->
         <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
+        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
+
     </ItemGroup>
 
     <!-- global packages -->

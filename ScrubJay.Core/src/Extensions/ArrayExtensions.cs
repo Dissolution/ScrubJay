@@ -1,0 +1,112 @@
+namespace ScrubJay.Extensions;
+
+/// <summary>
+/// Extensions on 2D Arrays
+/// </summary>
+[PublicAPI]
+public static class ArrayExtensions
+{
+#if NETFRAMEWORK || NETSTANDARD2_0
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Span<T> AsSpan<T>(this T[]? array, Range range)
+    {
+        if (array is null)
+            return [];
+        (int start, int length) = range.GetOffsetAndLength(array.Length);
+        return new Span<T>(array, start, length);
+    }
+#endif
+
+    public static void ForEach<T>(this T[]? array, ActRef<T> perItem)
+    {
+        if (array is not null)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                perItem(ref array[i]);
+            }
+        }
+    }
+
+    /// <inheritdoc cref="Array.ConvertAll{TInput,TOutput}"/>
+    public static O[] ConvertAll<I, O>(
+        this I[] array,
+        Converter<I, O> converter)
+        => Array.ConvertAll<I, O>(array, converter);
+
+    public static Result<T> TryGet<T>(
+        this T[]? array,
+        Index index,
+        [CallerArgumentExpression(nameof(array))]
+        string? arrayName = null,
+        [CallerArgumentExpression(nameof(index))]
+        string? indexName = null)
+    {
+        return
+            from arr in Validate.IsNotNull(array, arrayName)
+            from idx in Validate.Index(index, arr.Length, indexName)
+            select arr[idx];
+    }
+
+    public static Result<T> TrySet<T>(
+        this T[]? array,
+        Index index,
+        T item,
+        [CallerArgumentExpression(nameof(array))]
+        string? arrayName = null,
+        [CallerArgumentExpression(nameof(index))]
+        string? indexName = null)
+    {
+        return
+            from arr in Validate.IsNotNull(array, arrayName)
+            from idx in Validate.Index(index, arr.Length, indexName)
+            select (arr[idx] = item);
+    }
+
+    /// <summary>
+    /// Returns <c>true</c> if <paramref name="array"/> is <c>null</c> or has a Length of 0
+    /// </summary>
+    public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this T[]? array)
+        => array is null || (array.Length == 0);
+
+#if NETFRAMEWORK || NETSTANDARD2_0
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, int start) => array.AsSpan(start).ToArray();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, int start, int length) => array.AsSpan(start, length).ToArray();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, Range range) => array.AsSpan(range).ToArray();
+
+    public static void Reverse<T>(this T[] array)
+    {
+        int end = array.Length - 1;
+
+        T temp1;
+        T temp2;
+        for (int i = 0; i < end; --end)
+        {
+            temp1 = array[i];
+            temp2 = array[end];
+            array[i] = temp2;
+            array[end] = temp1;
+            ++i;
+        }
+    }
+#else
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, int start) => array[start..];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, int start, int length) => array[new Range(start, start + length)];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T[] Slice<T>(this T[] array, Range range) => array[range];
+
+#if !NET10_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Reverse<T>(this T[] array) => Array.Reverse<T>(array);
+#endif
+#endif
+}

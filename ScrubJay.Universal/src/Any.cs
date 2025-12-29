@@ -3,15 +3,9 @@ namespace ScrubJay.Universal;
 [PublicAPI]
 public static partial class Any
 {
-    static Any()
-    {
-        
-    }
-    
-    public static string ToString<T>(T? value)
-    {
-        return value?.ToString() ?? string.Empty;
-    }
+    static Any() { }
+
+
 
     public static int CompareTo<T>(T? value, T? other)
     {
@@ -19,7 +13,7 @@ public static partial class Any
             return comparable.CompareTo(other!);
         return Comparer<T>.Default.Compare(value!, other!);
     }
-    
+
     public static bool Equals<T>(T? value, object? obj)
     {
         if (value is null)

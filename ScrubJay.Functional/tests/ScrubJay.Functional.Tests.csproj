@@ -31,7 +31,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\ScrubJay.Testing\src\ScrubJay.Testing.csproj" />
       <ProjectReference Include="..\src\ScrubJay.Functional.csproj" />
     </ItemGroup>
 

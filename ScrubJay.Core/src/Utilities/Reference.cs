@@ -1,0 +1,35 @@
+﻿namespace ScrubJay.Utilities;
+
+/// <summary>
+/// Utility for manipulating references
+/// </summary>
+[PublicAPI]
+public static class Reference
+{
+    /// <summary>
+    /// Replace the <typeparamref name="T"/> in <paramref name="location"/> with
+    /// <paramref name="value"/> and return the <typeparamref name="T"/> that was in <paramref name="location"/>
+    /// </summary>
+    /// <remarks>
+    /// This is a non-locking version of <see cref="Interlocked"/>'s <c>Exchange</c> methods
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(location))]
+    public static T Exchange<T>(ref T location, T value)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        T original = location;
+        location = value;
+        return original;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Exchange<T>(ref Span<T> left, ref Span<T> right)
+    {
+        Span<T> temp = left;
+        left = right;
+        right = temp;
+    }
+}

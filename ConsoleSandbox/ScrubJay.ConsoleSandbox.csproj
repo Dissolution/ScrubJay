@@ -15,8 +15,6 @@
     
     <ItemGroup>
       <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\ScrubJay.Interpolated\src\ScrubJay.Interpolated.csproj" />
-      <ProjectReference Include="..\ScrubJay.Testing\src\ScrubJay.Testing.csproj" />
       <ProjectReference Include="..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
     </ItemGroup>
 

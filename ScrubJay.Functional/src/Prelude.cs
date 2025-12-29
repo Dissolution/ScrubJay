@@ -1,7 +1,4 @@
-﻿// prevent attribute name conflict with `JetBrains.Annotations.NotNullAttribute`
-global using NotNullAttribute = System.Diagnostics.CodeAnalysis.NotNullAttribute;
-
-using ScrubJay.Functional.IMPL;
+﻿using ScrubJay.Functional.IMPL;
 
 namespace ScrubJay.Functional;
 
@@ -45,4 +42,14 @@ public static class Prelude
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Unit Unit() => default(Unit);
+
+    public static Result Try(Action? action)
+    {
+        return Result.Try(action);
+    }
+    
+    public static Result<T> Try<T>(Func<T>? func)
+    {
+        return Result.Try<T>(func);
+    }
 }

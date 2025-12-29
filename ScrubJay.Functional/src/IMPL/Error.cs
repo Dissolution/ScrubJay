@@ -29,6 +29,10 @@ public readonly ref struct Error<E>
 
     public override string ToString()
     {
-        return Build($"Error({Value})");
+        #if NET9_0_OR_GREATER
+        return $"Error({Any.ToString(Value)})";
+        #else
+        return $"Error({Value})";
+        #endif
     }
 }

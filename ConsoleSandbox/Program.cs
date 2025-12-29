@@ -1,37 +1,28 @@
-﻿
-using System.Diagnostics;
-using System.Reflection;
-using ConsoleSandbox;
-using ScrubJay.Functional;
-using ScrubJay.Interpolated;
-using ScrubJay.Testing;
-using ScrubJay.Universal;
+﻿using System.Reflection;
 
-
-
-//
-// var elementType = type.GetElementType();
-// var elementTypeAttributes = Attribute.GetCustomAttributes(elementType!, true);
-// var elementTypeNullable = elementType.Nullability;
-// var elementTypeGenericTypes = elementType!.GetGenericArguments();
+var type = typeof(int).MakeByRefType();
+string str = type.ToString();
 
 Debugger.Break();
 
 
 return;
 
-static class Util
+namespace ConsoleSandbox
 {
-    
-    
-    public static bool IsGenericArgumentNullable(Type genericType, int argumentIndex)
+    static class Util
     {
-        var attr = genericType.GetCustomAttribute<NullableAttribute>();
-        if (attr?.NullableFlags != null && attr.NullableFlags.Length > argumentIndex + 1)
+    
+    
+        public static bool IsGenericArgumentNullable(Type genericType, int argumentIndex)
         {
-            return attr.NullableFlags[argumentIndex + 1] == 2;
-        }
+            var attr = genericType.GetCustomAttribute<NullableAttribute>();
+            if (attr?.NullableFlags != null && attr.NullableFlags.Length > argumentIndex + 1)
+            {
+                return attr.NullableFlags[argumentIndex + 1] == 2;
+            }
 
-        return false; // Unable to determine, assume not nullable
+            return false; // Unable to determine, assume not nullable
+        }
     }
 }

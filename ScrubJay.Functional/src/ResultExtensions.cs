@@ -37,7 +37,7 @@ public static class ResultExtensions
         /// <returns>
         /// The <see cref="Result{T}"/> of the invocation
         /// </returns>
-        public static Result<Unit> Try(Action? action)
+        public static Result Try(Action? action)
         {
             if (action is null)
             {
@@ -47,7 +47,7 @@ public static class ResultExtensions
             try
             {
                 action.Invoke();
-                return Result<Unit>.Ok(Unit.Default);
+                return true;
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ public static class ResultExtensions
             }
         }
 
-        public static Result<Unit> Try<I>(
+        public static Result Try<I>(
             [NotNullWhen(true)] I? instance,
             [NotNullWhen(true)] Action<I>? instanceAction)
         {
@@ -68,7 +68,7 @@ public static class ResultExtensions
             try
             {
                 instanceAction.Invoke(instance);
-                return Result<Unit>.Ok(default);
+                return true;
             }
             catch (Exception ex)
             {

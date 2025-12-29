@@ -1,16 +1,12 @@
 <Solution>
-  <Folder Name="/ScrubJay.Extensions/">
-    <Project Path="ScrubJay.Extensions/src/ScrubJay.Extensions.csproj" />
+  <Folder Name="/ScrubJay.Core/">
+    <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Functional/">
     <Project Path="ScrubJay.Functional/src/ScrubJay.Functional.csproj" />
     <Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
   </Folder>
-  <Folder Name="/ScrubJay.Testing/">
-    <Project Path="ScrubJay.Testing/src/ScrubJay.Testing.csproj" />
-  </Folder>
   <Folder Name="/ScrubJay.Text/">
-    <Project Path="ScrubJay.Text\src\ScrubJay.Text.csproj" />
     <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Universal/">
