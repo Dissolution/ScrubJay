@@ -147,7 +147,7 @@ public class OrderedList<T> : IList<T>
     {
         int count = _size;
 
-        int i = Throw.IfBadInsertIndex(index, count);
+        Guard.InsertIndex(index,count);
 
         Adding(1);
 
@@ -193,7 +193,7 @@ public class OrderedList<T> : IList<T>
     {
         int count = _size;
 
-        Throw.IfBadIndex(index, count);
+        Guard.Index(index,count);
 
         count--;
         if (index < count)
@@ -268,7 +268,7 @@ public class OrderedList<T> : IList<T>
 
     public void CopyTo(T[] array, int arrayIndex = 0)
     {
-        Validate.CanCopyTo(array, arrayIndex, _size).ThrowIfError();
+        Guard.CanCopyTo(_size, array, arrayIndex);
         _items.AsSpan(0, _size).CopyTo(array.AsSpan(arrayIndex));
     }
 

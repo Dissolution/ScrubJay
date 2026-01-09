@@ -61,9 +61,8 @@ public ref struct SpanWriter<T>
 
     public SpanWriter(Span<T> span, int position)
     {
-        Throw.IfBadIndex(position, span.Length);
         _span = span;
-        _position = position;
+        _position = Guard.Index(position, span.Length);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -121,7 +120,7 @@ public ref struct SpanWriter<T>
         }
         else
         {
-            throw Ex.Argument(items, $"Could not write {items.Length} items: Only {RemainingCount} capacity remains");
+            throw Ex.Arg(items, $"Could not write {items.Length} items: Only {RemainingCount} capacity remains");
         }
     }
 

@@ -1,0 +1,2 @@
+namespace ScrubJay.Iteration;
+

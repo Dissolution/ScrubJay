@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Text.Building;
+﻿using ScrubJay.Iteration;
+
+namespace ScrubJay.Text.Building;
 
 partial class TextBuilder
 {

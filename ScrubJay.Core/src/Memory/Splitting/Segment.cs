@@ -1,4 +1,4 @@
-namespace ScrubJay.Memory;
+namespace ScrubJay.Memory.Splitting;
 
 
 #if NET9_0_OR_GREATER

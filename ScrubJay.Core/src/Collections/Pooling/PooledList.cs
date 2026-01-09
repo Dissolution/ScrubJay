@@ -3,6 +3,7 @@
 using System.Buffers;
 using System.Text;
 
+
 #pragma warning disable CA1710
 
 namespace ScrubJay.Collections.Pooling;
@@ -17,7 +18,7 @@ namespace ScrubJay.Collections.Pooling;
 /// </typeparam>
 [PublicAPI]
 [MustDisposeResource]
-public sealed class PooledList<T> : PooledArray<T>,
+public sealed class PooledList<T> :
     IList<T>,
     IReadOnlyList<T>,
     ICollection<T>,
@@ -25,8 +26,9 @@ public sealed class PooledList<T> : PooledArray<T>,
     IEnumerable<T>,
     IDisposable
 {
-    // the position in _array that we're writing to
+    internal T[] _array;
     internal int _position;
+    internal int _version;
 
     /// <inheritdoc cref="ICollection{T}.IsReadOnly"/>
     bool ICollection<T>.IsReadOnly => false;
@@ -127,6 +129,16 @@ public sealed class PooledList<T> : PooledArray<T>,
         }
     }
 
+    /// <summary>
+    /// Gets the current capacity to store items<br/>
+    /// This will be automatically increased if required or by calling <see cref="Grow"/>
+    /// </summary>
+    public int Capacity
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _array.Length;
+    }
+
     internal PooledList(T[] array, int position)
     {
         _array = array;
@@ -138,7 +150,9 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public PooledList() : base()
     {
+        _array = [];
         _position = 0;
+        _version = 0;
     }
 
     /// <summary>
@@ -150,12 +164,48 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// <remarks>
     /// If <paramref name="minCapacity"/> is greater than 0, an array will be rented from <see cref="ArrayPool{T}"/>
     /// </remarks>
-    public PooledList(int minCapacity) : base(minCapacity)
+    public PooledList(int minCapacity) : base()
     {
+        _array = ArrayNest<T>.Rent(minCapacity);
         _position = 0;
+        _version = 0;
     }
 
-    protected override void CopyToNewArray(T[] newArray) => Sequence.CopyTo(_array.AsSpan(0, _position), newArray);
+    [HandlesResourceDisposal]
+    ~PooledList()
+    {
+        Dispose();
+    }
+
+#region Grow
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Grow() => GrowTo(Capacity * 2);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void GrowBy(int adding)
+    {
+        Debug.Assert(adding > 0);
+        GrowTo(Capacity + (adding * 2));
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public void GrowTo(int minCapacity)
+    {
+        if (minCapacity > Capacity)
+        {
+            T[] newArray = ArrayNest<T>.Rent(minCapacity * 2);
+            if (_position > 0)
+            {
+                Written.CopyTo(newArray);
+            }
+
+            ArrayNest.Return(_array);
+            _array = newArray;
+        }
+    }
+
+#endregion /Grow
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void InsertManyEnumerable(int index, IEnumerable<T> items)
@@ -182,18 +232,20 @@ public sealed class PooledList<T> : PooledArray<T>,
         return true;
     }
 
+#region Add, AddMany
+
     /// <summary>
     /// Add a new <paramref name="item"/> to this <see cref="PooledList{T}"/>
     /// </summary>
     public void Add(T item)
     {
+        _version++;
         int pos = _position;
         if (pos >= Capacity)
         {
             GrowBy(1);
         }
 
-        _version++;
         _array[pos] = item;
         _position = pos + 1;
     }
@@ -201,30 +253,29 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// <summary>
     /// Adds the given <paramref name="items"/> to this <see cref="PooledList{T}"/>
     /// </summary>
-    public void AddMany(ReadOnlySpan<T> items)
+    public void AddMany(params ReadOnlySpan<T> items)
     {
-        int pos = _position;
-        int newPos = pos + items.Length;
-        if (newPos >= Capacity)
+        if (!items.IsEmpty)
         {
-            GrowBy(items.Length);
-        }
+            _version++;
 
-        _version++;
-        Sequence.CopyTo(items, _array.AsSpan(pos));
-        _position = newPos;
+            int pos = _position;
+            int newPos = pos + items.Length;
+            if (newPos >= Capacity)
+            {
+                GrowBy(items.Length);
+            }
+
+            Sequence.CopyTo(items, _array.AsSpan(pos));
+            _position = newPos;
+        }
     }
 
     /// <summary>
     /// Adds the given <paramref name="items"/> to this <see cref="PooledList{T}"/>
     /// </summary>
-    public void AddMany(params T[]? items)
-    {
-        if (items is not null)
-        {
-            AddMany(new ReadOnlySpan<T>(items));
-        }
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddMany(T[]? items) => AddMany(items.AsSpan());
 
     /// <summary>
     /// Adds the given <paramref name="items"/> to this <see cref="PooledList{T}"/>
@@ -235,12 +286,23 @@ public sealed class PooledList<T> : PooledArray<T>,
             return;
 
         int itemCount;
+
+#if !NETFRAMEWORK && !NETSTANDARD
+        if (items is List<T> list)
+        {
+            var span = CollectionsMarshal.AsSpan(list);
+            AddMany(span);
+            return;
+        }
+#endif
+
         if (items is ICollection<T> collection)
         {
             itemCount = collection.Count;
             if (itemCount == 0)
                 return;
 
+            _version++;
             int pos = _position;
             int newPos = pos + itemCount;
             if (newPos > Capacity)
@@ -248,19 +310,21 @@ public sealed class PooledList<T> : PooledArray<T>,
                 GrowBy(itemCount);
             }
 
-            _version++;
             collection.CopyTo(_array, pos);
             _position = newPos;
+            return;
         }
-        else
+
+        // slow path
+        foreach (var item in items)
         {
-            // slow path
-            foreach (var item in items)
-            {
-                Add(item);
-            }
+            Add(item);
         }
     }
+
+#endregion
+
+#region Insert, InsertMany
 
     /// <inheritdoc cref="IList{T}.Insert"/>
     void IList<T>.Insert(int index, T item) => TryInsert(index, item).OkOrThrow();
@@ -276,9 +340,8 @@ public sealed class PooledList<T> : PooledArray<T>,
     public Result<int> TryInsert(Index index, T item)
     {
         int pos = _position;
-        var vr = Validate.InsertIndex(index, pos);
-        if (!vr.IsOk(out int offset))
-            return vr;
+        if (Validate.InsertIndex(index, pos).IsError(out var error, out var offset))
+            return error;
 
         if (offset == pos)
         {
@@ -311,15 +374,11 @@ public sealed class PooledList<T> : PooledArray<T>,
     {
         int itemCount = items.Length;
 
-        if (itemCount == 0)
-            return Validate.InsertIndex(index, _position);
-
         if (itemCount == 1)
             return TryInsert(index, items[0]);
 
-        var vr = Validate.InsertIndex(index, _position);
-        if (!vr.IsOk(out int offset))
-            return vr;
+        if (!Validate.InsertIndex(index, _position).IsOk(out int offset, out var ex))
+            return ex;
 
         if (offset == _position)
         {
@@ -361,14 +420,20 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </returns>
     public Result<int> TryInsertMany(Index index, IEnumerable<T>? items)
     {
+        int offset;
+        Exception? error;
+
         if (items is null)
-            return Validate.InsertIndex(index, _position);
+        {
+            if (Validate.InsertIndex(index, _position).IsOk(out offset, out error))
+                return 0;
+            return error;
+        }
 
         int pos = _position;
 
-        var vr = Validate.InsertIndex(index, pos);
-        if (!vr.IsOk(out int offset))
-            return vr;
+        if (!Validate.InsertIndex(index, pos).IsOk(out offset, out error))
+            return error;
 
         if (offset == _position)
         {
@@ -400,6 +465,9 @@ public sealed class PooledList<T> : PooledArray<T>,
         InsertManyEnumerable(offset, items);
         return Ok(offset);
     }
+
+#endregion /Insert
+
 
     /// <summary>
     /// Sorts the items in this <see cref="PooledList{T}"/> using an optional <see cref="IComparer{T}"/>
@@ -722,40 +790,47 @@ public sealed class PooledList<T> : PooledArray<T>,
 
 
     public Result<T> TryGetAt(Index index)
-        => Validate
-            .Index(index, _position)
-            .Select(i => _array[i]);
+    {
+        if (!Validate.Index(index, _position).IsOk(out var offset, out var error))
+            return error;
+        return _array[offset];
+    }
 
     public Result<T[]> TryGetMany(Range range)
-        => Validate
-            .Range(range, _position)
-            .Select(ol => _array.Slice(ol.Offset, ol.Length));
+    {
+        if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
+            return error;
+        return _array.Slice(offset, length);
+    }
+
 
     public Result TryGetManyTo(Range range, Span<T> destination)
     {
-        if (!Validate.Range(range, _position).IsOk(out var ol, out var error))
+        if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
             return error;
-        if (ol.Length > destination.Length)
-            return Ex.Argument(destination, $"Destination span cannot hold {ol.Length} items");
-        Sequence.CopyTo(_array.AsSpan(range), destination);
+        if (length > destination.Length)
+            return Ex.Arg(destination, $"Destination span cannot hold {length} items");
+        Sequence.CopyTo(_array.AsSpan(offset, length), destination);
         return true;
     }
 
-    public Result TrySetAt(Index index, T item) => Validate.Index(index, _position).Select(i =>
+    public Result TrySetAt(Index index, T item)
     {
+        if (!Validate.Index(index, _position).IsOk(out var offset, out var error))
+            return error;
         _version++;
-        _array[i] = item;
+        _array[offset] = item;
         return true;
-    });
+    }
 
     public Result TrySetMany(Range range, scoped ReadOnlySpan<T> items)
     {
-        if (!Validate.Range(range, _position).IsOk(out var ol, out var error))
+        if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
             return error;
-        if (ol.Length > items.Length)
-            return new ArgumentException($"{items.Length} items cannot fit in a Range Length of {ol.Length}");
+        if (length > items.Length)
+            return new ArgumentException($"{items.Length} items cannot fit in a Range Length of {length}");
         _version++;
-        Sequence.CopyTo(items, _array.AsSpan(ol.Offset, ol.Length));
+        Sequence.CopyTo(items, _array.AsSpan(offset, length));
         return true;
     }
 
@@ -774,9 +849,8 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </returns>
     public Result<int> TryRemoveAt(Index index)
     {
-        var valid = Validate.Index(index, _position);
-        if (!valid.IsOk(out int offset))
-            return valid;
+        if (!Validate.Index(index, _position).IsOk(out var offset, out var error))
+            return error;
         _version++;
         Sequence.SelfCopy(Written, (offset + 1).., offset..);
         _position--;
@@ -795,9 +869,8 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </returns>
     public Result<T> TryRemoveAndGetAt(Index index)
     {
-        var valid = Validate.Index(index, _position);
-        if (!valid.IsOk(out int offset, out var ex))
-            return ex;
+        if (!Validate.Index(index, _position).IsOk(out var offset, out var error))
+            return error;
         T item = Written[offset];
         _version++;
         Sequence.SelfCopy(Written, (offset + 1).., offset..);
@@ -817,10 +890,8 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </returns>
     public Result<int> TryRemoveMany(Range range)
     {
-        var valid = Validate.Range(range, _position);
-        if (!valid.IsOk(out var ol, out var ex))
-            return ex;
-        (int offset, int length) = ol;
+        if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
+            return error;
         _version++;
         Sequence.SelfCopy(Written, (offset + length).., offset..);
         _position -= length;
@@ -838,10 +909,8 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </returns>
     public Result<T[]> TryRemoveAndGetMany(Range range)
     {
-        var valid = Validate.Range(range, _position);
-        if (!valid.IsOk(out var ol, out var ex))
-            return ex;
-        (int offset, int length) = ol;
+        if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
+            return error;
         T[] items = _array.AsSpan(offset, length).ToArray();
         _version++;
         Sequence.SelfCopy(_array, (offset + length).., offset..);
@@ -982,7 +1051,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// <inheritdoc cref="ICollection{T}.CopyTo"/>
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
     {
-        Validate.CanCopyTo(array, arrayIndex, _position).ThrowIfError();
+        Guard.CanCopyTo(_position, array, arrayIndex);
         Sequence.CopyTo(Written, array.AsSpan(arrayIndex));
     }
 
@@ -1002,7 +1071,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public Span<T> Slice(int index)
     {
-        Validate.Index(index, _position).ThrowIfError();
+        Guard.Index(index, _position);
         return _array.AsSpan(index.._position);
     }
 
@@ -1011,7 +1080,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public Span<T> Slice(Index index)
     {
-        int offset = Validate.Index(index, _position).OkOrThrow();
+        int offset = Guard.Index(index, _position);
         return _array.AsSpan(offset.._position);
     }
 
@@ -1020,7 +1089,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public Span<T> Slice(int index, int count)
     {
-        Validate.IndexLength(index, count, _position).ThrowIfError();
+        Guard.Range(index, count, _position);
         return _array.AsSpan(index, count);
     }
 
@@ -1029,7 +1098,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public Span<T> Slice(Index index, int count)
     {
-        (int offset, int len) = Validate.IndexLength(index, count, _position).OkOrThrow();
+        (int offset, int len) = Guard.Range(index, count,_position);
         return _array.AsSpan(offset, len);
     }
 
@@ -1038,7 +1107,7 @@ public sealed class PooledList<T> : PooledArray<T>,
     /// </summary>
     public Span<T> Slice(Range range)
     {
-        (int offset, int len) = Validate.Range(range, _position).OkOrThrow();
+        (int offset, int len) = Guard.Range(range,_position);
         return _array.AsSpan(offset, len);
     }
 
@@ -1071,11 +1140,20 @@ public sealed class PooledList<T> : PooledArray<T>,
     }
 #pragma warning restore CA1002
 
-    protected override void OnDisposing()
+#region Disposal
+
+    [HandlesResourceDisposal]
+    public void Dispose()
     {
         _version++;
         _position = 0;
+        T[] toReturn = Interlocked.Exchange<T[]>(ref _array, []);
+        ArrayNest.Return(toReturn);
+        GC.SuppressFinalize(this);
     }
+
+#endregion /Disposal
+
 
     public (T[], int) Empty()
     {

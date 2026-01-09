@@ -146,7 +146,7 @@ public partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder Repeat<T>(int count, T? value, char format, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder Repeat<T>(int count, T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (count > 0)

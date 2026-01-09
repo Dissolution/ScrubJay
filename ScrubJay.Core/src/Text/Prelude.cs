@@ -5,8 +5,8 @@ public static class Prelude
 {
     public static string Build(
         [HandlesResourceDisposal]
-        InterpolatedTextHandler handler)
+        InterpolatedTextBuilder handler)
     {
-        return handler.ToStringAndDispose();
+        return handler.ToStringAndClear();
     }
 }

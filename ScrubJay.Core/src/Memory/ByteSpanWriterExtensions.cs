@@ -210,7 +210,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.U8Prefix:
                 {
                     if (len > byte.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in U8Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in U8Prefix");
                     writer.Write((byte)len);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -218,7 +218,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.U16Prefix:
                 {
                     if (len > ushort.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in U16Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in U16Prefix");
                     writer.Write((ushort)len, endianness);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -238,7 +238,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.I8Prefix:
                 {
                     if (len > sbyte.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in I8Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in I8Prefix");
                     writer.Write((sbyte)len);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -246,7 +246,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.I16Prefix:
                 {
                     if (len > short.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in I16Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in I16Prefix");
                     writer.Write((short)len, endianness);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -301,7 +301,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.U8Prefix:
                 {
                     if (len > byte.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in U8Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in U8Prefix");
                     writer.Write((byte)len);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -309,7 +309,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.U16Prefix:
                 {
                     if (len > ushort.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in U16Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in U16Prefix");
                     writer.Write((ushort)len, endianness);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -329,7 +329,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.I8Prefix:
                 {
                     if (len > sbyte.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in I8Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in I8Prefix");
                     writer.Write((sbyte)len);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -337,7 +337,7 @@ public static class ByteSpanWriterExtensions
                 case StringEncodingAffix.I16Prefix:
                 {
                     if (len > short.MaxValue)
-                        throw Ex.Argument(fix, $"String length of {len} cannot fit in I16Prefix");
+                        throw Ex.Arg(fix, $"String length of {len} cannot fit in I16Prefix");
                     writer.Write((short)len, endianness);
                     writer.WriteMany(bytes, endianness);
                     return;
@@ -383,14 +383,14 @@ public static class ByteSpanWriterExtensions
                 }
                 case TimeEncodingAffix.TimeU32:
                 {
-                    Throw.IfGreaterThan(timeSpan.TotalSeconds, uint.MaxValue);
-                    writer.Write((uint)timeSpan.TotalSeconds, endianness);
+                    uint ts = Guard.IsValidU32(timeSpan.TotalSeconds);
+                    writer.Write(ts, endianness);
                     return;
                 }
                 case TimeEncodingAffix.TimeU64:
                 {
-                    Throw.IfGreaterThan(timeSpan.TotalSeconds, ulong.MaxValue);
-                    writer.Write((ulong)timeSpan.TotalSeconds, endianness);
+                    ulong ts = Guard.IsValidU64(timeSpan.TotalSeconds);
+                    writer.Write(ts, endianness);
                     return;
                 }
                 default:
@@ -414,14 +414,14 @@ public static class ByteSpanWriterExtensions
                 case TimeEncodingAffix.TimeU32:
                 {
                     var seconds = (dateTime - TimeEncodingAffix.OriginDateTime).TotalSeconds;
-                    Throw.IfGreaterThan(seconds, uint.MaxValue);
-                    writer.Write((uint)seconds, endianness);
+                    uint sec = (uint)Guard.IsBetween(seconds, uint.MinValue, uint.MaxValue);
+                    writer.Write(sec, endianness);
                     return;
                 }
                 case TimeEncodingAffix.TimeU64:
                 {
                     var seconds = (dateTime - TimeEncodingAffix.OriginDateTime).TotalSeconds;
-                    Throw.IfGreaterThan(seconds, ulong.MaxValue);
+                    ulong sec = (ulong)Guard.IsBetween(seconds, ulong.MinValue, ulong.MaxValue);
                     writer.Write((ulong)seconds, endianness);
                     return;
                 }

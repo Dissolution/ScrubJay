@@ -1,6 +1,4 @@
-﻿using static ScrubJay.Utilities.GenericTypeConstraint;
-
-namespace ScrubJay.Collections.Pooling;
+﻿namespace ScrubJay.Collections.Pooling;
 
 /// <summary>
 ///
@@ -48,11 +46,13 @@ public static class InstancePool
     }
 
 
-    public static InstancePool<T> Default<T>(IsNew<T> _ = default)
+    public static InstancePool<T> Default<T>(TypeConstraints.IsNew<T> _ = default)
         where T : class, new()
         => new(new InstancePoolPolicy<T>(static () => new()));
 
-    public static InstancePool<T> Default<T>(IsDisposableNew<T> _ = default)
+    public static InstancePool<T> Default<T>(
+        TypeConstraints.IsDisposable<T> _ = default,
+        TypeConstraints.IsNew<T> __ = default)
         where T : class, IDisposable, new()
         => new(new InstancePoolPolicy<T>(
             createInstance: static () => new(),

@@ -7,6 +7,8 @@
         <NoWarn>$(NoWarn);
             CS1591; <!-- undocumented members -->
             CS8981; <!-- `text` -->
+            CA1062;
+            CA1715; <!-- Prefix Generic type parameter names with 'T' -->
         </NoWarn>
     </PropertyGroup>
 

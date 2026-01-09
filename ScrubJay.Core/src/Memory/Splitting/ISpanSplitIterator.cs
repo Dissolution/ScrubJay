@@ -1,6 +1,6 @@
 using ScrubJay.Iteration;
 
-namespace ScrubJay.Memory;
+namespace ScrubJay.Memory.Splitting;
 
 [PublicAPI]
 public interface ISpanSplitIterator<T> : IIterator<Segment<T>>

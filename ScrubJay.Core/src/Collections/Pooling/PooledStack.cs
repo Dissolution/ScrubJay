@@ -413,8 +413,8 @@ public class PooledStack<T> : PooledArray<T>,
         int count = _size;
         var array = _array;
 
-        if (Validate.CanCopyTo(span, count).IsError(out var ex))
-            return ex;
+        if (Validate.CanCopyTo(count, span).IsError(out var error))
+            return error;
 
         int s = 0; // index into span
         int a; // index into our array

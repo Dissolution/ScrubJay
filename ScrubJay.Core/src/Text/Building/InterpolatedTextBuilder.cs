@@ -8,7 +8,7 @@ namespace ScrubJay.Text.Building;
 /// Provides a handler used to append interpolated strings into <see cref="TextBuilder"/> instances.
 /// </summary>
 /// <remarks>
-/// Heavily inspired by <see cref="DefaultInterpolatedStringHandler"/> and <see cref="StringBuilder.AppendInterpolatedStringHandler"/>
+/// Heavily inspired by <see cref="DefaultInterpolatedStringHandler"/> and <see cref="System.Text.AppendInterpolatedStringHandler"/>
 /// </remarks>
 [PublicAPI]
 [InterpolatedStringHandler]

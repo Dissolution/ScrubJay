@@ -1,4 +1,7 @@
 // ReSharper disable ConvertNullableToShortForm
+
+
+
 namespace ScrubJay.Extensions;
 
 /// <summary>

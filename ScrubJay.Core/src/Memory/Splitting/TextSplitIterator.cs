@@ -1,4 +1,4 @@
-namespace ScrubJay.Memory;
+namespace ScrubJay.Memory.Splitting;
 
 [PublicAPI]
 public ref struct TextSplitIterator : ISpanSplitIterator<char>

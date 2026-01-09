@@ -39,7 +39,7 @@ public partial class TextBuilder
     {
         int pos = _position;
 
-        int offset = Throw.IfBadInsertIndex(index, pos);
+        int offset = Guard.InsertIndex(index, pos);
 
         if (offset == pos)
             return Format<T>(value, format, provider);
@@ -63,7 +63,7 @@ public partial class TextBuilder
     {
         int pos = _position;
 
-        int offset = Throw.IfBadInsertIndex(index, pos);
+        int offset = Guard.InsertIndex(index, pos);
 
         if (offset == pos)
             return Render<T>(value);

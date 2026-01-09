@@ -28,7 +28,7 @@ public sealed class DictionaryAdapter<K, V> :
     {
         if (objKey.Is<K>(out var key))
             return key;
-        throw Ex.Argument(objKey, $"Invalid Key - '{objKey}' is not a {typeof(K):@}", null, keyName);
+        throw Ex.Arg(objKey, $"Invalid Key - '{objKey}' is not a {typeof(K):@}", keyName);
     }
 
     [return: NotNullIfNotNull(nameof(objValue))]
@@ -38,7 +38,7 @@ public sealed class DictionaryAdapter<K, V> :
     {
         if (objValue.As<V>(out var value))
             return value;
-        throw Ex.Argument(objValue, $"Invalid Value - '{objValue}' is not a {typeof(V):@}", null, valueName);
+        throw Ex.Arg(objValue, $"Invalid Value - '{objValue}' is not a {typeof(V):@}", valueName);
     }
 
     private sealed class KeyCollection : IReadOnlyCollection<K>, ICollection<K>, ICollection
@@ -69,8 +69,7 @@ public sealed class DictionaryAdapter<K, V> :
 
         void ICollection.CopyTo(Array array, int index)
         {
-            Validate.CanCopyTo(array, index, Count).ThrowIfError();
-
+            Guard.CanCopyTo(Count, array, index);
             var keys = UntypedKeys;
             foreach (object? key in keys)
             {
@@ -80,8 +79,7 @@ public sealed class DictionaryAdapter<K, V> :
 
         void ICollection<K>.CopyTo(K[] array, int arrayIndex)
         {
-            Validate.CanCopyTo(array, arrayIndex, Count).ThrowIfError();
-
+            Guard.CanCopyTo(Count, array, arrayIndex);
             var keys = UntypedKeys;
             foreach (object? key in keys)
             {
@@ -132,8 +130,8 @@ public sealed class DictionaryAdapter<K, V> :
 
         void ICollection.CopyTo(Array array, int index)
         {
-            Validate.CanCopyTo(array, index, Count).ThrowIfError();
-
+            Guard.CanCopyTo(Count, array, index);
+            
             var values = UntypedValues;
             foreach (object? value in values)
             {
@@ -143,7 +141,7 @@ public sealed class DictionaryAdapter<K, V> :
 
         void ICollection<V>.CopyTo(V[] array, int arrayIndex)
         {
-            Validate.CanCopyTo(array, arrayIndex, Count).ThrowIfError();
+            Guard.CanCopyTo(Count, array, arrayIndex);
 
             var values = UntypedValues;
             foreach (object? value in values)
@@ -304,8 +302,8 @@ public sealed class DictionaryAdapter<K, V> :
 
     void ICollection<KeyValuePair<K, V>>.CopyTo(KeyValuePair<K, V>[] array, int arrayIndex)
     {
-        Validate.CanCopyTo(array, arrayIndex, _dictionary.Count).ThrowIfError();
-
+        Guard.CanCopyTo(_dictionary.Count, array, arrayIndex);
+        
         foreach (DictionaryEntry entry in _dictionary.Cast<DictionaryEntry>())
         {
             array[arrayIndex++] = new(ObjectToKey(entry.Key), ObjectToValue(entry.Value)!);

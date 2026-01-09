@@ -1,5 +1,7 @@
 ﻿// Exception to Identifiers Require Correct Suffix
 
+
+
 #pragma warning disable CA1710
 // CA1043 : Use Integral Or String Argument For Indexers
 #pragma warning disable CA1043
@@ -35,11 +37,11 @@ public sealed class ArrayAdapterND<T> :
         {
             int lower = array.GetLowerBound(d);
             if (lower == int.MinValue)
-                throw Ex.Argument(array, $"Dimension {d} has an unsupported lower bound of int.MinValue ({int.MinValue})");
+                throw Ex.Arg(array, $"Dimension {d} has an unsupported lower bound of int.MinValue ({int.MinValue})");
             lowerBounds[d] = lower;
             int upper = array.GetUpperBound(d);
             if (upper < lower)
-                throw Ex.Argument(array, $"Dimension {d} has an upper bound {upper} lower than its lower bound {lower}");
+                throw Ex.Arg(array, $"Dimension {d} has an upper bound {upper} lower than its lower bound {lower}");
             upperBounds[d] = upper;
         }
 
@@ -98,7 +100,7 @@ public sealed class ArrayAdapterND<T> :
 
     public bool TryCopyTo(Span<T?> destination)
     {
-        if (!Validate.CanCopyTo(destination, Count))
+        if (!Validate.CanCopyTo(Count, destination))
             return false;
 
         int d = 0;

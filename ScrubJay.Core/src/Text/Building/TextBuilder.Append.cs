@@ -60,7 +60,7 @@ partial class TextBuilder
 #if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder Append<T>(T? value, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder Append<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         Write(value.Stringify());
@@ -89,7 +89,7 @@ partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder AppendLine<T>(T? value, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder AppendLine<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
         => Append<T>(value).NewLine();
 #endif
@@ -161,7 +161,7 @@ partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder AppendMany<T>(IEnumerable<T>? values, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder AppendMany<T>(IEnumerable<T>? values, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (values is not null)

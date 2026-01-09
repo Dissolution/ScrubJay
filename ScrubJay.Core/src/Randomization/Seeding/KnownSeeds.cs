@@ -12,14 +12,14 @@ public sealed class KnownSeeds : RandSeed
 
     public KnownSeeds(params ulong[] seeds)
     {
-        Throw.IfEmpty(seeds);
+        Guard.IsNotEmpty(seeds);
         _seeds = seeds;
         _seedCount = seeds.Length;
     }
 
     public KnownSeeds(ReadOnlySpan<ulong> seeds)
     {
-        Throw.IfEmpty(seeds);
+        Guard.IsNotEmpty(seeds);
         _seeds = seeds.ToArray();
         _seedCount = seeds.Length;
     }

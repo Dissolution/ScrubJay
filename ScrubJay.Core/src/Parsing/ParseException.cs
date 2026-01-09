@@ -40,7 +40,7 @@ public class ParseException : InvalidOperationException, IEnumerable
     /// </remarks>
     public void Add(string key, object? value)
     {
-        Throw.IfEmpty(key);
+        Guard.IsNotEmpty(key);
         if (value is not null)
         {
             Data.Add(key, value);

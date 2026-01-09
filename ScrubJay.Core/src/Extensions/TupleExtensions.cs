@@ -16,7 +16,7 @@ public static class TupleExtensions
         {
             get
             {
-                int i = Throw.IfBadIndex(_index, _tuple.Length);
+                int i = Guard.Index(_index, _tuple.Length);
                 return _tuple[i];
             }
         }

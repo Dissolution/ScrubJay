@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Extensions;
+﻿
+
+namespace ScrubJay.Extensions;
 
 /// <summary>
 /// Extensions on <see cref="Range"/>

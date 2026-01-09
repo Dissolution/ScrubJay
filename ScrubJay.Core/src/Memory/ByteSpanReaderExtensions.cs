@@ -247,7 +247,7 @@ public static class ByteSpanReaderExtensions
         Endianness endianness = Endianness.System,
         Encoding? encoding = null)
     {
-        Throw.IfLessThan(length, 0);
+        Guard.IsGrequalTo(length, 0);
         if (endianness.IsNoSwap)
         {
             return (encoding ?? Encoding.UTF8).GetString(reader.Take(length));

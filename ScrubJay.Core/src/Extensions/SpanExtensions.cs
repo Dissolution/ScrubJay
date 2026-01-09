@@ -2,6 +2,7 @@
 
 using Polyfills;
 
+
 namespace ScrubJay.Extensions;
 
 /// <summary>

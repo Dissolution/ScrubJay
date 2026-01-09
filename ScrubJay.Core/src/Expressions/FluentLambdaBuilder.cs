@@ -20,7 +20,7 @@ public class FluentLambdaBuilder<B>
     {
         _builder = (B)this;
 
-        Validate.Implements(delegateType, typeof(Delegate)).ThrowIfError();
+        Guard.Implements(delegateType, typeof(Delegate));
         _delegateType = delegateType;
 
         var genericTypes = delegateType.GetGenericArguments();
@@ -61,9 +61,9 @@ public class FluentLambdaBuilder<B>
 
     public B ParamName(Index index, string? name)
     {
-        Validate.Index(index, _parameters.Length).ThrowIfError();
-        ParameterExpression param = _parameters[index];
-        _parameters[index] = Expression.Parameter(param.Type, name);
+        int offset = Guard.Index(index, _parameters.Length);
+        ParameterExpression param = _parameters[offset];
+        _parameters[offset] = Expression.Parameter(param.Type, name);
         return _builder;
     }
 
@@ -71,7 +71,7 @@ public class FluentLambdaBuilder<B>
     {
         int count = _parameters.Length;
         if (names.Length != count)
-            throw Ex.Argument(names);
+            throw Ex.Arg(names);
         for (int i = 0; i < count; i++)
         {
             ParameterExpression param = _parameters[i];

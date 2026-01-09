@@ -41,8 +41,8 @@ public partial class TextBuilder
     /// A first-to-last search will start at this index to ^1 and a last-to-first search will start at this index to 0.
     /// </param>
     /// <returns>
-    /// An <see cref="Option{int}"/>:<br/>
-    /// <see cref="Some{int}"/>: The index of the matching <see cref="char"/> in this <see cref="TextBuilder"/>.<br/>
+    /// An <see cref="Option{T}"/>:<br/>
+    /// <see cref="Some{T}"/>: The index of the matching <see cref="char"/> in this <see cref="TextBuilder"/>.<br/>
     /// <see cref="None"/>: No matching <see cref="char"/> was found.
     /// </returns>
     public Option<int> TryFindIndex(

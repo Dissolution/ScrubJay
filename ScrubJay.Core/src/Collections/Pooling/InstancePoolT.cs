@@ -60,7 +60,7 @@ public sealed class InstancePool<T> : IInstancePool<T>, IDisposable
         while (true)
         {
             // check for disposal
-            Throw.IfDisposed(_instances is null, _instances);
+            Throw.IfDisposed(this, _instances is null);
 
             // check first instance and try to take it
             T? instance = _firstInstance;
@@ -68,7 +68,7 @@ public sealed class InstancePool<T> : IInstancePool<T>, IDisposable
             {
                 // There was no instance or we could not take it
                 // can we get from instances?
-                if (!_instances.TryDequeue(out instance))
+                if (!_instances!.TryDequeue(out instance))
                 {
                     // no instance available, create a new one (item count does not change)
                     instance = _createInstance();
@@ -114,7 +114,8 @@ public sealed class InstancePool<T> : IInstancePool<T>, IDisposable
         if ((_itemCount < MaxCapacity) && (Interlocked.Increment(ref _itemCount) <= MaxCapacity))
         {
             // Try to store in the first slot
-            if ((_firstInstance != null) || (Interlocked.CompareExchange<T?>(ref _firstInstance, instance, null) != null))
+            if ((_firstInstance != null) ||
+                (Interlocked.CompareExchange<T?>(ref _firstInstance, instance, null) != null))
             {
                 // Store in instances
                 _instances.Enqueue(instance);
@@ -123,7 +124,7 @@ public sealed class InstancePool<T> : IInstancePool<T>, IDisposable
             return; // stored
         }
 
-        dispose:
+    dispose:
         // Run any available dispose action
         _disposeInstance?.Invoke(instance);
         // not stored

@@ -87,6 +87,7 @@ public abstract class PrngBase : IPrng
                 if (PercentF64() >= 0.1d)
                     return (byte)i;
             }
+
             return 0;
         }
     }
@@ -156,7 +157,7 @@ public abstract class PrngBase : IPrng
     {
         int count = items.Length;
         if (count == 0)
-            throw Ex.Argument(items, "You must pass at least one item");
+            throw Ex.Arg(items, "You must pass at least one item");
         if (count == 1)
             return items[0];
         int r = ZeroTo(count);
@@ -165,7 +166,7 @@ public abstract class PrngBase : IPrng
 
     public T[] GetItems<T>(int count, params ReadOnlySpan<T> items)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
         if (count == 0) return [];
 
         int choiceCount = items.Length;
@@ -183,7 +184,7 @@ public abstract class PrngBase : IPrng
 
     public void FillItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
     {
-        Throw.IfEmpty(choices);
+        Guard.IsNotEmpty(choices);
 
         int choiceCount = choices.Length;
 
@@ -196,7 +197,7 @@ public abstract class PrngBase : IPrng
 
     public string GetAsciiString(int length)
     {
-        Throw.IfLessThan(length, 0);
+        Guard.IsGrequalTo(length, 0);
         if (length == 0)
             return string.Empty;
         Span<char> buffer = stackalloc char[length];
@@ -205,10 +206,9 @@ public abstract class PrngBase : IPrng
         {
             buffer[i] = (char)InRange(32, 127);
         }
+
         return buffer.AsString();
     }
-
-
 
 
     /// <summary>
@@ -267,8 +267,7 @@ public abstract class PrngBase : IPrng
     /// <returns></returns>
     public int InRange(int minValue, int maxValue)
     {
-        Throw.IfLessThan(maxValue, minValue);
-
+        Guard.IsGrequalTo(maxValue, minValue);
         return ZeroTo((maxValue - minValue)) + minValue;
     }
 
@@ -280,7 +279,7 @@ public abstract class PrngBase : IPrng
     /// <returns></returns>
     public long InRange(long minValue, long maxValue)
     {
-        Throw.IfLessThan(maxValue, minValue);
+        Guard.IsGrequalTo(maxValue, minValue);
 
         return (long)ZeroTo((ulong)(maxValue - minValue)) + minValue;
     }

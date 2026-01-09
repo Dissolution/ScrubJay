@@ -1,4 +1,5 @@
 ﻿// Member can be made `readonly` -- Incorrect on members that return Span<T>, which may change the underlying data
+
 #pragma warning disable IDE0251
 
 // Rename collections to end in a suffix
@@ -9,6 +10,7 @@
 
 using System.Buffers;
 using System.Text;
+
 
 namespace ScrubJay.Collections.Pooling;
 
@@ -77,6 +79,7 @@ public ref struct Buffer<T> : IDisposable
 #endregion
 
 #region Fields + Properties
+
     // these are internal for testing reasons
 
 
@@ -160,7 +163,7 @@ public ref struct Buffer<T> : IDisposable
     public int Count
     {
         readonly get => _position;
-        set => _position = Guard.Between(value, 0, Capacity);
+        set => _position = Guard.IsBetween(value, 0, Capacity);
     }
 
     /// <summary>
@@ -210,7 +213,7 @@ public ref struct Buffer<T> : IDisposable
     {
         _array = null;
         _span = initialBuffer;
-        _position = Guard.Between(startPosition, 0, (initialBuffer.Length, true));
+        _position = Guard.IsBetween(startPosition, Bounds.Inclusive(0), Bounds.Inclusive(initialBuffer.Length));
     }
 
 #endregion
@@ -403,7 +406,8 @@ public ref struct Buffer<T> : IDisposable
 
     public void Insert(Index index, T item)
     {
-        int offset = Throw.IfBadInsertIndex(index, _position);
+        int offset = Guard.InsertIndex(index, _position);
+
         if (offset == _position)
         {
             Add(item);
@@ -426,7 +430,8 @@ public ref struct Buffer<T> : IDisposable
 
     public void InsertMany(Index index, params ReadOnlySpan<T> items)
     {
-        int offset = Throw.IfBadInsertIndex(index, _position);
+        int offset = Guard.InsertIndex(index, _position);
+
         if (offset == _position)
         {
             AddMany(items);
@@ -458,7 +463,7 @@ public ref struct Buffer<T> : IDisposable
     public void InsertMany(Index index, IEnumerable<T>? items)
     {
         if (items is null) return;
-        int offset = Throw.IfBadInsertIndex(index, _position);
+        int offset = Guard.InsertIndex(index, _position);
         if (offset == _position)
         {
             AddMany(items);
@@ -599,8 +604,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -627,8 +631,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -698,8 +701,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -725,8 +727,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -794,8 +795,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -822,8 +822,7 @@ public ref struct Buffer<T> : IDisposable
             if (offset.TryGetValue(out Index offsetIndex))
             {
                 // Validate that offset
-                var validIndex = Validate.Index(offsetIndex, pos);
-                if (!validIndex.IsOk(out index))
+                if (!Validate.Index(offsetIndex, pos).IsOk(out index))
                 {
                     return None;
                 }
@@ -884,7 +883,7 @@ public ref struct Buffer<T> : IDisposable
     /// </returns>
     public Option<T> TryRemoveAndGetAt(Index index)
     {
-        if (!Validate.Index(index, _position).IsOk(out int offset))
+        if (!Validate.Index(index,_position).IsOk(out int offset))
         {
             return None;
         }
@@ -906,12 +905,11 @@ public ref struct Buffer<T> : IDisposable
     /// </returns>
     public bool TryRemoveMany(Range range)
     {
-        if (!Validate.Range(range, _position).IsOk(out var ol))
+        if (!Validate.Range(range, _position).IsOk(out int offset, out int length))
         {
             return false;
         }
 
-        (int offset, int length) = ol;
         Sequence.SelfCopy(Written, (offset + length).., offset..);
         return true;
     }
@@ -928,12 +926,11 @@ public ref struct Buffer<T> : IDisposable
 #pragma warning disable IDE0251
     public Option<T[]> TryRemoveAndGetMany(Range range)
     {
-        if (!Validate.Range(range, _position).IsOk(out var ol))
+        if (!Validate.Range(range, _position).IsOk(out int offset, out int length))
         {
             return None;
         }
 
-        (int offset, int length) = ol;
         T[] items = _span.Slice(offset, length).ToArray();
         Sequence.SelfCopy(_span, (offset + length).., offset..);
         return Some(items);
@@ -1006,7 +1003,7 @@ public ref struct Buffer<T> : IDisposable
 
     public Span<T> Allocate(int length)
     {
-        Throw.IfLessThan(length, 0);
+        Guard.IsGrequalTo(length, 0);
 
         int pos = _position;
         int newPos = pos + length;
@@ -1023,8 +1020,8 @@ public ref struct Buffer<T> : IDisposable
 
     public Span<T> AllocateAt(Index index, int length)
     {
-        int i = Throw.IfBadInsertIndex(index, _position);
-        Throw.IfLessThan(length, 0);
+        int i = Guard.InsertIndex(index, _position);
+        Guard.IsGrequalTo(length, 0);
         if (i == _position)
             return Allocate(length);
 
@@ -1115,7 +1112,7 @@ public ref struct Buffer<T> : IDisposable
     /// </summary>
     public Span<T> Slice(int index)
     {
-        Validate.Index(index, _position).ThrowIfError();
+        Guard.Index(index, _position);
         return _array.AsSpan(index.._position);
     }
 
@@ -1124,7 +1121,7 @@ public ref struct Buffer<T> : IDisposable
     /// </summary>
     public Span<T> Slice(Index index)
     {
-        int offset = Validate.Index(index, _position).OkOrThrow();
+        int offset = Guard.Index(index, _position);
         return _array.AsSpan(offset.._position);
     }
 
@@ -1133,7 +1130,7 @@ public ref struct Buffer<T> : IDisposable
     /// </summary>
     public Span<T> Slice(int index, int count)
     {
-        Validate.IndexLength(index, count, _position).ThrowIfError();
+        Guard.Range(index, count, _position);
         return _array.AsSpan(index, count);
     }
 
@@ -1142,7 +1139,7 @@ public ref struct Buffer<T> : IDisposable
     /// </summary>
     public Span<T> Slice(Index index, int count)
     {
-        (int offset, int len) = Validate.IndexLength(index, count, _position).OkOrThrow();
+        (int offset, int len) = Guard.Range(index, count, _position);
         return _array.AsSpan(offset, len);
     }
 

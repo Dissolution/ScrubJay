@@ -1,4 +1,6 @@
-﻿#pragma warning disable S3247
+﻿
+
+#pragma warning disable S3247
 
 // ReSharper disable UseSwitchCasePatternVariable
 // ReSharper disable MergeCastWithTypeCheck
@@ -61,7 +63,7 @@ public static class ObjectExtensions
                 return new ArgumentNullException(nameof(obj));
             }
 
-            return Ex.Argument(obj, $"Object `{obj:@}` is not a {typeof(T):@} instance");
+            return Ex.Arg(obj, $"Object `{obj:@}` is not a {typeof(T):@} instance");
         }
 
         public bool As<T>([NotNullIfNotNull(nameof(obj))] out T? value)
@@ -101,9 +103,9 @@ public static class ObjectExtensions
                 return Ok(default(T));
             }
 
-            return Ex.Argument(obj, $"Null object cannot be a {typeof(T):@} instance", null, objName);
+            return Ex.Arg(obj, $"Null object cannot be a {typeof(T):@} instance", objName);
         }
 
-        return Ex.Argument(obj, $"Object `{obj:@}` is not a {typeof(T):@} instance", null, objName);
+        return Ex.Arg(obj, $"Object `{obj:@}` is not a {typeof(T):@} instance", objName);
     }
 }

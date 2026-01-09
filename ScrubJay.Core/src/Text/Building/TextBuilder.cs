@@ -62,7 +62,7 @@ public sealed partial class TextBuilder :
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            int offset = Throw.IfBadIndex(index, _position);
+            int offset = Guard.Index(index, _position);
             return ref _chars[offset];
         }
     }
@@ -80,7 +80,7 @@ public sealed partial class TextBuilder :
     {
         get
         {
-            (int offset, int length) = Throw.IfBadRange(range, _position);
+            (int offset, int length) = Guard.Range(range, _position);
             return _chars.AsSpan(offset, length);
         }
     }
@@ -140,31 +140,31 @@ public sealed partial class TextBuilder :
 
     public Span<char> Slice(int index)
     {
-        Validate.Index(index, _position).ThrowIfError();
+        Guard.Index(index, _position);
         return _chars.AsSpan(index.._position);
     }
 
     public Span<char> Slice(Index index)
     {
-        int offset = Validate.Index(index, _position).OkOrThrow();
+        int offset = Guard.Index(index, _position);
         return _chars.AsSpan(offset.._position);
     }
 
     public Span<char> Slice(int index, int count)
     {
-        Validate.IndexLength(index, count, _position).ThrowIfError();
+        Guard.Range(index, count, _position);
         return _chars.AsSpan(index, count);
     }
 
     public Span<char> Slice(Index index, int count)
     {
-        (int offset, int len) = Validate.IndexLength(index, count, _position).OkOrThrow();
+        (int offset, int len) = Guard.Range(index, count, _position);
         return _chars.AsSpan(offset, len);
     }
 
     public Span<char> Slice(Range range)
     {
-        (int offset, int len) = Validate.Range(range, _position).OkOrThrow();
+        (int offset, int len) = Guard.Range(range, _position);
         return _chars.AsSpan(offset, len);
     }
 
@@ -179,7 +179,7 @@ public sealed partial class TextBuilder :
     public Result<int> TryCopyTo(Span<char> destination)
     {
         int len = _position;
-        if (Validate.CanCopyTo(destination, len).IsError(out var error))
+        if (Validate.CanCopyTo(len, destination).IsError(out var error))
             return error;
         TextHelper.Notsafe.CopyBlock(_chars, destination, len);
         return Ok(len);

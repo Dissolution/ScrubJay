@@ -1,3 +1,5 @@
+
+
 namespace ScrubJay.Extensions;
 
 [PublicAPI]

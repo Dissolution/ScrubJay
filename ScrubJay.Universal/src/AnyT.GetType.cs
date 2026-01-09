@@ -9,7 +9,8 @@ namespace ScrubJay.Universal;
 partial class Any<T>
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType(T? _) => typeof(T);
+    [return: NotNull]
+    public static Type? GetType(T? _) => typeof(T);
 }
 
 #endif

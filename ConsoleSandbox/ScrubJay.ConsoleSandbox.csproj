@@ -12,10 +12,14 @@
     <ItemGroup>
         <Using Include="System.Diagnostics"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
+        <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="Demand*.cs" />
     </ItemGroup>
 
 </Project>

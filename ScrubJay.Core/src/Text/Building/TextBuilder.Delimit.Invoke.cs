@@ -1,3 +1,6 @@
+using ScrubJay.Iteration;
+using ScrubJay.Memory.Splitting;
+
 namespace ScrubJay.Text.Building;
 
 partial class TextBuilder

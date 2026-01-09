@@ -1,4 +1,4 @@
-namespace ScrubJay.Memory;
+namespace ScrubJay.Memory.Splitting;
 
 /// <summary>
 /// What kind of separator is being used in a <see cref="SpanSplitIterator{T}"/>

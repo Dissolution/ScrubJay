@@ -3,10 +3,6 @@ namespace ScrubJay.Universal;
 [PublicAPI]
 public static partial class Any
 {
-    static Any() { }
-
-
-
     public static int CompareTo<T>(T? value, T? other)
     {
         if (value is IComparable<T> comparable)
@@ -28,6 +24,7 @@ public static partial class Any
         return EqualityComparer<T>.Default.Equals(value!, other!);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode<T>(T? value)
     {
         if (value is null)
@@ -35,10 +32,19 @@ public static partial class Any
         return value.GetHashCode();
     }
 
-    public static Type GetType<T>(T? value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(value))]
+    public static Type? GetType<T>(T? value)
     {
-        if (value is null)
-            return typeof(T);
-        return value.GetType();
+        if (value is not null) 
+            return value.GetType();
+        return null;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
+    {
+        boxed = (object?)value;
+        return true;
     }
 }

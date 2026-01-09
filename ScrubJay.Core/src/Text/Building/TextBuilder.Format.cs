@@ -148,7 +148,7 @@ partial class TextBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder Format<T>(T? value, char format, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder Format<T>(T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (format == '@')
@@ -157,7 +157,7 @@ partial class TextBuilder
         }
 
         if (typeof(T).IsRef)
-            throw Ex.Argument(value, "ref structs only support two formats: null and '@'");
+            throw Ex.Arg(value, "ref structs only support two formats: null and '@'");
 
         // we cannot defer to Format<T> as we have the `allows ref struct` constraint on our `T`
         // even though we know that this value is not a ref struct
@@ -181,7 +181,7 @@ partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder FormatLine<T>(T? value, char format, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder FormatLine<T>(T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
         => Format<T>(value, format).NewLine();
 #endif
@@ -244,7 +244,7 @@ partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder FormatMany<T>(IEnumerable<T>? values, char format, GenericTypeConstraint.AllowsRefStruct<T> _ = default)
+    public TextBuilder FormatMany<T>(IEnumerable<T>? values, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (values is not null)

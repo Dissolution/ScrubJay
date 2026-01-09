@@ -1,4 +1,4 @@
-﻿using ScrubJay.Text.Building;
+﻿
 
 #pragma warning disable CA1010, CA1710
 
@@ -62,9 +62,8 @@ public ref struct TryFormatWriter : IEnumerable
 
     public TryFormatWriter(Span<char> destination, int position)
     {
-        Throw.IfNotBetween(position, 0, destination.Length);
         _destination = destination;
-        _position = position;
+        _position = Guard.IsBetween(position, 0, destination.Length + 1);
         _hasFailed = None;
     }
 

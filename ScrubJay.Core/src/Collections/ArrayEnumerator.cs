@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Collections;
+﻿#pragma warning disable CA1063
+
+namespace ScrubJay.Collections;
 
 /// <summary>
 /// A typed <see cref="IEnumerator{T}"/> over an <see cref="Array"/>
@@ -40,6 +42,7 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
             if (_index < _minIndex)
                 return new InvalidOperationException("Enumeration has finished");
         }
+
         Debug.Assert((uint)_index < (uint)_array.Length);
         return Ok(_array[_index]);
     }
@@ -64,7 +67,7 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
     {
         _array = array.ThrowIfNull();
         int arrLen = array.Length;
-        (int offset, int length) = Validate.Range(arrayRange, arrLen).OkOrThrow();
+        (int offset, int length) = Guard.Range(arrayRange, arrLen);
         _minIndex = offset;
         _maxIndex = offset + (length - 1);
         _step = step;
@@ -80,10 +83,11 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
     {
         _array = array.ThrowIfNull();
         int arrLen = array.Length;
-        _minIndex = Validate.Index(minArrayIndex, arrLen).OkOrThrow();
-        _maxIndex = Validate.Index(maxArrayIndex, arrLen).OkOrThrow();
+        _minIndex = Guard.Index(minArrayIndex,arrLen);
+        _maxIndex = Guard.Index(maxArrayIndex,arrLen);
         if (_maxIndex < _minIndex)
-            throw new ArgumentOutOfRangeException(nameof(maxArrayIndex), maxArrayIndex, "Max Array Index must be greater than Min Array Index");
+            throw new ArgumentOutOfRangeException(nameof(maxArrayIndex), maxArrayIndex,
+                "Max Array Index must be greater than Min Array Index");
         _step = step;
         _index = step switch
         {
@@ -101,10 +105,11 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
     {
         _array = array.ThrowIfNull();
         int arrLen = array.Length;
-        _minIndex = Validate.Index(minArrayIndex, arrLen).OkOrThrow();
-        _maxIndex = Validate.Index(maxArrayIndex, arrLen).OkOrThrow();
+        _minIndex = Guard.Index(minArrayIndex,arrLen);
+        _maxIndex = Guard.Index(maxArrayIndex,arrLen);
         if (_maxIndex < _minIndex)
-            throw new ArgumentOutOfRangeException(nameof(maxArrayIndex), maxArrayIndex, "Max Array Index must be greater than Min Array Index");
+            throw new ArgumentOutOfRangeException(nameof(maxArrayIndex), maxArrayIndex,
+                "Max Array Index must be greater than Min Array Index");
         _step = step;
         _index = step switch
         {
@@ -121,7 +126,7 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
     public bool MoveNext()
     {
         if (_getCurrentVersion is not null)
-            Throw.IfBadEnumerationVersion(_getCurrentVersion() != _version);
+            Throw.IfBadEnumeration(_getCurrentVersion(), _version);
 
         int newIndex = _index + _step;
         if ((newIndex < _minIndex) || (newIndex > _maxIndex))
@@ -132,8 +137,8 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
 
     public Result<T> TryMoveNext()
     {
-        if (_getCurrentVersion is not null && (_getCurrentVersion() != _version))
-            return new InvalidOperationException("Version has changed");
+        if (_getCurrentVersion is not null) 
+            Throw.IfBadEnumeration(_getCurrentVersion(), _version);
 
         int newIndex = _index + 1;
         if ((newIndex < _minIndex) || (newIndex > _maxIndex))
@@ -145,7 +150,7 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
     public void Reset()
     {
         if (_getCurrentVersion is not null)
-            Throw.IfBadEnumerationVersion(_getCurrentVersion() != _version);
+            Throw.IfBadEnumeration(_getCurrentVersion(), _version);
 
         if (_step == +1)
         {

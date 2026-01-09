@@ -1,6 +1,7 @@
-using ScrubJay.Validation;
+using Xunit.Internal;
 
-namespace ScrubJay.Interpolated.Tests;
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
+namespace ScrubJay.Universal.Tests;
 
 /// <summary>
 /// Comprehensive unit tests for TypeName utility using TheoryData
@@ -36,7 +37,7 @@ public class TypeNameTests
     [Fact]
     public void NullTypeWorks()
     {
-        Demand.That(TypeName.For(null)).IsEqualTo("null");
+        Assert.Equal("null", TypeName.For(null));
     }
 
     [Theory]
@@ -44,7 +45,8 @@ public class TypeNameTests
     public void TypeAliasesWork(TypeExpected te)
     {
         var (type, expected) = te;
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
+        
     }
 
 #endregion
@@ -66,7 +68,7 @@ public class TypeNameTests
     [MemberData(nameof(PointerTypeData))]
     public void PointerTypesWork(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -88,7 +90,7 @@ public class TypeNameTests
     [MemberData(nameof(ReferenceTypeData))]
     public void ByRefTypesWork(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion /ByRef Types
@@ -112,7 +114,7 @@ public class TypeNameTests
     [MemberData(nameof(ArrayTypeData))]
     public void NDArraysWork(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
     public static TheoryData<Type, string> ComplexArrayTestData => new()
@@ -131,7 +133,7 @@ public class TypeNameTests
     [MemberData(nameof(ComplexArrayTestData))]
     public void ComplexArraysWork(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion / Arrays
@@ -156,7 +158,7 @@ public class TypeNameTests
     [MemberData(nameof(NullableStructData))]
     public void NullableWorks(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -181,7 +183,7 @@ public class TypeNameTests
     [MemberData(nameof(GenericTypeData))]
     public void For_GenericTypes_ReturnsCorrectFormat(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -207,7 +209,7 @@ public class TypeNameTests
     [MemberData(nameof(TupleTypeData))]
     public void For_TupleTypes_ReturnsParenthesisFormat(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -278,7 +280,7 @@ public class TypeNameTests
     [MemberData(nameof(ComplexTypeData))]
     public void For_ComplexTypes_ReturnsCorrectFormat(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -304,10 +306,7 @@ public class TypeNameTests
     [MemberData(nameof(NestedTypeData))]
     public void For_NestedTypes_ReturnsCorrectFormat(Type type, string expected)
     {
-        string typeName = TypeName.For(type);
-        if (typeName != expected)
-            Debugger.Break();
-        Demand.That(typeName).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -327,7 +326,7 @@ public class TypeNameTests
     [MemberData(nameof(CustomTypeData))]
     public void For_CustomTypes_ReturnsTypeName(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -349,7 +348,7 @@ public class TypeNameTests
     [MemberData(nameof(ActionFuncTypeData))]
     public void For_ActionAndFuncTypes_ReturnsCorrectFormat(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
@@ -382,7 +381,7 @@ public class TypeNameTests
     [MemberData(nameof(ExtremeEdgeCaseData))]
     public void For_ExtremeEdgeCases_ReturnsCorrectFormat(Type type, string expected)
     {
-        Demand.That(TypeName.For(type)).IsEqualTo(expected);
+        Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion

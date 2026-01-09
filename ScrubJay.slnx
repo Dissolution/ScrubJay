@@ -1,5 +1,10 @@
 <Solution>
+  <Folder Name="/Sandboxes/">
+    <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj" />
+    <Project Path="StandaloneSandbox/StandaloneSandbox.csproj" />
+  </Folder>
   <Folder Name="/ScrubJay.Core/">
+    <Project Path="ScrubJay.Core/build_tasks/BuildTasks.csproj" />
     <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Functional/">
@@ -13,5 +18,4 @@
     <Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
     <Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
   </Folder>
-  <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj" />
 </Solution>

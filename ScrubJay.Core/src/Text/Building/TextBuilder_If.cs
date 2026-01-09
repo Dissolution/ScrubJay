@@ -22,7 +22,7 @@ partial class TextBuilder
         T trueValue,
         Action<TextBuilder>? onFalse = null)
 #if NET9_0_OR_GREATER
-    where T : allows ref struct
+        where T : allows ref struct
 #endif
     {
         if (condition)
@@ -39,7 +39,7 @@ partial class TextBuilder
         Action<TextBuilder>? onTrue,
         F falseValue)
 #if NET9_0_OR_GREATER
-    where F : allows ref struct
+        where F : allows ref struct
 #endif
     {
         if (condition)
@@ -52,12 +52,12 @@ partial class TextBuilder
         }
     }
 
-    public TextBuilder If<T,F>(bool condition,
+    public TextBuilder If<T, F>(bool condition,
         T trueValue,
         F falseValue)
 #if NET9_0_OR_GREATER
-    where T : allows ref struct
-    where F : allows ref struct
+        where T : allows ref struct
+        where F : allows ref struct
 #endif
     {
         if (condition)
@@ -215,6 +215,9 @@ partial class TextBuilder
     public TextBuilder IfNotNull<T>(T? value,
         Action<TextBuilder, T>? onNotNull = null,
         Action<TextBuilder>? onNull = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
         if (value is not null)
         {
@@ -367,28 +370,6 @@ partial class TextBuilder
         return this;
     }
 
-    public TextBuilder IfNotEmpty(
-        [HandlesResourceDisposal] InterpolatedTextBuilder interpolatedTextBuilder)
-    {
-        if (interpolatedTextBuilder.Length > 0)
-        {
-            return Append(ref interpolatedTextBuilder);
-        }
-
-        return this;
-    }
-
-    public TextBuilder IfNotEmpty(
-        [HandlesResourceDisposal] InterpolatedTextBuilder interpolatedTextBuilder, Action<TextBuilder>? onEmpty)
-    {
-        if (interpolatedTextBuilder.Length > 0)
-        {
-            return Append(ref interpolatedTextBuilder);
-        }
-
-        onEmpty?.Invoke(this);
-        return this;
-    }
 
 #endregion
 }

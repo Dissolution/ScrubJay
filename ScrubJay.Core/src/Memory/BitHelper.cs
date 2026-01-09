@@ -87,7 +87,7 @@ public static class BitHelper
     {
     }
 
-    public static robytes AsBytes<U>(in U value, GenericTypeConstraint.IsUnmanagedRefStruct<U> _ = default)
+    public static robytes AsBytes<U>(in U value, TypeConstraints.IsUnmanagedAllowsRefStruct<U> _ = default)
         where U : unmanaged
 #if NET9_0_OR_GREATER
         , allows ref struct
@@ -96,13 +96,13 @@ public static class BitHelper
         return Notsafe.InToBytes<U>(in value);
     }
 
-    public static robytes AsBytes<E>(in E @enum, GenericTypeConstraint.IsEnum<E> _ = default)
+    public static robytes AsBytes<E>(in E @enum, TypeConstraints.IsEnum<E> _ = default)
         where E : struct, Enum
     {
         return Notsafe.InToBytes<E>(in @enum);
     }
 
-    public static RefResult<U> TryFromBytes<U>(robytes bytes, GenericTypeConstraint.IsUnmanagedRefStruct<U> _ = default)
+    public static RefResult<U> TryFromBytes<U>(robytes bytes, TypeConstraints.IsUnmanagedAllowsRefStruct<U> _ = default)
         where U : unmanaged
 #if NET9_0_OR_GREATER
         , allows ref struct
@@ -110,7 +110,7 @@ public static class BitHelper
     {
         int size = Utilities.Notsafe.SizeOf<U>();
         if (bytes.Length < size)
-            return Ex.Argument(bytes, $"Needed to read {size} bytes and only found {bytes.Length}");
+            return Ex.Arg(bytes, $"Needed to read {size} bytes and only found {bytes.Length}");
         return Ok(Notsafe.ReadFrom<U>(in bytes.GetPinnableReference()));
     }
 
@@ -195,7 +195,7 @@ public static class BitHelper
 #region Read
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static U Read<U>(scoped ReadOnlySpan<byte> bytes, GenericTypeConstraint.IsUnmanagedRefStruct<U> _ = default)
+    public static U Read<U>(scoped ReadOnlySpan<byte> bytes, TypeConstraints.IsUnmanagedAllowsRefStruct<U> _ = default)
         where U : unmanaged
 #if NET9_0_OR_GREATER
         , allows ref struct
@@ -205,7 +205,7 @@ public static class BitHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static U Read<U>(scoped Span<byte> bytes, GenericTypeConstraint.IsUnmanagedRefStruct<U> _ = default)
+    public static U Read<U>(scoped Span<byte> bytes, TypeConstraints.IsUnmanagedAllowsRefStruct<U> _ = default)
         where U : unmanaged
 #if NET9_0_OR_GREATER
         , allows ref struct
@@ -215,14 +215,14 @@ public static class BitHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static E Read<E>(scoped ReadOnlySpan<byte> bytes, GenericTypeConstraint.IsEnum<E> _ = default)
+    public static E Read<E>(scoped ReadOnlySpan<byte> bytes, TypeConstraints.IsEnum<E> _ = default)
         where E : struct, Enum
     {
         return Notsafe.ReadFrom<E>(in bytes.GetPinnableReference());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static E Read<E>(scoped Span<byte> bytes, GenericTypeConstraint.IsEnum<E> _ = default)
+    public static E Read<E>(scoped Span<byte> bytes, TypeConstraints.IsEnum<E> _ = default)
         where E : struct, Enum
     {
         return Notsafe.ReadFrom<E>(in bytes.GetPinnableReference());
@@ -241,7 +241,7 @@ public static class BitHelper
     {
         int size = Utilities.Notsafe.SizeOf<U>();
         if (size > destination.Length)
-            return Ex.Argument(source, $"Source has size {size} and destination can only contain {destination.Length} bytes");
+            return Ex.Arg(source, $"Source has size {size} and destination can only contain {destination.Length} bytes");
         Notsafe.WriteTo<U>(ref destination.GetPinnableReference(), in source);
         return Ok(size);
     }

@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Text.Building;
+﻿using ScrubJay.Memory.Splitting;
+
+namespace ScrubJay.Text.Building;
 
 /// <summary>
 /// Manages whitespace for a <see cref="TextBuilder"/>

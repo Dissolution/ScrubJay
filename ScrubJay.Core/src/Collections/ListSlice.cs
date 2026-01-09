@@ -9,14 +9,14 @@ public abstract class ListSlice
 
     public static ListSlice<T> Create<T>(IList<T> list, Range range)
     {
-        (int offset, int len) = Validate.Range(range, list.Count).OkOrThrow();
-        return new ListSlice<T>(list, offset, len);
+        (int offset, int length) = Guard.Range(range, list.Count);
+        return new ListSlice<T>(list, offset, length);
     }
 
     public static ListSlice<T> Create<T>(IList<T> list, Index index, int length)
     {
-        (int offset, int len) = Validate.IndexLength(index, length, list.Count).OkOrThrow();
-        return new ListSlice<T>(list, offset, len);
+        (int offset, length) = Guard.Range(index, length, list.Count);
+        return new ListSlice<T>(list, offset, length);
     }
 }
 
@@ -67,7 +67,7 @@ public sealed class ListSlice<T> : ListSlice, IList<T>, IReadOnlyList<T>
 
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
     {
-        Validate.CanCopyTo(array, arrayIndex, _length).ThrowIfError();
+        Guard.CanCopyTo(_length, array, arrayIndex);
         for (int i = 0; i < _length; i++)
         {
             array[arrayIndex + i] = this[i];

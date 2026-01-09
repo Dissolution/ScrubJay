@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Memory;
+﻿
+
+namespace ScrubJay.Memory;
 
 [PublicAPI]
 public ref struct SpanReader<T>
@@ -22,11 +24,7 @@ public ref struct SpanReader<T>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get => _position;
-        set
-        {
-            Throw.IfNotBetween(value, 0, _spanLength);
-            _position = value;
-        }
+        set => _position = Guard.IsBetween(value, 0, _spanLength);
     }
 
     public readonly bool IsCompleted => _position >= _spanLength;
@@ -121,7 +119,7 @@ public ref struct SpanReader<T>
 
     public T[] TakeToArray(int count)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
         if (_position + count <= _spanLength)
         {
             var taken = _span.Slice(_position, count).ToArray();
@@ -134,7 +132,7 @@ public ref struct SpanReader<T>
 
     public ReadOnlySpan<T> Take(int count)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
         if (_position + count <= _spanLength)
         {
             var slice = _span.Slice(_position, count);
@@ -394,7 +392,7 @@ public ref struct SpanReader<T>
 
     public readonly ReadOnlySpan<T> Peek(int count)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
         if (_position + count <= _spanLength)
             return _span.Slice(_position, count);
 
@@ -415,7 +413,7 @@ public ref struct SpanReader<T>
 
     public readonly T[] PeekToArray(int count)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
         if (_position + count <= _spanLength)
             return _span.Slice(_position, count).ToArray();
 
@@ -667,7 +665,7 @@ public ref struct SpanReader<T>
 
     public void Skip(int count)
     {
-        Throw.IfLessThan(count, 0);
+        Guard.IsGrequalTo(count, 0);
 
         if (_position + count <= _spanLength)
         {

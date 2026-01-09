@@ -3,7 +3,7 @@
 using System.Collections.Frozen;
 #endif
 
-namespace ScrubJay.Interpolated;
+namespace ScrubJay.Universal;
 
 partial class TypeName
 {

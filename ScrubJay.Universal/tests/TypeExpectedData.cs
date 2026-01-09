@@ -1,4 +1,4 @@
-namespace ScrubJay.Interpolated.Tests;
+namespace ScrubJay.Universal.Tests;
 
 public sealed record class TypeExpected(Type? Type, string Name)
 {

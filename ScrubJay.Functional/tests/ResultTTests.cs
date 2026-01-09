@@ -26,7 +26,7 @@ public class ResultTests
     [Fact]
     public void Ok_WithNullValue_CreatesOkResult()
     {
-        var result = Result<string>.Ok(null);
+        var result = Result<string>.Ok(null!);
         
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
@@ -864,7 +864,7 @@ public class ResultTests
         }
         else
         {
-            Assert.True(false, "Should not reach here");
+            Assert.Fail("Should not reach here");
         }
     }
 
@@ -875,7 +875,7 @@ public class ResultTests
         
         if (error)
         {
-            Assert.True(false, "Should not reach here");
+            Assert.Fail("Should not reach here");
         }
         else
         {
@@ -930,7 +930,7 @@ public class ResultTests
     [Fact]
     public void ToString_OkWithNull_FormatsCorrectly()
     {
-        var ok = Result<string>.Ok(null);
+        var ok = Result<string>.Ok(null!);
         
         Assert.Equal("Ok()", ok.ToString());
     }
@@ -1352,7 +1352,7 @@ public class ResultTests
     [Fact]
     public void Result_WithReferenceType_OkWithNull()
     {
-        var ok = Result<string>.Ok(null);
+        var ok = Result<string>.Ok(null!);
         
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
@@ -1445,7 +1445,8 @@ public class ResultTests
 
     private class Person
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
+        
         public int Age { get; set; }
     }
 

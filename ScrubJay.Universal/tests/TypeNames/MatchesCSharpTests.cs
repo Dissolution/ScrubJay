@@ -1,7 +1,4 @@
-using ScrubJay.Functional;
-using ScrubJay.Validation;
-
-namespace ScrubJay.Interpolated.Tests.TypeNames;
+namespace ScrubJay.Universal.Tests.TypeNames;
 
 
 public class MatchesCSharpTests
@@ -12,8 +9,7 @@ public class MatchesCSharpTests
     {
         TestData = new(AppDomain.CurrentDomain
             .GetAssemblies()
-            .SelectWhere(static assembly => Try(assembly.GetTypes))
-            .SelectMany(static types => types)
+            .SelectMany(static assembly => assembly.GetTypes())
             .Select(static type => new TypeExpected(type, TypeToStringConverter.ToCSharpString(type))));
     }
 
@@ -23,6 +19,6 @@ public class MatchesCSharpTests
     {
         var (type, expected) = te;
         var name = TypeName.For(type);
-        Demand.That(name).IsEqualTo(expected);
+        Assert.Equal(expected, name);
     }
 }

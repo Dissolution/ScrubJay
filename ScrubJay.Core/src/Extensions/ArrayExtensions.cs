@@ -6,6 +6,12 @@ namespace ScrubJay.Extensions;
 [PublicAPI]
 public static class ArrayExtensions
 {
+    extension(Array? array)
+    {
+        public Type? ElementType => array?.GetType().GetElementType();
+    }
+    
+    
 #if NETFRAMEWORK || NETSTANDARD2_0
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<T> AsSpan<T>(this T[]? array, Range range)

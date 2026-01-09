@@ -15,7 +15,7 @@ public sealed class PhraseSeed : RandSeed
 
     public PhraseSeed(string phrase)
     {
-        Throw.IfEmpty(phrase);
+        Guard.IsNotEmpty(phrase);
         _phrase = phrase;
         var phraseBytes = Encoding.UTF8.GetBytes(phrase);
 #if NETFRAMEWORK || NETSTANDARD || NETCOREAPP3_1

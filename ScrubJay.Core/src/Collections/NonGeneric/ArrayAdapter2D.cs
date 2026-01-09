@@ -39,7 +39,7 @@ public sealed class ArrayAdapter2D<T> :
         _array = array.ThrowIfNull();
         int dims = array.Rank;
         if (dims != 1)
-            throw Ex.Argument(nameof(array), "Array must have a Rank of 1");
+            throw Ex.Arg(nameof(array), "Array must have a Rank of 1");
         _lowerBounds = array.GetLowerBound(0);
         _upperBound = array.GetUpperBound(0);
     }
@@ -52,7 +52,7 @@ public sealed class ArrayAdapter2D<T> :
 
     public void CopyTo(T[] array, int arrayIndex = 0)
     {
-        Validate.CanCopyTo(array, arrayIndex, Count).ThrowIfError();
+        Guard.CanCopyTo(Count, array, arrayIndex);
         Array.Copy(_array, 0, array, arrayIndex, _array.Length);
     }
 

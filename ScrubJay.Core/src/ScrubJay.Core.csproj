@@ -28,7 +28,7 @@
         <AnalysisMode>All</AnalysisMode>
         <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <NoWarn>CA1034;CA1822;CA1708;CA2201;</NoWarn>
+        <NoWarn>$(NoWarn);CA1034;CA1822;CA1708;CA2201;</NoWarn>
 
         <!-- Ensure that all Polyfilled types are public -->
         <PolyPublic>true</PolyPublic>
@@ -100,7 +100,7 @@
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Prelude" Static="true"/>
         <Using Include="ScrubJay.Universal"/>
-        
+
         <Using Include="ScrubJay.Collections"/>
         <Using Include="ScrubJay.Collections.Pooling"/>
         <Using Include="ScrubJay.Comparison"/>
@@ -110,6 +110,7 @@
         <Using Include="ScrubJay.Memory"/>
         <Using Include="ScrubJay.Rendering"/>
         <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Building"/>
         <Using Include="ScrubJay.Utilities"/>
         <Using Include="ScrubJay.Validation"/>
     </ItemGroup>
@@ -135,13 +136,26 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+
     <ItemGroup>
-      <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
+        <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
     </ItemGroup>
+
+
+    <UsingTask TaskName="GenerateValidateFilesTask" AssemblyFile="$(MSBuildProjectDirectory)\..\build_tasks\bin\$(Configuration)\netstandard2.0\BuildTasks.dll"/>
+
+    <Target Name="GenerateValidateFiles" BeforeTargets="BeforeBuild">
+        <ItemGroup>
+            <GuardFiles Include="**\Guard*.cs" Exclude="bin\**;obj\**;**\Validate*.cs"/>
+        </ItemGroup>
+
+        <GenerateValidateFilesTask SourceFiles="@(GuardFiles)"/>
+    </Target>
 </Project>
