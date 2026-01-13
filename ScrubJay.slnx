@@ -11,6 +11,11 @@
     <Project Path="ScrubJay.Functional/src/ScrubJay.Functional.csproj" />
     <Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
   </Folder>
+  <Folder Name="/ScrubJay.Reflection/">
+    <Project Path="ScrubJay.Reflection/benchmarks/ScrubJay.Reflection.Benchmarks.csproj" />
+    <Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj" />
+    <Project Path="ScrubJay.Reflection/tests/ScrubJay.Reflection.Tests.csproj" />
+  </Folder>
   <Folder Name="/ScrubJay.Text/">
     <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
   </Folder>

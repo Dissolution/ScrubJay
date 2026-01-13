@@ -1,227 +1,129 @@
+using System.Reflection;
+#if NET8_0_OR_GREATER
+using System.Collections.Frozen;
+#endif
+
 namespace ScrubJay.Universal;
 
-partial class TypeName
-{
-    private static void WriteNestingInformation(StringBuilder builder, Type type, GenericTypes providedGenericTypes)
-    {
-        Debug.Assert(type.IsNested);
-
-        if (!providedGenericTypes.IsFilled)
-        {
-            providedGenericTypes.Fill(type.GetGenericArguments());
-        }
-      
-        var declaringType = type.DeclaringType ?? type.ReflectedType ?? type.Module.GetType();
-        WriteType(builder, declaringType, providedGenericTypes);
-        builder.Append('.');
-    }
-}
-
-/// <summary>
-/// Gets nicer names for <see cref="Type">Types</see>!<br/>
-/// <code>
-/// `System.Int32` -> `int`
-/// `System.Collections.Generic.IList`1` -> `IList&lt;int&gt;`
-///
-/// </code>
-/// </summary>
 [PublicAPI]
 public static partial class TypeName
 {
-    extension(StringBuilder builder)
+    // We have a few local dictionaries we're going to create and reference, but never expand
+
+#if NET8_0_OR_GREATER
+    private static readonly FrozenDictionary<Type, string> _typeAliases;
+#else
+    private static readonly Dictionary<Type, string> _typeAliases;
+#endif
+
+    static TypeName()
     {
-        public StringBuilder AppendTypeName(Type? type)
-        {
-            return builder.Append(For(type));
-        }
-
-        public StringBuilder AppendTypeName<T>()
-        {
-            return builder.Append(For<T>());
-        }
-    }
-
-    private sealed class GenericTypes
-    {
-        public static GenericTypes Empty { get; } = new();
-        
-        private Type[]? _genericTypes;
-        private int _offset;
-
-        public bool IsFilled => _genericTypes is not null;
-
-        public int Count => _genericTypes is null ? 0 : _genericTypes.Length - _offset;
-        public Type this[int index] => _genericTypes[_offset + index];
-        
-        public GenericTypes()
-        {
-            _genericTypes = null;
-            _offset = -1;
-        }
-
-        public void Fill(params Type[] genericTypes)
-        {
-            _genericTypes = genericTypes;
-            _offset = 0;
-        }
-
-        public bool TryGet([NotNullWhen(true)] out Type? type)
-        {
-            if (_genericTypes is null)
-            {
-                type = null;
-                return false;
-            }
-            
-            if (_offset >= _genericTypes.Length)
-            {
-                type = null;
-                return false;
-            }
-
-            type = _genericTypes[_offset];
-            _offset++;
-            return true;
-        }
-
-        public ReadOnlySpan<Type> FillTake(Type[] genericTypes)
-        {
-            if (_genericTypes is null)
-            {
-                _genericTypes = genericTypes;
-                _offset = genericTypes.Length;
-                return genericTypes;
-            }
-            else if (_genericTypes.SequenceEqual(genericTypes))
-            {
-                // we've already used some
-                ReadOnlySpan<Type> types = _genericTypes.AsSpan(_offset);
-                _offset = genericTypes.Length;
-                return types;
-            }
-            else
-            {
-                int count = genericTypes.Length;
-                if (_offset + count > _genericTypes.Length)
+        _typeAliases = new Dictionary<Type, string>
                 {
-                    Debugger.Break();
+                    [typeof(byte)] = "byte",
+                    [typeof(sbyte)] = "sbyte",
+                    [typeof(short)] = "short",
+                    [typeof(ushort)] = "ushort",
+                    [typeof(int)] = "int",
+                    [typeof(uint)] = "uint",
+                    [typeof(long)] = "long",
+                    [typeof(ulong)] = "ulong",
+                    [typeof(nint)] = "nint",
+                    [typeof(nuint)] = "nuint",
+                    [typeof(float)] = "float",
+                    [typeof(double)] = "double",
+                    [typeof(decimal)] = "decimal",
+                    [typeof(bool)] = "bool",
+                    [typeof(char)] = "char",
+                    [typeof(string)] = "string",
+                    [typeof(object)] = "object",
+                    [typeof(void)] = "void",
+                    [typeof(Tuple)] = "()",
+                    [typeof(ValueTuple)] = "()",
                 }
-                ReadOnlySpan<Type> types = _genericTypes.AsSpan(_offset, count);
-                _offset += count;
-                return types;
-            }
-        }
+#if NET8_0_OR_GREATER
+                .ToFrozenDictionary()
+#endif
+            ;
     }
 
-    private static void WriteType(StringBuilder builder, Type? type, GenericTypes providedGenericTypes)
+
+    internal static StringBuilder AppendTypeName(this StringBuilder builder, Type? type)
     {
         if (type is null)
-        {
-            builder.Append("null");
-            return;
-        }
+            return builder.Append("null");
 
         if (_typeAliases.TryGetValue(type, out var alias))
-        {
-            builder.Append(alias);
-            return;
-        }
+            return builder.Append(alias);
 
         if (type.IsPointer)
         {
-            type = type.GetElementType()!;
-            WriteType(builder, type, providedGenericTypes);
-            builder.Append('*');
-            return;
+            return builder.AppendTypeName(type.GetElementType()).Append('*');
         }
 
         if (type.IsByRef)
         {
-            type = type.GetElementType()!;
-            WriteType(builder, type, providedGenericTypes);
-            builder.Append('&');
-            return;
+            return builder.AppendTypeName(type.GetElementType()).Append('&');
         }
 
         if (type.IsArray)
         {
-            WriteArrayType(builder, type, providedGenericTypes);
-            return;
+            return builder.AppendArrayType(type);
         }
 
-        if (type.IsNested && !type.IsGenericParameter)
+        Type[] genericTypes = type.GetGenericArguments();
+
+        if (type is { IsNested: true, IsGenericParameter: false })
         {
-            WriteNestingInformation(builder, type, providedGenericTypes);
-            // do not return
+            var parent = type.ParentType;
+            if (parent.IsGenericType)
+            {
+                return AppendComplexNestedName(builder, type, parent, genericTypes);
+            }
+
+            builder.AppendTypeName(parent).Append('.');
         }
-        
+
         if (type.IsGenericType)
         {
-            ReadOnlySpan<Type> genericTypes = providedGenericTypes.FillTake(type.GetGenericArguments()); 
-          
-            var genericTypeDef = type.GetGenericTypeDefinition();
-            
-            if (_tupleTypes.Contains(genericTypeDef))
+            Type genericTypeDefinition = type.GetGenericTypeDefinition();
+
+            if (IsGenericTuple(type, genericTypeDefinition))
             {
-                WriteTupleType(builder, type, providedGenericTypes);
-                return;
+                WriteTuple(builder, type, genericTypes);
+                return builder;
             }
 
-            if (genericTypeDef == typeof(Nullable<>))
+            if (genericTypeDefinition == typeof(Nullable<>))
             {
                 Debug.Assert(genericTypes.Length == 1);
-                WriteType(builder, genericTypes[0], providedGenericTypes);
-                builder.Append('?');
-                return;
+                return builder.AppendTypeName(genericTypes[0]).Append('?');
             }
 
-            var name = type.Name;
-            int i = name.LastIndexOf('`');
-            if (i >= 0)
-            {
-                builder.Append(name, 0, i);
-            }
-            else
-            {
-                builder.Append(name);
-            }
-
-            builder.Append('<');
-            WriteType(builder, genericTypes[0], providedGenericTypes);
-            for (i = 1; i < genericTypes.Length; i++)
-            {
-                builder.Append(", ");
-                WriteType(builder, genericTypes[i], providedGenericTypes);
-            }
-            builder.Append('>');
-            return;
+            return AppendNameAndGenericTypes(builder, type, genericTypes);
         }
-        
-        
-        // just write the name
-        builder.Append(type.Name);
+
+        if (type.IsGenericParameter)
+        {
+            // these are part of definition, not declaration, so we don't show them
+            // otherwise it would be T, T1, etc
+            return builder;
+        }
+
+        return builder.Append(type.Name);
     }
-   
-    /*
+
+
     public static string For(Type? type)
     {
-        var builder = new StringBuilder();
-        WriteType(builder, type, new());
+        StringBuilder builder = new StringBuilder();
+        builder.AppendTypeName(type);
         return builder.ToString();
     }
-    
-    public static string For<T>() => For(typeof(T));
-    */
-    public static string For(Type? type)
-    {
-        if (type is null)
-            return string.Empty;
-        
-        var builder = new StringBuilder();
-        TypeName.AppendTypeName(builder, type);
-        return builder.ToString();
-    }
-    
-    public static string For<T>() => For(typeof(T));
-    
+
+    public static string For<T>()
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        => For(typeof(T));
 }

@@ -1,4 +1,4 @@
-namespace ScrubJay.Validation;
+
 
 public static partial class Throw
 {

@@ -2,7 +2,6 @@
 // Do not declare static methods on generic types
 // Do not catch Exception
 
-
 #pragma warning disable CA1715, CA1000, CA1031
 
 

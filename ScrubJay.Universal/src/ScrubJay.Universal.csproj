@@ -7,6 +7,42 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Universal</PackageId>
+        <Title>ScrubJay - Universal</Title>
+        <Version>0.0.1-alpha</Version>
+        <Authors>Dissolution</Authors>
+
+        <Description>
+            Helpers for working with generic types with strong contraints.
+        </Description>
+
+        <RepositoryUrl>https://github.com/Dissolution/ScrubJay.Universal</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>jay.png</PackageIcon>
+        <PackageOutputPath>..\packages\</PackageOutputPath>
+    </PropertyGroup>
+
+    <!-- Special Release configurations -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- Create NuGet Package -->
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <!-- Validate -->
+        <EnablePackageValidation>false</EnablePackageValidation>
+    </PropertyGroup>
+
+    <!-- Additional release includes -->
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath="\"/>
+        <None Include="..\jay.png" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="System.Text"/>
@@ -19,10 +55,6 @@
         </PackageReference>
         <PackageReference Include="InlineIL.Fody" Version="1.10.1">
             <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Polyfill" Version="9.4.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory" Version="4.6.3"/>

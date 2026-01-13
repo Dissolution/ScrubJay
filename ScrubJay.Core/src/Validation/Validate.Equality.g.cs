@@ -47,9 +47,10 @@ partial class Validate
     }
 
 #if NET9_0_OR_GREATER
+
     public static RefResult<T> IsEqual<T>(T actual, T expected,
-        [CallerArgumentExpression(nameof(actual))] string? actualName = null,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
+        TypeConstraints.AllowsRefStruct<T> _,
+        [CallerArgumentExpression(nameof(actual))] string? actualName = null)
         where T : allows ref struct
     {
         if (Any.Equals(actual, expected))

@@ -70,8 +70,8 @@ public static class TypeConstraints
         where T : INumberBase<T>
 #endif
         ;
-
-
+    
+    [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsUnmanagedAllowsRefStruct<T>
         where T : unmanaged
 #if NET9_0_OR_GREATER

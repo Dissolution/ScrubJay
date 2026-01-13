@@ -33,7 +33,7 @@ public static partial class Ex
             .If(valueName is not null, valueName, "<???>")
             .Append("\": ")
             .IfNotNull(value,
-                static (tb, v) => tb.AppendTypeName(Any.GetType(v)).Append(" = `").Append(v).Append('`'),
+                static (tb, v) => tb.AppendTypeName(typeof(T)).Append(" = `").Append(v).Append('`'),
                 static tb => tb.Write("<null>"));
     }
 

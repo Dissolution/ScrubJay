@@ -1,17 +1,20 @@
-using Xunit.Internal;
+#pragma warning disable CS8500
 
-#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 namespace ScrubJay.Universal.Tests;
 
-/// <summary>
-/// Comprehensive unit tests for TypeName utility using TheoryData
-/// </summary>
 public class TypeNameTests
 {
-#region Type Aliases
-
-    public static TypeExpectedData TypeAliasesData => new()
+    [Fact]
+    public void NullWorks()
     {
+        Assert.Equal("null", TypeName.For(null));
+    }
+
+
+#region C# type aliases
+
+    public static TheoryData<Type, string> TypeAliasesData { get; } =
+    [
         (typeof(byte), "byte"),
         (typeof(sbyte), "sbyte"),
         (typeof(short), "short"),
@@ -32,83 +35,72 @@ public class TypeNameTests
         (typeof(void), "void"),
         (typeof(Tuple), "()"),
         (typeof(ValueTuple), "()"),
-    };
+    ];
 
-    [Fact]
-    public void NullTypeWorks()
-    {
-        Assert.Equal("null", TypeName.For(null));
-    }
 
     [Theory]
     [MemberData(nameof(TypeAliasesData))]
-    public void TypeAliasesWork(TypeExpected te)
+    public void TypeAliasesWork(Type type, string expected)
     {
-        var (type, expected) = te;
         Assert.Equal(expected, TypeName.For(type));
-        
     }
 
 #endregion
 
 
-#region Pointer Types
+#region Pointers
 
-    public static TheoryData<Type, string> PointerTypeData => new()
-    {
-        { typeof(void*), "void*" },
-        { typeof(byte*), "byte*" },
-        { typeof(char*), "char*" },
-        { typeof(void**), "void**" },
-        { typeof(void***), "void***" },
-        { typeof(void********), "void********" },
-    };
+    public static TheoryData<Type, string> PointerTypeData { get; } =
+    [
+        (typeof(void*), "void*"),
+        (typeof(byte*), "byte*"),
+        (typeof(char*), "char*"),
+        (typeof(void**), "void**"),
+        (typeof(void***), "void***"),
+        (typeof(void********), "void********"),
+    ];
 
     [Theory]
     [MemberData(nameof(PointerTypeData))]
-    public void PointerTypesWork(Type type, string expected)
+    public void PointersWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
 
+#region References
 
-#region ByRef Types
-
-    public static TheoryData<Type, string> ReferenceTypeData => new()
-    {
-        { typeof(int).MakeByRefType(), "int&" },
-        { typeof(string).MakeByRefType(), "string&" },
-        { typeof(bool).MakeByRefType(), "bool&" },
-        { typeof(double).MakeByRefType(), "double&" },
-        { typeof(TestStruct).MakeByRefType(), "TypeNameTests.TestStruct&" },
-        { typeof(List<int>).MakeByRefType(), "List<int>&" },
-    };
+    public static TheoryData<Type, string> ReferenceTypeData { get; } =
+    [
+        (typeof(int).MakeByRefType(), "int&"),
+        (typeof(string).MakeByRefType(), "string&"),
+        (typeof(Span<double>).MakeByRefType(), "Span<double>&"),
+        (typeof(double).MakeByRefType(), "double&"),
+        (typeof(TestStruct).MakeByRefType(), "TypeNameTests.TestStruct&"),
+        (typeof(List<int>).MakeByRefType(), "List<int>&"),
+    ];
 
     [Theory]
     [MemberData(nameof(ReferenceTypeData))]
-    public void ByRefTypesWork(Type type, string expected)
+    public void ReferencesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
-#endregion /ByRef Types
+#endregion
 
+#region Arrays
 
-#region Array Types
-
-    public static TheoryData<Type, string> ArrayTypeData => new()
-    {
-        { typeof(int[]), "int[]" },
-        { typeof(string[]), "string[]" },
-        { typeof(object[]), "object[]" },
-        { typeof(int[,]), "int[,]" },
-        { typeof(int[,,]), "int[,,]" },
-        { typeof(int[,,,]), "int[,,,]" },
-        { typeof(string[,]), "string[,]" },
-        { typeof(double[,,,,,,,,,,,,,,,,,,,,,,,,,,]), "double[,,,,,,,,,,,,,,,,,,,,,,,,,,]" },
-    };
+    public static TheoryData<Type, string> ArrayTypeData { get; } =
+    [
+        (typeof(int[]), "int[]"),
+        (typeof(string[]), "string[]"),
+        (typeof(byte[,]), "byte[,]"),
+        (typeof(double*[,,]), "double*[,,]"),
+        (typeof(long[,,,]), "long[,,,]"),
+        (typeof(double[,,,,,,,,,,,,,,,,,,,,,,,,,,]), "double[,,,,,,,,,,,,,,,,,,,,,,,,,,]"),
+    ];
 
     [Theory]
     [MemberData(nameof(ArrayTypeData))]
@@ -117,17 +109,17 @@ public class TypeNameTests
         Assert.Equal(expected, TypeName.For(type));
     }
 
-    public static TheoryData<Type, string> ComplexArrayTestData => new()
-    {
+    public static TheoryData<Type, string> ComplexArrayTestData { get; } =
+    [
         // Arrays of arrays
-        { typeof(int[][]), "int[][]" },
-        { typeof(int[][][][][]), "int[][][][][]" },
+        (typeof(int[][]), "int[][]"),
+        (typeof(int[][][][][]), "int[][][][][]"),
 
         // Mixed multi-dimensional arrays
-        { typeof(int[][,]), "int[][,]" },
-        { typeof(int[,][]), "int[,][]" },
-        { typeof(int[,,,][,][,,]), "int[,,,][,][,,]" },
-    };
+        (typeof(int[][,]), "int[][,]"),
+        (typeof(int[,][]), "int[,][]"),
+        (typeof(int[,,,][,][,,]), "int[,,,][,][,,]"),
+    ];
 
     [Theory]
     [MemberData(nameof(ComplexArrayTestData))]
@@ -136,27 +128,46 @@ public class TypeNameTests
         Assert.Equal(expected, TypeName.For(type));
     }
 
-#endregion / Arrays
+#endregion
 
 
 #region Nullable Types
 
-    public static TheoryData<Type, string> NullableStructData => new()
-    {
-        { typeof(int?), "int?" },
-        { typeof(bool?), "bool?" },
-        { typeof(double?), "double?" },
-        { typeof(decimal?), "decimal?" },
-        { typeof(byte?), "byte?" },
-        { typeof(long?), "long?" },
-        { typeof(char?), "char?" },
-        { typeof(DateTime?), "DateTime?" },
-        { typeof(Guid?), "Guid?" },
-    };
+    public static TheoryData<Type, string> NullableData { get; } =
+    [
+        (typeof(int?), "int?"),
+        (typeof(bool?), "bool?"),
+        (typeof(double?), "double?"),
+        (typeof(decimal?), "decimal?"),
+        (typeof(byte?), "byte?"),
+        (typeof(long?), "long?"),
+        (typeof(char?), "char?"),
+        (typeof(DateTime?), "DateTime?"),
+        (typeof(Guid?), "Guid?"),
+    ];
 
     [Theory]
-    [MemberData(nameof(NullableStructData))]
+    [MemberData(nameof(NullableData))]
     public void NullableWorks(Type type, string expected)
+    {
+        Assert.Equal(expected, TypeName.For(type));
+    }
+
+#endregion
+
+#region Nested Types
+
+    public static TheoryData<Type, string> NestedTypeData { get; } =
+    [
+        (typeof(OuterClass.InnerClass), "TypeNameTests.OuterClass.InnerClass"),
+        (typeof(OuterClass.InnerStruct), "TypeNameTests.OuterClass.InnerStruct"),
+        (typeof(OuterClass.InnerEnum), "TypeNameTests.OuterClass.InnerEnum"),
+        (typeof(OuterClass.InnerClass.DeeplyNestedClass), "TypeNameTests.OuterClass.InnerClass.DeeplyNestedClass"),
+    ];
+
+    [Theory]
+    [MemberData(nameof(NestedTypeData))]
+    public void NestedTypesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
@@ -165,49 +176,85 @@ public class TypeNameTests
 
 #region Generic Types
 
-    public static TheoryData<Type, string> GenericTypeData => new()
-    {
-        { typeof(List<int>), "List<int>" },
-        { typeof(List<string>), "List<string>" },
-        { typeof(Dictionary<int, string>), "Dictionary<int, string>" },
-        { typeof(Dictionary<string, object>), "Dictionary<string, object>" },
-        { typeof(IEnumerable<int>), "IEnumerable<int>" },
-        { typeof(IList<double>), "IList<double>" },
-        { typeof(HashSet<string>), "HashSet<string>" },
-        { typeof(Dictionary<string, List<int>>), "Dictionary<string, List<int>>" },
-        { typeof(List<List<int>>), "List<List<int>>" },
-        { typeof(Dictionary<int, Dictionary<string, bool>>), "Dictionary<int, Dictionary<string, bool>>" },
-    };
+    public static TheoryData<Type, string> GenericTypeData { get; } =
+    [
+        // Open types
+        (typeof(List<>), "List<>"),
+        (typeof(IDictionary<,>), "IDictionary<,>"),
+
+        (typeof(List<int>), "List<int>"),
+        (typeof(Dictionary<int, string>), "Dictionary<int, string>"),
+
+        (typeof(Dictionary<string, List<int>>), "Dictionary<string, List<int>>"),
+        (typeof(List<HashSet<IEnumerable<Guid>>>), "List<HashSet<IEnumerable<Guid>>>"),
+        (typeof(Dictionary<int, Dictionary<string, bool>>), "Dictionary<int, Dictionary<string, bool>>"),
+    ];
 
     [Theory]
     [MemberData(nameof(GenericTypeData))]
-    public void For_GenericTypes_ReturnsCorrectFormat(Type type, string expected)
+    public void GenericTypesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
 
-#region Tuple Types
+#region NestedGenericTypes
 
-    public static TheoryData<Type, string> TupleTypeData => new()
+#region Nested Types
+
+    public static TheoryData<Type, string> NestedGenericTypesData { get; } = new()
     {
-        { typeof((int, string)), "(int, string)" },
-        { typeof((int, int)), "(int, int)" },
-        { typeof((string, bool, double)), "(string, bool, double)" },
-        { typeof((int, string, bool, double)), "(int, string, bool, double)" },
-        { typeof((byte, short, int, long, float)), "(byte, short, int, long, float)" },
-        { typeof(Tuple<int>), "(int)" },
-        { typeof(Tuple<int, string>), "(int, string)" },
-        { typeof(Tuple<int, string, bool>), "(int, string, bool)" },
-        { typeof(ValueTuple<int>), "(int)" },
-        { typeof(ValueTuple<int, string>), "(int, string)" },
-        { typeof(ValueTuple<int, string, bool>), "(int, string, bool)" },
+        (typeof(OuterGeneric<int>.InnerClass), "TypeNameTests.OuterGeneric<int>.InnerClass"),
+        (typeof(OuterGeneric<string>.InnerClass), "TypeNameTests.OuterGeneric<string>.InnerClass"),
+        (typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeNameTests.OuterGeneric<int>.InnerGeneric<string>"),
+        (
+            typeof(OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>),
+            "TypeNameTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"
+        ),
     };
 
     [Theory]
+    [MemberData(nameof(NestedGenericTypesData))]
+    public void NestedGenericTypesWork(Type type, string expected)
+    {
+        Assert.Equal(expected, TypeName.For(type));
+    }
+
+#endregion
+
+#endregion
+
+#region Tuple Types
+
+    public static TheoryData<Type, string> TupleTypeData { get; } =
+    [
+        (typeof((int, string)), "(int, string)"),
+        (typeof((int, int)), "(int, int)"),
+        (typeof((string, bool, double)), "(string, bool, double)"),
+        (typeof((int, string, bool, double)), "(int, string, bool, double)"),
+        (typeof((byte, short, int, long, float)), "(byte, short, int, long, float)"),
+
+        (typeof(Tuple<int>), "(int)"),
+        (typeof(Tuple<int, string>), "(int, string)"),
+        (typeof(Tuple<int, string, bool>), "(int, string, bool)"),
+
+        (typeof(ValueTuple<int>), "(int)"),
+        (typeof(ValueTuple<int, string>), "(int, string)"),
+        (typeof(ValueTuple<int, string, bool>), "(int, string, bool)"),
+
+        // Max Length without TRest
+        (typeof(ValueTuple<char, bool, string, DateTime, TimeSpan, Guid, object>),
+            "(char, bool, string, DateTime, TimeSpan, Guid, object)"),
+
+        // With TRest
+        (typeof((sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)),
+            "(sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)"),
+    ];
+
+    [Theory]
     [MemberData(nameof(TupleTypeData))]
-    public void For_TupleTypes_ReturnsParenthesisFormat(Type type, string expected)
+    public void TuplesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
@@ -217,177 +264,129 @@ public class TypeNameTests
 
 #region Complex Combinations
 
-    public static TheoryData<Type, string> ComplexTypeData => new()
-    {
+    public static TheoryData<Type, string> ComplexTypeData { get; } =
+    [
         // Arrays of generics
-        { typeof(List<int>[]), "List<int>[]" },
-        { typeof(Dictionary<int, string>[]), "Dictionary<int, string>[]" },
+        (typeof(List<int>[]), "List<int>[]"),
+        (typeof(Dictionary<int, string>[]), "Dictionary<int, string>[]"),
 
         // Generics with arrays
-        { typeof(List<int[]>), "List<int[]>" },
-        { typeof(Dictionary<string, int[]>), "Dictionary<string, int[]>" },
+        (typeof(List<int[]>), "List<int[]>"),
+        (typeof(Dictionary<string, int[]>), "Dictionary<string, int[]>"),
 
         // Nullable in generics
-        { typeof(List<int?>), "List<int?>" },
-        { typeof(Dictionary<string, bool?>), "Dictionary<string, bool?>" },
+        (typeof(List<int?>), "List<int?>"),
+        (typeof(Dictionary<string, bool?>), "Dictionary<string, bool?>"),
 
         // Arrays of nullable
-        { typeof(int?[]), "int?[]" },
-        { typeof(bool?[]), "bool?[]" },
+        (typeof(int?[]), "int?[]"),
+        (typeof(bool?[]), "bool?[]"),
 
         // Multi-dimensional arrays of generics
-        { typeof(List<int>[,]), "List<int>[,]" },
-        { typeof(Dictionary<int, string>[,,]), "Dictionary<int, string>[,,]" },
+        (typeof(List<int>[,]), "List<int>[,]"),
+        (typeof(Dictionary<int, string>[,,]), "Dictionary<int, string>[,,]"),
 
         // Nested generics with nullable
-        { typeof(List<Dictionary<string, int?>>), "List<Dictionary<string, int?>>" },
-        { typeof(Dictionary<int, List<string?>>), "Dictionary<int, List<string?>>" },
+        (typeof(List<Dictionary<string, int?>>), "List<Dictionary<string, int?>>"),
+        (typeof(Dictionary<int, List<string?>>), "Dictionary<int, List<string>>"),
 
         // Tuples with generics
-        { typeof((List<int>, string)), "(List<int>, string)" },
-        { typeof((int, Dictionary<string, bool>)), "(int, Dictionary<string, bool>)" },
+        (typeof((List<int>, string)), "(List<int>, string)"),
+        (typeof((int, Dictionary<string, bool>)), "(int, Dictionary<string, bool>)"),
 
         // Tuples with nullable
-        { typeof((int?, string)), "(int?, string)" },
-        { typeof((bool?, double?, string)), "(bool?, double?, string)" },
+        (typeof((int?, string)), "(int?, string)"),
+        (typeof((bool?, double?, string)), "(bool?, double?, string)"),
 
         // Tuples with arrays
-        { typeof((int[], string[])), "(int[], string[])" },
-        { typeof((int[,], bool)), "(int[,], bool)" },
+        (typeof((int[], string[])), "(int[], string[])"),
+        (typeof((int[,], bool)), "(int[,], bool)"),
 
         // Arrays of tuples
-        { typeof((int, string)[]), "(int, string)[]" },
-        { typeof((bool, double, char)[,]), "(bool, double, char)[,]" },
+        (typeof((int, string)[]), "(int, string)[]"),
+        (typeof((bool, double, char)[,]), "(bool, double, char)[,]"),
 
         // Generics with tuples
-        { typeof(List<(int, string)>), "List<(int, string)>" },
-        { typeof(Dictionary<int, (string, bool)>), "Dictionary<int, (string, bool)>" },
+        (typeof(List<(int, string)>), "List<(int, string)>"),
+        (typeof(Dictionary<int, (string, bool)>), "Dictionary<int, (string, bool)>"),
 
         // Pointer arrays
-        { typeof(int*[]), "int*[]" },
+        (typeof(int*[]), "int*[]"),
 
         // Triple nesting
-        { typeof(List<Dictionary<string, List<int>>>), "List<Dictionary<string, List<int>>>" },
+        (typeof(List<Dictionary<string, List<int>>>), "List<Dictionary<string, List<int>>>"),
 
         // Crazy combo: array of nullable generic with tuple
-        { typeof(List<(int?, string)>[]), "List<(int?, string)>[]" },
+        (typeof(List<(int?, string)>[]), "List<(int?, string)>[]"),
 
         // Even crazier: multi-dimensional array of generic dictionary with nullable tuple values
-        { typeof(Dictionary<string, (int?, bool?)>[,]), "Dictionary<string, (int?, bool?)>[,]" },
-    };
+        (typeof(Dictionary<string, (int?, bool?)>[,]), "Dictionary<string, (int?, bool?)>[,]"),
+    ];
 
     [Theory]
     [MemberData(nameof(ComplexTypeData))]
-    public void For_ComplexTypes_ReturnsCorrectFormat(Type type, string expected)
+    public void ComplexTypesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
 
-#region Nested Types
+#region Delegate Types
 
-    public static TheoryData<Type, string> NestedTypeData => new()
-    {
-        { typeof(OuterClass.InnerClass), "TypeNameTests.OuterClass.InnerClass" },
-        { typeof(OuterClass.InnerStruct), "TypeNameTests.OuterClass.InnerStruct" },
-        { typeof(OuterClass.InnerEnum), "TypeNameTests.OuterClass.InnerEnum" },
-        { typeof(OuterClass.InnerClass.DeeplyNestedClass), "TypeNameTests.OuterClass.InnerClass.DeeplyNestedClass" },
-        { typeof(OuterGeneric<int>.InnerClass), "TypeNameTests.OuterGeneric<int>.InnerClass" },
-        { typeof(OuterGeneric<string>.InnerClass), "TypeNameTests.OuterGeneric<string>.InnerClass" },
-        { typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeNameTests.OuterGeneric<int>.InnerGeneric<string>" },
-        {
-            typeof(OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>),
-            "TypeNameTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"
-        },
-    };
+    private delegate char? DoThing(int i, string? str);
+
+    private delegate R DoThing<in A, in B, out R>(A a, B b);
+
+    public static TheoryData<Type, string> DelegateTypesData { get; } =
+    [
+        (typeof(Action), "Action"),
+        (typeof(Action<int>), "Action<int>"),
+        (typeof(Action<int, string>), "Action<int, string>"),
+        (typeof(Func<int>), "Func<int>"),
+        (typeof(Func<int, string>), "Func<int, string>"),
+        (typeof(Func<int, string, bool>), "Func<int, string, bool>"),
+        (typeof(Predicate<int>), "Predicate<int>"),
+        (typeof(DoThing), "TypeNameTests.DoThing"),
+        (typeof(DoThing<int, string, char?>), "TypeNameTests.DoThing<int, string, char?>"),
+    ];
 
     [Theory]
-    [MemberData(nameof(NestedTypeData))]
-    public void For_NestedTypes_ReturnsCorrectFormat(Type type, string expected)
+    [MemberData(nameof(DelegateTypesData))]
+    public void DelegateTypesWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
 
-#region Edge Cases
 
-    public static TheoryData<Type, string> CustomTypeData => new()
-    {
-        { typeof(TestStruct), "TypeNameTests.TestStruct" },
-        { typeof(TestEnum), "TypeNameTests.TestEnum" },
-        { typeof(TestClass), "TypeNameTests.TestClass" },
-        { typeof(ITestInterface), "TypeNameTests.ITestInterface" },
-        { typeof(TestDelegate), "TypeNameTests.TestDelegate" },
-    };
+#region Combinations
 
-    [Theory]
-    [MemberData(nameof(CustomTypeData))]
-    public void For_CustomTypes_ReturnsTypeName(Type type, string expected)
-    {
-        Assert.Equal(expected, TypeName.For(type));
-    }
-
-#endregion
-
-#region Action and Func Types
-
-    public static TheoryData<Type, string> ActionFuncTypeData => new()
-    {
-        { typeof(Action), "Action" },
-        { typeof(Action<int>), "Action<int>" },
-        { typeof(Action<int, string>), "Action<int, string>" },
-        { typeof(Func<int>), "Func<int>" },
-        { typeof(Func<int, string>), "Func<int, string>" },
-        { typeof(Func<int, string, bool>), "Func<int, string, bool>" },
-        { typeof(Predicate<int>), "Predicate<int>" },
-    };
-
-    [Theory]
-    [MemberData(nameof(ActionFuncTypeData))]
-    public void For_ActionAndFuncTypes_ReturnsCorrectFormat(Type type, string expected)
-    {
-        Assert.Equal(expected, TypeName.For(type));
-    }
-
-#endregion
-
-#region Extreme Edge Cases
-
-    public static TheoryData<Type, string> ExtremeEdgeCaseData => new()
-    {
-        // Nullable of nullable-containing generic
-        { typeof(List<int?>[]), "List<int?>[]" },
-
-        // 7-element tuple (max without nesting)
-        { typeof((int, int, int, int, int, int, int)), "(int, int, int, int, int, int, int)" },
-
-        // 8-element tuple (uses TRest)
-        { typeof((int, int, int, int, int, int, int, int)), "(int, int, int, int, int, int, int, int)" },
-
-
-        // Pointer to pointer to array
-        { typeof(int[]*), "int[]*" },
-
-        // Generic with multiple type parameters all complex
-        {
-            typeof(Dictionary<List<int?>, Dictionary<string, bool?[]>>),
+    public static TheoryData<Type, string> CombinationTypesData =>
+    [
+        (typeof(List<int?>[]), "List<int?>[]"),
+        (typeof(int[]*), "int[]*"),
+        (typeof(Dictionary<List<int?>, Dictionary<string, bool?[]>>),
             "Dictionary<List<int?>, Dictionary<string, bool?[]>>"
-        },
-    };
+        ),
+
+    ];
 
     [Theory]
-    [MemberData(nameof(ExtremeEdgeCaseData))]
-    public void For_ExtremeEdgeCases_ReturnsCorrectFormat(Type type, string expected)
+    [MemberData(nameof(CombinationTypesData))]
+    public void CombinationsWork(Type type, string expected)
     {
         Assert.Equal(expected, TypeName.For(type));
     }
 
 #endregion
 
-#region Test Helper Types
-
+#region Test Helper Types 
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedTypeParameter
+// ReSharper disable UnusedType.Global
     public struct TestStruct
     {
         public int Value;
@@ -396,15 +395,18 @@ public class TypeNameTests
     public enum TestEnum
     {
         Value1,
-        Value2
+        Value2,
     }
 
     public class TestClass { }
 
     public interface ITestInterface { }
 
+   
     public delegate void TestDelegate();
 
+    
+    
     public class OuterClass
     {
         public class InnerClass
@@ -419,6 +421,7 @@ public class TypeNameTests
             Value
         }
     }
+
 
     public class OuterGeneric<T>
     {
