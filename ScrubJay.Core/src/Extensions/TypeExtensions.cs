@@ -55,7 +55,7 @@ public static class TypeExtensions
                 return true;
             }
         }
-
+        
         public bool IsNullable()
         {
             return type is not null && Nullable.GetUnderlyingType(type) is not null;

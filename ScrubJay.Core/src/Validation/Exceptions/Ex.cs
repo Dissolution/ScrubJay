@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Validation;
+﻿using ScrubJay.Destructuring;
+
+namespace ScrubJay.Validation;
 
 /// <summary>
 /// A static helper class for creating <see cref="Exception">Exceptions</see>
@@ -33,7 +35,7 @@ public static partial class Ex
             .If(valueName is not null, valueName, "<???>")
             .Append("\": ")
             .IfNotNull(value,
-                static (tb, v) => tb.AppendTypeName(typeof(T)).Append(" = `").Append(v).Append('`'),
+                static (tb, v) => tb.DestructType<T>().Append(" = `").Append(v).Append('`'),
                 static tb => tb.Write("<null>"));
     }
 

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\ScrubJay.Functional.csproj"/>
+    </ItemGroup>
+
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Functional.Json</PackageId>
+        <Title>ScrubJay - Functional -- Json Extensions</Title>
+        <Description>
+            Additional extensions for ScrubJay.Functional related to Json
+        </Description>
+    </PropertyGroup>
+
+</Project>

@@ -13,6 +13,8 @@ partial class Guard
         return array;
     }
 
+//#if NET9_0_OR_GREATER
+
     public static Span<T> IsNotEmpty<T>(Span<T> span,
         [CallerArgumentExpression(nameof(span))]
         string? spanName = null)
@@ -30,4 +32,6 @@ partial class Guard
             throw Ex.Arg(span, "was empty", spanName);
         return span;
     }
+
+//#endif    
 }

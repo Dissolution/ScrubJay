@@ -1,7 +1,5 @@
 ﻿// We're using these parameters
-
 #pragma warning disable IDE0060
-
 // ReSharper disable EntityNameCapturedOnly.Global
 
 using static InlineIL.IL;

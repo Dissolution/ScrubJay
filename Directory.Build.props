@@ -1,26 +1,47 @@
 <Project>
     <PropertyGroup>
-        <!-- Generate XML documentation files -->
+        <!-- generate XML documentation files -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <!-- Suppress Warnings -->
-        <NoWarn>$(NoWarn);
-            CS1591; <!-- undocumented members -->
-            CS8981; <!-- `text` -->
+        <NoWarn>
+            $(NoWarn);      <!-- inherit any other suppressions -->
+            CS1591;         <!-- undocumented members -->
+            CS8981;         <!-- `text` alias -->
             CA1062;
-            CA1715; <!-- Prefix Generic type parameter names with 'T' -->
+            CA1715;         <!-- Prefix Generic type parameter names with 'T' -->
+            CA1063;         <!-- Implement IDisposable 'correctly' -->
+            CA1000;         <!-- Do not declare static memebrs on generic types -->
+            CA2225;         <!-- Provide alternative methods for operators -->
+            CA1710; CA1805; CA1051; CA1815; CA1033; CA1725; CA1810; CA1307; CA1031; CA1305; CA1720;
+            
         </NoWarn>
     </PropertyGroup>
 
-    <!-- Special Release configurations -->
+    <!-- NuGet -->
+    <PropertyGroup>
+        <Version>0.90.0-alpha</Version>
+        <Authors>Dissolution</Authors>
+        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <!-- Release configurations -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <!-- Create NuGet Package -->
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <!-- Validate -->
         <EnablePackageValidation>false</EnablePackageValidation>
         <!-- Set common output path for Packages -->
-        <PackageOutputPath>..\packages\</PackageOutputPath>
+        <PackageOutputPath>..\..\packages\</PackageOutputPath>
     </PropertyGroup>
+    
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 
     <!-- global usings -->
     <ItemGroup>

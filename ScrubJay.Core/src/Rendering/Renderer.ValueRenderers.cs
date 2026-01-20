@@ -1,4 +1,3 @@
-using ScrubJay.Collections.NonGeneric;
 using ScrubJay.Iteration;
 
 namespace ScrubJay.Rendering;

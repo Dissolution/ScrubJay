@@ -4,7 +4,7 @@
 public class OrderedList<T> : IList<T>
 {
     private T[] _items = [];
-    private int _size = 0;
+    private int _size;
 
     bool ICollection<T>.IsReadOnly => false;
 

@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InvokeAsExtensionMethod
 
-#pragma warning disable CA1822, IDE0062, CA1708
+#pragma warning disable CA1822, IDE0062, CA1708, CA1307
 
 namespace ScrubJay.Comparison;
 
@@ -108,7 +108,7 @@ public static class EquateExtensions
             => MemoryExtensions.SequenceEqual(str.AsSpan(), other);
 
         public bool Equate(string? other)
-            => string.Equals(str, other);
+            => string.Equals(str, other, StringComparison.Ordinal);
 
         public bool Equate(in char other, StringComparison comparison)
             => EquateExtensions.Equate(str.AsSpan(), other.AsSpan(), comparison);

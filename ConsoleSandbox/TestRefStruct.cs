@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ConsoleSandbox;
 
 public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparable<TestRefStruct>

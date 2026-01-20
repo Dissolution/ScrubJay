@@ -1,5 +1,4 @@
-﻿using ScrubJay.Text.Building;
-using ScrubJay.Text.Comparison;
+﻿using ScrubJay.Text.Comparison;
 #pragma warning disable IDE0022
 
 namespace ScrubJay.Text;

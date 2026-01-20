@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CA1819
 
 using System.Reflection;
-using ScrubJay.Text.Building;
 
 
 namespace ScrubJay.Enums;
@@ -35,9 +34,8 @@ public abstract class EnumInfo :
 
     public static EnumInfo For(Type enumType)
     {
-        Throw.IfNull(enumType);
-        if (!enumType.IsEnum)
-            throw Ex.Arg(enumType, $"Invalid Enum Type: {enumType:@}");
+        Guard.IsNotNull(enumType);
+        Guard.IsEnum(enumType);
         return _enumInfoCache.GetOrAdd(enumType, CreateEnumInfo);
     }
 
@@ -52,7 +50,6 @@ public abstract class EnumInfo :
     {
         return _enumInfoCache.GetOrAdd<E>(CreateEnumInfo).ThrowIfNot<EnumInfo<E>>();
     }
-
 
     private readonly EnumMemberInfo[] _members;
 

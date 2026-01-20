@@ -1,4 +1,4 @@
-﻿#pragma warning disable CA1040
+﻿#pragma warning disable CA1040, CA1716
 
 namespace ScrubJay;
 

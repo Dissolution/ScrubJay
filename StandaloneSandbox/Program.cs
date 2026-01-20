@@ -1,12 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System;
-using InlineIL;
-using static InlineIL.IL;
-
-
-
-
 Console.WriteLine(new string('~', 80));
 Console.WriteLine("Press Enter to exit");
 Console.ReadLine();

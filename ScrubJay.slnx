@@ -8,6 +8,8 @@
     <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Functional/">
+    <Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
+    <Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj" />
     <Project Path="ScrubJay.Functional/src/ScrubJay.Functional.csproj" />
     <Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
   </Folder>

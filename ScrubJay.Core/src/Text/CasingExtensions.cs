@@ -3,7 +3,6 @@
 #pragma warning disable CA1008
 
 using System.Globalization;
-using ScrubJay.Text.Building;
 
 namespace ScrubJay.Text;
 

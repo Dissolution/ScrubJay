@@ -16,6 +16,7 @@ partial class Validate
     }
 
 #if NET9_0_OR_GREATER
+
     public static RefResult<Span<T>> IsNotEmpty<T>(Span<T> span,
         [CallerArgumentExpression(nameof(span))]
         string? spanName = null)
@@ -24,9 +25,7 @@ partial class Validate
             return Ex.Arg(span, "was empty", spanName);
         return span;
     }
-#endif
 
-#if NET9_0_OR_GREATER
     public static RefResult<ReadOnlySpan<T>> IsNotEmpty<T>(ReadOnlySpan<T> span,
         [CallerArgumentExpression(nameof(span))]
         string? spanName = null)
@@ -35,5 +34,6 @@ partial class Validate
             return Ex.Arg(span, "was empty", spanName);
         return span;
     }
+
 #endif
 }

@@ -21,4 +21,13 @@ partial class Guard
             return type;
         throw Ex.Arg(type, $"does not implement {typeof(T)}", typeName);
     }
+
+    public static Type IsEnum(Type type,
+        [CallerArgumentExpression(nameof(type))]
+        string? typeName = null)
+    {
+        if (type.IsEnum)
+            return type;
+        throw Ex.Arg(type, "is not an enum", typeName);
+    }
 }

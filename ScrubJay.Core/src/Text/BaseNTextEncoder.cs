@@ -1,6 +1,4 @@
-﻿using ScrubJay.Text.Building;
-
-namespace ScrubJay.Text;
+﻿namespace ScrubJay.Text;
 
 public class BaseNTextEncoder
 {

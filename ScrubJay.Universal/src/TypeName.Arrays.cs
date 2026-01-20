@@ -11,7 +11,7 @@ partial class TypeName
         Type? elementType = arrayType.GetElementType();
         Debug.Assert(elementType is not null);
         
-        if (!elementType.IsArray)
+        if (!elementType!.IsArray)
         {
             return builder
                 .AppendTypeName(elementType)

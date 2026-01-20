@@ -5,11 +5,6 @@
 // ReSharper disable ArrangeMethodOrOperatorBody
 // ReSharper disable InvokeAsExtensionMethod
 
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Reflection.Emit;
-using ScrubJay.Expressions;
-
 namespace ScrubJay.Text;
 
 /// <summary>

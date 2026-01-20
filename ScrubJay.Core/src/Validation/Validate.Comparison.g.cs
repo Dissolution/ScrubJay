@@ -16,7 +16,7 @@ partial class Validate
             return Ex.ArgRange(value, $"was greater than or equal to exclusive maximum of {exclusiveMax}", valueName);
         return value;
     }
-
+    
     public static Result<T> IsBetween<T>(T value, LowerBound<T> min, UpperBound<T> max,
         [CallerArgumentExpression(nameof(value))] string? valueName = null)
         where T : IComparable<T>
@@ -38,7 +38,7 @@ partial class Validate
             return actual;
         return Ex.ArgRange(actual, $"was not less than {expected}");
     }
-
+    
     public static Result<T> IsLequalTo<T>(T actual, T expected,
         [CallerArgumentExpression(nameof(actual))]
         string? actualName = null)
@@ -49,7 +49,7 @@ partial class Validate
             return actual;
         return Ex.ArgRange(actual, $"was not less than or equal to {expected}");
     }
-
+    
     public static Result<T> IsGreaterThan<T>(T actual, T expected,
         [CallerArgumentExpression(nameof(actual))]
         string? actualName = null)
@@ -60,7 +60,7 @@ partial class Validate
             return actual;
         return Ex.ArgRange(actual, $"was not greater than {expected}");
     }
-
+    
     public static Result<T> IsGrequalTo<T>(T actual, T expected,
         [CallerArgumentExpression(nameof(actual))]
         string? actualName = null)

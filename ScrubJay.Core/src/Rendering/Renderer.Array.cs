@@ -1,5 +1,3 @@
-using ScrubJay.Collections.NonGeneric;
-
 namespace ScrubJay.Rendering;
 
 partial class Renderer

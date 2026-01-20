@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace ScrubJay.Universal.Tests;
 
 public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparable<TestRefStruct>

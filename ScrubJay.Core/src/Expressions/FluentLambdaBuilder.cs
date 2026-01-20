@@ -20,7 +20,7 @@ public class FluentLambdaBuilder<B>
     {
         _builder = (B)this;
 
-        Guard.Implements(delegateType, typeof(Delegate));
+        Guard.Implements<Delegate>(delegateType);
         _delegateType = delegateType;
 
         var genericTypes = delegateType.GetGenericArguments();

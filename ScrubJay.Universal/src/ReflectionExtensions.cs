@@ -40,7 +40,7 @@ internal static class ReflectionExtensions
                 del = dynamicMethod.CreateDelegate<D>();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debugger.Break();
                 del = null;

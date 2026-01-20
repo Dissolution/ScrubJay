@@ -1,4 +1,6 @@
+#pragma warning disable CA1716
 
+namespace ScrubJay.Validation;
 
 public static partial class Throw
 {

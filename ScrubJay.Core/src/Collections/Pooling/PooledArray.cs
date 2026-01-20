@@ -1,6 +1,4 @@
-﻿using System.Buffers;
-
-#pragma warning disable CA1816
+﻿#pragma warning disable CA1816
 
 namespace ScrubJay.Collections.Pooling;
 

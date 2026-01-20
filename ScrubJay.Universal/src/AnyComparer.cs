@@ -15,7 +15,7 @@ public sealed class AnyComparer<T> : IEqualityComparer<T>, IComparer<T>
         return Any.Equals<T>(x, y);
     }
 
-    public int GetHashCode([DisallowNull] T obj)
+    public int GetHashCode(T obj)
     {
         return Any.GetHashCode<T>(obj);
     }

@@ -1,3 +1,4 @@
+#pragma warning disable CS8620
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 using System.Reflection;

@@ -2,6 +2,7 @@ namespace ScrubJay.Memory.Splitting;
 
 
 #if NET9_0_OR_GREATER
+#pragma warning disable CA1819
 
 [PublicAPI]
 public readonly ref struct Segment<T>

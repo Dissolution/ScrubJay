@@ -1,6 +1,4 @@
-using System.Text;
-
-#pragma warning disable CA1815, IDE0250
+#pragma warning disable CA1815, IDE0250, CA1001
 
 namespace ScrubJay.Text.Building;
 
@@ -8,7 +6,7 @@ namespace ScrubJay.Text.Building;
 /// Provides a handler used to append interpolated strings into <see cref="TextBuilder"/> instances.
 /// </summary>
 /// <remarks>
-/// Heavily inspired by <see cref="DefaultInterpolatedStringHandler"/> and <see cref="System.Text.AppendInterpolatedStringHandler"/>
+/// Heavily inspired by <see cref="DefaultInterpolatedStringHandler"/> and System.Text.AppendInterpolatedStringHandler
 /// </remarks>
 [PublicAPI]
 [InterpolatedStringHandler]

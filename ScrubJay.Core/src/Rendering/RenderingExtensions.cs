@@ -36,10 +36,7 @@ public static class RenderingExtensions
                 Renderer.GetValueRenderer<T>().Invoke(value, builder);
             }
         }
-
-        /// <summary>
-        /// Gets a <see cref="string"/> Rendering of this <typeparamref name="T"/> <paramref name="value"/>
-        /// </summary>
+        
         public string Render()
         {
             if (value is null)

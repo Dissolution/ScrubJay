@@ -1,7 +1,5 @@
 // ReSharper disable SpecifyACultureInStringConversionExplicitly
 
-using System.Runtime.InteropServices.JavaScript;
-
 namespace ScrubJay.Universal.Tests;
 
 public class AnyToStringTests

@@ -10,6 +10,8 @@ namespace ScrubJay.Functional;
 [PublicAPI]
 public class Problem : IEnumerable
 {
+    public static implicit operator Problem(Exception exception) => new Problem(exception);
+    
     public string? Details { get; set; }
 
     public string? Title { get; set; }
@@ -19,6 +21,11 @@ public class Problem : IEnumerable
     public Dictionary<string, object?> Data { get; } = new(0, StringComparer.OrdinalIgnoreCase);
 
 
+    public Problem()
+    {
+        
+    }
+    
     public Problem(Exception exception)
     {
         if (exception is null)

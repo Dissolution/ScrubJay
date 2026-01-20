@@ -1,7 +1,14 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
+using ConsoleSandbox;
+using ScrubJay.Destructuring;
+using ScrubJay.Universal;
 
-var type = typeof(int).MakeByRefType();
-string str = type.ToString();
+int a = 147;
+string b = "TRJ";
+
+
+var str = Util.Teardown((Guid g) => g.ToString() + b + "ABC");
 
 Debugger.Break();
 
@@ -12,17 +19,11 @@ namespace ConsoleSandbox
 {
     static class Util
     {
-    
-    
-        public static bool IsGenericArgumentNullable(Type genericType, int argumentIndex)
+        public static string Teardown(Expression? expression)
         {
-            var attr = genericType.GetCustomAttribute<NullableAttribute>();
-            if (attr?.NullableFlags != null && attr.NullableFlags.Length > argumentIndex + 1)
-            {
-                return attr.NullableFlags[argumentIndex + 1] == 2;
-            }
-
-            return false; // Unable to determine, assume not nullable
+            return Destructure.Value(expression);
         }
+    
+    
     }
 }

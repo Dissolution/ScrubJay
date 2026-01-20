@@ -18,7 +18,7 @@ partial class Validate
 
         return (start, end - start);
     }
-
+    
     public static Result<(int Offset, int Length)> Range(Index start, int length, int available,
         [CallerArgumentExpression(nameof(start))] string? startName = null,
         [CallerArgumentExpression(nameof(length))] string? lengthName = null)
@@ -31,7 +31,7 @@ partial class Validate
 
         return (startIndex, length);
     }
-
+    
     public static Result<(int Offset, int Length)> Range(int start, int length, int available,
         [CallerArgumentExpression(nameof(start))] string? startName = null,
         [CallerArgumentExpression(nameof(length))] string? lengthName = null)

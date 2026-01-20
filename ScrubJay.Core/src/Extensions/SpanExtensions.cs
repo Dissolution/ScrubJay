@@ -1,8 +1,5 @@
 ﻿#pragma warning disable S3776, MA0051
 
-using Polyfills;
-
-
 namespace ScrubJay.Extensions;
 
 /// <summary>

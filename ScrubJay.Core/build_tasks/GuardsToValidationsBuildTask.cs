@@ -18,7 +18,7 @@ public sealed class GenerateValidateFilesTask : Task
             .Replace(".cs", ".g.cs");
         return Path.Combine(dir!, fileName);
     }
-
+    
     private static string GetTransformedContent(string sourceContent)
     {
         var builder = new StringBuilder()
@@ -27,45 +27,24 @@ public sealed class GenerateValidateFilesTask : Task
 
         var lines = sourceContent.Split(NEWLINE_CHARS, StringSplitOptions.None);
         bool inNet9Block = false;
-        bool needToEndNet9Block = false;
-
+        
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
+
+            var start = line.AsSpan().TrimStart();
             
-            if (string.IsNullOrWhiteSpace(line))
+            if (start.StartsWith("//#if NET9_0_OR_GREATER") || start.StartsWith("#if NET9_0_OR_GREATER"))
             {
-                if (needToEndNet9Block)
-                {
-                    builder.AppendLine("#endif");
-                    inNet9Block = false;
-                    needToEndNet9Block = false;
-                }
-
-                builder.AppendLine();
-                continue;
-            }
-
-            if (line.EndsWith("}"))
-            {
-                builder.AppendLine(line);
-                if (needToEndNet9Block)
-                {
-                    builder.AppendLine("#endif");
-                    inNet9Block = false;
-                    needToEndNet9Block = false;
-                }
-
-                continue;
-            }
-
-            if (line.StartsWith("#if NET9_0"))
-            {
+                builder.AppendLine("#if NET9_0_OR_GREATER");
                 inNet9Block = true;
+                continue;
             }
-            else if (inNet9Block && line.StartsWith("#endif"))
+            else if (start.StartsWith("//#endif") || start.StartsWith("#endif"))
             {
+                builder.AppendLine("#endif");
                 inNet9Block = false;
+                continue;
             }
 
             line = line
@@ -80,25 +59,28 @@ public sealed class GenerateValidateFilesTask : Task
 
             if (m.Success && m.Groups.Count >= 5)
             {
-                if (inNet9Block || m.Groups[1].Value.Contains("Span"))
+                var returnType = m.Groups[1].Value;
+                if (returnType.Contains("Span") || inNet9Block)
                 {
-                    if (!inNet9Block)
-                    {
-                        builder.AppendLine("#if NET9_0_OR_GREATER");
-                        needToEndNet9Block = true;
-                    }
-
                     builder.Append(line, 0, m.Index)
-                        .Append("public static RefResult<");
+                        .Append("public static RefResult<")
+                        .Append(m.Groups[1])
+                        .Append("> ");
+                }
+                else if (returnType == "bool")
+                {
+                    builder.Append(line, 0, m.Index)
+                        .Append("public static Result ");
                 }
                 else
                 {
                     builder.Append(line, 0, m.Index)
-                        .Append("public static Result<");
+                        .Append("public static Result<")
+                        .Append(m.Groups[1])
+                        .Append("> ");
                 }
 
-                builder.Append(m.Groups[1])
-                    .Append("> ")
+                builder
                     .Append(m.Groups[2])
                     .Append(m.Groups[3])
                     .Append('(')
@@ -110,11 +92,6 @@ public sealed class GenerateValidateFilesTask : Task
             }
 
             builder.AppendLine();
-        }
-
-        if (needToEndNet9Block)
-        {
-            builder.AppendLine("#endif");
         }
 
         return builder.ToString();

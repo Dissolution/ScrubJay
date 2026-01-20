@@ -1,3 +1,4 @@
+#pragma warning disable CS8620
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 using System.Reflection;
@@ -89,7 +90,7 @@ partial class MethodCache<T>
         // Span + ReadOnlySpan throw
         try
         {
-            _ = func(default);
+            _ = func(default!);
         }
         catch
         {
