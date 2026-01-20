@@ -125,4 +125,10 @@ public static partial class TypeName
         where T : allows ref struct
 #endif
         => For(typeof(T));
+
+    public static string For<I>(I? instance)
+#if NET9_0_OR_GREATER
+        where I : allows ref struct
+#endif
+        => For(Any.GetType<I>(instance));
 }

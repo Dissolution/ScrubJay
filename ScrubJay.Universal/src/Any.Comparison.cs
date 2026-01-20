@@ -8,6 +8,13 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Compares two <typeparamref name="T"/> values and returns their relative value.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="other"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(T? value, T? other)
         => Comparer<T>.Default.Compare(value!, other!);

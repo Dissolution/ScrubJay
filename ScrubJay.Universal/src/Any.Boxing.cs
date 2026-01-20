@@ -1,15 +1,34 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
 
+#if NET9_0_OR_GREATER
 using InlineIL;
 using static InlineIL.IL;
+#endif
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
-    public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? obj)
+    /// <summary>
+    /// Try to box the given <typeparamref name="T"/> <paramref name="value"/> into an <see cref="object"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The generic value to box
+    /// </param>
+    /// <param name="boxed">
+    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into
+    /// </param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns>
+    /// <c>true</c> if <paramref name="value"/> was boxed into <paramref name="boxed"/>,<br/>
+    /// <c>false</c> if it was not
+    /// </returns>
+    /// <remarks>
+    /// For non-<c>allows ref struct</c> values, this always succeeds.
+    /// </remarks>
+    public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
     {
-        obj = (object?)value;
+        boxed = (object?)value;
         return true;
     }
 }
@@ -21,7 +40,7 @@ partial class Any
      * in MethodCache<T>, it would fail compilation for any T : ref struct values
      * here we can abuse compiler tricks to ensure that only non-ref-struct Ts are ever constructed
      */
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
         where T : allows ref struct // but _never_ will be
@@ -30,7 +49,25 @@ partial class Any
         Emit.Box<T>();
         return Return<object>();
     }
-    
+
+    /// <summary>
+    /// Try to box the given <typeparamref name="T"/> <paramref name="value"/> into an <see cref="object"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The generic value to box
+    /// </param>
+    /// <param name="boxed">
+    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into
+    /// </param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns>
+    /// <c>true</c> if <paramref name="value"/> was boxed into <paramref name="boxed"/>,<br/>
+    /// <c>false</c> if it was not
+    /// </returns>
+    /// <remarks>
+    /// For non-<c>allows ref struct</c> values, this always succeeds.<br/>
+    /// Otherwise, this will always fail.
+    /// </remarks>
     public static bool TryBox<T>(T? value, out object? boxed, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
@@ -68,11 +105,11 @@ partial class Any
          *   of that method will ever be compiled with a ref-struct for T, as we've eliminated them by this point.
          */
 
-        Emit.Ldarg(nameof(boxed));  // ref object boxed
-        Emit.Ldarg(nameof(value));  // T value
+        Emit.Ldarg(nameof(boxed)); // ref object boxed
+        Emit.Ldarg(nameof(value)); // T value
         Emit.Call(new MethodRef(typeof(Any), nameof(FastBox)).MakeGenericMethod(typeof(T)));
-        Emit.Stind_Ref();           // object -> boxed
-        Emit.Ldc_I4_1();            // 1 == true
+        Emit.Stind_Ref(); // object -> boxed
+        Emit.Ldc_I4_1(); // 1 == true
         Emit.Ret();
         throw Unreachable();
     }

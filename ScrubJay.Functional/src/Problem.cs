@@ -1,5 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+using System.Text;
 
 namespace ScrubJay.Functional;
 
@@ -7,55 +6,75 @@ namespace ScrubJay.Functional;
 /// A generic Problem for use as a non-<see cref="Exception"/> Error in a <see cref="Result{T,E}"/>.<br/>
 /// This is a rough approximation of <see href="https://www.rfc-editor.org/rfc/rfc9457.html">Problem Details</see> without the overhead of any ASP or Web related properties.<br/>
 /// </summary>
+/// <remarks>
+/// This class implements <see cref="IEnumerable"/> and has an <see cref="Add"/> method so that it can be used with fluent collection initialization syntax.
+/// </remarks>
 [PublicAPI]
 public class Problem : IEnumerable
 {
     public static implicit operator Problem(Exception exception) => new Problem(exception);
-    
+
+    private Dictionary<string, object?>? _data;
+
+    /// <summary>
+    /// The details about this <see cref="Problem"/>
+    /// </summary>
     public string? Details { get; set; }
 
+    /// <summary>
+    /// The title of this <see cref="Problem"/>
+    /// </summary>
     public string? Title { get; set; }
 
+    /// <summary>
+    /// An optional <see cref="Exception"/> related to this <see cref="Problem"/>
+    /// </summary>
     public Exception? Exception { get; set; }
 
-    public Dictionary<string, object?> Data { get; } = new(0, StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// Additional contextual information about this <see cref="Problem"/>
+    /// </summary>
+    public Dictionary<string, object?> Data =>
+        _data ??= new Dictionary<string, object?>(capacity: 0, comparer: StringComparer.OrdinalIgnoreCase);
 
-
-    public Problem()
+    /// <summary>
+    /// Directly gets or sets <see cref="Data"/>
+    /// </summary>
+    /// <param name="key"></param>
+    public object? this[object? key]
     {
-        
+        get => Data[key?.ToString() ?? "null"];
+        set => Data[key?.ToString() ?? "null"] = value;
     }
-    
-    public Problem(Exception exception)
-    {
-        if (exception is null)
-            throw new ArgumentNullException(nameof(exception));
 
-        this.Exception = exception;
-        this.Title = exception.GetType().Name;
-        this.Details = exception.Message;
-        foreach (DictionaryEntry data in exception.Data)
+    public Problem() { }
+
+    public Problem(string? details, string? title = null, Exception? exception = null)
+        : this(exception, details, title) { }
+
+    public Problem(Exception? exception, string? details = null, string? title = null)
+    {
+        if (exception is not null)
         {
-            this.Data[data.Key.ToString()!] = data.Value;
+            this.Exception = exception;
+            this.Details = details ?? exception.Message;
+            this.Title = title ?? TypeName.For(exception);
+            if (exception.Data.Count > 0)
+            {
+                _data = new(capacity: exception.Data.Count, StringComparer.OrdinalIgnoreCase);
+                foreach (DictionaryEntry data in exception.Data)
+                {
+                    _data[data.Key.ToString() ?? "null"] = data.Value;
+                }
+            }
+        }
+        else
+        {
+            this.Exception = null;
+            this.Details = details;
+            this.Title = title;
         }
     }
-
-    public Problem(string? details)
-        : this(details, null, null) { }
-
-    public Problem(string? details, Exception? exception)
-        : this(details, null, exception) { }
-
-    public Problem(string? details, string? title)
-        : this(details, title, null) { }
-
-    public Problem(string? details, string? title, Exception? exception)
-    {
-        this.Details = details;
-        this.Exception = exception;
-        this.Title = title;
-    }
-
 
     public void Add(string key, object? value)
     {
@@ -64,6 +83,36 @@ public class Problem : IEnumerable
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return Data.GetEnumerator();
+        return this.Data.GetEnumerator();
+    }
+
+    public override string ToString()
+    {
+        StringBuilder builder = new();
+        builder.AppendLine("Problem:")
+            .Append("    Title: ").Append(Title).AppendLine()
+            .Append("  Details: ").Append(Details).AppendLine();
+        if (Exception is not null)
+        {
+            builder
+                .Append("    Error: ").Append(TypeName.For(Exception)).AppendLine()
+                .Append("      ").Append(Exception.Message).AppendLine();
+        }
+
+        if (_data is not null && _data.Count > 0)
+        {
+            builder.Append("     Data:");
+            foreach (var pair in _data)
+            {
+                builder
+                    .AppendLine()
+                    .Append("       ")
+                    .Append(pair.Key)
+                    .Append(":  ")
+                    .Append(pair.Value);
+            }
+        }
+
+        return builder.ToString();
     }
 }
