@@ -8,6 +8,38 @@ namespace ScrubJay.Functional.Asp;
 [PublicAPI]
 public static class ProblemExtensions
 {
+    extension(ProblemDetails problemDetails)
+    {
+        /// <summary>
+        /// Convert this <see cref="ProblemDetails"/> into a <see cref="Problem"/>
+        /// </summary>
+        public Problem ToProblem()
+        {
+            var problem = new Problem
+            {
+                Details = problemDetails.Detail,
+                Title = problemDetails.Title,
+            };
+            
+            foreach (var kvp in problemDetails.Extensions)
+            {
+                problem.Data[kvp.Key] = kvp.Value;
+            }
+
+            if (problemDetails.Status.HasValue)
+            {
+                problem["StatusCode"] = problemDetails.Status;
+            }
+
+            if (problemDetails.Instance is not null)
+            {
+                problem["Instance"] = problemDetails.Instance;
+            }
+
+            return problem;
+        }
+    }
+    
     extension(Problem problem)
     {
         public Problem WithStatusCode(int statusCode)
@@ -17,17 +49,13 @@ public static class ProblemExtensions
         }
         
         /// <summary>
-        /// Converts this <see cref="Problem"/> to a <see cref="ProblemDetails"/> instance
+        /// Converts this <see cref="Problem"/> into a <see cref="ProblemDetails"/> instance
         /// </summary>
         public ProblemDetails ToProblemDetails()
         {
             // Try to extract a status code from Data
             int statusCode;
             if (problem.Data.TryGetValue("StatusCode", out var status) && status is int)
-            {
-                statusCode = (int)status;
-            }
-            else if (problem.Data.TryGetValue("Status", out status) && status is int)
             {
                 statusCode = (int)status;
             }
@@ -60,8 +88,7 @@ public static class ProblemExtensions
 
             foreach (var kvp in problem.Data)
             {
-                if (kvp.Key.Equals("Status", StringComparison.OrdinalIgnoreCase) ||
-                    kvp.Key.Equals("Instance", StringComparison.OrdinalIgnoreCase) ||
+                if (kvp.Key.Equals("Instance", StringComparison.OrdinalIgnoreCase) ||
                     kvp.Key.Equals("StatusCode", StringComparison.OrdinalIgnoreCase))
                     continue;
                 problemDetails.Extensions[kvp.Key] = kvp.Value;

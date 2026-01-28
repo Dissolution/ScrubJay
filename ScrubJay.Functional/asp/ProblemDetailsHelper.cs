@@ -6,13 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ScrubJay.Functional.Asp;
 
-public enum StackTraceLevel
-{
-    None,
-    Sanitized,
-    Full,
-}
-
 [PublicAPI]
 public static class ProblemDetailsHelper
 {
@@ -154,6 +147,19 @@ public static class ProblemDetailsHelper
         return problem;
     }
 
+    public static Problem GetProblem<E>(E? error)
+    {
+        return error switch
+        {
+            Problem problem => problem,
+            ProblemDetails problemDetails => problemDetails.ToProblem(),
+            _ => new Problem(error?.ToString(), "Error")
+            {
+                ["Type"] = (error?.GetType() ?? typeof(E)).Name,
+            },
+        };
+    }
+    
     public static ProblemDetails GetProblemDetails<E>(E? error)
     {
         return error switch

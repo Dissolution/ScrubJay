@@ -7,8 +7,41 @@ namespace ScrubJay.Functional.Asp;
 /// Extensions on <see cref="Result"/>, <see cref="Result{T}"/>, and <see cref="Result{T,E}"/> related to ASP
 /// </summary>
 [PublicAPI]
-public static partial class AspResultExtensions
+public static partial class ResultExtensions
 {
+    extension(Result)
+    {
+        public static Result FromIActionResult(IActionResult actionResult)
+        {
+            if (actionResult is null)
+                return new ArgumentNullException(nameof(actionResult));
+
+            if (actionResult is ObjectResult objectResult)
+            {
+                if (objectResult.Value is null || objectResult.Value is Unit)
+                    return Result.Ok;
+                if (objectResult.Value is Result result)
+                    return result;
+                if (objectResult.Value is Exception ex)
+                    return ex;
+                if (objectResult.Value is ProblemDetails problemDetails)
+                    return new ProblemException(problemDetails.ToProblem());
+            }
+
+            if (actionResult is StatusCodeResult statusCodeResult)
+            {
+                if (statusCodeResult.StatusCode == StatusCodes.Status200OK)
+                    return Result.Ok;
+            }
+            
+            // have to assume failure
+            return new ProblemException($"IActionResult Error: {actionResult}");
+        }
+        
+        // todo: FromActionResult, FromActionResult<T>
+    }
+    
+    
     extension(Result result)
     {
         /// <summary>

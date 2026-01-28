@@ -15,7 +15,6 @@ public readonly ref struct RefOption<T>
     /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
     /// </summary>
     public static implicit operator bool(in RefOption<T> option) => option._isSome;
-
     /// <summary>
     /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
     /// </summary>
@@ -31,6 +30,7 @@ public readonly ref struct RefOption<T>
     /// </summary>
     public static implicit operator RefOption<T>(None _) => None;
 
+    public static implicit operator RefOption<T>(T value) => Some(value);
 #endregion
 
     public static RefOption<T> None => default;

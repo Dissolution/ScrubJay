@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ScrubJay.Functional.Asp;
 
-partial class AspResultExtensions
+[PublicAPI]
+public static class ResultTEExtensions
 {
     extension<T, E>(Result<T, E> result)
     {

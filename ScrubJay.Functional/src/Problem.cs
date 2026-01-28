@@ -49,10 +49,16 @@ public class Problem : IEnumerable
 
     public Problem() { }
 
-    public Problem(string? details, string? title = null, Exception? exception = null)
-        : this(exception, details, title) { }
-
-    public Problem(Exception? exception, string? details = null, string? title = null)
+    public Problem(string? details)
+        : this(details, null, null) { }
+    
+    public Problem(string? details, string? title)
+        : this(details, title, null) { }
+    
+    public Problem(string? details, Exception? exception)
+        : this(details, null, exception) { }
+    
+    public Problem(string? details, string? title, Exception? exception)
     {
         if (exception is not null)
         {
@@ -75,6 +81,13 @@ public class Problem : IEnumerable
             this.Title = title;
         }
     }
+    
+    public Problem(Exception? exception)
+        : this(null, null, exception) { }
+    
+    public Problem(Exception? exception, string? title)
+        : this(null, title, exception) { }
+    
 
     public void Add(string key, object? value)
     {
@@ -114,5 +127,27 @@ public class Problem : IEnumerable
         }
 
         return builder.ToString();
+    }
+}
+
+[PublicAPI]
+public class ProblemException : Exception
+{
+    public string? Title { get; }
+
+    public ProblemException(Problem problem)
+        : base(problem.Details, problem.Exception)
+    {
+        this.Title = problem.Title;
+        foreach (var kvp in problem.Data)
+        {
+            base.Data.Add(kvp.Key, kvp.Value);
+        }
+    }
+
+    public ProblemException(string? details, string? title = null, Exception? exception = null)
+        : base(details, exception)
+    {
+        this.Title = title;
     }
 }
