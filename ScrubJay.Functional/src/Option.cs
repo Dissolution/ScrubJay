@@ -10,10 +10,25 @@ public static class Option
 {
 #region Constructors
 
+    /// <summary>
+    /// Gets a <see cref="IMPL.None"/> that implicitly converts into any <see cref="Option{T}.None"/>
+    /// </summary>
+    /// <returns></returns>
     public static IMPL.None None() => default;
-    
+
+    /// <summary>
+    /// Gets <see cref="Option{T}.None"/>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static Option<T> None<T>() => default;
-    
+
+    /// <summary>
+    /// Gets <see cref="Option{T}.Some"/>
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static Option<T> Some<T>(T value) => Option<T>.Some(value);
 
     /// <summary>
@@ -59,10 +74,13 @@ public static class Option
     /// <summary>
     /// Extensions on a <c>ref Option&lt;T&gt;</c> that can add/remove/exchange values (similar to rust)
     /// </summary>
-    /// <param name="option"></param>
-    /// <typeparam name="T"></typeparam>
     extension<T>(ref Option<T> option)
     {
+        /// <summary>
+        /// Inserts <paramref name="value"/> into this <see cref="Option{T}"/> and returns what was formerly inside.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public Option<T> Insert(T value)
         {
             if (option.IsSome(out var existingValue))
@@ -77,7 +95,7 @@ public static class Option
             }
         }
 
-        public T GetOrInsert(T value)
+        public T SomeOrInsert(T value)
         {
             if (option.IsSome(out var existingValue))
                 return existingValue;
@@ -85,7 +103,7 @@ public static class Option
             return value;
         }
 
-        public T GetOrInsert(Func<T> valueFactory)
+        public T SomeOrInsert(Func<T> valueFactory)
         {
             if (option.IsSome(out var value))
                 return value;
@@ -138,5 +156,5 @@ public static class Option
         }
     }
 
-    #endregion
+#endregion
 }

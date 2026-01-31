@@ -22,6 +22,7 @@
     <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Universal/">
+    <File Path="ScrubJay.Universal\README.md" />
     <Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
     <Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
   </Folder>

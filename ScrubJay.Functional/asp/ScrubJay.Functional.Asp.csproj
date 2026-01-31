@@ -23,6 +23,7 @@
         <Description>
             ASP helpers for ScrubJay.Functional
         </Description>
+        <Version>0.91.0-alpha</Version>
     </PropertyGroup>
 
 </Project>

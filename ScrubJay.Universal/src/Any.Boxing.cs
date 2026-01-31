@@ -3,6 +3,7 @@
 #if NET9_0_OR_GREATER
 using InlineIL;
 using static InlineIL.IL;
+#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 #endif
 
 namespace ScrubJay.Universal;
@@ -16,15 +17,15 @@ partial class Any
     /// The generic value to box
     /// </param>
     /// <param name="boxed">
-    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into
+    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into.
     /// </param>
     /// <typeparam name="T"></typeparam>
     /// <returns>
-    /// <c>true</c> if <paramref name="value"/> was boxed into <paramref name="boxed"/>,<br/>
-    /// <c>false</c> if it was not
+    /// <c>true</c> if <paramref name="value"/> was boxed,<br/>
+    /// <c>false</c> if it was not.
     /// </returns>
     /// <remarks>
-    /// For non-<c>allows ref struct</c> values, this always succeeds.
+    /// For non-<c>ref struct</c> values, this always succeeds.
     /// </remarks>
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
     {
@@ -36,11 +37,11 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
-    /* store the method here and not in MethodCache<T>
-     * in MethodCache<T>, it would fail compilation for any T : ref struct values
-     * here we can abuse compiler tricks to ensure that only non-ref-struct Ts are ever constructed
+    /* store the FastBox<T> method here and not in MethodCache<T>,
+     * as MethodCache<T> would fail compilation for any T : ref struct values.
+     * Here we can abuse a compiler trick to ensure that only non-ref-struct Ts are ever boxed
      */
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
         where T : allows ref struct // but _never_ will be
@@ -61,12 +62,11 @@ partial class Any
     /// </param>
     /// <typeparam name="T"></typeparam>
     /// <returns>
-    /// <c>true</c> if <paramref name="value"/> was boxed into <paramref name="boxed"/>,<br/>
-    /// <c>false</c> if it was not
+    /// <c>true</c> if <paramref name="value"/> was boxed,<br/>
+    /// <c>false</c> if it was not.
     /// </returns>
     /// <remarks>
-    /// For non-<c>allows ref struct</c> values, this always succeeds.<br/>
-    /// Otherwise, this will always fail.
+    /// For non-<c>ref struct</c> values, this always succeeds; otherwise it always fails.
     /// </remarks>
     public static bool TryBox<T>(T? value, out object? boxed, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct

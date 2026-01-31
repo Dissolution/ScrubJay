@@ -296,11 +296,16 @@ public readonly ref struct RefOption<T>
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return false;
+        return _isSome && Any.Equals<T>(_value, obj);
     }
 
     public override int GetHashCode()
     {
+        if (_isSome)
+        {
+            return Any.GetHashCode<T>(_value);
+        }
+
         return 0;
     }
 

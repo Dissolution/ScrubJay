@@ -369,12 +369,24 @@ public readonly ref struct RefResult<T>
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return false;
+        if (_isOk)
+        {
+            return Any.Equals<T>(_value, obj);
+        }
+        else
+        {
+            return _error!.Equals(obj);
+        }
     }
 
     public override int GetHashCode()
     {
-        return 0;
+        if (_isOk)
+        {
+            return Any.GetHashCode<T>(_value);
+        }
+
+        return _error!.GetHashCode();
     }
 
     public override string ToString()

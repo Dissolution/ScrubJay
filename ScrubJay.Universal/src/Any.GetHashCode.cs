@@ -3,11 +3,20 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Gets a hashcode for a <typeparamref name="T"/> <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> value to hash, may be <c>null</c>.
+    /// </param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode<T>(T? value)
     {
@@ -16,6 +25,11 @@ partial class Any
         return value.GetHashCode();
     }
 
+    /// <summary>
+    /// Gets a hashcode for some <see cref="text"/>.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode(scoped text text)
     {
@@ -51,6 +65,23 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
+    /// <summary>
+    /// Gets a hashcode for a <typeparamref name="T"/> <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> value to hash, may be <c>null</c>.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/> being hashed, <i>may</i> be a <c>ref struct</c>.
+    /// </typeparam>
+    /// <returns>
+    /// An <see cref="int"/> hashcode of the <typeparamref name="T"/> <paramref name="value"/>.
+    /// </returns>
+    /// <remarks>
+    /// This method may not have to exist, as <c>ref struct</c> values cannot currently be stored in a HashSet nor Dictionary.
+    /// But it does to allow for the possibility that more stack-based collections could exist in the future,
+    /// and for maximum compatability with <see cref="object"/>.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct

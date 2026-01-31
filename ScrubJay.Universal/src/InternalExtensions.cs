@@ -1,18 +1,10 @@
-
-
 using System.Reflection;
 using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-internal static class ReflectionExtensions
+internal static class InternalExtensions
 {
-    extension(Type type)
-    {
-        public Type ParentType => type.DeclaringType ?? type.ReflectedType ?? type.Module.GetType();
-    }
-
-
 #if NET9_0_OR_GREATER
     extension(DynamicMethod)
     {
@@ -24,7 +16,7 @@ internal static class ReflectionExtensions
                 callingConvention: CallingConventions.Standard,
                 returnType: returnType,
                 parameterTypes: parameterTypes,
-                m: typeof(ReflectionExtensions).Module,
+                m: typeof(InternalExtensions).Module,
                 skipVisibility: true);
             return dynamicMethod;
         }
@@ -55,7 +47,7 @@ internal static class ReflectionExtensions
         {
             if (type is null)
                 return null;
-            
+
             var methods = type.GetMethods(flags);
             foreach (var method in methods)
             {
@@ -83,7 +75,7 @@ internal static class ReflectionExtensions
 
             return null;
         }
-        
+
         public MethodInfo? FindMethod(
             string name,
             Type returnType,
@@ -91,9 +83,9 @@ internal static class ReflectionExtensions
         {
             if (type is null)
                 return null;
-            
+
             BindingFlags flags;
-        
+
             // Enums
             if (type.IsEnum)
             {
@@ -103,13 +95,13 @@ internal static class ReflectionExtensions
 
             // look for an instance method
             flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        
+
             // enum, ref-like, and value types we constrain
             if (type.IsEnum || type.IsByRefLike || type.IsByRefLike || type.IsValueType)
             {
                 flags |= BindingFlags.DeclaredOnly;
             }
-            
+
             return FindMethod(type, flags, name, returnType, parameterTypes);
         }
     }
@@ -128,7 +120,7 @@ internal static class ReflectionExtensions
                 generator.Emit(OpCodes.Ldarga_S, 0);
             }
             // heap types
-            else 
+            else
             {
                 // load the value directly
                 generator.Emit(OpCodes.Ldarg_0);

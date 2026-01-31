@@ -21,7 +21,9 @@ public static class ProblemDetailsHelper
     {
         _exceptionStatusCodes = new Dictionary<Type, int>
         {
+            [typeof(ArgumentNullException)] = StatusCodes.Status400BadRequest,
             [typeof(ArgumentException)] = StatusCodes.Status400BadRequest,
+            [typeof(InvalidOperationException)] = StatusCodes.Status400BadRequest,
             [typeof(FormatException)] = StatusCodes.Status400BadRequest,
             [typeof(AuthenticationException)] = StatusCodes.Status401Unauthorized,
             [typeof(UnauthorizedAccessException)] = StatusCodes.Status403Forbidden,
@@ -30,7 +32,7 @@ public static class ProblemDetailsHelper
             [typeof(FileNotFoundException)] = StatusCodes.Status404NotFound,
             [typeof(NotSupportedException)] = StatusCodes.Status405MethodNotAllowed,
             [typeof(TimeoutException)] = StatusCodes.Status408RequestTimeout,
-            [typeof(InvalidOperationException)] = StatusCodes.Status409Conflict,
+            
 #if NET8_0_OR_GREATER
             [typeof(OperationCanceledException)] = StatusCodes.Status499ClientClosedRequest,
             [typeof(TaskCanceledException)] = StatusCodes.Status499ClientClosedRequest,
@@ -38,7 +40,7 @@ public static class ProblemDetailsHelper
             [typeof(OperationCanceledException)] = 499,
             [typeof(TaskCanceledException)] = 499,
 #endif
-            [typeof(ArgumentNullException)] = StatusCodes.Status500InternalServerError,
+            
             [typeof(NullReferenceException)] = StatusCodes.Status500InternalServerError,
         };
     }

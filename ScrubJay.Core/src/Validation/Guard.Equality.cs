@@ -55,6 +55,16 @@ partial class Guard
         throw Ex.Arg(actual, $"was not equal to {expected}", actualName);
     }
     
+    public static T IsNotEqual<T>(T actual, T expected,
+        TypeConstraints.AllowsRefStruct<T> _,
+        [CallerArgumentExpression(nameof(actual))] string? actualName = null)
+        where T : allows ref struct
+    {
+        if (!Any.Equals(actual, expected))
+            return actual;
+        throw Ex.Arg(actual, $"was equal to {expected}", actualName);
+    }
+    
     public static T IsEqual<T>(T actual, T expected,
         IEqualityComparer<T>? comparer,
         TypeConstraints.AllowsRefStruct<T> _,
@@ -66,6 +76,19 @@ partial class Guard
         if (comparer.Equals(actual, expected))
             return actual;
         throw Ex.Arg(actual, $"was not equal to {expected} according to {comparer}", actualName);
+    }
+    
+    public static T IsNotEqual<T>(T actual, T expected,
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.AllowsRefStruct<T> _,
+        [CallerArgumentExpression(nameof(actual))] string? actualName = null)
+        where T : allows ref struct
+    {
+        if (comparer is null)
+            return IsNotEqual<T>(actual, expected, _, actualName);
+        if (!comparer.Equals(actual, expected))
+            return actual;
+        throw Ex.Arg(actual, $"was equal to {expected} according to {comparer}", actualName);
     }
 #endif
 }

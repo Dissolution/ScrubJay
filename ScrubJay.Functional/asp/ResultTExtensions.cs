@@ -67,11 +67,11 @@ public static class ResultTExtensions
             {
                 if (statusCodeActionResult.StatusCode == StatusCodes.Status200OK)
                 {
-                    return Result<T>.Ok(value);
+                    return Result<T>.Ok(value!);
                 }
             }
 
-            return Result<T>.FromActionResult(inner);
+            return Result<T>.FromActionResult(inner!);
         }
 
     }

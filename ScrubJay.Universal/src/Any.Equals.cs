@@ -3,15 +3,52 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+// ReSharper disable InvokeAsExtensionMember
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Compares two <typeparamref name="T"/> values and returns a <see cref="bool"/> indicating if they are equal.
+    /// </summary>
+    /// <param name="value">
+    /// The first <typeparamref name="T"/> to equate.
+    /// </param>
+    /// <param name="other">
+    ///The second <typeparamref name="T"/> to equate.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values being equated.
+    /// </typeparam>
+    /// <returns>
+    /// <c>true</c> if <paramref name="value"/> is equal to <paramref name="other"/><br/>
+    /// <c>false</c> if <paramref name="value"/> is not equal to <paramref name="other"/>
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equals<T>(T? value, T? other)
         => EqualityComparer<T>.Default.Equals(value!, other!);
 
+    /// <summary>
+    /// Compares two <typeparamref name="T"/> values with an <see cref="IEqualityComparer{T}"/> and returns a <see cref="bool"/> indicating if they are equal.
+    /// </summary>
+    /// <param name="value">
+    /// The first <typeparamref name="T"/> to equate.
+    /// </param>
+    /// <param name="other">
+    ///The second <typeparamref name="T"/> to equate.
+    /// </param>
+    /// <param name="comparer">
+    /// The <see cref="IEqualityComparer{T}"/> used to determine quality between the values.<br/>
+    /// If <c>null</c>, <see cref="Equals{T}(T,T)"/> will be used.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values being equated.
+    /// </typeparam>
+    /// <returns>
+    /// <c>true</c> if the <paramref name="comparer"/> indicated that <paramref name="value"/> is equal to <paramref name="other"/><br/>
+    /// <c>false</c> if the <paramref name="comparer"/> indicated that <paramref name="value"/> is not equal to <paramref name="other"/>
+    /// </returns>
     public static bool Equals<T>(T? value, T? other, IEqualityComparer<T>? comparer)
     {
         if (comparer is null)

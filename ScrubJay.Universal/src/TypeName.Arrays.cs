@@ -11,6 +11,7 @@ partial class TypeName
         Type? elementType = arrayType.GetElementType();
         Debug.Assert(elementType is not null);
         
+        // if we aren't a nested array, we can just print our ranks and return
         if (!elementType!.IsArray)
         {
             return builder

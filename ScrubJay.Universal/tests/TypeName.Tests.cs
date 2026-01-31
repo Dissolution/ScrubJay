@@ -7,7 +7,7 @@ public class TypeNameTests
     [Fact]
     public void NullWorks()
     {
-        Assert.Equal("null", TypeName.For(null));
+        Assert.Equal("〈null〉", TypeName.For(null));
     }
 
 
@@ -33,7 +33,6 @@ public class TypeNameTests
         (typeof(string), "string"),
         (typeof(object), "object"),
         (typeof(void), "void"),
-        (typeof(Tuple), "()"),
         (typeof(ValueTuple), "()"),
     ];
 
@@ -418,7 +417,7 @@ public class TypeNameTests
 
         public enum InnerEnum
         {
-            Value
+            Value,
         }
     }
 

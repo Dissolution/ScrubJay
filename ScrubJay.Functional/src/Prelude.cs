@@ -3,29 +3,44 @@
 namespace ScrubJay.Functional;
 
 /// <remarks>
-/// To include these methods in a single <c>.cs</c> file, add to its <c>usings</c> section:<br/>
+/// To include these methods in a single <c>.cs</c> file, add to its <c>usings</c> section:
 /// <code>
-/// using static ScrubJay.Functional.Prelude
+/// using static ScrubJay.Functional.Prelude;
 /// </code><br/>
-/// To include them in an entire project, add to its <c>.csproj</c> file:<br/>
+/// To include them in an entire project, add to its <c>.csproj</c> file:
 /// <code>
 /// &lt;ItemGroup&gt;
 ///     &lt;Using Include="ScrubJay.Functional.Prelude" Static="true"/&gt;
 /// &lt;/ItemGroup&gt;
-/// </code><br/>
+/// </code>
 /// </remarks>
 [PublicAPI]
 public static class Prelude
 {
+    /// <summary>
+    /// Returns the <see cref="IMPL.None"/> value.
+    /// </summary>
     public static None None
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => field;
     } = None.Default;
 
+    /// <summary>
+    /// Returns an <see cref="Option{T}.Some"/> containing the given <typeparamref name="T"/> <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Option<T> Some<T>(T value) => Option<T>.Some(value);
 
+    /// <summary>
+    /// Returns an <see cref="Ok{T}"/> that implicitly converts into a <see cref="Result{T}.Ok"/>, <see cref="Result{T,E}.Ok"/>, or <see cref="Option{T}.Some"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Ok<T> Ok<T>(T value)
 #if NET9_0_OR_GREATER
@@ -33,6 +48,12 @@ public static class Prelude
 #endif
         => new Ok<T>(value);
 
+    /// <summary>
+    /// Returns an <see cref="Error{E}"/> that implicitly converts into a <see cref="Result{T,E}.Error"/>.
+    /// </summary>
+    /// <param name="error"></param>
+    /// <typeparam name="E"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Error<E> Error<E>(E error)
 #if NET9_0_OR_GREATER
@@ -40,14 +61,30 @@ public static class Prelude
 #endif
         => new Error<E>(error);
 
+    /// <summary>
+    /// Returns the <see cref="Unit"/> value.
+    /// </summary>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Unit Unit() => default(Unit);
 
+    /// <summary>
+    /// Tries to execute an <see cref="Action"/> and returns a <see cref="Result"/> describing its invocation.
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result Try(Action? action)
     {
         return Result.Try(action);
     }
     
+    /// <summary>
+    /// Tries to execute an <see cref="Func{T}"/> and returns a <see cref="Result{T}"/> describing its invocation.
+    /// </summary>
+    /// <param name="func"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Result<T> Try<T>(Func<T>? func)
     {
         return Result.Try<T>(func);

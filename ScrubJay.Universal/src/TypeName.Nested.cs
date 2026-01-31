@@ -17,7 +17,7 @@ partial class TypeName
         {
             if (p.IsGenericType)
             {
-                renderNesting(p, p.ParentType);
+                renderNesting(p, p.ParentType!);
             }
             else
             {

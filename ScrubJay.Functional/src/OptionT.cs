@@ -53,7 +53,7 @@ public readonly struct Option<T> :
     public static implicit operator bool(Option<T> option) => option._isSome;
     public static implicit operator Option<T>(None _) => None;
     public static implicit operator Option<T>(T value) => Some(value);
-    public static implicit operator Option<T>(Result<T> result) => result.AsOption();
+    public static explicit operator Option<T>(Result<T> result) => result.AsOption();
 
     public static bool operator true(Option<T> option) => option._isSome;
     public static bool operator false(Option<T> option) => !option._isSome;

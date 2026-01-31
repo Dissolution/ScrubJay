@@ -180,7 +180,7 @@ public readonly struct Trit :
         {
             TRUE_VALUE => onTrue.Invoke(),
             FALSE_VALUE => onFalse.Invoke(),
-            _ => onUnknown.Invoke()
+            _ => onUnknown.Invoke(),
         };
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

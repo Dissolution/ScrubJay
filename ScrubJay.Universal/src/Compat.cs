@@ -1,4 +1,6 @@
 #if NETSTANDARD2_0
+/* This file only exists to provide support for several attributes in .net standard 2.0 environments */
+
 
 namespace System.Diagnostics.CodeAnalysis
 {

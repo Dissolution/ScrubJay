@@ -1,3 +1,5 @@
+#pragma warning disable CA1040
+
 using System.Linq.Expressions;
 
 namespace ScrubJay.Destructuring;

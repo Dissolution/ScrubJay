@@ -3,22 +3,53 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+// ReSharper disable InvokeAsExtensionMember
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
     /// <summary>
-    /// Compares two <typeparamref name="T"/> values and returns their relative value.
+    /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="other"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <param name="value">
+    /// The first <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="other">
+    /// The second <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values to compare.
+    /// </typeparam>
+    /// <returns>
+    /// <c>&lt;0</c> if <paramref name="value"/> is less than <paramref name="other"/><br/>
+    /// <c>0</c> if <paramref name="value"/> is equal to <paramref name="other"/><br/>
+    /// <c>&gt;0</c> if <paramref name="value"/> is greater than <paramref name="other"/>
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T? value, T? other)
-        => Comparer<T>.Default.Compare(value!, other!);
+    public static int Compare<T>(T? value, T? other) => Comparer<T>.Default.Compare(value!, other!);
 
+    /// <summary>
+    /// Compares two <typeparamref name="T"/> values with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="value">
+    /// The first <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="other">
+    /// The second <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="comparer">
+    /// The <see cref="IComparer{T}"/> that determines the relation between <paramref name="value"/> and <paramref name="other"/>.<br/>
+    /// If <c>null</c>, <see cref="Compare{T}(T,T)"/> will be used.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values to compare.
+    /// </typeparam>
+    /// <returns>
+    /// <c>&lt;0</c> if <paramref name="comparer"/> indicates that <paramref name="value"/> is less than <paramref name="other"/><br/>
+    /// <c>0</c> if <paramref name="comparer"/> indicates that<paramref name="value"/> is equal to <paramref name="other"/><br/>
+    /// <c>&gt;0</c> if <paramref name="comparer"/> indicates that<paramref name="value"/> is greater than <paramref name="other"/>
+    /// </returns>
     public static int Compare<T>(T? value, T? other, IComparer<T>? comparer)
     {
         if (comparer is null)
@@ -26,6 +57,14 @@ partial class Any
         return comparer.Compare(value!, other!);
     }
 
+    /// <summary>
+    /// Compares two <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;T&gt;s</see> and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(scoped ReadOnlySpan<T> left, scoped ReadOnlySpan<T> right)
 #if !NET10_0_OR_GREATER
         where T : IComparable<T>
@@ -34,6 +73,14 @@ partial class Any
         return MemoryExtensions.SequenceCompareTo(left, right);
     }
 
+    /// <summary>
+    /// Compares two <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;T&gt;s</see> with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <param name="comparer"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static int Compare<T>(
         scoped ReadOnlySpan<T> left,
         scoped ReadOnlySpan<T> right,
@@ -58,11 +105,28 @@ partial class Any
 #endif
     }
 
+    /// <summary>
+    /// Compares two <see cref="text"/> values and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns>
+    /// <c>&lt;0</c> if <paramref name="left"/> is less than <paramref name="right"/><br/>
+    /// <c>0</c> if <paramref name="left"/> is equal to <paramref name="right"/><br/>
+    /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
+    /// </returns>
     public static int Compare(scoped text left, scoped text right)
     {
         return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
     }
     
+    /// <summary>
+    /// Compares two <see cref="text"/> values with a <see cref="StringComparison"/> and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <param name="comparison"></param>
+    /// <returns></returns>
     public static int Compare(scoped text left, scoped text right, StringComparison comparison)
     {
         return MemoryExtensions.CompareTo(left, right, comparison);

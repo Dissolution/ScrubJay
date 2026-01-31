@@ -14,13 +14,12 @@
             CA1000;         <!-- Do not declare static memebrs on generic types -->
             CA2225;         <!-- Provide alternative methods for operators -->
             CA1710; CA1805; CA1051; CA1815; CA1033; CA1725; CA1810; CA1307; CA1031; CA1305; CA1720;
-            
+
         </NoWarn>
     </PropertyGroup>
 
     <!-- NuGet -->
     <PropertyGroup>
-        <Version>0.90.3-alpha</Version>
         <Authors>Dissolution</Authors>
         <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
@@ -37,7 +36,7 @@
         <!-- Set common output path for Packages -->
         <PackageOutputPath>..\..\packages\</PackageOutputPath>
     </PropertyGroup>
-    
+
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <None Include="..\README.md" Pack="true" PackagePath="\"/>
         <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
@@ -51,6 +50,7 @@
         <Using Include="System.Diagnostics.CodeAnalysis"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Text"/>
         <Using Include="System.Numerics"/>
 
         <!-- Aliases -->

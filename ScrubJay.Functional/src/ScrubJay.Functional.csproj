@@ -17,6 +17,7 @@
         <Description>
             Functional types and extensions for C#.
         </Description>
+        <Version>0.91.0-alpha</Version>
     </PropertyGroup>
 
     <!-- Global Usings -->

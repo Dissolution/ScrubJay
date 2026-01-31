@@ -1,3 +1,6 @@
+using System.Numerics;
+using System.Runtime.InteropServices;
+
 namespace ScrubJay.Universal;
 
 /// <summary>

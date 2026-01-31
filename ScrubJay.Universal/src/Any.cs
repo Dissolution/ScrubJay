@@ -8,6 +8,10 @@ namespace ScrubJay.Universal;
 public static partial class Any { }
 
 #if NET9_0_OR_GREATER
+/// <summary>
+/// Internal helper utility that only exists in .net9.0+ that stores emitted delegates that work on ref structs
+/// </summary>
+/// <typeparam name="T"></typeparam>
 [PublicAPI]
 internal static partial class MethodCache<T>
     where T : allows ref struct { }

@@ -1,5 +1,4 @@
 using System.Reflection;
-using ScrubJay.Destructuring;
 using ScrubJay.Reflection;
 
 namespace ScrubJay.Extensions;
@@ -22,7 +21,7 @@ public static class ReflectionExtensions
                     EventInfo eventInfo =>
                         (eventInfo.AddMethod ?? eventInfo.RemoveMethod ?? eventInfo.RaiseMethod)?.IsGenericMethod ==
                         true,
-                    _ => false
+                    _ => false,
                 };
             }
         }

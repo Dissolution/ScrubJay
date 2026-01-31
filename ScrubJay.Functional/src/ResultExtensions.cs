@@ -1,5 +1,10 @@
+using System.Globalization;
+
 namespace ScrubJay.Functional;
 
+/// <summary>
+/// Extensions on <see cref="Result"/>
+/// </summary>
 [PublicAPI]
 public static class ResultExtensions
 {
@@ -16,7 +21,7 @@ public static class ResultExtensions
         {
             if (T.TryParse(text, provider, out var value))
                 return value;
-            return new ArgumentException(nameof(text), $"Could not parse '{text}' to a {typeof(T)} value");
+            return new ArgumentException($"Could not parse '{text}' to a {TypeName.For<T>()} value", nameof(text));
         }
 
         public static Result<T> Parse<T>(
@@ -26,7 +31,29 @@ public static class ResultExtensions
         {
             if (T.TryParse(str, provider, out var value))
                 return value;
-            return new ArgumentException(nameof(str), $"Could not parse \"{str}\" to a {typeof(T)} value");
+            return new ArgumentException($"Could not parse \"{str}\" to a {TypeName.For<T>()} value", nameof(str));
+        }
+        
+        public static Result<N> Parse<N>(
+            scoped ReadOnlySpan<char> text,
+            NumberStyles numberStyle = NumberStyles.Number,
+            IFormatProvider? provider = null)
+            where N : INumberBase<N>
+        {
+            if (N.TryParse(text, numberStyle, provider, out var value))
+                return value;
+            return new ArgumentException($"Could not parse '{text}' to a {TypeName.For<N>()} number", nameof(text));
+        }
+        
+        public static Result<N> Parse<N>(
+            string? str,
+            NumberStyles numberStyle = NumberStyles.Number,
+            IFormatProvider? provider = null)
+            where N : INumberBase<N>
+        {
+            if (N.TryParse(str, numberStyle, provider, out var value))
+                return value;
+            return new ArgumentException($"Could not parse \"{str}\" to a {TypeName.For<N>()} number", nameof(str));
         }
 #endif
 

@@ -57,6 +57,16 @@ partial class Validate
         return Ex.Arg(actual, $"was not equal to {expected}", actualName);
     }
     
+    public static RefResult<T> IsNotEqual<T>(T actual, T expected,
+        TypeConstraints.AllowsRefStruct<T> _,
+        [CallerArgumentExpression(nameof(actual))] string? actualName = null)
+        where T : allows ref struct
+    {
+        if (!Any.Equals(actual, expected))
+            return actual;
+        return Ex.Arg(actual, $"was equal to {expected}", actualName);
+    }
+    
     public static RefResult<T> IsEqual<T>(T actual, T expected,
         IEqualityComparer<T>? comparer,
         TypeConstraints.AllowsRefStruct<T> _,
@@ -68,6 +78,19 @@ partial class Validate
         if (comparer.Equals(actual, expected))
             return actual;
         return Ex.Arg(actual, $"was not equal to {expected} according to {comparer}", actualName);
+    }
+    
+    public static RefResult<T> IsNotEqual<T>(T actual, T expected,
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.AllowsRefStruct<T> _,
+        [CallerArgumentExpression(nameof(actual))] string? actualName = null)
+        where T : allows ref struct
+    {
+        if (comparer is null)
+            return IsNotEqual<T>(actual, expected, _, actualName);
+        if (!comparer.Equals(actual, expected))
+            return actual;
+        return Ex.Arg(actual, $"was equal to {expected} according to {comparer}", actualName);
     }
 #endif
 }

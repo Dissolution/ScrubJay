@@ -1,55 +1,62 @@
-// ReSharper disable SpecifyACultureInStringConversionExplicitly
-
 namespace ScrubJay.Universal.Tests;
 
-public class AnyToStringTests
+public class Any_ToString_Tests
 {
-    [Fact]
-    public void DecimalsWork()
+    [Theory]
+    [InlineData(int.MinValue)]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(int.MaxValue)]
+    public void CanToStringInt(int i32)
     {
-        decimal m;
-        Random rand = new Random();
-
-        for (var i = 0; i < 100; i++)
-        {
-            m = (rand.Next(1000) + (rand.Next(1000) / 1000m));
-            string toString = m.ToString();
-            string anyToString = Any.ToString<decimal>(m);
-            Assert.Equal(toString, anyToString);
-        }
-    }
-
-    public static TheoryData<DateTime> DateTimes { get; } = new();
-
-    static AnyToStringTests()
-    {
-        Random rand = new Random();
-
-        while (DateTimes.Count < 100)
-        {
-            long ticks = rand.NextInt64();
-            if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
-                continue;
-            DateTime datetime = new DateTime(ticks);
-            DateTimes.Add(datetime);
-        }
+        string str = Any.ToString<int>(i32);
+        Assert.NotNull(str);
+        Assert.Equal(i32.ToString(), str);
     }
 
     [Theory]
-    [MemberData(nameof(DateTimes))]
-    public void DateTimesWork(DateTime dateTime)
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("\0")]
+    [InlineData("TRJ-147")]
+    public void CanToStringString(string? str)
     {
-        string toString = dateTime.ToString();
-        string anyToString = Any.ToString<DateTime>(dateTime);
-        Assert.Equal(toString, anyToString);
+        string anystr = Any.ToString<string>(str);
+        Assert.NotNull(anystr);
+        Assert.Equal(str ?? string.Empty, anystr);
+    }
+
+    [Theory]
+    [InlineData('\0')]
+    [InlineData(char.MaxValue)]
+    [InlineData((char)0xD800)]
+    public void CanToStringChar(char ch)
+    {
+        string str = Any.ToString<char>(ch);
+        Assert.NotNull(str);
+        Assert.True(str.Length == 1);
+        Assert.Equal(ch, str[0]);
     }
 
     [Fact]
-    public void TestRefStructWorks()
+    public void CanToStringText()
     {
-        TestRefStruct test = new TestRefStruct(147, "TRJ");
-        string toString = test.ToString();
-        string anyToString = Any.ToString<TestRefStruct>(test);
-        Assert.Equal(toString, anyToString);
+        ReadOnlySpan<char> text;
+        string str;
+
+        {
+            text = default;
+            str = Any.ToString<ReadOnlySpan<char>>(text);
+            Assert.NotNull(str);
+            Assert.True(str.Length == 0);
+        }
+       
+        {
+            text = "TRJ".AsSpan();
+            str = Any.ToString<ReadOnlySpan<char>>(text);
+            Assert.NotNull(str);
+            Assert.Equal("TRJ", str);
+        }
     }
 }

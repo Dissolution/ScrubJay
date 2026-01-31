@@ -35,7 +35,9 @@ partial class Destructure
             {
                 var viz = member.Visibility;
                 var flags = FlagsEnumExtensions.GetFlags<Visibility>(viz);
+#pragma warning disable CA1308
                 builder.Delimit(' ', flags, (tb, flag) => tb.Append(flag.ToString().ToLowerInvariant()));
+#pragma warning restore CA1308
                 appended = true;
             }
             

@@ -1,14 +1,13 @@
 ﻿using System.Linq.Expressions;
-using System.Reflection;
-using ConsoleSandbox;
 using ScrubJay.Destructuring;
 using ScrubJay.Universal;
 
-int a = 147;
-string b = "TRJ";
-
-
-var str = Util.Teardown((Guid g) => g.ToString() + b + "ABC");
+var t = typeof(IList<int>);
+var s = t.ToString();
+var n = t.Name;
+var fn = t.FullName;
+var aqn = t.AssemblyQualifiedName;
+var typename = TypeName.For(t);
 
 Debugger.Break();
 

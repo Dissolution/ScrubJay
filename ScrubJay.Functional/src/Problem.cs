@@ -14,6 +14,7 @@ public class Problem : IEnumerable
 {
     public static implicit operator Problem(Exception exception) => new Problem(exception);
 
+
     private Dictionary<string, object?>? _data;
 
     /// <summary>
@@ -51,13 +52,13 @@ public class Problem : IEnumerable
 
     public Problem(string? details)
         : this(details, null, null) { }
-    
+
     public Problem(string? details, string? title)
         : this(details, title, null) { }
-    
+
     public Problem(string? details, Exception? exception)
         : this(details, null, exception) { }
-    
+
     public Problem(string? details, string? title, Exception? exception)
     {
         if (exception is not null)
@@ -81,13 +82,13 @@ public class Problem : IEnumerable
             this.Title = title;
         }
     }
-    
+
     public Problem(Exception? exception)
         : this(null, null, exception) { }
-    
+
     public Problem(Exception? exception, string? title)
         : this(null, title, exception) { }
-    
+
 
     public void Add(string key, object? value)
     {
@@ -101,7 +102,7 @@ public class Problem : IEnumerable
 
     public override string ToString()
     {
-        StringBuilder builder = new();
+        StringBuilder builder = StringBuilder.Rent();
         builder.AppendLine("Problem:")
             .Append("    Title: ").Append(Title).AppendLine()
             .Append("  Details: ").Append(Details).AppendLine();
@@ -126,7 +127,7 @@ public class Problem : IEnumerable
             }
         }
 
-        return builder.ToString();
+        return builder.ToStringAndReturn();
     }
 }
 

@@ -1,52 +1,7 @@
-#if NET8_0_OR_GREATER
-using System.Collections.Frozen;
-#endif
-
 namespace ScrubJay.Universal;
 
 partial class TypeName
 {
-#if NET8_0_OR_GREATER
-    private static readonly FrozenSet<Type> _tupleTypeDefinitions =
-#else
-    private static readonly HashSet<Type> _tupleTypeDefinitions =
-#endif
-            new HashSet<Type>
-                {
-                    typeof(ValueTuple<>),
-                    typeof(ValueTuple<,>),
-                    typeof(ValueTuple<,,>),
-                    typeof(ValueTuple<,,,>),
-                    typeof(ValueTuple<,,,,>),
-                    typeof(ValueTuple<,,,,,>),
-                    typeof(ValueTuple<,,,,,,>),
-                    typeof(ValueTuple<,,,,,,,>),
-                    typeof(Tuple<>),
-                    typeof(Tuple<,>),
-                    typeof(Tuple<,,>),
-                    typeof(Tuple<,,,>),
-                    typeof(Tuple<,,,,>),
-                    typeof(Tuple<,,,,,>),
-                    typeof(Tuple<,,,,,,>),
-                    typeof(Tuple<,,,,,,,>),
-                }
-#if NET8_0_OR_GREATER
-                .ToFrozenSet()
-#endif
-        ;
-  
-    internal static bool IsGenericTuple(Type type, Type? genericTypeDefinition = null)
-    {
-        if (genericTypeDefinition is null)
-        {
-            if (!type.IsGenericType) 
-                return false;
-            genericTypeDefinition = type.GetGenericTypeDefinition();
-        }
-
-        return _tupleTypeDefinitions.Contains(genericTypeDefinition);
-    }
-    
     internal static void WriteTuple(
         StringBuilder builder, 
         Type type,
@@ -80,7 +35,7 @@ partial class TypeName
 
         static void checkedAppend(StringBuilder sb, Type t)
         {
-            if (!IsGenericTuple(t))
+            if (!t.IsTuple)
             {
                 sb.AppendTypeName(t);
             }

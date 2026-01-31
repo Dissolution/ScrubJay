@@ -8,6 +8,12 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Returns a <see cref="string"/> representation of a <typeparamref name="T"/> <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToString<T>(T? value)
     {

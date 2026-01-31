@@ -8,6 +8,13 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Determine if a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="other"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static bool Equals<T>(T? value, object? other)
     {
         if (value is null)

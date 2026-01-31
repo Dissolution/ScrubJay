@@ -59,7 +59,7 @@ public sealed class ArrayEnumerator<T> : IEnumerator<T>, IEnumerator
         {
             +1 => _minIndex - 1,
             -1 => _maxIndex + 1,
-            _ => throw new ArgumentOutOfRangeException(nameof(step), step, "Step must be +1 or -1")
+            _ => throw new ArgumentOutOfRangeException(nameof(step), step, "Step must be +1 or -1"),
         };
     }
 

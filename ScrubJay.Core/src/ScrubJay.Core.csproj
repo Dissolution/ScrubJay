@@ -42,6 +42,7 @@
         <Description>
             The core ScrubJay library: common code used in all ScrubJay solutions.
         </Description>
+        <Version>0.91.0-alpha</Version>
     </PropertyGroup>
 
     <!-- Expose our internals to Benchmarks, Test, and downstream ScrubJay libraries -->
