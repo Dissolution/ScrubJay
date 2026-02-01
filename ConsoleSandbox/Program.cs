@@ -1,21 +1,21 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using ConsoleSandbox;
 using ScrubJay.Destructuring;
+using ScrubJay.Reflection;
 using ScrubJay.Universal;
 
-var t = typeof(IList<int>);
-var s = t.ToString();
-var n = t.Name;
-var fn = t.FullName;
-var aqn = t.AssemblyQualifiedName;
-var typename = TypeName.For(t);
 
 Debugger.Break();
-
 
 return;
 
 namespace ConsoleSandbox
 {
+    [return: NotNullIfNotNull(nameof(value))]
+    public delegate T? CheckNotNull<T>([AllowNull, NotNull] T value);
+
+    
     static class Util
     {
         public static string Teardown(Expression? expression)

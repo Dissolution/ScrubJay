@@ -204,4 +204,14 @@ public static class ReflectionExtensions
             return Attribute.GetCustomAttributes(member, inherit);
         }
     }
+
+    extension(ParameterInfo? parameter)
+    {
+        public Attribute[] GetAttributes(bool inherit = true)
+        {
+            if (parameter is null)
+                return [];
+            return Attribute.GetCustomAttributes(parameter, inherit);
+        }
+    }
 }

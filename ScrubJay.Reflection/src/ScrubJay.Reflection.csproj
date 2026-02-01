@@ -19,6 +19,8 @@
     <ItemGroup>
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
+        
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
     </ItemGroup>
     
     <!-- NuGet Packages -->
@@ -51,5 +53,11 @@
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Core\src\ScrubJay.Core.csproj" />
+      <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
+      <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
     </ItemGroup>
 </Project>
