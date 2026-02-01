@@ -180,7 +180,7 @@ public ref struct InterpolatedTextBuilder
     {
         if (_builder is null)
         {
-            _buffer.AddMany(value.Stringify().AsSpan());
+            _buffer.AddMany(Any.ToString<T>(value));
         }
         else
         {

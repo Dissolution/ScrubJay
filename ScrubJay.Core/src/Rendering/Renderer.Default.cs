@@ -51,8 +51,8 @@ partial class Renderer
         }
 
         Debugger.Break();
-        // we can .ToString anything with Stringify
-        builder.Write(value.Stringify());
+        // we can .ToString anything
+        builder.Write(Any.ToString<T>(value));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -61,7 +61,7 @@ partial class Renderer
         where T : allows ref struct
 #endif
     {
-        // we can .ToString anything with Stringify
-        builder.Write(value.Stringify());
+        // we can .ToString anything
+        builder.Write(Any.ToString<T>(value));
     }
 }

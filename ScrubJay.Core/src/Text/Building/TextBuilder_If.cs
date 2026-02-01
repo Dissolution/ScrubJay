@@ -71,7 +71,7 @@ partial class TextBuilder
     }
 
 
-    public TextBuilder If(bool condition, txt trueText = default, txt falseText = default)
+    public TextBuilder If(bool condition, scoped text trueText = default, scoped text falseText = default)
     {
         if (condition)
         {

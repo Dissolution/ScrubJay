@@ -41,14 +41,7 @@ partial class TextBuilder
             return this;
         }
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public TextBuilder Append(scoped txt text)
-    {
-        Write((text)text);
-        return this;
-    }
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TextBuilder Append<T>(T? value)
     {
@@ -63,7 +56,7 @@ partial class TextBuilder
     public TextBuilder Append<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        Write(value.Stringify());
+        Write(Any.ToString<T>(value));
         return this;
     }
 #endif

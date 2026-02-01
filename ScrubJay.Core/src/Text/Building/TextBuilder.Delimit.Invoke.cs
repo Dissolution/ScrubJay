@@ -225,7 +225,45 @@ partial class TextBuilder
 
 #region Values: SpanSplitIterator
 
-    public TextBuilder Delimit<T>(scoped txt delimiter, SpanSplitIterator<T> iterator, Action<TextBuilder, Segment<T>>? build)
+    public TextBuilder Delimit<T>(char delimiter, SpanSplitIterator<T> iterator, Action<TextBuilder, Segment<T>>? build)
+        where T : IEquatable<T>
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit<T>(scoped text delimiter, SpanSplitIterator<T> iterator, Action<TextBuilder, Segment<T>>? build)
+        where T : IEquatable<T>
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit<T>(string? delimiter, SpanSplitIterator<T> iterator, Action<TextBuilder, Segment<T>>? build)
         where T : IEquatable<T>
     {
         if (build is not null)
@@ -268,7 +306,45 @@ partial class TextBuilder
 
 #region Values: SpanSplitEqualityIterator
 
-    public TextBuilder Delimit<T>(scoped txt delimiter, SpanSplitEqualityIterator<T> iterator,
+    public TextBuilder Delimit<T>(char delimiter, SpanSplitEqualityIterator<T> iterator,
+        Action<TextBuilder, Segment<T>>? build)
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit<T>(scoped text delimiter, SpanSplitEqualityIterator<T> iterator,
+        Action<TextBuilder, Segment<T>>? build)
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit<T>(string? delimiter, SpanSplitEqualityIterator<T> iterator,
         Action<TextBuilder, Segment<T>>? build)
     {
         if (build is not null)
@@ -311,7 +387,43 @@ partial class TextBuilder
 
 #region Values: TextSplitIterator
 
-    public TextBuilder Delimit(scoped txt delimiter, TextSplitIterator iterator, Action<TextBuilder, Segment<char>>? build)
+    public TextBuilder Delimit(char delimiter, TextSplitIterator iterator, Action<TextBuilder, Segment<char>>? build)
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit(scoped text delimiter, TextSplitIterator iterator, Action<TextBuilder, Segment<char>>? build)
+    {
+        if (build is not null)
+        {
+            if (iterator.TryMoveNext(out var segment))
+            {
+                build(this, segment);
+                while (iterator.TryMoveNext(out segment))
+                {
+                    Write(delimiter);
+                    build(this, segment);
+                }
+            }
+        }
+
+        return this;
+    }
+    
+    public TextBuilder Delimit(string? delimiter, TextSplitIterator iterator, Action<TextBuilder, Segment<char>>? build)
     {
         if (build is not null)
         {

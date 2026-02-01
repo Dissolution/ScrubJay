@@ -177,11 +177,5 @@ public static class TypeExtensions
 #endif
 #pragma warning disable CA2263
             => Implements(type, typeof(T));
-
-        public bool IsStatic
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => type is { IsAbstract: true, IsSealed: true };
-        }
     }
 }
