@@ -26,7 +26,7 @@ public static class ReflectionExtensions
             }
         }
         
-        public Type? OwningType
+        public Type? ParentType
         {
             get
             {
@@ -151,7 +151,7 @@ public static class ReflectionExtensions
 
                         if (type.IsNested)
                         {
-                            viz.AddFlag(type.OwningType.Visibility);
+                            viz.AddFlag(type.ParentType.Visibility);
 
                             if (type.IsNestedPrivate)
                             {

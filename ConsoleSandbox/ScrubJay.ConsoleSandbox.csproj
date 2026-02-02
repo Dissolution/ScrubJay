@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Polyfill" Version="9.7.3">
+      <PackageReference Include="Polyfill" Version="9.8.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

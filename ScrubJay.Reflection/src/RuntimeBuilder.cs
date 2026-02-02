@@ -4,6 +4,7 @@ namespace ScrubJay.Reflection;
 public static class RuntimeBuilder
 {
     public static AssemblyBuilder Assembly { get; }
+    
     public static ModuleBuilder Module { get; }
 
     static RuntimeBuilder()

@@ -60,7 +60,7 @@ partial class Destructure
                 }
                 else if (member is ConstructorInfo ctor)
                 {
-                    builder.DestructMember(ctor.OwningType, options);
+                    builder.DestructMember(ctor.ParentType, options);
                 }
                 else if (member is MethodInfo method)
                 {

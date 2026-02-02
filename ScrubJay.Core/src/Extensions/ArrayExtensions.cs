@@ -10,6 +10,17 @@ public static class ArrayExtensions
     {
         public Type? ElementType => array?.GetType().GetElementType();
     }
+
+    extension<T>(T[]? array)
+    {
+        public bool Contains(T item)
+        {
+            if (array is null) return false;
+            return Array.IndexOf<T>(array, item) >= 0;
+        }
+    }
+    
+    
     
     
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -75,6 +86,8 @@ public static class ArrayExtensions
     public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this T[]? array)
         => array is null || (array.Length == 0);
 
+    
+    
 #if NETFRAMEWORK || NETSTANDARD2_0
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T[] Slice<T>(this T[] array, int start) => array.AsSpan(start).ToArray();

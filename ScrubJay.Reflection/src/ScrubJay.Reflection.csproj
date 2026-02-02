@@ -19,8 +19,18 @@
     <ItemGroup>
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
-        
+
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Extensions"/>
+        <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Building"/>
+        <Using Include="ScrubJay.Reflection.Extensions"/>
+        <Using Include="ScrubJay.Validation"/>
+        <Using Include="ScrubJay.Comparison"/>
+        <Using Include="ScrubJay.Memory"/>
+        <Using Include="ScrubJay.Parsing"/>
+        <Using Include="ScrubJay.Rendering"/>
     </ItemGroup>
     
     <!-- NuGet Packages -->
@@ -32,9 +42,7 @@
         <PackageReference Include="InlineIL.Fody" Version="1.10.1">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Polyfill" Version="9.7.3">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     </ItemGroup>
     
     <!-- .NetStandard and .NetFramework require extra packages -->

@@ -34,7 +34,7 @@ partial class Renderer
 
         if (value is Type type)
         {
-            TypeRenderer.Default.RenderTo(type, builder);
+            builder.Write(TypeName.For(type));
             return;
         }
 
@@ -50,7 +50,7 @@ partial class Renderer
             return;
         }
 
-        Debugger.Break();
+        //Debugger.Break();
         // we can .ToString anything
         builder.Write(Any.ToString<T>(value));
     }

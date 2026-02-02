@@ -45,7 +45,6 @@ public static partial class Renderer
         Register<object>(RenderObjectTo);
 
         Register(new ExceptionRenderer());
-        Register(new TypeRenderer());
         Register(new MethodRenderer());
         Register(new ParameterRenderer());
     }
