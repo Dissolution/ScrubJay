@@ -1,4 +1,6 @@
-﻿#if NET7_0_OR_GREATER
+﻿
+
+#if NET7_0_OR_GREATER
 using ScrubJay.Parsing;
 #endif
 
@@ -181,8 +183,8 @@ public readonly struct Pair<K, V> :
 
     public override string ToString() => $"({Key}, {Value})";
 
-    public void RenderTo(TextBuilder builder)
+    public TextBuilder RenderTo(TextBuilder builder)
     {
-        builder.Append($"({Key:@}, {Value:@})");
+        return builder.Append($"({Key:@}, {Value:@})");
     }
 }

@@ -60,17 +60,17 @@ public ref struct DeterministicHasher
     private const uint START_HASH = SEED + PRIME5;
 
     /// <summary>
-    /// The seed for this Hasher
+    /// The seed for the DeterministicHasher
     /// </summary>
-    private const uint SEED = 0xDEADBEEFU;
+    private const uint SEED = 0x0C0FFEE0U;
 
     /// <summary>
-    /// The current hashcode for no value
+    /// The hashcode for no value(s)
     /// </summary>
     public static int EmptyHash { get; }
 
     /// <summary>
-    /// The current hashcode for <c>null</c>
+    /// The hashcode for <c>null</c>
     /// </summary>
     public static int NullHash { get; }
 
@@ -139,6 +139,8 @@ public ref struct DeterministicHasher
 
     private uint _length;
 
+    public void Add(bool boolean) => Add(boolean ? 1U : 0U);
+    
     public void Add(byte u8) => Add((uint)u8);
 
     public void Add(sbyte i8) => Add((uint)i8);
@@ -201,7 +203,7 @@ public ref struct DeterministicHasher
 
     public void Add(scoped text text)
     {
-        Add(MemoryMarshal.Cast<char, byte>(text));
+        AddMany(MemoryMarshal.Cast<char, byte>(text));
     }
 
     public void Add(string? str)
@@ -212,7 +214,7 @@ public ref struct DeterministicHasher
         }
         else
         {
-            Add(MemoryMarshal.Cast<char, byte>(str.AsSpan()));
+            AddMany(MemoryMarshal.Cast<char, byte>(str.AsSpan()));
         }
     }
 
@@ -224,7 +226,7 @@ public ref struct DeterministicHasher
         Span<byte> buffer = stackalloc byte[16];
         guid.TryWriteBytes(buffer);
 #endif
-        Add(buffer);
+        AddMany(buffer);
     }
 
     public void Add(TimeSpan timeSpan)
@@ -238,7 +240,13 @@ public ref struct DeterministicHasher
         AddUnmanaged(dateTime.Kind);
     }
 
-    public void Add(scoped ReadOnlySpan<byte> bytes)
+    public void Add(DateTimeOffset dateTimeOffset)
+    {
+        Add(dateTimeOffset.Ticks);
+        Add(dateTimeOffset.Offset);
+    }
+    
+    public void AddMany(scoped ReadOnlySpan<byte> bytes)
     {
         var leftoverBytes = bytes.Length % sizeof(uint);
 
@@ -270,10 +278,10 @@ public ref struct DeterministicHasher
         }
     }
 
-    public void Add<U>(scoped ReadOnlySpan<U> values)
+    public void AddMany<U>(scoped ReadOnlySpan<U> values)
         where U : unmanaged
     {
-        Add(MemoryMarshal.Cast<U, byte>(values));
+        AddMany(MemoryMarshal.Cast<U, byte>(values));
     }
 
     public void AddNull()
@@ -281,6 +289,18 @@ public ref struct DeterministicHasher
         Add(0);
     }
 
+    public void AddEnum<E>(E @enum)
+        where E : struct, Enum
+    {
+        int size = Notsafe.SizeOf<E>();
+        ReadOnlySpan<byte> bytes;
+        unsafe
+        {
+            bytes = new(Notsafe.InAsVoidPtr<E>(in @enum), size);
+        }
+        AddMany(bytes);
+    }
+    
     public void AddUnmanaged<U>(U value)
         where U : unmanaged
     {
@@ -291,7 +311,7 @@ public ref struct DeterministicHasher
             span = new ReadOnlySpan<byte>(Notsafe.InAsVoidPtr<U>(in value), sizeof(U));
         }
 
-        Add(span);
+        AddMany(span);
     }
 
     /// <summary>
@@ -349,6 +369,6 @@ public ref struct DeterministicHasher
 
     public override readonly string ToString()
     {
-        return $"{nameof(DeterministicHasher)} #{ToHashCode():X}";
+        return $"{nameof(DeterministicHasher)} current hash: #{ToHashCode():X}";
     }
 }

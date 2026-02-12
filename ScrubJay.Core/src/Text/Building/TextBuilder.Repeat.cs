@@ -146,13 +146,13 @@ public partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder Repeat<T>(int count, T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public TextBuilder Repeat<T>(int count, T value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (count > 0)
         {
             int start = _position;
-            Format<T>(value, format);
+            Format<T>(value, format, _);
             int pos = _position;
             Span<char> written = _chars.AsSpan(start, pos - start);
             return Repeat(count - 1, written);

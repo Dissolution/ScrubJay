@@ -1,5 +1,7 @@
 
 
+
+
 namespace ScrubJay.Validation;
 
 partial class Ex

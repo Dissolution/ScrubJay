@@ -1,4 +1,5 @@
 using InlineIL;
+
 using static InlineIL.IL;
 // ReSharper disable MergeCastWithTypeCheck
 
@@ -43,11 +44,11 @@ partial class TextBuilder
     {
         if (format.Equate('@'))
         {
-            Renderer.RenderTo<T>(value, this);
+            return this.Render(value);
         }
         else if (format.Equate("@T"))
         {
-            Renderer.RenderTo<Type>(Type.GetType<T>(value), this);
+            return this.Render(Any.GetType(value));
         }
         else if (value is IFormattable)
         {
@@ -82,11 +83,11 @@ partial class TextBuilder
     {
         if (format.Equate('@'))
         {
-            Renderer.RenderTo<T>(value, this);
+            return this.Render(value);
         }
         else if (format.Equate("@T"))
         {
-            Renderer.RenderTo<Type>(Type.GetType<T>(value), this);
+            return this.Render(Any.GetType(value));
         }
         else if (value is IFormattable)
         {
@@ -123,7 +124,7 @@ partial class TextBuilder
     {
         if (format == '@')
         {
-            return Render<T>(value);
+            return this.Render<T>(value);
         }
 
         return Format<T>(value, format.AsString());
@@ -148,12 +149,12 @@ partial class TextBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder Format<T>(T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public TextBuilder Format<T>(T value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (format == '@')
         {
-            return Render<T>(value);
+            return this.Render<T>(value, _);
         }
 
         if (typeof(T).IsRef)
@@ -181,9 +182,9 @@ partial class TextBuilder
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public TextBuilder FormatLine<T>(T? value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public TextBuilder FormatLine<T>(T value, char format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
-        => Format<T>(value, format).NewLine();
+        => Format<T>(value, format, _).NewLine();
 #endif
 
 #endregion /FormatLine

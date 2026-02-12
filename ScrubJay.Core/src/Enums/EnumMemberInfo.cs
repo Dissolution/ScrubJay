@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 
+
 namespace ScrubJay.Enums;
 
 [PublicAPI]
@@ -33,63 +34,48 @@ public abstract class EnumMemberInfo :
         }
     }
 
-    public static EnumMemberInfo? For(Enum @enum)
-    {
-        return EnumInfo.For(@enum).GetMemberInfo(@enum);
-    }
-
-    public static EnumMemberInfo<E>? For<E>(E @enum)
-        where E : struct, Enum
-    {
-        return EnumInfo.For<E>().GetMemberInfo(@enum);
-    }
 
     private readonly HashSet<string> _aliases = [];
-    private readonly string _display;
+    private readonly string _render;
 
-    public EnumInfo EnumInfo { get; }
+    public EnumTypeInfo EnumTypeInfo { get; }
     public Attribute[] Attributes { get; }
     public string Name { get; }
-    public string Display => _display;
+    public string Description => _render;
     public IReadOnlyCollection<string> Aliases => _aliases;
     public object Member { get; }
     public long I64Value { get; }
 
-    protected EnumMemberInfo(EnumInfo enumInfo, FieldInfo memberField)
+    protected EnumMemberInfo(EnumTypeInfo enumTypeInfo, FieldInfo memberField)
     {
-        Debug.Assert(enumInfo is not null);
+        Debug.Assert(enumTypeInfo is not null);
         Debug.Assert(memberField is not null);
         Debug.Assert(memberField!.IsStatic);
-        Debug.Assert(memberField.DeclaringType == enumInfo!.EnumType);
+        Debug.Assert(memberField.DeclaringType == enumTypeInfo!.EnumType);
 
-        EnumInfo = enumInfo;
+        EnumTypeInfo = enumTypeInfo;
         Attributes = Attribute.GetCustomAttributes(memberField);
         Name = memberField.Name;
         Member = memberField.GetValue(null).ThrowIfNull();
         I64Value = Convert.ToInt64(Member);
 
         // default render is name
-        _display = Name;
+        _render = Name;
         _aliases = new(StringComparer.Ordinal);
 
         // In order of least important to most (overwrite)
 #if !NETFRAMEWORK && !NETSTANDARD
         if (Attributes.TryGet<DisplayAttribute>(out var displayAttr))
         {
-            AddAlias(displayAttr.Name, _aliases, ref _display);
-            AddAlias(displayAttr.ShortName, _aliases, ref _display);
-            AddAlias(displayAttr.Description, _aliases, ref _display);
+            AddAlias(displayAttr.Name, _aliases, ref _render);
+            AddAlias(displayAttr.ShortName, _aliases, ref _render);
+            AddAlias(displayAttr.Description, _aliases, ref _render);
         }
 #endif
 
         if (Attributes.TryGet<DescriptionAttribute>(out var descriptionAttr))
         {
-            AddAlias(descriptionAttr.Description, _aliases, ref _display);
-        }
-
-        if (Attributes.TryGet<RenderAsAttribute>(out var displayAsAttr))
-        {
-            AddAlias(displayAsAttr.Display, _aliases, ref _display);
+            AddAlias(descriptionAttr.Description, _aliases, ref _render);
         }
 
         // shrink aliases to save memory
@@ -110,13 +96,13 @@ public abstract class EnumMemberInfo :
     public bool Equals(EnumMemberInfo? enumMemberInfo)
     {
         return enumMemberInfo is not null &&
-               enumMemberInfo.EnumInfo == EnumInfo &&
+               enumMemberInfo.EnumTypeInfo == EnumTypeInfo &&
                enumMemberInfo.Name == Name;
     }
 
     public bool Equals(Enum e)
     {
-        return e.GetType() == EnumInfo.EnumType &&
+        return e.GetType() == EnumTypeInfo.EnumType &&
                e.ToString() == Name;
     }
 
@@ -131,12 +117,12 @@ public abstract class EnumMemberInfo :
 
     public override int GetHashCode()
     {
-        return Hasher.HashMany(EnumInfo, Name);
+        return Hasher.HashMany(EnumTypeInfo, Name);
     }
 
-    public void RenderTo(TextBuilder builder)
+    public TextBuilder RenderTo(TextBuilder builder)
     {
-        builder.Write(_display);
+        return builder.Append(_render);
     }
 
     public override string ToString() => Name;

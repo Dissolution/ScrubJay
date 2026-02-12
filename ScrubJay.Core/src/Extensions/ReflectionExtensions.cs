@@ -203,6 +203,15 @@ public static class ReflectionExtensions
                 return [];
             return Attribute.GetCustomAttributes(member, inherit);
         }
+
+        public A? GetAttribute<A>(bool inherit = true)
+            where A : Attribute
+        {
+            if (member is null)
+                return null;
+            var attributes = Attribute.GetCustomAttributes(member, inherit);
+            return attributes.OfType<A>().FirstOrDefault();
+        }
     }
 
     extension(ParameterInfo? parameter)

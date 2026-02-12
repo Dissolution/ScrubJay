@@ -1,6 +1,6 @@
-﻿#pragma warning disable CS0618 // Type or member is obsolete
+﻿
 
-using ScrubJay.Rendering;
+#pragma warning disable CS0618 // Type or member is obsolete
 
 namespace ScrubJay.Reflection.Decompilation;
 
@@ -69,7 +69,7 @@ public sealed record class Instruction(ILOffset Offset, OpCode OpCode, Option<ob
         }
     }
     
-    public void RenderTo(TextBuilder builder) => builder
+    public TextBuilder RenderTo(TextBuilder builder) => builder
         .Render(Offset)
         .Append(": ")
         .Align(OpCode.Name, 14, alignment: Alignment.Right)

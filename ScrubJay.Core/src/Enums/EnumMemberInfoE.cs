@@ -8,8 +8,8 @@ public sealed class EnumMemberInfo<E> : EnumMemberInfo
 {
     public new E Member { get; }
 
-    private EnumMemberInfo(EnumInfo<E> enumInfo, FieldInfo memberField)
-        : base(enumInfo, memberField)
+    private EnumMemberInfo(EnumTypeInfo<E> enumTypeInfo, FieldInfo memberField)
+        : base(enumTypeInfo, memberField)
     {
         Member = memberField.GetValue(null).ThrowIfNot<E>();
     }

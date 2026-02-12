@@ -1,4 +1,5 @@
-﻿using ScrubJay.Maths;
+﻿
+using ScrubJay.Maths;
 using ScrubJay.Randomization.Seeding;
 
 

@@ -116,6 +116,10 @@
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="ARCHIVE\" />
+    </ItemGroup>
+
 
     <UsingTask TaskName="GenerateValidateFilesTask" AssemblyFile="$(MSBuildProjectDirectory)\..\build_tasks\bin\$(Configuration)\netstandard2.0\BuildTasks.dll"/>
 

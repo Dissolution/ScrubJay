@@ -66,7 +66,7 @@ public partial class TextBuilder
         int offset = Guard.InsertIndex(index, pos);
 
         if (offset == pos)
-            return Render<T>(value);
+            return this.Render<T>(value);
 
         Capture(tb => tb.Render<T>(value), out var written);
         int len = written.Length;

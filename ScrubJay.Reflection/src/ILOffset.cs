@@ -1,8 +1,8 @@
 using System.Globalization;
+
 using ScrubJay.Comparison;
 using ScrubJay.Memory;
 using ScrubJay.Parsing;
-using ScrubJay.Rendering;
 using ScrubJay.Text;
 using ScrubJay.Text.Building;
 using ScrubJay.Validation;
@@ -156,9 +156,9 @@ public readonly struct ILOffset :
             .ToStringAndDispose();
     }
 
-    public void RenderTo(TextBuilder builder)
+    public TextBuilder RenderTo(TextBuilder builder)
     {
-        builder.Append("IL_")
+        return builder.Append("IL_")
             .If(_offset, static o => o >= 0,
                 static (tb, o) => tb.Format(o, "X4"),
                 static (tb, _) => tb.Append("????"));

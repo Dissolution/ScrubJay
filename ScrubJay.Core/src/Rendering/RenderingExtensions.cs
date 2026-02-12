@@ -3,65 +3,29 @@ namespace ScrubJay.Rendering;
 [PublicAPI]
 public static class RenderingExtensions
 {
-    extension(Enum e)
+    [Renders<Guid>]
+    public static TextBuilder RenderTo(this Guid guid, TextBuilder builder)
     {
-        public string Display()
-        {
-            var memberInfo = EnumMemberInfo.For(e);
-            if (memberInfo is not null)
-            {
-                return memberInfo.Display;
-            }
-
-            return Enum.GetName(e.GetType(), e) ?? e.ToString();
-        }
-    }
-    extension<T>(T? value)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
+        var buffer = builder.Allocate(36);
+#if DEBUG
+        bool formatted = guid.TryFormat(buffer, out int charsWritten, "D");
+        Debug.Assert(formatted);
+        Debug.Assert(charsWritten == 36);
+#else
+                guid.TryFormat(buffer, out _, "D");
 #endif
+        buffer.ForEach((ref ch) => ch = char.ToUpper(ch));
+        return builder;
+    }
+
+    [Renders<Enum>]
+    public static TextBuilder RenderTo(this Enum @enum, TextBuilder builder)
     {
-        /// <summary>
-        /// Render this <typeparamref name="T"/> <paramref name="value"/> to a <see cref="TextBuilder"/>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RenderTo(TextBuilder builder)
+        if (EnumTypeInfo.For(@enum).TryGetMemberInfo(@enum).IsSome(out var info))
         {
-            if (value is null)
-            {
-                builder.Write("〈null〉");
-            }
-            else
-            {
-                Renderer.GetValueRenderer<T>().Invoke(value, builder);
-            }
+            return info.RenderTo(builder);
         }
-        
-        public string Render()
-        {
-            if (value is null)
-                return "〈null〉";
 
-            var renderer = Renderer.GetValueRenderer<T>();
-            using var builder = new TextBuilder();
-            renderer(value, builder);
-            return builder.ToString();
-        }
+        return builder.Append(@enum.ToString());
     }
-
-#if !NET9_0_OR_GREATER
-    public static string Render<T>(this Span<T> span)
-    {
-        using var builder = new TextBuilder();
-        Renderer.RenderSpanTo<T>(span, builder);
-        return builder.ToString();
-    }
-
-    public static string Render<T>(this ReadOnlySpan<T> span)
-    {
-        using var builder = new TextBuilder();
-        Renderer.RenderReadOnlySpanTo<T>(span, builder);
-        return builder.ToString();
-    }
-#endif
 }

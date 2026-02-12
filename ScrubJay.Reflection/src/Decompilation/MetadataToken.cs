@@ -1,4 +1,4 @@
-﻿using ScrubJay.Rendering;
+﻿
 
 namespace ScrubJay.Reflection.Decompilation;
 
@@ -89,7 +89,7 @@ public readonly struct MetadataToken :
 
     public string ToString(string? format, IFormatProvider? provider = null) => _token.ToString(format, provider);
 
-    public void RenderTo(TextBuilder builder) => builder
+    public TextBuilder RenderTo(TextBuilder builder) => builder
         .Render(TokenType)
         .Append('.')
         .Format(Identifier, "X6");

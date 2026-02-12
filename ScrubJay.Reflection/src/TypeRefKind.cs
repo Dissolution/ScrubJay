@@ -1,4 +1,6 @@
-using ScrubJay.Rendering;
+
+
+using System.ComponentModel;
 
 namespace ScrubJay.Reflection;
 
@@ -12,25 +14,25 @@ public enum TypeRefKind
     /// <summary>
     /// Default referencing (copy value, ref class)
     /// </summary>
-    [RenderAs("")]
+    [Description("")]
     Default = 1 << 0,
     
     /// <summary>
     /// <c>ref</c>
     /// </summary>
-    [RenderAs("ref ")]
+    [Description("ref ")]
     Ref = 1 << 1,
     
     /// <summary>
     /// <c>in</c>
     /// </summary>
-    [RenderAs("in ")]
+    [Description("in ")]
     In = (1 << 2) | Ref,
     
     /// <summary>
     /// <c>out</c>
     /// </summary>
-    [RenderAs("out ")]
+    [Description("out ")]
     Out = (1 << 3) | Ref,
 
     Any = Default | Ref | In | Out,

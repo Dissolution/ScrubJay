@@ -3,6 +3,7 @@
 // ReSharper disable ArrangeThisQualifier
 
 using System.Globalization;
+
 using ScrubJay.Parsing;
 
 
@@ -1483,9 +1484,9 @@ public readonly struct Rational :
         }
     }
 
-    public void RenderTo(TextBuilder builder)
+    public TextBuilder RenderTo(TextBuilder builder)
     {
-        builder.Append(Numerator).Append('/').Append(Denominator);
+        return builder.Append(Numerator).Append('/').Append(Denominator);
     }
 
     public bool TryFormat(

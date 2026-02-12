@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 using System.Reflection;
-using ConsoleSandbox;
-using ScrubJay.Destructuring;
-using ScrubJay.Reflection;
-using ScrubJay.Reflection.Decompilation;
-using ScrubJay.Reflection.Extensions;
-using ScrubJay.Universal;
+using System.Text.Json;
+using ScrubJay.Extensions;
+using ScrubJay.Rendering;
+using ScrubJay.Text.Building;
 
+/*
 var methods = AppDomain
     .CurrentDomain
     .GetAssemblies()
@@ -23,6 +21,15 @@ foreach (var method in methods)
     var str = d.ToString();
     Debugger.Break();
 }
+*/
+
+var ser = JsonSerializer.Serialize(new TextBuilder());
+
+
+using var builder = new TextBuilder();
+builder.Render(BindingFlags.Public |  BindingFlags.Static);
+var str = builder.ToString();
+
 
 Debugger.Break();
 
@@ -36,9 +43,6 @@ namespace ConsoleSandbox
 
     static class Util
     {
-        public static string Teardown(Expression? expression)
-        {
-            return Destructure.Value(expression);
-        }
+
     }
 }
