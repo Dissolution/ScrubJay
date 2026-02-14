@@ -3,34 +3,42 @@
 [PublicAPI]
 public static class AttributeExtensions
 {
-    public static bool Contains<A>(this Attribute[]? attributes)
-        where A : Attribute
+    extension(Attribute[]? attributes)
     {
-        if (attributes is not null)
+        /// <summary>
+        /// Does this <see cref="Attribute"/> array contain an <typeparamref name="A"/>?
+        /// </summary>
+        /// <typeparam name="A"></typeparam>
+        /// <returns></returns>
+        public bool Contains<A>()
+            where A : Attribute
         {
-            foreach (Attribute attribute in attributes)
+            if (attributes is not null)
             {
-                if (attribute is A)
-                    return true;
+                foreach (Attribute attribute in attributes)
+                {
+                    if (attribute is A)
+                        return true;
+                }
             }
+
+            return false;
         }
 
-        return false;
-    }
-
-    public static bool TryGet<A>(this Attribute[]? attributes, [NotNullWhen(true)] out A? attr)
-        where A : Attribute
-    {
-        if (attributes is not null)
+        public bool TryGet<A>([NotNullWhen(true)] out A? attr)
+            where A : Attribute
         {
-            foreach (Attribute attribute in attributes)
+            if (attributes is not null)
             {
-                if (attribute.Is<A>(out attr))
-                    return true;
+                foreach (Attribute attribute in attributes)
+                {
+                    if (attribute.Is<A>(out attr))
+                        return true;
+                }
             }
-        }
 
-        attr = null;
-        return false;
+            attr = null;
+            return false;
+        }
     }
 }

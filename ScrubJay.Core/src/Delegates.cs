@@ -7,7 +7,6 @@ namespace ScrubJay;
 
 #if NET9_0_OR_GREATER
 
-
 #region ActRef
 
 [PublicAPI]
@@ -41,7 +40,8 @@ public delegate void ActRef<TR, in T1, in T2, in T3, in T4>(ref TR refArg, T1 ar
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+    T5 arg5)
     where TR : allows ref struct
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -50,7 +50,8 @@ public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5>(ref TR refArg
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5, in T6>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5, in T6>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5, T6 arg6)
     where TR : allows ref struct
     where T1 : allows ref struct
@@ -61,7 +62,8 @@ public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5, in T6>(ref TR
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3,
+public delegate void ActRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(ref TR refArg, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where TR : allows ref struct
     where T1 : allows ref struct
@@ -115,7 +117,8 @@ public delegate void ActRSpan<T, in T1, in T2, in T3, in T4>(ReadOnlySpan<T> spa
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -124,7 +127,8 @@ public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5>(ReadOnlySpan
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -134,7 +138,8 @@ public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(ReadO
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(ReadOnlySpan<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -145,7 +150,8 @@ public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+public delegate void ActRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8>(ReadOnlySpan<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -186,7 +192,8 @@ public delegate void ActSpan<T, in T1, in T2, in T3, in T4>(Span<T> span, T1 arg
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+    T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
     where T3 : allows ref struct
@@ -194,7 +201,8 @@ public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5>(Span<T> span,
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -204,7 +212,8 @@ public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6>(Span<T
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7>(Span<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -215,7 +224,8 @@ public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7>
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate void ActSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8>(Span<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -277,7 +287,8 @@ public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, out R>(ref TR ref
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, out R>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, out R>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5, T6 arg6)
     where TR : allows ref struct
     where T1 : allows ref struct
@@ -289,7 +300,8 @@ public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, out R>(ref
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(ref TR refArg, T1 arg1, T2 arg2, T3 arg3,
+public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(ref TR refArg, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where TR : allows ref struct
     where T1 : allows ref struct
@@ -302,7 +314,8 @@ public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(ref TR refArg, T1 arg1, T2 arg2,
+public delegate R FnRef<TR, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(ref TR refArg, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where TR : allows ref struct
     where T1 : allows ref struct
@@ -342,7 +355,8 @@ public delegate R FnRSpan<T, in T1, in T2, in T3, out R>(ReadOnlySpan<T> span, T
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4)
     where T1 : allows ref struct
     where T2 : allows ref struct
     where T3 : allows ref struct
@@ -350,7 +364,8 @@ public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, out R>(ReadOnlySpan<T> 
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -360,7 +375,8 @@ public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, out R>(ReadOnlyS
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -371,7 +387,8 @@ public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(Re
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(ReadOnlySpan<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -383,7 +400,8 @@ public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, ou
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(ReadOnlySpan<T> span, T1 arg1,
+public delegate R FnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(ReadOnlySpan<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -418,7 +436,8 @@ public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, R>(ReadOnly
     where T3 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -426,7 +445,8 @@ public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, R>(R
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, R>(ReadOnlySpan<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -435,7 +455,8 @@ public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(ReadOnlySpan<T> span, T1 arg1,
+public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(ReadOnlySpan<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -445,7 +466,8 @@ public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(ReadOnlySpan<T> span,
+public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(
+    ReadOnlySpan<T> span,
     T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -456,7 +478,8 @@ public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(ReadOnlySpan<T> span,
+public delegate ReadOnlySpan<R> RSpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(
+    ReadOnlySpan<T> span,
     T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -490,14 +513,16 @@ public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, R>(ReadOnlySpan<T> s
     where T3 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4)
     where T1 : allows ref struct
     where T2 : allows ref struct
     where T3 : allows ref struct
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -506,7 +531,8 @@ public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Rea
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(ReadOnlySpan<T> span, T1 arg1, T2 arg2,
+public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(ReadOnlySpan<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -516,7 +542,8 @@ public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6,
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(ReadOnlySpan<T> span, T1 arg1,
+public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(ReadOnlySpan<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -527,7 +554,8 @@ public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6,
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(ReadOnlySpan<T> span, T1 arg1,
+public delegate Span<R> SpanFnRSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(ReadOnlySpan<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -583,7 +611,8 @@ public delegate R
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -594,7 +623,8 @@ public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, out R>(Spa
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out R>(Span<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -606,7 +636,8 @@ public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, out
     where R : allows ref struct;
 
 [PublicAPI]
-public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(Span<T> span, T1 arg1, T2 arg2,
+public delegate R FnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out R>(Span<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -641,14 +672,16 @@ public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, R>(Span<T> s
     where T3 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4)
     where T1 : allows ref struct
     where T2 : allows ref struct
     where T3 : allows ref struct
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Span<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -657,7 +690,8 @@ public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(Span<T> span, T1 arg1, T2 arg2,
+public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(Span<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -667,7 +701,8 @@ public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(Span<T> span, T1 arg1,
+public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(Span<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -678,7 +713,8 @@ public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(Span<T> span, T1 arg1,
+public delegate ReadOnlySpan<R> RSpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(Span<T> span,
+    T1 arg1,
     T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -719,7 +755,8 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, R>(Span<T> spa
     where T4 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+    T4 arg4,
     T5 arg5)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -728,7 +765,8 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, R>(Span
     where T5 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(Span<T> span, T1 arg1, T2 arg2, T3 arg3,
+public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, R>(Span<T> span, T1 arg1, T2 arg2,
+    T3 arg3,
     T4 arg4, T5 arg5, T6 arg6)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -738,7 +776,8 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, 
     where T6 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(Span<T> span, T1 arg1, T2 arg2,
+public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, R>(Span<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -749,7 +788,8 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, 
     where T7 : allows ref struct;
 
 [PublicAPI]
-public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(Span<T> span, T1 arg1, T2 arg2,
+public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, R>(Span<T> span, T1 arg1,
+    T2 arg2,
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
     where T1 : allows ref struct
     where T2 : allows ref struct
@@ -761,9 +801,8 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, 
     where T8 : allows ref struct;
 
 #endregion
+
 #else
-
-
 #region ActRef
 
 [PublicAPI]
@@ -1115,5 +1154,11 @@ public delegate Span<R> SpanFnSpan<T, in T1, in T2, in T3, in T4, in T5, in T6, 
     T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8);
 
 #endregion
-
 #endif
+
+[PublicAPI]
+public delegate void IndexedItemRef<T>(ref T item, int index)
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
+;

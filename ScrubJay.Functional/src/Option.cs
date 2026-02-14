@@ -16,20 +16,27 @@ public static class Option
     /// <returns></returns>
     public static IMPL.None None() => default;
 
-    /// <summary>
-    /// Gets <see cref="Option{T}.None"/>
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static Option<T> None<T>() => default;
+    /// <inheritdoc cref="Option{T}.None"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Option<T> None<T>() => Option<T>.None;
 
-    /// <summary>
-    /// Gets <see cref="Option{T}.Some"/>
-    /// </summary>
-    /// <param name="value"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <inheritdoc cref="Option{T}.Some"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Option<T> Some<T>(T value) => Option<T>.Some(value);
+
+    /// <inheritdoc cref="Option{T}.SomeIf"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Option<T> SomeIf<T>(T value, Func<T, bool> predicate)
+        => Option<T>.SomeIf(value, predicate);
+
+#if NET9_0_OR_GREATER
+    /// <inheritdoc cref="Option{T}.SomeIf"/>
+    public static RefOption<T> SomeIf<T>(T value, Func<T, bool> predicate,
+        // ReSharper disable once MethodOverloadWithOptionalParameter
+        TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => RefOption<T>.SomeIf(value, predicate);
+#endif
 
     /// <summary>
     /// Returns <see cref="Option{T}.Some"/> if <paramref name="value"/> is not <c>null</c>,<br/>

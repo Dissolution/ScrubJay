@@ -1,10 +1,10 @@
-
-
-namespace ScrubJay.Extensions;
+namespace ScrubJay.Extensions.NEO;
 
 [PublicAPI]
 public static class EnumeratorExtensions
 {
+    extension(IEnumerator? enumerator) { }
+
     extension<E>(E enumerator)
         where E : IEnumerator
     {

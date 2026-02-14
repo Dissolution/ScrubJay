@@ -92,6 +92,29 @@ public readonly struct Option<T> :
     /// </summary>
     public static Option<T> Some(T value) => new(value);
 
+    /// <summary>
+    /// Returns <see cref="Some{T}"/> if a given <paramref name="value"/> matches a <paramref name="predicate"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> value to examine.
+    /// </param>
+    /// <param name="predicate">
+    /// The <see cref="Func{T,bool}"/> predicate used to determine if the <paramref name="value"/>
+    /// should be returned as <see cref="Some{T}"/> or <see cref="None"/>.
+    /// </param>
+    /// <returns>
+    /// <see cref="Some{T}"/> if the <paramref name="value"/> matched the <paramref name="predicate"/>;<br/>
+    /// otherwise <see cref="None"/>.
+    /// </returns>
+    public static Option<T> SomeIf(T value, Func<T, bool> predicate)
+    {
+        if (predicate(value))
+        {
+            return new(value);
+        }
+
+        return None;
+    }
 
     // Is this Option.Some?
     // if someone does default(Option), this will be false, so default(Option) == None

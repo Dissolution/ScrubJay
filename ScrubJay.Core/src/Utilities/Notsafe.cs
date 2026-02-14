@@ -668,78 +668,36 @@ public static unsafe class Notsafe
     }
 
 #region Pointer Offsetting
-
-#region Add
-
-    /// <summary>
-    /// Adds an element offset to the given reference.
-    /// </summary>
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void* Add<T>(void* source, nuint elementOffset)
+    public static ref T OffsetRef<T>(ref T source, nint offset)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        Emit.Ldarg(nameof(source));
-        Emit.Ldarg(nameof(elementOffset));
-        Emit.Sizeof<T>();
-        Emit.Conv_I();
-        Emit.Mul();
-        Emit.Add();
-        return ReturnPointer();
+        Emit.Ldarg(nameof(source));     // start with source offset
+        Emit.Ldarg(nameof(offset));     // get the offset amount
+        Emit.Sizeof<T>();               // get the size of a T value
+        Emit.Mul();                     // multiply (to get the byte offset)
+        Emit.Add();                     // add the byte offset to the source offset
+        return ref ReturnRef<T>();
     }
-
-    /// <summary>
-    /// Adds an element offset to the given reference.
-    /// </summary>
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T Add<T>(ref T source, nint elementOffset)
+    public static ref readonly T OffsetReadOnlyRef<T>(ref readonly T source, nint offset)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        Emit.Ldarg(nameof(source));
-        Emit.Ldarg(nameof(elementOffset));
-        Emit.Sizeof<T>();
-        Emit.Mul();
-        Emit.Add();
+        Emit.Ldarg(nameof(source));     // start with source offset
+        Emit.Ldarg(nameof(offset));     // get the offset amount
+        Emit.Sizeof<T>();               // get the size of a T value
+        Emit.Mul();                     // multiply (to get the byte offset)
+        Emit.Add();                     // add the byte offset to the source offset
         return ref ReturnRef<T>();
     }
 
-    /// <summary>
-    /// Adds an element offset to the given reference.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T Add<T>(ref T source, nuint elementOffset)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        Emit.Ldarg(nameof(source));
-        Emit.Ldarg(nameof(elementOffset));
-        Emit.Sizeof<T>();
-        Emit.Mul();
-        Emit.Add();
-        return ref ReturnRef<T>();
-    }
-
-    /// <summary>
-    /// Adds a byte offset to the given reference.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T AddByteOffset<T>(ref T source, nuint byteOffset)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        Emit.Ldarg(nameof(source));
-        Emit.Ldarg(nameof(byteOffset));
-        Emit.Add();
-        return ref ReturnRef<T>();
-    }
-
-#endregion
-
+    
 #endregion
 
 

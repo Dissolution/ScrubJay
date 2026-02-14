@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.Json;
 using ScrubJay.Extensions;
+using ScrubJay.Extensions.NEO;
 using ScrubJay.Rendering;
 using ScrubJay.Text.Building;
 
@@ -23,12 +24,10 @@ foreach (var method in methods)
 }
 */
 
-var ser = JsonSerializer.Serialize(new TextBuilder());
 
+HashSet<int> hs = [1, 2, 3];
+var one = hs.One<HashSet<int>, int>();
 
-using var builder = new TextBuilder();
-builder.Render(BindingFlags.Public |  BindingFlags.Static);
-var str = builder.ToString();
 
 
 Debugger.Break();

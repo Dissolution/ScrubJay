@@ -20,6 +20,7 @@ public static class SpanExtensions
 
     extension<T>(ReadOnlySpan<T> span)
     {
+        /*
 #if !NET8_0_OR_GREATER
         public int IndexOf(T value, IEqualityComparer<T>? comparer = null)
         {
@@ -39,10 +40,11 @@ public static class SpanExtensions
             return -1;
         }
 #endif
+*/
 
 #if !NET10_0_OR_GREATER
 
-
+        /*
         public int IndexOf(
             ReadOnlySpan<T> value,
             IEqualityComparer<T>? comparer = null)
@@ -77,7 +79,8 @@ public static class SpanExtensions
 
             return -1;
         }
-
+        */
+        /*
 #if !NET8_0_OR_GREATER
         public int IndexOfAny(ReadOnlySpan<T> values, IEqualityComparer<T>? comparer = null)
         {
@@ -87,7 +90,9 @@ public static class SpanExtensions
                     return -1;
 
                 case 1:
+                {
                     return IndexOf(span, values[0], comparer);
+                }
 
                 case 2:
                     return IndexOfAny(span, values[0], values[1], comparer);
@@ -172,47 +177,11 @@ public static class SpanExtensions
             }
         }
 #endif
+*/
 #endif
     }
 
 
-    /// <summary>
-    /// Performs the given <paramref name="perItem"/> action on each item in the <see cref="Span{T}"/>
-    /// </summary>
-    /// <param name="span">
-    /// The <see cref="Span{T}"/> of items to perform the <see cref="FnRef{T,None}"/> delegate upon
-    /// </param>
-    /// <param name="perItem">
-    /// The <see cref="FnRef{T,None}"/> delegate to perform on each item of the <see cref="Span{T}"/>
-    /// </param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of items in the <see cref="Span{T}"/>
-    /// </typeparam>
-    public static void ForEach<T>(this Span<T> span, ActRef<T> perItem)
-    {
-        for (int i = 0; i < span.Length; i++)
-        {
-            perItem(ref span[i]);
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Option<T> TryGet<T>(this Span<T> span, Index index)
-    {
-        int offset = index.GetOffset(span.Length);
-        if ((offset < 0) || (offset >= span.Length))
-            return None;
-        return Some(span[offset]);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Option<T> TryGet<T>(this ReadOnlySpan<T> span, Index index)
-    {
-        int offset = index.GetOffset(span.Length);
-        if ((offset < 0) || (offset >= span.Length))
-            return None;
-        return Some(span[offset]);
-    }
 
     public static bool TryGet<T>(this Span<T> span, Range range, out Span<T> slice)
     {
@@ -238,22 +207,6 @@ public static class SpanExtensions
         return true;
     }
 
-    /// <summary>
-    /// Tries to set the item at an <see cref="Index"/> with a <paramref name="value"/>
-    /// </summary>
-    /// <param name="span"></param>
-    /// <param name="index"></param>
-    /// <param name="value"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static bool TrySet<T>(this Span<T> span, Index index, T value)
-    {
-        int offset = index.GetOffset(span.Length);
-        if ((offset < 0) || (offset >= span.Length))
-            return false;
-        span[offset] = value;
-        return true;
-    }
 
     public static bool StartsWith<T>(this Span<T> span, ReadOnlySpan<T> slice, IEqualityComparer<T>? itemComparer)
     {
