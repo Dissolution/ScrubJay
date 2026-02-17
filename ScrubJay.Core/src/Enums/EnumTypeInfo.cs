@@ -57,7 +57,7 @@ public abstract class EnumTypeInfo :
     public Attribute[] Attributes { get; }
     public Type EnumType { get; }
     public Type UnderlyingType { get; }
-    public bool IsFlags => Attributes.Contains<FlagsAttribute>();
+    public bool IsFlags => Attributes.OfType<FlagsAttribute>().Any();
     public IEnumerable<EnumMemberInfo> Members => _members;
 
     protected EnumTypeInfo(Type enumType)

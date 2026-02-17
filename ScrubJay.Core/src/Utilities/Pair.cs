@@ -1,5 +1,7 @@
 ﻿
 
+
+using ScrubJay.Rendering.Rendition3;
 #if NET7_0_OR_GREATER
 using ScrubJay.Parsing;
 #endif

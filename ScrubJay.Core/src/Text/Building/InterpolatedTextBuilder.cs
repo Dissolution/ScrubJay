@@ -1,5 +1,7 @@
 
 
+using ScrubJay.Rendering.Rendition3;
+
 #pragma warning disable CA1815, IDE0250, CA1001
 
 namespace ScrubJay.Text.Building;

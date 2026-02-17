@@ -65,7 +65,7 @@ public sealed class ArrayAdapterND<T> :
         return Ok(indices);
     }
 
-    public Result<T?> TryGetValue(int[] indices)
+    public Result<T> TryGetValue(int[] indices)
     {
         return ValidateIndices(indices)
             .Select(idx => _array.GetValue(idx).As<T>());

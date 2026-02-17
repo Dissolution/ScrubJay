@@ -77,19 +77,19 @@ public ref struct SpanSplitEqualityIterator<T> : ISpanSplitIterator<T>
         {
             case SeparatorKind.Item:
             {
-                index = _span[scan..].IndexOf(_separator, _equalityComparer);
+                index = _span[scan..].TryFindIndex(_separator, _equalityComparer).SomeOr(-1);
                 skipLength = 1;
                 break;
             }
             case SeparatorKind.AnySpan:
             {
-                index = _span[scan..].IndexOfAny(_separators, _equalityComparer);
+                index = _span[scan..].TryFindIndexOfAny(_separators, _equalityComparer).SomeOr(-1);
                 skipLength = 1;
                 break;
             }
             case SeparatorKind.Span:
             {
-                index = _span[scan..].IndexOf(_separators, _equalityComparer);
+                index = _span[scan..].TryFindIndex(_separators, _equalityComparer).SomeOr(-1);
                 skipLength = _separators.Length;
                 break;
             }

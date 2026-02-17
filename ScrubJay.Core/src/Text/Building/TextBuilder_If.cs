@@ -208,6 +208,28 @@ partial class TextBuilder
 
         return this;
     }
+    
+    public TextBuilder If<T,N>(
+        T value,
+        Func<T, Option<N>> selectWhere,
+        Action<TextBuilder, N>? onTrue = null,
+        Action<TextBuilder, T>? onFalse = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        var option = selectWhere(value);
+        if (option.IsSome(out var newValue))
+        {
+            onTrue?.Invoke(this, newValue);
+        }
+        else
+        {
+            onFalse?.Invoke(this, value);
+        }
+
+        return this;
+    }
 
 
 #region IfNotNull

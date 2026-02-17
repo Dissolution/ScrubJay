@@ -1,4 +1,4 @@
-namespace ScrubJay.Rendering;
+namespace ScrubJay.Rendering.Rendition3;
 
 [PublicAPI]
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]

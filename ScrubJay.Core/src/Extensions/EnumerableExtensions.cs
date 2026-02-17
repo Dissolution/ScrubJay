@@ -1,7 +1,8 @@
 // ReSharper disable TooWideLocalVariableScope
 // ReSharper disable InlineOutVariableDeclaration
+
 #pragma warning  disable CA2208
-namespace ScrubJay.Extensions.NEO;
+namespace ScrubJay.Extensions;
 
 [PublicAPI]
 public static class EnumerableExtensions
@@ -14,10 +15,10 @@ public static class EnumerableExtensions
 #endif
     ;
 
-    extension<E, T>(E? enumerable)
-        where E : IEnumerable<T>
+
+    extension<T>(IEnumerable<T>? enumerable)
     {
-        #region One()
+#region One()
 
         /* The behavior of Enumerable.SingleOrDefault() is counter-intuitive:
          * The name suggests that if there is one item in an enumerable, that item will be returned,
@@ -27,7 +28,7 @@ public static class EnumerableExtensions
          * This is an implementation of expected behavior.
          */
 
-  
+
         public Result<T> TryGetOne()
         {
             if (enumerable is null)
@@ -70,7 +71,7 @@ public static class EnumerableExtensions
                 return Ok(value);
             }
         }
-      
+
 
         public Result<T> TryGetOne(Func<T, bool>? predicate)
         {
@@ -131,35 +132,26 @@ public static class EnumerableExtensions
         }
 
 
-        public T One() 
-            => enumerable.TryGetOne<E,T>().OkOrThrow();
+        public T One()
+            => enumerable.TryGetOne<T>().OkOrThrow();
 
         public T One(Func<T, bool> predicate)
-            => enumerable.TryGetOne<E,T>(predicate).OkOrThrow();
+            => enumerable.TryGetOne<T>(predicate).OkOrThrow();
 
         public T? OneOrDefault()
-            => enumerable.TryGetOne<E,T>().OkOrDefault();
+            => enumerable.TryGetOne<T>().OkOrDefault();
 
         public T OneOr(T fallback)
-            => enumerable.TryGetOne<E,T>().OkOr(fallback);
+            => enumerable.TryGetOne<T>().OkOr(fallback);
 
         public T? OneOrDefault(Func<T, bool> predicate)
-            => enumerable.TryGetOne<E,T>(predicate).OkOrDefault();
+            => enumerable.TryGetOne<T>(predicate).OkOrDefault();
 
         public T OneOr(Func<T, bool> predicate, T fallback)
-            => enumerable.TryGetOne<E,T>(predicate).OkOr(fallback);
+            => enumerable.TryGetOne<T>(predicate).OkOr(fallback);
 
 #endregion
-      
-    }
 
-
-    extension<E, T>(E? enumerable)
-        where E : IEnumerable<T>
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
         public IEnumerable<O> SelectWhere<O>(SelectWherePredicate<T, O> selectWherePredicate)
         {
             if (enumerable is null)
@@ -173,37 +165,19 @@ public static class EnumerableExtensions
                     yield return output;
             }
         }
-    }
 
-    extension<E, T>(E? enumerable)
-        where E : IEnumerable<T?>
-        where T : notnull
-#if NET9_0_OR_GREATER
-        , allows ref struct
-#endif
-    {
-        public IEnumerable<T> WhereNotNull()
-        {
-            if (enumerable is null)
-                yield break;
-            foreach (T? value in enumerable)
-            {
-                if (value is not null)
-                    yield return value;
-            }
-        }
-    }
-
-    extension<T>(IEnumerable<T> enumerable)
-    {
         public IEnumerable<T> OrderByIndexIn(T[] orderedItems)
         {
+            if (enumerable is null)
+                return Enumerable.Empty<T>();
             return enumerable.OrderBy(item => Array.IndexOf(orderedItems, item));
         }
 
         public IEnumerable<T> OrderByIndexIn(T[] orderedItems, IEqualityComparer<T>? itemComparer,
             bool firstToLast = true)
         {
+            if (enumerable is null)
+                return Enumerable.Empty<T>();
             return enumerable.OrderBy(item => orderedItems.TryFindIndex(item, itemComparer, firstToLast).SomeOr(-1));
         }
 
@@ -218,18 +192,39 @@ public static class EnumerableExtensions
         /// </param>
         public void Consume(Action<T> perItem)
         {
-            foreach (T item in enumerable)
+            if (enumerable is not null)
             {
-                perItem(item);
+                foreach (T item in enumerable)
+                {
+                    perItem(item);
+                }
             }
         }
 
-
-
-
 #if NETSTANDARD2_0
-    public static HashSet<T> ToHashSet<T>(this IEnumerable<T> enumerable)
-        => new(enumerable);
+    public HashSet<T> ToHashSet()
+    {
+        if (enumerable is null)
+            return [];
+        return [..enumerable];
+    }
 #endif
+    }
+
+
+    extension<T>(IEnumerable<T>? enumerable)
+        where T : notnull
+    {
+        public IEnumerable<T> WhereNotNull()
+        {
+            if (enumerable is null)
+                yield break;
+            foreach (T? value in enumerable)
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (value is not null)
+                    yield return value;
+            }
+        }
     }
 }

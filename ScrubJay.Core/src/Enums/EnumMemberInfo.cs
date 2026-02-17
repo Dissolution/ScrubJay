@@ -4,7 +4,7 @@
 using System.ComponentModel.DataAnnotations;
 #endif
 using System.Reflection;
-
+using ScrubJay.Rendering.Rendition3;
 
 
 namespace ScrubJay.Enums;
@@ -65,7 +65,9 @@ public abstract class EnumMemberInfo :
 
         // In order of least important to most (overwrite)
 #if !NETFRAMEWORK && !NETSTANDARD
-        if (Attributes.TryGet<DisplayAttribute>(out var displayAttr))
+        
+        var displayAttr = Attributes.OfType<DisplayAttribute>().FirstOrDefault();
+        if (displayAttr is not null)
         {
             AddAlias(displayAttr.Name, _aliases, ref _render);
             AddAlias(displayAttr.ShortName, _aliases, ref _render);
@@ -73,11 +75,12 @@ public abstract class EnumMemberInfo :
         }
 #endif
 
-        if (Attributes.TryGet<DescriptionAttribute>(out var descriptionAttr))
+        var descriptionAttr = Attributes.OfType<DescriptionAttribute>().FirstOrDefault();
+        if (descriptionAttr is not null)
         {
             AddAlias(descriptionAttr.Description, _aliases, ref _render);
         }
-
+      
         // shrink aliases to save memory
         _aliases.TrimExcess();
     }

@@ -213,5 +213,48 @@ partial class TextBuilder
 
 #endregion /Values: Iterable
 
+    #region Values: Generic Typed
+
+    public TextBuilder Delimit<T1, T2>(scoped text delimiter, T1 value1, T2 value2)
+    {
+        return Append<T1>(value1).Append(delimiter).Append<T2>(value2);
+    }
+
+    public TextBuilder Delimit<T1, T2, T3>(scoped text delimiter, T1 value1, T2 value2, T3 value3)
+    {
+        return Append<T1>(value1)
+            .Append(delimiter)
+            .Append<T2>(value2)
+            .Append(delimiter)
+            .Append<T3>(value3);
+    }
+    
+    public TextBuilder Delimit<T1, T2, T3, T4>(scoped text delimiter, T1 value1, T2 value2, T3 value3, T4 value4)
+    {
+        return Append<T1>(value1)
+            .Append(delimiter)
+            .Append<T2>(value2)
+            .Append(delimiter)
+            .Append<T3>(value3)
+            .Append(delimiter)
+            .Append<T4>(value4);
+    }
+    
+    public TextBuilder Delimit<T1, T2, T3, T4, T5>(scoped text delimiter, T1 value1, T2 value2, T3 value3, T4 value4, T5 value5)
+    {
+        return Append<T1>(value1)
+            .Append(delimiter)
+            .Append<T2>(value2)
+            .Append(delimiter)
+            .Append<T3>(value3)
+            .Append(delimiter)
+            .Append<T4>(value4)
+            .Append(delimiter)
+            .Append<T5>(value5);
+    }
+
+#endregion
+    
+    
 #endregion /Action: Append
 }

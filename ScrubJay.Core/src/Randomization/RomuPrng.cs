@@ -2,6 +2,7 @@
 
 
 using ScrubJay.Randomization.Seeding;
+using ScrubJay.Rendering.Rendition3;
 
 
 namespace ScrubJay.Randomization;

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
+using ConsoleSandbox;
 using ScrubJay.Extensions;
-using ScrubJay.Extensions.NEO;
-using ScrubJay.Rendering;
+using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
 
 /*
@@ -25,9 +25,13 @@ foreach (var method in methods)
 */
 
 
-HashSet<int> hs = [1, 2, 3];
-var one = hs.One<HashSet<int>, int>();
-
+var thing = new FormattableClass()
+{
+    Id = 147,
+    Name = "TRJ",
+};
+var r = thing.Render();
+var r2 = (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Render();
 
 
 Debugger.Break();
@@ -43,5 +47,47 @@ namespace ConsoleSandbox
     static class Util
     {
 
+    }
+
+    public class FormattableClass : IFormattable, IRenderable
+    {
+        public int Id { get; set; }
+        
+        public string? Name { get; set; }
+        
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return $"{nameof(FormattableClass)}({Id}, {Name})";
+        }
+
+        public void RenderTo(TextBuilder builder)
+        {
+            builder.Append(nameof(FormattableClass))
+                .Append('(')
+                .Delimit(", ", Id, Name)
+                .Append(')');
+            Debugger.Break();
+        }
+    }
+
+    public struct FormattableStruct : IFormattable, IRenderable
+    {
+        public int Id { get; set; }
+        
+        public string? Name { get; set; }
+        
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return $"{nameof(FormattableStruct)}({Id}, {Name})";
+        }
+        
+        public void RenderTo(TextBuilder builder)
+        {
+            builder.Append(nameof(FormattableStruct))
+                .Append('(')
+                .Delimit(", ", Id, Name)
+                .Append(')');
+            Debugger.Break();
+        }
     }
 }

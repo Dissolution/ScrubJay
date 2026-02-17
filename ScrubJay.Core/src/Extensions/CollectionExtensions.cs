@@ -11,10 +11,4 @@ public static class CollectionExtensions
     /// </summary>
     public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this ICollection<T>? collection)
         => collection is null || (collection.Count == 0);
-
-    extension<C, T>(C? collection)
-        where C : ICollection<T>
-    {
-        
-    }
 }

@@ -36,7 +36,7 @@ public sealed class DictionaryAdapter<K, V> :
         [CallerArgumentExpression(nameof(objValue))]
         string? valueName = null)
     {
-        if (objValue.As<V>(out var value))
+        if (objValue.Is<V>(out var value))
             return value;
         throw Ex.Arg(objValue, $"Invalid Value - '{objValue}' is not a {typeof(V):@}", valueName);
     }

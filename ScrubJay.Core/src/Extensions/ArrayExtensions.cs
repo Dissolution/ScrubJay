@@ -1,4 +1,4 @@
-namespace ScrubJay.Extensions.NEO;
+namespace ScrubJay.Extensions;
 
 [PublicAPI]
 public static class ArrayExtensions
@@ -17,47 +17,53 @@ public static class ArrayExtensions
 
     extension<T>(T[]? array)
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T GetRef()
+        public ref T FirstItemRef
         {
-            if (array is null)
-                return ref Notsafe.NullRef<T>();
-#if !NETSTANDARD
-            return ref MemoryMarshal.GetArrayDataReference(array);
-#else
-            if (array.Length == 0)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
             {
-                unsafe
+                if (array is null)
+                    return ref Notsafe.NullRef<T>();
+#if !NETSTANDARD
+                return ref MemoryMarshal.GetArrayDataReference(array);
+#else
+                if (array.Length == 0)
                 {
-                    return ref Unsafe.AsRef<T>(null);
+                    unsafe
+                    {
+                        return ref Unsafe.AsRef<T>(null);
+                    }
                 }
-            }
 
-            return ref array[0];
+                return ref array[0];
 #endif
+            }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly T GetReadonlyRef()
+        public ref readonly T FirstItemReadonlyRef
         {
-            if (array is null)
-                return ref Notsafe.NullRef<T>();
-#if !NETSTANDARD
-            return ref MemoryMarshal.GetArrayDataReference(array);
-#else
-            if (array.Length == 0)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
             {
-                unsafe
+                if (array is null)
+                    return ref Notsafe.NullRef<T>();
+#if !NETSTANDARD
+                return ref MemoryMarshal.GetArrayDataReference(array);
+#else
+                if (array.Length == 0)
                 {
-                    return ref Unsafe.AsRef<T>(null);
+                    unsafe
+                    {
+                        return ref Unsafe.AsRef<T>(null);
+                    }
                 }
-            }
 
-            return ref array[0];
+                return ref array[0];
 #endif
+            }
         }
-        
-         public bool TryGetAt(int index, [MaybeNullWhen(false)] out T value)
+
+        public bool TryGetAt(int index, [MaybeNullWhen(false)] out T value)
         {
             if (array is not null)
             {
@@ -215,7 +221,7 @@ public static class ArrayExtensions
                 }
             }
         }
-        
+
         public bool Contains(T item)
         {
             if (array is null) return false;
@@ -254,7 +260,25 @@ public static class ArrayExtensions
         {
             if (array is not null)
             {
+#if !NETSTANDARD2_0
                 Array.Reverse<T>(array);
+#else
+                int len = array.Length;
+                if (len > 1)
+                {
+
+                    ref T first = ref array.FirstItemRef;
+                    ref T last = ref Unsafe.Subtract(ref Unsafe.Add(ref first, len), 1);
+                    do
+                    {
+                        T temp = first;
+                        first = last;
+                        last = temp;
+                        first = ref Unsafe.Add(ref first, 1);
+                        last = ref Unsafe.Subtract(ref last, 1);
+                    } while (Unsafe.IsAddressLessThan(ref first, ref last));
+                }
+#endif
             }
         }
 #endif

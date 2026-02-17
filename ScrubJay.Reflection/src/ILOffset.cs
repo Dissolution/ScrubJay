@@ -3,6 +3,7 @@ using System.Globalization;
 using ScrubJay.Comparison;
 using ScrubJay.Memory;
 using ScrubJay.Parsing;
+using ScrubJay.Rendering.Rendition3;
 using ScrubJay.Text;
 using ScrubJay.Text.Building;
 using ScrubJay.Validation;

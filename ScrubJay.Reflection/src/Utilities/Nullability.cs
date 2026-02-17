@@ -192,9 +192,9 @@ public static class Nullability
         }
 
         NullabilityInfo? nullabilityInfo = Get(property);
-        property.GetAttributes().TryGet<NullableAttribute>(out var nullableAttribute);
+        property.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out var nullableAttribute);
         var propertyType = property.PropertyType;
-        propertyType.GetAttributes().TryGet<NullableContextAttribute>(out var nullableContextAttribute);
+        propertyType.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out var nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {
@@ -303,8 +303,8 @@ public static class Nullability
         NullableAttribute? nullableAttribute = null;
         NullableContextAttribute? nullableContextAttribute = null;
 
-        member.GetAttributes().TryGet<NullableAttribute>(out nullableAttribute);
-        relatedType?.GetAttributes().TryGet<NullableContextAttribute>(out nullableContextAttribute);
+        member.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out nullableAttribute);
+        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {
@@ -385,8 +385,8 @@ public static class Nullability
         NullableAttribute? nullableAttribute = null;
         NullableContextAttribute? nullableContextAttribute = null;
 
-        parameter.GetAttributes().TryGet<NullableAttribute>(out nullableAttribute);
-        relatedType?.GetAttributes().TryGet<NullableContextAttribute>(out nullableContextAttribute);
+        parameter.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out nullableAttribute);
+        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {

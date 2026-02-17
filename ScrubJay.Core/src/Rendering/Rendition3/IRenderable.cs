@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
-
-namespace ScrubJay.Rendering;
+namespace ScrubJay.Rendering.Rendition3;
 
 /// <summary>
 /// Indicates that this value can render itself to a <see cref="TextBuilder"/>.
@@ -45,7 +43,7 @@ public sealed class EnumRendererFactory : RendererFactory
 
     private Delegate CreateDelegate(Type enumType)
     {
-        
+        throw Ex.NotImplemented();
     }
     
     private RenderTo<E> CreateRenderTo<E>()

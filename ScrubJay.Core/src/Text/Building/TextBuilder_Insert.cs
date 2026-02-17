@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Text.Building;
+﻿using ScrubJay.Rendering.Rendition3;
+
+namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
 {

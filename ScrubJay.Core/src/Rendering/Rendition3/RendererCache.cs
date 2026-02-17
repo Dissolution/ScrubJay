@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ScrubJay.Rendering;
+namespace ScrubJay.Rendering.Rendition3;
 
 [PublicAPI]
 public static class RendererCache

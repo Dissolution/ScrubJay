@@ -174,7 +174,7 @@ public sealed partial class TextBuilder :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public text AsText() => new text(_chars, 0, _position);
 
-    public char[] ToArray() => _chars.Slice(0, _position);
+    public char[] ToArray() => _chars.SubArray(0, _position);
 
     public Result<int> TryCopyTo(Span<char> destination)
     {

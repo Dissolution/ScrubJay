@@ -1,5 +1,7 @@
 ﻿
 
+using ScrubJay.Rendering.Rendition3;
+
 #pragma warning disable CS0618 // Type or member is obsolete
 
 namespace ScrubJay.Reflection.Decompilation;

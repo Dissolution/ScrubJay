@@ -118,8 +118,12 @@ public static class TypeExtensions
 
             if (type == checkType)
                 return true;
-            // Everything implements object
-            if ((checkType == typeof(object)) && !type.IsPointer)
+            // ref structs, byrefs, and pointers do not implement anything
+            if (type.IsRef || type.IsPointer)
+                return false;
+            
+            // Everything else implements object
+            if (checkType == typeof(object))
                 return true;
 
             if (!checkType.IsGenericTypeDefinition)

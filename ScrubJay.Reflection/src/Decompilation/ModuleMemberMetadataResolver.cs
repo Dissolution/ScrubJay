@@ -1,4 +1,5 @@
 ﻿using ScrubJay.Reflection.Exceptions;
+using ScrubJay.Rendering.Rendition3;
 
 namespace ScrubJay.Reflection.Decompilation;
 

@@ -6,16 +6,17 @@ public static class ListExtensions
     extension<T>(List<T>? list)
     {
 #if !NETSTANDARD
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T GetRef()
+        public ref T FirstItemRef
         {
-            return ref CollectionsMarshal.AsSpan(list).GetRef();
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref CollectionsMarshal.AsSpan(list).FirstItemRef;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref readonly T GetReadonlyRef()
+
+        public ref readonly T FirstItemReadonlyRef
         {
-            return ref CollectionsMarshal.AsSpan(list).GetReadonlyRef();
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ref CollectionsMarshal.AsSpan(list).FirstItemReadonlyRef;
         }
 #endif
 

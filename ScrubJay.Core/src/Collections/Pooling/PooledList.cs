@@ -800,7 +800,7 @@ public sealed class PooledList<T> :
     {
         if (!Validate.Range(range, _position).IsOk(out var offset, out var length, out var error))
             return error;
-        return _array.Slice(offset, length);
+        return _array.SubArray(offset, length);
     }
 
 
@@ -1116,7 +1116,7 @@ public sealed class PooledList<T> :
     /// Copy the items in this <see cref="PooledList{T}"/> to a new <c>T[]</c>
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T[] ToArray() => _array.Slice(0, _position);
+    public T[] ToArray() => _array.SubArray(0, _position);
 
     /// <summary>
     /// Convert this <see cref="PooledList{T}"/> to a <see cref="List{T}"/> containing the same items

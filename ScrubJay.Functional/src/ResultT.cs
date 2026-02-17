@@ -618,5 +618,15 @@ public readonly struct Result<T> :
         return Result<N>.Error(_error!);
     }
 
+    public Result<T> Where(Func<T, bool> predicate)
+    {
+        if (_isOk && !predicate(_value!))
+        {
+            return new InvalidOperationException($"Ok value `{_value?.ToString()}` did not match the predicate");
+        }
+
+        return this;
+    }
+
 #endregion
 }

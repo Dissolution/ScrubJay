@@ -2,6 +2,7 @@
 
 using ScrubJay.Memory;
 using ScrubJay.Reflection.Utilities;
+using ScrubJay.Rendering.Rendition3;
 using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 using ScrubJay.Validation;
@@ -44,7 +45,7 @@ public sealed class DecompiledMethod
             Parameters = [new ThisParameterInfo(Method), ..method.GetParameters()];
         }
 
-        ParameterTypes = Parameters.ConvertAll(static p => p.ParameterType);
+        ParameterTypes = Parameters.SelectToArray(static p => p.ParameterType);
 
         if (method is MethodInfo methodInfo)
         {
