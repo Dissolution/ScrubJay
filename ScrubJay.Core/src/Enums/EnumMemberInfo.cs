@@ -35,7 +35,7 @@ public abstract class EnumMemberInfo :
     }
 
 
-    private readonly HashSet<string> _aliases = [];
+    private readonly HashSet<string> _aliases;
     private readonly string _render;
 
     public EnumTypeInfo EnumTypeInfo { get; }

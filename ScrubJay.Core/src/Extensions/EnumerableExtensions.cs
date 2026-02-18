@@ -184,9 +184,6 @@ public static class EnumerableExtensions
         /// <summary>
         /// Consume this <see cref="IEnumerable{T}"/> by performing an <see cref="Action{T}"/> on each of its values
         /// </summary>
-        /// <param name="enumerable">
-        /// The <see cref="IEnumerable{T}"/> to consume (after which further enumeration will fail)
-        /// </param>
         /// <param name="perItem">
         /// An <see cref="Action{T}"/> to invoke upon each value in the <see cref="IEnumerable{T}"/>
         /// </param>

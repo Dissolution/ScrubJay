@@ -104,7 +104,6 @@ public static class TypeExtensions
         /// <summary>
         /// Does <c>this</c> <paramref name="type"/> implement the <paramref name="checkType"/>?
         /// </summary>
-        /// <param name="type">The <see cref="Type"/> to examine</param>
         /// <param name="checkType">The <see cref="Type"/> that this <paramref name="type"/> must implement</param>
         /// <returns>
         /// <c>true</c> if <paramref name="type"/> implements <paramref name="checkType"/>; otherwise, <c>false</c>
@@ -180,6 +179,6 @@ public static class TypeExtensions
             where T : allows ref struct
 #endif
 #pragma warning disable CA2263
-            => Implements(type, typeof(T));
+            => type.Implements(typeof(T));
     }
 }

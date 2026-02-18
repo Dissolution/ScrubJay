@@ -18,7 +18,7 @@ public static class RendererCache
                 // skip system assemblies
                 if (assembly.FullName is not null &&
                     (assembly.FullName.StartsWith("System", StringComparison.Ordinal) ||
-                     assembly.FullName.StartsWith("Microsoft", StringComparison.Ordinal)))
+                        assembly.FullName.StartsWith("Microsoft", StringComparison.Ordinal)))
                 {
                     return false;
                 }
@@ -159,8 +159,10 @@ public static class RendererCache
             score += 10;
         if (attrs.HasFlags(GenericParameterAttributes.DefaultConstructorConstraint))
             score += 10;
+#if NET9_0_OR_GREATER
         if (attrs.HasFlags(GenericParameterAttributes.AllowByRefLike))
             score += 10;
+#endif
 
         // same for generic parameter constraints
         // Count type constraints (interfaces, base classes, Enum, etc.)

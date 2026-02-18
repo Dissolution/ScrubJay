@@ -21,21 +21,15 @@ public static class MethodRenderer
                     {
                         tb.Append(m.Name);
                     }
-            
+
                     tb.Append('<')
-                        .Delimit(", ", method.GetGenericArguments(), TBA<Type>.Render)
+                        .Delimit(", ", m.GetGenericArguments(), TBA<Type>.Render)
                         .Append('>');
                 })
 
             .Append('(')
             .Delimit(", ", method.GetParameters(), "@")
             .Append(')')
-            .If(method, static m => m.Is<MethodInfo>())
-        
-        
-        if (method is MethodInfo methodInfo)
-        {
-            builder.Append(" -> ").Render(methodInfo.ReturnType);
-        }
+            .If(method, static m => m.Is<MethodInfo>(), static (tb, m) => tb.Render(m.ReturnType));
     }
 }

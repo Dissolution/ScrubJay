@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/Sandboxes/">
-    <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj" />
+    <Project Path="ConsoleSandbox/ScrubJay.Sandboxes.Console.csproj" />
     <Project Path="StandaloneSandbox/StandaloneSandbox.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Core/">

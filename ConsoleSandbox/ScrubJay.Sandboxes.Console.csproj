@@ -6,7 +6,8 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>ConsoleSandbox</RootNamespace>
+        <RootNamespace>ScrubJay.Sandboxes</RootNamespace>
+        <AssemblyName>ScrubJay.Sandboxes.Console</AssemblyName>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
