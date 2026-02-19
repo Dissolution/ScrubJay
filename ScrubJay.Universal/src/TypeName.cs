@@ -86,9 +86,9 @@ public static partial class TypeName
         {
             Type genericTypeDefinition = type.GetGenericTypeDefinition();
 
-            if (genericTypeDefinition.Namespace == "System" &&
-                (genericTypeDefinition.Name.StartsWith("Tuple`") ||
-                 genericTypeDefinition.Name.StartsWith("ValueTuple")))
+            if (string.Equals(genericTypeDefinition.Namespace, "System", StringComparison.Ordinal) &&
+                (genericTypeDefinition.Name.StartsWith("Tuple`", StringComparison.Ordinal) ||
+                 genericTypeDefinition.Name.StartsWith("ValueTuple", StringComparison.Ordinal)))
             {
                 WriteTuple(builder, type, genericTypes);
                 return builder;

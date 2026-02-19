@@ -2,6 +2,9 @@
 
 namespace ScrubJay.Functional;
 
+/// <summary>
+/// A <c>static</c> prelude to import common functions.
+/// </summary>
 /// <remarks>
 /// To include these methods in a single <c>.cs</c> file, add to its <c>usings</c> section:
 /// <code>
@@ -78,7 +81,7 @@ public static class Prelude
     {
         return Result.Try(action);
     }
-    
+
     /// <summary>
     /// Tries to execute an <see cref="Func{T}"/> and returns a <see cref="Result{T}"/> describing its invocation.
     /// </summary>

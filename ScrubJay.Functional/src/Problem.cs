@@ -1,3 +1,5 @@
+#pragma warning disable CA1032, RCS1194
+
 using System.Text;
 
 namespace ScrubJay.Functional;
@@ -10,10 +12,9 @@ namespace ScrubJay.Functional;
 /// This class implements <see cref="IEnumerable"/> and has an <see cref="Add"/> method so that it can be used with fluent collection initialization syntax.
 /// </remarks>
 [PublicAPI]
-public class Problem : IEnumerable
+public partial class Problem : IEnumerable<KeyValuePair<string, object?>>
 {
     public static implicit operator Problem(Exception exception) => new Problem(exception);
-
 
     private Dictionary<string, object?>? _data;
 
@@ -35,29 +36,36 @@ public class Problem : IEnumerable
     /// <summary>
     /// Additional contextual information about this <see cref="Problem"/>
     /// </summary>
-    public Dictionary<string, object?> Data =>
-        _data ??= new Dictionary<string, object?>(capacity: 0, comparer: StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, object?> Data
+        => _data ??= new Dictionary<string, object?>(
+               capacity: 0,
+               comparer: StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Directly gets or sets <see cref="Data"/>
     /// </summary>
     /// <param name="key"></param>
-    public object? this[object? key]
-    {
-        get => Data[key?.ToString() ?? "null"];
-        set => Data[key?.ToString() ?? "null"] = value;
-    }
+    public object? this[object? key] { get => Data[key?.ToString() ?? "null"]; set => Data[key?.ToString() ?? "null"] = value; }
 
     public Problem() { }
 
     public Problem(string? details)
-        : this(details, null, null) { }
+        : this(
+            details,
+            null,
+            null) { }
 
     public Problem(string? details, string? title)
-        : this(details, title, null) { }
+        : this(
+            details,
+            title,
+            null) { }
 
     public Problem(string? details, Exception? exception)
-        : this(details, null, exception) { }
+        : this(
+            details,
+            null,
+            exception) { }
 
     public Problem(string? details, string? title, Exception? exception)
     {
@@ -66,9 +74,13 @@ public class Problem : IEnumerable
             this.Exception = exception;
             this.Details = details ?? exception.Message;
             this.Title = title ?? TypeName.For(exception);
+
             if (exception.Data.Count > 0)
             {
-                _data = new(capacity: exception.Data.Count, StringComparer.OrdinalIgnoreCase);
+                _data = new(
+                    capacity: exception.Data.Count,
+                    StringComparer.OrdinalIgnoreCase);
+
                 foreach (DictionaryEntry data in exception.Data)
                 {
                     _data[data.Key.ToString() ?? "null"] = data.Value;
@@ -84,42 +96,55 @@ public class Problem : IEnumerable
     }
 
     public Problem(Exception? exception)
-        : this(null, null, exception) { }
+        : this(
+            null,
+            null,
+            exception) { }
 
     public Problem(Exception? exception, string? title)
-        : this(null, title, exception) { }
-
+        : this(
+            null,
+            title,
+            exception) { }
 
     public void Add(string key, object? value)
     {
         this.Data[key] = value;
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return this.Data.GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => this.Data.GetEnumerator();
+
+    public IEnumerator<KeyValuePair<string, object?>> GetEnumerator() => this.Data.GetEnumerator();
 
     public override string ToString()
     {
         StringBuilder builder = StringBuilder.Rent();
+
         builder.AppendLine("Problem:")
-            .Append("    Title: ").Append(Title).AppendLine()
-            .Append("  Details: ").Append(Details).AppendLine();
+            .Append("    Title: ")
+            .Append(Title)
+            .AppendLine()
+            .Append("  Details: ")
+            .Append(Details)
+            .AppendLine();
+
         if (Exception is not null)
         {
-            builder
-                .Append("    Error: ").Append(TypeName.For(Exception)).AppendLine()
-                .Append("      ").Append(Exception.Message).AppendLine();
+            builder.Append("    Error: ")
+                .Append(TypeName.For(Exception))
+                .AppendLine()
+                .Append("      ")
+                .Append(Exception.Message)
+                .AppendLine();
         }
 
         if (_data is not null && _data.Count > 0)
         {
             builder.Append("     Data:");
+
             foreach (var pair in _data)
             {
-                builder
-                    .AppendLine()
+                builder.AppendLine()
                     .Append("       ")
                     .Append(pair.Key)
                     .Append(":  ")
@@ -131,23 +156,31 @@ public class Problem : IEnumerable
     }
 }
 
+#pragma warning disable CA1010, MA0056
 [PublicAPI]
 public class ProblemException : Exception
 {
     public string? Title { get; }
 
     public ProblemException(Problem problem)
-        : base(problem.Details, problem.Exception)
+        : base(
+            problem.Details,
+            problem.Exception)
     {
         this.Title = problem.Title;
+
         foreach (var kvp in problem.Data)
         {
-            base.Data.Add(kvp.Key, kvp.Value);
+            base.Data.Add(
+                kvp.Key,
+                kvp.Value);
         }
     }
 
     public ProblemException(string? details, string? title = null, Exception? exception = null)
-        : base(details, exception)
+        : base(
+            details,
+            exception)
     {
         this.Title = title;
     }

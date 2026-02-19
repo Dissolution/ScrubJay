@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace ConsoleSandbox;
+namespace ScrubJay.Sandboxes;
 
 public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparable<TestRefStruct>
 {
     public readonly int Id;
-    
+
     public readonly string? Name;
 
     public TestRefStruct(int id, string? name)
@@ -18,12 +18,12 @@ public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparabl
     {
         return this.Id.CompareTo(other.Id);
     }
-    
+
     public bool Equals(TestRefStruct other)
     {
         return this.Id.Equals(other.Id);
     }
-    
+
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
         if (obj is int id)

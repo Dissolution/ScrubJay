@@ -75,6 +75,7 @@ public static class Option
     {
         if (nestedOptions.IsSome(out var option))
             return option;
+
         return default;
     }
 

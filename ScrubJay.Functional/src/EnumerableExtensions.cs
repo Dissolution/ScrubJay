@@ -15,7 +15,8 @@ public static class EnumerableExtensions
 
             foreach (T value in enumerable)
             {
-                if (selectWhere(value).IsSome(out var newValue))
+                if (selectWhere(value)
+                    .IsSome(out var newValue))
                 {
                     yield return newValue;
                 }
@@ -29,7 +30,8 @@ public static class EnumerableExtensions
 
             foreach (T value in enumerable)
             {
-                if (selectWhere(value).IsOk(out var newValue))
+                if (selectWhere(value)
+                    .IsOk(out var newValue))
                 {
                     yield return newValue;
                 }
@@ -43,7 +45,8 @@ public static class EnumerableExtensions
 
             foreach (T value in enumerable)
             {
-                if (selectWhere(value).IsOk(out var newValue))
+                if (selectWhere(value)
+                    .IsOk(out var newValue))
                 {
                     yield return newValue;
                 }
@@ -58,11 +61,14 @@ public static class EnumerableExtensions
             foreach (T value in enumerable)
             {
                 N newValue;
+
                 try
                 {
                     newValue = selector(value);
                 }
-                catch (Exception)
+#pragma warning disable
+                catch
+#pragma warning restore
                 {
                     continue;
                 }

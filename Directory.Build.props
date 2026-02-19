@@ -14,37 +14,32 @@
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
-
-        <!-- Suppress Warnings -->
-        <NoWarn>
-            $(NoWarn);      <!-- inherit any other suppressions -->
-            CS1591;         <!-- undocumented members -->
-            CS8981;         <!-- `text` alias -->
-            CA1062;
-            CA1715;         <!-- Prefix Generic type parameter names with 'T' -->
-            CA1063;         <!-- Implement IDisposable 'correctly' -->
-            CA1000;         <!-- Do not declare static memebrs on generic types -->
-            CA2225;         <!-- Provide alternative methods for operators -->
-            CA1710; CA1805; CA1051; CA1815; CA1033; CA1725; CA1810; CA1307; CA1031; CA1305; CA1720;
-
-        </NoWarn>
+        <!-- Individual suppressions are located in `.editorconfig` -->
     </PropertyGroup>
 
     <!-- Analyzers -->
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.257">
+        <PackageReference Include="Meziantou.Analyzer">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.0.128591">
+        <PackageReference Include="SonarAnalyzer.CSharp">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Roslynator.Analyzers" Version="4.14.1">
+        <PackageReference Include="Roslynator.Analyzers">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="xunit.analyzers" Version="1.26.0">
+        <PackageReference Include="xunit.analyzers">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <!-- Other helpful NuGet Packages -->
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
 
     <!-- NuGet -->
     <PropertyGroup>
@@ -79,6 +74,8 @@
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Text"/>
+
+        <Using Include="JetBrains.Annotations"/>
 
         <!-- Aliases -->
         <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>

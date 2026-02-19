@@ -11,10 +11,9 @@ public static class TypeExtensions
         /// <summary>
         /// Gets the parent (owning) <see cref="Type"/> of this <see cref="Type"/>.
         /// </summary>
-        //[return: NotNullIfNotNull(nameof(type))]
+        [NotNullIfNotNull(nameof(type))]
         public Type? ParentType
         {
-            [return: NotNullIfNotNull(nameof(type))]
             get
             {
                 if (type is null)
@@ -40,9 +39,9 @@ public static class TypeExtensions
                 if (type is null || !type.IsGenericType)
                     return false;
                 var genericDef = type.GetGenericTypeDefinition();
-                return genericDef.Namespace == "System" &&
-                       (genericDef.Name.StartsWith("Tuple`") ||
-                        genericDef.Name.StartsWith("ValueTuple`"));
+                return string.Equals(genericDef.Namespace, "System", StringComparison.Ordinal) &&
+                       (genericDef.Name.StartsWith("Tuple`", StringComparison.Ordinal) ||
+                        genericDef.Name.StartsWith("ValueTuple`", StringComparison.Ordinal));
             }
         }
     }

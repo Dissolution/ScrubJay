@@ -381,52 +381,52 @@ public class TypeNameTests
 
 #endregion
 
-#region Test Helper Types 
+#region Test Helper Types
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable UnusedType.Global
-    public struct TestStruct
+    internal struct TestStruct
     {
         public int Value;
     }
 
-    public enum TestEnum
+    internal enum TestEnum
     {
         Value1,
         Value2,
     }
 
-    public class TestClass { }
+    internal class TestClass { }
 
-    public interface ITestInterface { }
+    internal interface ITestInterface { }
 
-   
-    public delegate void TestDelegate();
 
-    
-    
-    public class OuterClass
+    internal delegate void TestDelegate();
+
+
+
+    internal class OuterClass
     {
-        public class InnerClass
+        internal class InnerClass
         {
             public class DeeplyNestedClass { }
         }
 
-        public struct InnerStruct { }
+        internal struct InnerStruct { }
 
-        public enum InnerEnum
+        internal enum InnerEnum
         {
             Value,
         }
     }
 
 
-    public class OuterGeneric<T>
+    internal class OuterGeneric<T>
     {
-        public class InnerClass { }
+        internal class InnerClass { }
 
-        public class InnerGeneric<U> { }
+        internal class InnerGeneric<U> { }
     }
 
 #endregion

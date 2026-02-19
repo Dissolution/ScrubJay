@@ -1,3 +1,5 @@
+#pragma warning disable S2326, CA1711
+
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -26,7 +28,7 @@ public static class TypeConstraints
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        ;
+    ;
 
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsUnmanaged<T>
@@ -65,15 +67,15 @@ public static class TypeConstraints
 #if NET7_0_OR_GREATER
         where T : ISpanParsable<T>
 #endif
-        ;
+    ;
 
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsNumberBase<T>
 #if NET7_0_OR_GREATER
         where T : INumberBase<T>
 #endif
-        ;
-    
+    ;
+
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsUnmanagedAllowsRefStruct<T>
         where T : unmanaged
@@ -81,5 +83,4 @@ public static class TypeConstraints
         , allows ref struct
 #endif
     ;
-
 }

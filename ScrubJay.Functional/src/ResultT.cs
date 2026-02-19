@@ -13,7 +13,7 @@ namespace ScrubJay.Functional;
 /// <typeparam name="T">
 /// The <see cref="Type"/> of value stored with an <c>Ok</c> Result
 /// </typeparam>
-/// <remarks> 
+/// <remarks>
 /// This emulates a discriminated union:
 /// <code>
 /// Result
@@ -50,12 +50,12 @@ public readonly struct Result<T> :
 #region Operators
 
     /// <summary>
-    /// Implicitly convert a <see cref="Result{T}"/> into a <c>bool</c> (Ok -> <c>true</c>, Error -> <c>false</c>) 
+    /// Implicitly convert a <see cref="Result{T}"/> into a <c>bool</c> (Ok -> <c>true</c>, Error -> <c>false</c>)
     /// </summary>
     public static implicit operator bool(Result<T> result) => result._isOk;
 
     /// <summary>
-    /// Implicitly convert a <see cref="Result{T}"/> into a <see cref="Result"/> (Ok(T) -> Ok, Error -> Error) 
+    /// Implicitly convert a <see cref="Result{T}"/> into a <see cref="Result"/> (Ok(T) -> Ok, Error -> Error)
     /// </summary>
     public static implicit operator Result(Result<T> result) =>
         result.IsError(out var error) ? Result.Error(error) : Result.Ok;
@@ -127,8 +127,8 @@ public readonly struct Result<T> :
     private
 #endif
         readonly bool _isOk;
-    
-    
+
+
     // possible ok value
 #if DEBUG
     internal
@@ -144,7 +144,7 @@ public readonly struct Result<T> :
     private
 #endif
         readonly Exception? _error;
-    
+
     /// <remarks>
     /// <see cref="Result{T}"/> may only be constructed with <see cref="Ok"/>, <see cref="Error"/>,
     /// or an implicit conversion from a <typeparamref name="T"/> or <see cref="Exception"/>.
@@ -360,11 +360,11 @@ public readonly struct Result<T> :
         }
     }
 
-    public int CompareTo(T? ok)
+    public int CompareTo(T? other)
     {
         if (_isOk)
         {
-            return Comparer<T>.Default.Compare(_value!, ok!);
+            return Comparer<T>.Default.Compare(_value!, other!);
         }
 
         return 1; // Error < Ok
@@ -509,6 +509,7 @@ public readonly struct Result<T> :
 
     [PublicAPI]
     [MustDisposeResource(false)]
+    [StructLayout(LayoutKind.Auto)]
     public struct ResultEnumerator : IEnumerator<T>, IEnumerator, IDisposable
     {
         private readonly Result<T> _result;

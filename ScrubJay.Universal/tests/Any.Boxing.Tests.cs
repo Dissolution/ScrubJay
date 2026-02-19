@@ -10,10 +10,17 @@ public class Any_Boxing_Tests
     [InlineData(int.MaxValue)]
     public void CanBoxInt(int i32)
     {
-        var boxed = Any.TryBox(i32, out object? box);
+        var boxed = Any.TryBox(
+            i32,
+            out object? box);
+
         Assert.True(boxed);
         Assert.NotNull(box);
-        Assert.Equal(typeof(int), box.GetType());
+
+        Assert.Equal(
+            typeof(int),
+            box.GetType());
+
         Assert.True(box.Equals(i32));
         Assert.True(i32.Equals(box));
     }
@@ -25,12 +32,19 @@ public class Any_Boxing_Tests
     [InlineData("TRJ-147")]
     public void CanBoxString(string? str)
     {
-        var boxed = Any.TryBox(str, out object? box);
+        var boxed = Any.TryBox(
+            str,
+            out object? box);
+
         Assert.True(boxed);
         Assert.True((box is null) == (str is null));
+
         if (str is not null)
         {
-            Assert.Equal(typeof(string), box!.GetType());
+            Assert.Equal(
+                typeof(string),
+                box!.GetType());
+
             Assert.True(box.Equals(str));
             Assert.True(str.Equals(box));
         }
@@ -42,10 +56,17 @@ public class Any_Boxing_Tests
     [InlineData((char)0xD800)]
     public void CanBoxChar(char ch)
     {
-        var boxed = Any.TryBox(ch, out object? box);
+        var boxed = Any.TryBox(
+            ch,
+            out object? box);
+
         Assert.True(boxed);
         Assert.NotNull(box);
-        Assert.Equal(typeof(char), box.GetType());
+
+        Assert.Equal(
+            typeof(char),
+            box.GetType());
+
         Assert.True(box.Equals(ch));
         Assert.True(ch.Equals(box));
     }
@@ -57,26 +78,32 @@ public class Any_Boxing_Tests
         bool boxed;
         object? box;
 
-        {
-            text = default;
-            boxed = Any.TryBox<ReadOnlySpan<char>>(text, out box);
-            Assert.False(boxed);
-            Assert.Null(box);
-        }
-       
-        {
-            text = "TRJ".AsSpan();
-            boxed = Any.TryBox<ReadOnlySpan<char>>(text, out box);
-            Assert.False(boxed);
-            Assert.Null(box);
-        }
+        text = default;
 
-        {
-            string str = "TRJ";
-            text = str;
-            boxed = Any.TryBox<ReadOnlySpan<char>>(text, out box);
-            Assert.False(boxed);
-            Assert.Null(box);
-        }
+        boxed = Any.TryBox<ReadOnlySpan<char>>(
+            text,
+            out box);
+
+        Assert.False(boxed);
+        Assert.Null(box);
+
+        text = "TRJ".AsSpan();
+
+        boxed = Any.TryBox<ReadOnlySpan<char>>(
+            text,
+            out box);
+
+        Assert.False(boxed);
+        Assert.Null(box);
+
+        string str = "TRJ";
+        text = str;
+
+        boxed = Any.TryBox<ReadOnlySpan<char>>(
+            text,
+            out box);
+
+        Assert.False(boxed);
+        Assert.Null(box);
     }
 }

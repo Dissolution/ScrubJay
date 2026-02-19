@@ -8,7 +8,9 @@ internal static class InternalExtensions
 #if NET9_0_OR_GREATER
     extension(DynamicMethod)
     {
-        public static DynamicMethod New(string methodName, Type? returnType, params Type[]? parameterTypes)
+        public static DynamicMethod New(string methodName,
+            Type? returnType,
+            params Type[]? parameterTypes)
         {
             var dynamicMethod = new DynamicMethod(
                 name: methodName,
@@ -18,6 +20,7 @@ internal static class InternalExtensions
                 parameterTypes: parameterTypes,
                 m: typeof(InternalExtensions).Module,
                 skipVisibility: true);
+
             return dynamicMethod;
         }
     }
@@ -32,9 +35,10 @@ internal static class InternalExtensions
                 del = dynamicMethod.CreateDelegate<D>();
                 return true;
             }
-            catch (Exception)
+#pragma warning disable CA1031
+            catch
+#pragma warning restore CA1031
             {
-                Debugger.Break();
                 del = null;
                 return false;
             }
@@ -43,22 +47,30 @@ internal static class InternalExtensions
 
     extension(Type? type)
     {
-        private MethodInfo? FindMethod(BindingFlags flags, string name, Type returnType, params Type[] parameterTypes)
+        private MethodInfo? FindMethod(BindingFlags flags,
+            string name,
+            Type returnType,
+            params Type[] parameterTypes)
         {
             if (type is null)
                 return null;
 
             var methods = type.GetMethods(flags);
+
             foreach (var method in methods)
             {
-                if (method.Name.Equals(name, StringComparison.OrdinalIgnoreCase) &&
-                    method.ReturnType == returnType)
+                if (method.Name.Equals(
+                        name,
+                        StringComparison.OrdinalIgnoreCase)
+                    && method.ReturnType == returnType)
                 {
                     var parameters = method.GetParameters();
+
                     if (parameters.Length != parameterTypes.Length)
                         continue;
 
                     bool match = true;
+
                     for (var p = 0; p < parameters.Length; p++)
                     {
                         if (parameters[p].ParameterType != parameterTypes[p])
@@ -76,8 +88,7 @@ internal static class InternalExtensions
             return null;
         }
 
-        public MethodInfo? FindMethod(
-            string name,
+        public MethodInfo? FindMethod(string name,
             Type returnType,
             params Type[] parameterTypes)
         {
@@ -102,7 +113,12 @@ internal static class InternalExtensions
                 flags |= BindingFlags.DeclaredOnly;
             }
 
-            return FindMethod(type, flags, name, returnType, parameterTypes);
+            return FindMethod(
+                type,
+                flags,
+                name,
+                returnType,
+                parameterTypes);
         }
     }
 
@@ -111,13 +127,12 @@ internal static class InternalExtensions
         public void EmitLoadInstance(Type instanceType)
         {
             // stack types
-            if (instanceType.IsEnum ||
-                instanceType.IsByRef ||
-                instanceType.IsByRefLike ||
-                instanceType.IsValueType)
+            if (instanceType.IsEnum || instanceType.IsByRef || instanceType.IsByRefLike || instanceType.IsValueType)
             {
                 // load a ref to this value
-                generator.Emit(OpCodes.Ldarga_S, 0);
+                generator.Emit(
+                    OpCodes.Ldarga_S,
+                    0);
             }
             // heap types
             else
@@ -127,26 +142,35 @@ internal static class InternalExtensions
             }
         }
 
-        public void EmitCallMethod(Type instanceType, MethodInfo method)
+        public void EmitCallMethod(Type instanceType,
+            MethodInfo method)
         {
             // enums + byref likes we can use Constrained
-            if (instanceType.IsByRef ||
-                instanceType.IsEnum ||
-                instanceType.IsByRefLike)
+            if (instanceType.IsByRef || instanceType.IsEnum || instanceType.IsByRefLike)
             {
-                generator.Emit(OpCodes.Constrained, instanceType);
-                generator.Emit(OpCodes.Callvirt, method);
+                generator.Emit(
+                    OpCodes.Constrained,
+                    instanceType);
+
+                generator.Emit(
+                    OpCodes.Callvirt,
+                    method);
             }
             // value types we just call
-            else if (instanceType.IsValueType)
-            {
-                generator.Emit(OpCodes.Call, method);
-            }
-            // class types we have to callvirt
             else
-            {
-                generator.Emit(OpCodes.Callvirt, method);
-            }
+                if (instanceType.IsValueType)
+                {
+                    generator.Emit(
+                        OpCodes.Call,
+                        method);
+                }
+                // class types we have to callvirt
+                else
+                {
+                    generator.Emit(
+                        OpCodes.Callvirt,
+                        method);
+                }
         }
     }
 #endif

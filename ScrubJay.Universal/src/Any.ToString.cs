@@ -19,7 +19,7 @@ partial class Any
     {
         return value?.ToString() ?? string.Empty;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToString<T>(scoped ReadOnlySpan<T> span)
     {
@@ -61,7 +61,7 @@ partial class MethodCache<T>
     private static Func<T, string> CreateToStringFunc()
     {
         Type instanceType = typeof(T);
-        MethodInfo? toStringMethod = instanceType.FindMethod("ToString", typeof(string), []);
+        MethodInfo? toStringMethod = instanceType.FindMethod("ToString", typeof(string));
 
         if (toStringMethod is null)
             return FallbackToString;
@@ -84,7 +84,7 @@ partial class MethodCache<T>
 
         return func;
     }
-    
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string ToString(T? value)

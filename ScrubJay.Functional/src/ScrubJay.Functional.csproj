@@ -28,11 +28,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Polyfill" Version="9.8.0">
+        <PackageReference Include="Polyfill">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory" Version="4.6.3"/>
+                          Include="System.Memory"/>
     </ItemGroup>
 
     <ItemGroup>

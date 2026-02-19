@@ -333,6 +333,7 @@ public readonly ref struct RefResult<T>
 
     [PublicAPI]
     [MustDisposeResource(false)]
+    [StructLayout(LayoutKind.Auto)]
     public ref struct RefResultEnumerator
     {
         private readonly RefResult<T> _result;

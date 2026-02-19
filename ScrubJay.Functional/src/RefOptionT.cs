@@ -60,8 +60,8 @@ public readonly ref struct RefOption<T>
 
         return None;
     }
-    
-    
+
+
     public static RefOption<T> NotNull(T? value)
     {
         if (value is null)
@@ -285,6 +285,7 @@ public readonly ref struct RefOption<T>
 
     [PublicAPI]
     [MustDisposeResource(false)]
+    [StructLayout(LayoutKind.Auto)]
     public ref struct OptionEnumerator
     {
         private readonly RefOption<T> _option;

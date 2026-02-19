@@ -20,19 +20,19 @@
 
     <!-- Global Usings -->
     <ItemGroup>
-        
+
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Fody" Version="6.9.3">
+        <PackageReference Include="Fody">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="InlineIL.Fody" Version="1.10.1">
+        <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.ObjectPool"/>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory" Version="4.6.3"/>
+                          Include="System.Memory"/>
     </ItemGroup>
 </Project>

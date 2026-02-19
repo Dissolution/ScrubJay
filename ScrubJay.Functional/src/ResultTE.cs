@@ -363,11 +363,11 @@ public readonly struct Result<T, E> :
         }
     }
 
-    public int CompareTo(T? ok)
+    public int CompareTo(T? other)
     {
         if (_isOk)
         {
-            return Comparer<T>.Default.Compare(_value!, ok!);
+            return Comparer<T>.Default.Compare(_value!, other!);
         }
         else
         {
@@ -419,11 +419,11 @@ public readonly struct Result<T, E> :
         }
     }
 
-    public bool Equals(T? ok)
+    public bool Equals(T? other)
     {
         if (_isOk)
         {
-            return EqualityComparer<T>.Default.Equals(_value!, ok!);
+            return EqualityComparer<T>.Default.Equals(_value!, other!);
         }
 
         return false;
@@ -448,7 +448,7 @@ public readonly struct Result<T, E> :
             bool isOk => _isOk == isOk,
             _ => false,
         };
-    
+
     public override int GetHashCode()
     {
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -479,7 +479,12 @@ public readonly struct Result<T, E> :
 
 #region ToString / TryFormat
 
-    public string ToString(string? format, IFormatProvider? provider = null)
+    public string ToString(string? format)
+        => ToString(
+            format,
+            null);
+
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         string? str;
 
@@ -487,7 +492,7 @@ public readonly struct Result<T, E> :
         {
             if (_value is IFormattable)
             {
-                str = ((IFormattable)_value!).ToString(format, provider);
+                str = ((IFormattable)_value!).ToString(format, formatProvider);
             }
             else
             {
@@ -500,7 +505,7 @@ public readonly struct Result<T, E> :
         {
             if (_error is IFormattable)
             {
-                str = ((IFormattable)_error!).ToString(format, provider);
+                str = ((IFormattable)_error!).ToString(format, formatProvider);
             }
             else
             {
@@ -583,6 +588,7 @@ public readonly struct Result<T, E> :
 
     [PublicAPI]
     [MustDisposeResource(false)]
+    [StructLayout(LayoutKind.Auto)]
     public struct ResultEnumerator : IEnumerator<T>, IEnumerator, IDisposable
     {
         private readonly Result<T, E> _result;

@@ -1,5 +1,6 @@
 ﻿// CA1716: Identifiers should not match keywords
 
+
 using ScrubJay.Functional.IMPL;
 
 #pragma warning disable CA1716
@@ -32,52 +33,65 @@ public readonly struct Option<T> :
      * but cannot be declared because they may unify for some type parameter substitutions
      */
 #if NET7_0_OR_GREATER
-    IEqualityOperators<Option<T>, Option<T>, bool>,
-    IEqualityOperators<Option<T>, None, bool>,
+    IEqualityOperators<Option<T>, Option<T>, bool>, IEqualityOperators<Option<T>, None, bool>,
     //IEqualityOperators<Option<T>, T, bool>,
-    IComparisonOperators<Option<T>, Option<T>, bool>,
-    IComparisonOperators<Option<T>, None, bool>,
+    IComparisonOperators<Option<T>, Option<T>, bool>, IComparisonOperators<Option<T>, None, bool>,
     //IComparisonOperators<Option<T>, T, bool>,
 #endif
-    IEquatable<Option<T>>,
-    IEquatable<None>,
+    IEquatable<Option<T>>, IEquatable<None>,
     //IEquatable<T>,
-    IComparable<Option<T>>,
-    IComparable<None>,
+    IComparable<Option<T>>, IComparable<None>,
     //IComparable<T>,
-    IEnumerable<T>,
-    IFormattable
+    IEnumerable<T>, IFormattable
 {
 #region Operators
 
     public static implicit operator bool(Option<T> option) => option._isSome;
+
     public static implicit operator Option<T>(None _) => None;
+
     public static implicit operator Option<T>(T value) => Some(value);
+
     public static explicit operator Option<T>(Result<T> result) => result.AsOption();
 
     public static bool operator true(Option<T> option) => option._isSome;
+
     public static bool operator false(Option<T> option) => !option._isSome;
 
-
     public static bool operator ==(Option<T> left, Option<T> right) => left.Equals(right);
+
     public static bool operator !=(Option<T> left, Option<T> right) => !left.Equals(right);
+
     public static bool operator >(Option<T> left, Option<T> right) => left.CompareTo(right) > 0;
+
     public static bool operator >=(Option<T> left, Option<T> right) => left.CompareTo(right) >= 0;
+
     public static bool operator <(Option<T> left, Option<T> right) => left.CompareTo(right) < 0;
+
     public static bool operator <=(Option<T> left, Option<T> right) => left.CompareTo(right) <= 0;
 
     public static bool operator ==(Option<T> option, None _) => option.IsNone();
+
     public static bool operator !=(Option<T> option, None _) => option._isSome;
+
     public static bool operator >(Option<T> option, None none) => option.CompareTo(none) > 0;
+
     public static bool operator >=(Option<T> option, None none) => option.CompareTo(none) >= 0;
+
     public static bool operator <(Option<T> option, None none) => option.CompareTo(none) < 0;
+
     public static bool operator <=(Option<T> option, None none) => option.CompareTo(none) <= 0;
 
     public static bool operator ==(Option<T> option, T some) => option.Equals(some);
+
     public static bool operator !=(Option<T> option, T some) => !option.Equals(some);
+
     public static bool operator >(Option<T> option, T some) => option.CompareTo(some) > 0;
+
     public static bool operator >=(Option<T> option, T some) => option.CompareTo(some) >= 0;
+
     public static bool operator <(Option<T> option, T some) => option.CompareTo(some) < 0;
+
     public static bool operator <=(Option<T> option, T some) => option.CompareTo(some) <= 0;
 
 #endregion
@@ -154,6 +168,7 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return _value!;
+
         return fallback;
     }
 
@@ -161,6 +176,7 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return _value!;
+
         return getFallback();
     }
 
@@ -168,6 +184,7 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return _value!;
+
         return default;
     }
 
@@ -175,9 +192,9 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return _value!;
+
         throw new InvalidOperationException(errorMessage ?? $"{ToString()} is not Some");
     }
-
 
 #endregion
 
@@ -195,7 +212,6 @@ public readonly struct Option<T> :
         }
     }
 
-
     public void Match(Action<T> onSome, Action<None> onNone)
     {
         if (_isSome)
@@ -208,7 +224,6 @@ public readonly struct Option<T> :
         }
     }
 
-
     public R Match<R>(Func<T, R> some, Func<R> none)
     {
         if (_isSome)
@@ -220,7 +235,6 @@ public readonly struct Option<T> :
             return none();
         }
     }
-
 
     public R Match<R>(Func<T, R> some, Func<None, R> none)
     {
@@ -242,6 +256,7 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return Option<N>.Some(selector(_value!));
+
         return Option<N>.None;
     }
 
@@ -255,9 +270,7 @@ public readonly struct Option<T> :
         return Option<N>.None;
     }
 
-    public Option<N> SelectMany<K, N>(
-        Func<T, K> keySelector,
-        Func<T, K, N> newSelector)
+    public Option<N> SelectMany<K, N>(Func<T, K> keySelector, Func<T, K, N> newSelector)
     {
         if (_isSome)
         {
@@ -269,13 +282,12 @@ public readonly struct Option<T> :
         return Option<N>.None;
     }
 
-    public Option<N> SelectMany<K, N>(
-        Func<T, Option<K>> keySelector,
-        Func<T, K, N> newSelector)
+    public Option<N> SelectMany<K, N>(Func<T, Option<K>> keySelector, Func<T, K, N> newSelector)
     {
         if (_isSome)
         {
             var key = keySelector(_value!);
+
             if (key.IsSome(out var k))
             {
                 var newValue = newSelector(_value!, k);
@@ -300,12 +312,9 @@ public readonly struct Option<T> :
     /// <seealso href="https://doc.rust-lang.org/std/option/enum.Option.html#method.filter"/>
     public Option<T> Where(Func<T, bool> predicate)
     {
-        if (_isSome)
+        if (_isSome && predicate(_value!))
         {
-            if (predicate(_value!))
-            {
-                return this;
-            }
+            return this;
         }
 
         return None;
@@ -321,6 +330,7 @@ public readonly struct Option<T> :
 
     [PublicAPI]
     [MustDisposeResource(false)]
+    [StructLayout(LayoutKind.Auto)]
     public struct OptionEnumerator : IEnumerator<T>, IEnumerator, IDisposable
     {
         private readonly Option<T> _option;
@@ -441,10 +451,12 @@ public readonly struct Option<T> :
         return -1;
     }
 
-
-    public int CompareTo(None none) =>
-        // Some > None, None == None
-        _isSome ? 1 : 0;
+    public int CompareTo(None none)
+        =>
+            // Some > None, None == None
+            _isSome
+                ? 1
+                : 0;
 
     public int CompareTo(object? obj)
         => obj switch
@@ -531,14 +543,19 @@ public readonly struct Option<T> :
 #endregion
 
 #region Formatting
-    public string ToString(string? format, IFormatProvider? provider = null)
+
+    public string ToString(string? format) => ToString(format, null);
+
+#pragma warning disable S3247
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         if (_isSome)
         {
             string? str;
+
             if (_value is IFormattable)
             {
-                str = ((IFormattable)_value).ToString(format, provider);
+                str = ((IFormattable)_value).ToString(format, formatProvider);
             }
             else
             {
@@ -550,6 +567,7 @@ public readonly struct Option<T> :
 
         return nameof(None);
     }
+#pragma warning restore S3247
 
     public override string ToString()
     {
@@ -560,5 +578,6 @@ public readonly struct Option<T> :
 
         return nameof(None);
     }
+
 #endregion
 }

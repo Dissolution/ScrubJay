@@ -20,7 +20,7 @@ public readonly struct None :
     public static implicit operator bool(None _) => false;
     public static bool operator true(None _) => false;
     public static bool operator false(None _) => true;
-    
+
     public static bool operator ==(None _, None __) => true;
     public static bool operator !=(None _, None __) => false;
     public static bool operator >(None left, None right) => false;
@@ -28,7 +28,7 @@ public readonly struct None :
     public static bool operator <(None left, None right) => false;
     public static bool operator <=(None left, None right) => true;
 
-    
+
     /// <summary>
     /// Gets the default <see cref="None"/> instance
     /// </summary>
@@ -38,20 +38,20 @@ public readonly struct None :
     /// Gets a <c>ref readonly </c> to the default <see cref="None"/> instance
     /// </summary>
     public static ref readonly None Ref => ref Default;
-    
+
     public int CompareTo(None _) => 0;
-    
+
     public bool Equals(None _) => true;
 
-    public override bool Equals([NotNullWhen(true)] object? obj) 
+    public override bool Equals([NotNullWhen(true)] object? obj)
         => obj switch
         {
             None => true,
-            bool boolean => boolean == false,
+            bool boolean => !boolean,
             _ => false,
         };
-    
+
     public override int GetHashCode() => 0;
-    
+
     public override string ToString() => nameof(None);
 }

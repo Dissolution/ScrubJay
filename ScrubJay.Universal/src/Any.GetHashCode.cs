@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+
 #pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 
 namespace ScrubJay.Universal;
@@ -22,6 +23,7 @@ partial class Any
     {
         if (value is null)
             return 0;
+
         return value.GetHashCode();
     }
 
@@ -57,7 +59,9 @@ partial class Any
         }
         return hasher.ToHashCode();
 #else
-        return string.GetHashCode(text);
+        return string.GetHashCode(
+            text,
+            StringComparison.Ordinal);
 #endif
     }
 }
@@ -83,7 +87,8 @@ partial class Any
     /// and for maximum compatability with <see cref="object"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public static int GetHashCode<T>(T? value,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         return MethodCache<T>.GetHashCode(value);
@@ -92,29 +97,41 @@ partial class Any
 
 partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T, int>?> _lazyGetHashCodeFunc =
-        new(CreateGetHashCodeFunc, LazyThreadSafetyMode.ExecutionAndPublication);
-    
+    private static readonly Lazy<Func<T, int>?> _lazyGetHashCodeFunc = new(
+        CreateGetHashCodeFunc,
+        LazyThreadSafetyMode.ExecutionAndPublication);
+
     private static Func<T, int>? CreateGetHashCodeFunc()
     {
         Type instanceType = typeof(T);
-        MethodInfo? getHashCodeMethod = instanceType.FindMethod("GetHashCode", typeof(int), []);
+
+        MethodInfo? getHashCodeMethod = instanceType.FindMethod(
+            "GetHashCode",
+            typeof(int));
 
         if (getHashCodeMethod is null)
             return null;
 
         // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"{TypeName.For<T>()}_GetHashCode", typeof(int), typeof(T));
+        var dynamicMethod = DynamicMethod.New(
+            $"{TypeName.For<T>()}_GetHashCode",
+            typeof(int),
+            typeof(T));
+
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
         generator.EmitLoadInstance(instanceType);
+
         // call the method
-        generator.EmitCallMethod(instanceType, getHashCodeMethod);
+        generator.EmitCallMethod(
+            instanceType,
+            getHashCodeMethod);
+
         // return the int on the stack
         generator.Emit(OpCodes.Ret);
 
-        if (!dynamicMethod.TryCreateDelegate<Func<T,int>>(out var func))
+        if (!dynamicMethod.TryCreateDelegate<Func<T, int>>(out var func))
             return null;
 
         // try to execute it to see if it will even work
@@ -123,19 +140,22 @@ partial class MethodCache<T>
         {
             _ = func(default!);
         }
+#pragma warning disable
         catch
+#pragma warning restor
         {
             return null;
         }
-        
+
         return func;
     }
-    
+
     public static int GetHashCode(T? value)
     {
         if (value is not null)
         {
             var func = _lazyGetHashCodeFunc.Value;
+
             if (func is not null)
             {
                 return func(value);
