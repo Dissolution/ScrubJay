@@ -1,5 +1,4 @@
 using System.Globalization;
-
 using ScrubJay.Comparison;
 using ScrubJay.Memory;
 using ScrubJay.Parsing;
@@ -147,6 +146,16 @@ public readonly struct ILOffset :
         return writer.Wrote(out charsWritten);
     }
 
+
+
+    public TextBuilder RenderTo(TextBuilder builder)
+    {
+        return builder.Append("IL_")
+            .If(_offset, static o => o >= 0,
+                static (tb, o) => tb.Format(o, "X4"),
+                static (tb, _) => tb.Append("????"));
+    }
+
     public string ToString(string? format, IFormatProvider? provider = null)
     {
         return TextBuilder.New
@@ -155,14 +164,6 @@ public readonly struct ILOffset :
                 (tb, o) => tb.Format(o, format, provider),
                 static (tb, _) => tb.Append("????"))
             .ToStringAndDispose();
-    }
-
-    public TextBuilder RenderTo(TextBuilder builder)
-    {
-        return builder.Append("IL_")
-            .If(_offset, static o => o >= 0,
-                static (tb, o) => tb.Format(o, "X4"),
-                static (tb, _) => tb.Append("????"));
     }
 
     public override string ToString() => TextBuilder.Build(RenderTo);

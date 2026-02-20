@@ -35,12 +35,10 @@ public static class ActionResultExtensions
                 }
             }
             
-            if (actionResult is IStatusCodeActionResult statusCodeResult)
+            if (actionResult is IStatusCodeActionResult statusCodeResult 
+                && statusCodeResult.StatusCode == StatusCodes.Status200OK)
             {
-                if (statusCodeResult.StatusCode == StatusCodes.Status200OK)
-                {
-                    return Result<T, Problem>.Ok(default!);
-                }
+                return Result<T, Problem>.Ok(default!);
             }
 
             return Result<T, Problem>.Error(new Problem($"(IActionResult){TypeName.For<T>()} error: {actionResult}"));

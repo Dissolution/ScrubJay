@@ -63,12 +63,10 @@ public static class ResultTExtensions
         {
             T? value = actionResult.Value;
             var inner = actionResult.Result;
-            if (inner is IStatusCodeActionResult statusCodeActionResult)
+            if (inner is IStatusCodeActionResult statusCodeActionResult 
+                && statusCodeActionResult.StatusCode == StatusCodes.Status200OK)
             {
-                if (statusCodeActionResult.StatusCode == StatusCodes.Status200OK)
-                {
-                    return Result<T>.Ok(value!);
-                }
+                return Result<T>.Ok(value!);
             }
 
             return Result<T>.FromActionResult(inner!);

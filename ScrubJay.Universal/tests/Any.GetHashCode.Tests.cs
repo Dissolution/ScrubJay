@@ -60,7 +60,7 @@ public class Any_GetHashCode_Tests
 
         try
         {
-            hashcode = ros.GetHashCode();
+            _ = ros.GetHashCode();
         }
         catch (Exception ex)
         {

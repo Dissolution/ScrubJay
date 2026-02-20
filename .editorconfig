@@ -43,7 +43,10 @@ dotnet_diagnostic.CA1031.severity = none
 dotnet_diagnostic.CA1034.severity = none
 ### In externally visible method validate parameter is not null
 dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1065.severity = none
 dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1307.severity = none
+dotnet_diagnostic.CA1512.severity = none
 ### Remove underscores from type name
 dotnet_diagnostic.CA1707.severity = none
 ### Names of 'Members' of 'Type' should differ more than case           # new extension block issue
@@ -52,8 +55,13 @@ dotnet_diagnostic.CA1708.severity = none
 dotnet_diagnostic.CA1710.severity = none
 ### Prefix generic type parameter name with 'T'
 dotnet_diagnostic.CA1715.severity = none
+dotnet_diagnostic.CA1725.severity = none
+### Initializing values to their defaults
+dotnet_diagnostic.CA1805.severity = none
 ### Initialize static fields inline
 dotnet_diagnostic.CA1810.severity = none
+### Properties should not return arrays
+dotnet_diagnostic.CA1819.severity = none
 ### Provide a method/property named To/Is/etc as an alternative for operator
 dotnet_diagnostic.CA2225.severity = none
 
@@ -61,19 +69,25 @@ dotnet_diagnostic.CA2225.severity = none
 
 ### Add summary to documentation comment
 dotnet_diagnostic.RCS1138.severity = silent
-dotnet_diagnostic.RCS1139.seveirty = silent
+dotnet_diagnostic.RCS1139.severity = silent
 
 
 ## S (SonarQube)
 
 ### Remove commented out code
 dotnet_diagnostic.S125.severity = none
+
+dotnet_diagnostic.S927.severity = none
+dotnet_diagnostic.S1006.severity = none
 ### Return an empty collection instead of null
 dotnet_diagnostic.S1168.severity = none
 ### implemented type already declared
 dotnet_diagnostic.S1939.severity = none
+dotnet_diagnostic.S2372.severity = none
 ### Ensure accessibility bypass is safe
 dotnet_diagnostic.S3011.severity = none
+### Loop can be simplified with LINQ
+dotnet_diagnostic.S3267.severity = none
 ### Method signature overlaps
 dotnet_diagnostic.S3427.severity = none
 ### Initialize all static fields inline
@@ -81,6 +95,9 @@ dotnet_diagnostic.S3963.severity = none
 
 
 ## MA (Meziantou Analyzer)
+
+### Use string.Equals instead of != operator 
+dotnet_diagnostic.MA0006.severity = none
 
 ### Us an overload of ToString() that takes IFormatProvider
 dotnet_diagnostic.MA0011.severity = none
@@ -90,6 +107,9 @@ dotnet_diagnostic.MA0048.severity = none
 MA0051.maximum_lines_per_method = 1024
 MA0051.maximum_statements_per_method = 1024
 MA0051.skip_local_functions = false
+
+dotnet_diagnostic.MA0061.severity = none
+dotnet_diagnostic.MA0074.severity = none
 
 [*.cs]
 # C# Formatting Options

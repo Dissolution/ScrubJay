@@ -25,7 +25,7 @@ public static class Naming
     private static readonly HashSet<string> _keywords = SyntaxFacts
         .GetKeywordKinds()
         .Select(SyntaxFacts.GetText)
-        .ToHashSet();
+        .ToHashSet(StringComparer.Ordinal);
 
 #endif
 

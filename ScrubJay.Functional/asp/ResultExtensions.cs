@@ -28,20 +28,41 @@ public static partial class ResultExtensions
                     return new ProblemException(problemDetails.ToProblem());
             }
 
-            if (actionResult is StatusCodeResult statusCodeResult)
-            {
-                if (statusCodeResult.StatusCode == StatusCodes.Status200OK)
-                    return Result.Ok;
-            }
-            
+            if (actionResult is StatusCodeResult statusCodeResult
+                && statusCodeResult.StatusCode == StatusCodes.Status200OK)
+                return Result.Ok;
+
             // have to assume failure
             return new ProblemException($"IActionResult Error: {actionResult}");
         }
-        
-        // todo: FromActionResult, FromActionResult<T>
+
+        public static Result FromActionResult(ActionResult actionResult)
+        {
+            if (actionResult is null)
+                return new ArgumentNullException(nameof(actionResult));
+
+            if (actionResult is ObjectResult objectResult)
+            {
+                if (objectResult.Value is null || objectResult.Value is Unit)
+                    return Result.Ok;
+                if (objectResult.Value is Result result)
+                    return result;
+                if (objectResult.Value is Exception ex)
+                    return ex;
+                if (objectResult.Value is ProblemDetails problemDetails)
+                    return new ProblemException(problemDetails.ToProblem());
+            }
+
+            if (actionResult is StatusCodeResult statusCodeResult
+                && statusCodeResult.StatusCode == StatusCodes.Status200OK)
+                return Result.Ok;
+
+            // have to assume failure
+            return new ProblemException($"IActionResult Error: {actionResult}");
+        }
     }
-    
-    
+
+
     extension(Result result)
     {
         /// <summary>

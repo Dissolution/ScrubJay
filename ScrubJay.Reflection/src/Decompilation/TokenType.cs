@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Reflection.Decompilation;
+﻿#pragma warning disable S4663, CA1028, CA1711, CA1720
+
+namespace ScrubJay.Reflection.Decompilation;
 
 [PublicAPI]
 public enum TokenType : uint

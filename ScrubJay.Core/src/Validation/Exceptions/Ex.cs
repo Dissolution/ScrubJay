@@ -39,7 +39,6 @@ public static partial class Ex
 
 
 #region InvalidOperationException
-
     /// <summary>
     /// Get a new <see cref="InvalidOperationException"/>
     /// </summary>
@@ -51,26 +50,24 @@ public static partial class Ex
             message.ToStringAndClear(),
             innerException);
     }
-
 #endregion /InvalidOperationException
 
 #region NotImplementedException
+    /// <summary>
+    /// Get a new <see cref="NotImplementedException"/>
+    /// </summary>
+    public static NotImplementedException NotImplemented() => new();
 
     /// <summary>
     /// Get a new <see cref="NotImplementedException"/>
     /// </summary>
-    public static NotImplementedException NotImplemented(
-        InterpolatedTextBuilder message = default,
-        Exception? innerException = null)
+    public static NotImplementedException NotImplemented(InterpolatedTextBuilder message)
     {
-        return new NotImplementedException(
-            message.ToStringAndClear(),
-            innerException);
+        return new NotImplementedException(message.ToStringAndClear());
     }
-
 #endregion /NotImplementedException
 
-    #region UnreachableException
+#region UnreachableException
     /// <summary>
     /// Get a new <see cref="UnreachableException"/>
     /// </summary>
@@ -82,7 +79,7 @@ public static partial class Ex
             message.ToStringAndClear(),
             innerException);
     }
-    #endregion /UnreachableException
+#endregion /UnreachableException
 
 
 }

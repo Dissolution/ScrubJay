@@ -13,13 +13,12 @@ public static class EnumerableExtensions
         where I : allows ref struct
         where O : allows ref struct
 #endif
-    ;
+        ;
 
 
     extension<T>(IEnumerable<T>? enumerable)
     {
 #region One()
-
         /* The behavior of Enumerable.SingleOrDefault() is counter-intuitive:
          * The name suggests that if there is one item in an enumerable, that item will be returned,
          * and if there are zero or more than one items, default(T) will be returned.
@@ -149,7 +148,6 @@ public static class EnumerableExtensions
 
         public T OneOr(Func<T, bool> predicate, T fallback)
             => enumerable.TryGetOne<T>(predicate).OkOr(fallback);
-
 #endregion
 
         public IEnumerable<O> SelectWhere<O>(SelectWherePredicate<T, O> selectWherePredicate)
@@ -199,12 +197,21 @@ public static class EnumerableExtensions
         }
 
 #if NETSTANDARD2_0
-    public HashSet<T> ToHashSet()
-    {
-        if (enumerable is null)
-            return [];
-        return [..enumerable];
-    }
+#pragma warning disable MA0016
+        public HashSet<T> ToHashSet()
+        {
+            if (enumerable is null)
+                return [];
+            return [..enumerable];
+        }
+
+        public HashSet<T> ToHashSet(IEqualityComparer<T>? itemComparer)
+        {
+            if (enumerable is null)
+                return new(itemComparer);
+            return new(enumerable, itemComparer);
+        }
+#pragma warning restore MA0016
 #endif
     }
 

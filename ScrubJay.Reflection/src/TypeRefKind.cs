@@ -1,4 +1,4 @@
-
+#pragma warning disable CA2217, MA0062, S4070, S2346, CA1008
 
 using System.ComponentModel;
 
@@ -15,25 +15,28 @@ public enum TypeRefKind
     /// Default referencing (copy value, ref class)
     /// </summary>
     [Description("")]
-    Default = 1 << 0,
-    
+    Default = 0,
+
     /// <summary>
     /// <c>ref</c>
     /// </summary>
     [Description("ref ")]
-    Ref = 1 << 1,
-    
+    Ref = 1 << 0,
+
     /// <summary>
     /// <c>in</c>
     /// </summary>
     [Description("in ")]
-    In = (1 << 2) | Ref,
-    
+    In = (1 << 1) | Ref,
+
     /// <summary>
     /// <c>out</c>
     /// </summary>
     [Description("out ")]
-    Out = (1 << 3) | Ref,
+    Out = (1 << 2) | Ref,
 
+    /// <summary>
+    /// Any and all <see cref="TypeRefKind"/>s
+    /// </summary>
     Any = Default | Ref | In | Out,
 }

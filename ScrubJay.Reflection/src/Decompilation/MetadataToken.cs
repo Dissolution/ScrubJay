@@ -1,6 +1,4 @@
-﻿
-
-using ScrubJay.Rendering.Rendition3;
+﻿using ScrubJay.Rendering.Rendition3;
 
 namespace ScrubJay.Reflection.Decompilation;
 
@@ -89,12 +87,12 @@ public readonly struct MetadataToken :
         }.Wrote(out charsWritten);
     }
 
-    public string ToString(string? format, IFormatProvider? provider = null) => _token.ToString(format, provider);
-
     public TextBuilder RenderTo(TextBuilder builder) => builder
         .Render(TokenType)
         .Append('.')
         .Format(Identifier, "X6");
 
+    public string ToString(string? format, IFormatProvider? provider = null) => _token.ToString(format, provider);
+    
     public override string ToString() => TextBuilder.Build(RenderTo);
 }

@@ -1,4 +1,6 @@
-﻿using ScrubJay.Collections.NonGeneric;
+﻿#pragma warning disable CA1010
+
+using ScrubJay.Collections.NonGeneric;
 
 namespace ScrubJay.Reflection.Exceptions;
 

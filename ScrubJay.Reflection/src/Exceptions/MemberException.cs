@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Reflection.Exceptions;
+﻿#pragma warning disable RCS1194, CA1032, CA1010
+
+namespace ScrubJay.Reflection.Exceptions;
 
 [PublicAPI]
 public class MemberException : ReflectionException

@@ -1,18 +1,18 @@
-﻿
+﻿#pragma warning disable CA1711
 
 using ScrubJay.Rendering.Rendition3;
 
 namespace ScrubJay.Reflection.Decompilation;
 
-public sealed class InstructionStream : 
+public sealed class InstructionStream :
     IReadOnlyCollection<Instruction>,
     IEnumerable<Instruction>,
     IRenderable
 {
     private readonly List<Instruction> _instructions = [];
     private int _size = 0;
-    
-    
+
+
     public int Count => _instructions.Count;
 
     public int Size => _size;
@@ -33,8 +33,8 @@ public sealed class InstructionStream :
         _instructions.Add(instruction);
         _size += instruction.Size;
     }
-    
-    
+
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

@@ -5,13 +5,12 @@ namespace ScrubJay.Functional.Tests;
 /// </summary>
 public class ResultTests
 {
-    #region Construction Tests
-
+#region Construction Tests
     [Fact]
     public void Ok_CreatesOkResult()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal(42, value);
@@ -21,7 +20,7 @@ public class ResultTests
     public void Ok_WithNullValue_CreatesOkResult()
     {
         var result = Result<string>.Ok(null!);
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Null(value);
@@ -32,7 +31,7 @@ public class ResultTests
     {
         var exception = new InvalidOperationException("test error");
         var result = Result<int>.Error(exception);
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
@@ -42,21 +41,19 @@ public class ResultTests
     public void Error_WithNullException_CreatesErrorResultWithInvalidOperationException()
     {
         var result = Result<int>.Error(null);
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.IsType<InvalidOperationException>(error);
     }
+#endregion
 
-    #endregion
-
-    #region Implicit Conversion Tests
-
+#region Implicit Conversion Tests
     [Fact]
     public void ImplicitConversion_FromValue_CreatesOkResult()
     {
         Result<int> result = 42;
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal(42, value);
@@ -65,9 +62,9 @@ public class ResultTests
     [Fact]
     public void ImplicitConversion_FromException_CreatesErrorResult()
     {
-        var exception = new ArgumentException("test");
+        var exception = new InvalidOperationException("test");
         Result<int> result = exception;
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
@@ -78,16 +75,16 @@ public class ResultTests
     {
         Result<int> result = Result<int>.Ok(42);
         bool value = result;
-        
+
         Assert.True(value);
     }
 
     [Fact]
     public void ImplicitConversion_ToBool_ErrorIsFalse()
     {
-        Result<int> result = Result<int>.Error(new Exception());
+        Result<int> result = Result<int>.Error(new InvalidOperationException("Testing"));
         bool value = result;
-        
+
         Assert.False(value);
     }
 
@@ -96,39 +93,37 @@ public class ResultTests
     {
         Result<int> genericResult = Result<int>.Ok(42);
         Result nonGenericResult = genericResult;
-        
+
         Assert.True(nonGenericResult.IsOk());
     }
 
     [Fact]
     public void ImplicitConversion_ToNonGenericResult_ErrorResult()
     {
-        var exception = new Exception("test");
+        var exception = new InvalidOperationException("test");
         Result<int> genericResult = Result<int>.Error(exception);
         Result nonGenericResult = genericResult;
-        
+
         Assert.True(nonGenericResult.IsError());
         Assert.True(nonGenericResult.IsError(out var error));
         Assert.Same(exception, error);
     }
+#endregion
 
-    #endregion
-
-    #region IsOk Tests
-
+#region IsOk Tests
     [Fact]
     public void IsOk_NoParameters_ReturnsTrueForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.True(result.IsOk());
     }
 
     [Fact]
     public void IsOk_NoParameters_ReturnsFalseForError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         Assert.False(result.IsOk());
     }
 
@@ -136,9 +131,9 @@ public class ResultTests
     public void IsOk_WithValueOut_ReturnsTrueAndSetsValueForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var isOk = result.IsOk(out var value);
-        
+
         Assert.True(isOk);
         Assert.Equal(42, value);
     }
@@ -146,10 +141,10 @@ public class ResultTests
     [Fact]
     public void IsOk_WithValueOut_ReturnsFalseAndSetsDefaultForError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         var isOk = result.IsOk(out var value);
-        
+
         Assert.False(isOk);
         Assert.Equal(0, value);
     }
@@ -158,9 +153,9 @@ public class ResultTests
     public void IsOk_WithValueAndErrorOut_ReturnsTrueAndSetsValueForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var isOk = result.IsOk(out var value, out var error);
-        
+
         Assert.True(isOk);
         Assert.Equal(42, value);
         Assert.Null(error);
@@ -171,9 +166,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var result = Result<int>.Error(exception);
-        
+
         var isOk = result.IsOk(out var value, out var error);
-        
+
         Assert.False(isOk);
         Assert.Equal(0, value);
         Assert.Same(exception, error);
@@ -183,7 +178,7 @@ public class ResultTests
     public void IsOkAnd_ReturnsTrueWhenOkAndPredicateTrue()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.True(result.IsOkAnd(x => x > 40));
     }
 
@@ -191,27 +186,25 @@ public class ResultTests
     public void IsOkAnd_ReturnsFalseWhenOkAndPredicateFalse()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.False(result.IsOkAnd(x => x < 40));
     }
 
     [Fact]
     public void IsOkAnd_ReturnsFalseWhenError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         Assert.False(result.IsOkAnd(x => x > 40));
     }
+#endregion
 
-    #endregion
-
-    #region IsError Tests
-
+#region IsError Tests
     [Fact]
     public void IsError_NoParameters_ReturnsTrueForError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         Assert.True(result.IsError());
     }
 
@@ -219,7 +212,7 @@ public class ResultTests
     public void IsError_NoParameters_ReturnsFalseForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.False(result.IsError());
     }
 
@@ -228,9 +221,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var result = Result<int>.Error(exception);
-        
+
         var isError = result.IsError(out var error);
-        
+
         Assert.True(isError);
         Assert.Same(exception, error);
     }
@@ -239,9 +232,9 @@ public class ResultTests
     public void IsError_WithErrorOut_ReturnsFalseAndSetsNullForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var isError = result.IsError(out var error);
-        
+
         Assert.False(isError);
         Assert.Null(error);
     }
@@ -251,9 +244,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var result = Result<int>.Error(exception);
-        
+
         var isError = result.IsError(out var error, out var ok);
-        
+
         Assert.True(isError);
         Assert.Same(exception, error);
         Assert.Equal(0, ok);
@@ -263,9 +256,9 @@ public class ResultTests
     public void IsError_WithErrorAndOkOut_ReturnsFalseAndSetsOkForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var isError = result.IsError(out var error, out var ok);
-        
+
         Assert.False(isError);
         Assert.Null(error);
         Assert.Equal(42, ok);
@@ -274,16 +267,16 @@ public class ResultTests
     [Fact]
     public void IsErrorAnd_ReturnsTrueWhenErrorAndPredicateTrue()
     {
-        var result = Result<int>.Error(new ArgumentException());
-        
-        Assert.True(result.IsErrorAnd(ex => ex is ArgumentException));
+        var result = Result<int>.Error(new InvalidOperationException());
+
+        Assert.True(result.IsErrorAnd(ex => ex is InvalidOperationException));
     }
 
     [Fact]
     public void IsErrorAnd_ReturnsFalseWhenErrorAndPredicateFalse()
     {
-        var result = Result<int>.Error(new ArgumentException());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         Assert.False(result.IsErrorAnd(ex => ex is InvalidOperationException));
     }
 
@@ -291,31 +284,29 @@ public class ResultTests
     public void IsErrorAnd_ReturnsFalseWhenOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         Assert.False(result.IsErrorAnd(ex => true));
     }
+#endregion
 
-    #endregion
-
-    #region OkOr Tests
-
+#region OkOr Tests
     [Fact]
     public void OkOr_ReturnsValueWhenOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var value = result.OkOr(100);
-        
+
         Assert.Equal(42, value);
     }
 
     [Fact]
     public void OkOr_ReturnsFallbackWhenError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         var value = result.OkOr(100);
-        
+
         Assert.Equal(100, value);
     }
 
@@ -324,13 +315,13 @@ public class ResultTests
     {
         var result = Result<int>.Ok(42);
         var fallbackCalled = false;
-        
+
         var value = result.OkOr(() =>
         {
             fallbackCalled = true;
             return 100;
         });
-        
+
         Assert.Equal(42, value);
         Assert.False(fallbackCalled);
     }
@@ -338,15 +329,15 @@ public class ResultTests
     [Fact]
     public void OkOr_WithFunc_ReturnsFallbackWhenError()
     {
-        var result = Result<int>.Error(new Exception());
+        var result = Result<int>.Error(new InvalidOperationException());
         var fallbackCalled = false;
-        
+
         var value = result.OkOr(() =>
         {
             fallbackCalled = true;
             return 100;
         });
-        
+
         Assert.Equal(100, value);
         Assert.True(fallbackCalled);
     }
@@ -355,29 +346,29 @@ public class ResultTests
     public void OkOrDefault_ReturnsValueWhenOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var value = result.OkOrDefault();
-        
+
         Assert.Equal(42, value);
     }
 
     [Fact]
     public void OkOrDefault_ReturnsDefaultWhenError()
     {
-        var result = Result<int>.Error(new Exception());
-        
+        var result = Result<int>.Error(new InvalidOperationException());
+
         var value = result.OkOrDefault();
-        
+
         Assert.Equal(0, value);
     }
 
     [Fact]
     public void OkOrDefault_ReturnsNullForReferenceTypeWhenError()
     {
-        var result = Result<string>.Error(new Exception());
-        
+        var result = Result<string>.Error(new InvalidOperationException());
+
         var value = result.OkOrDefault();
-        
+
         Assert.Null(value);
     }
 
@@ -385,9 +376,9 @@ public class ResultTests
     public void OkOrThrow_ReturnsValueWhenOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var value = result.OkOrThrow();
-        
+
         Assert.Equal(42, value);
     }
 
@@ -396,24 +387,22 @@ public class ResultTests
     {
         var exception = new InvalidOperationException("test error");
         var result = Result<int>.Error(exception);
-        
+
         var thrown = Assert.Throws<InvalidOperationException>(() => result.OkOrThrow());
-        
+
         Assert.Same(exception, thrown);
     }
+#endregion
 
-    #endregion
-
-    #region ErrorOr Tests
-
+#region ErrorOr Tests
     [Fact]
     public void ErrorOr_ReturnsErrorWhenError()
     {
         var exception = new InvalidOperationException();
         var result = Result<int>.Error(exception);
-        
-        var error = result.ErrorOr(new ArgumentException());
-        
+
+        var error = result.ErrorOr(new UnauthorizedAccessException());
+
         Assert.Same(exception, error);
     }
 
@@ -421,10 +410,10 @@ public class ResultTests
     public void ErrorOr_ReturnsFallbackWhenOk()
     {
         var result = Result<int>.Ok(42);
-        var fallback = new ArgumentException();
-        
+        var fallback = new InvalidOperationException();
+
         var error = result.ErrorOr(fallback);
-        
+
         Assert.Same(fallback, error);
     }
 
@@ -434,13 +423,13 @@ public class ResultTests
         var exception = new InvalidOperationException();
         var result = Result<int>.Error(exception);
         var fallbackCalled = false;
-        
+
         var error = result.ErrorOr(() =>
         {
             fallbackCalled = true;
-            return new ArgumentException();
+            return new UnauthorizedAccessException();
         });
-        
+
         Assert.Same(exception, error);
         Assert.False(fallbackCalled);
     }
@@ -449,15 +438,15 @@ public class ResultTests
     public void ErrorOr_WithFunc_ReturnsFallbackWhenOk()
     {
         var result = Result<int>.Ok(42);
-        var fallback = new ArgumentException();
+        var fallback = new InvalidOperationException();
         var fallbackCalled = false;
-        
+
         var error = result.ErrorOr(() =>
         {
             fallbackCalled = true;
             return fallback;
         });
-        
+
         Assert.Same(fallback, error);
         Assert.True(fallbackCalled);
     }
@@ -466,9 +455,9 @@ public class ResultTests
     public void ThrowIfError_DoesNotThrowWhenOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         result.ThrowIfError();
-        
+
         // No exception thrown
     }
 
@@ -477,23 +466,21 @@ public class ResultTests
     {
         var exception = new InvalidOperationException("test");
         var result = Result<int>.Error(exception);
-        
+
         var thrown = Assert.Throws<InvalidOperationException>(() => result.ThrowIfError());
-        
+
         Assert.Same(exception, thrown);
     }
+#endregion
 
-    #endregion
-
-    #region Match Tests
-
+#region Match Tests
     [Fact]
     public void Match_Action_CallsOnOkForOk()
     {
         var result = Result<int>.Ok(42);
         var okCalled = false;
         var errorCalled = false;
-        
+
         result.Match(
             onOk: value =>
             {
@@ -504,7 +491,7 @@ public class ResultTests
             {
                 errorCalled = true;
             });
-        
+
         Assert.True(okCalled);
         Assert.False(errorCalled);
     }
@@ -516,7 +503,7 @@ public class ResultTests
         var result = Result<int>.Error(exception);
         var okCalled = false;
         var errorCalled = false;
-        
+
         result.Match(
             onOk: value =>
             {
@@ -527,7 +514,7 @@ public class ResultTests
                 errorCalled = true;
                 Assert.Same(exception, ex);
             });
-        
+
         Assert.False(okCalled);
         Assert.True(errorCalled);
     }
@@ -536,11 +523,11 @@ public class ResultTests
     public void Match_Func_ReturnsOnOkResultForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var output = result.Match(
             onOk: value => $"Value: {value}",
             onError: ex => $"Error: {ex.Message}");
-        
+
         Assert.Equal("Value: 42", output);
     }
 
@@ -548,25 +535,23 @@ public class ResultTests
     public void Match_Func_ReturnsOnErrorResultForError()
     {
         var result = Result<int>.Error(new InvalidOperationException("test"));
-        
+
         var output = result.Match(
             onOk: value => $"Value: {value}",
             onError: ex => $"Error: {ex.Message}");
-        
+
         Assert.Equal("Error: test", output);
     }
+#endregion
 
-    #endregion
-
-    #region AsOption Tests
-
+#region AsOption Tests
     [Fact]
     public void AsOption_ReturnsSomeForOk()
     {
         var result = Result<int>.Ok(42);
-        
+
         var option = result.AsOption();
-        
+
         Assert.True(option.IsSome());
         Assert.True(option.IsSome(out var value));
         Assert.Equal(42, value);
@@ -576,22 +561,20 @@ public class ResultTests
     public void AsOption_ReturnsNoneForError()
     {
         var result = Result<int>.Error(new Exception());
-        
+
         var option = result.AsOption();
-        
+
         Assert.True(option.IsNone());
     }
+#endregion
 
-    #endregion
-
-    #region Comparison Tests
-
+#region Comparison Tests
     [Fact]
     public void CompareTo_Result_OkLessThanError()
     {
         var ok = Result<int>.Ok(42);
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.True(ok.CompareTo(error) < 0);
         Assert.True(error.CompareTo(ok) > 0);
     }
@@ -601,7 +584,7 @@ public class ResultTests
     {
         var ok1 = Result<int>.Ok(10);
         var ok2 = Result<int>.Ok(20);
-        
+
         Assert.True(ok1.CompareTo(ok2) < 0);
         Assert.True(ok2.CompareTo(ok1) > 0);
         Assert.Equal(0, ok1.CompareTo(Result<int>.Ok(10)));
@@ -610,9 +593,9 @@ public class ResultTests
     [Fact]
     public void CompareTo_Result_ComparesErrorValues()
     {
-        var error1 = Result<int>.Error(new ArgumentException("a"));
-        var error2 = Result<int>.Error(new ArgumentException("b"));
-        
+        var error1 = Result<int>.Error(new InvalidOperationException("a"));
+        var error2 = Result<int>.Error(new InvalidOperationException("b"));
+
         // Errors are the same if they both have an exception
         var comparison = error1.CompareTo(error2);
         Assert.Equal(0, comparison);
@@ -622,7 +605,7 @@ public class ResultTests
     public void CompareTo_Value_ComparesOkWithValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.True(ok.CompareTo(30) > 0);
         Assert.True(ok.CompareTo(50) < 0);
         Assert.Equal(0, ok.CompareTo(42));
@@ -631,8 +614,8 @@ public class ResultTests
     [Fact]
     public void CompareTo_Value_ErrorIsGreaterThanAnyValue()
     {
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.True(error.CompareTo(42) > 0);
     }
 
@@ -641,8 +624,8 @@ public class ResultTests
     {
         var ok1 = Result<int>.Ok(10);
         var ok2 = Result<int>.Ok(20);
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.True(ok1 < ok2);
         Assert.True(ok1 <= ok2);
         Assert.True(ok2 > ok1);
@@ -655,23 +638,21 @@ public class ResultTests
     public void ComparisonOperators_Value_WorkCorrectly()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.True(ok > 30);
         Assert.True(ok >= 42);
         Assert.True(ok < 50);
         Assert.True(ok <= 42);
     }
+#endregion
 
-    #endregion
-
-    #region Equality Tests
-
+#region Equality Tests
     [Fact]
     public void Equals_Result_OkEqualsOkWithSameValue()
     {
         var ok1 = Result<int>.Ok(42);
         var ok2 = Result<int>.Ok(42);
-        
+
         Assert.True(ok1.Equals(ok2));
         Assert.True(ok1 == ok2);
         Assert.False(ok1 != ok2);
@@ -682,7 +663,7 @@ public class ResultTests
     {
         var ok1 = Result<int>.Ok(42);
         var ok2 = Result<int>.Ok(100);
-        
+
         Assert.False(ok1.Equals(ok2));
         Assert.False(ok1 == ok2);
         Assert.True(ok1 != ok2);
@@ -694,7 +675,7 @@ public class ResultTests
         var exception = new InvalidOperationException();
         var error1 = Result<int>.Error(exception);
         var error2 = Result<int>.Error(exception);
-        
+
         Assert.True(error1.Equals(error2));
         Assert.True(error1 == error2);
     }
@@ -704,7 +685,7 @@ public class ResultTests
     {
         var error1 = Result<int>.Error(new InvalidOperationException());
         var error2 = Result<int>.Error(new InvalidOperationException());
-        
+
         Assert.True(error1.Equals(error2));
         Assert.True(error1 == error2);
     }
@@ -713,8 +694,8 @@ public class ResultTests
     public void Equals_Result_OkNotEqualsError()
     {
         var ok = Result<int>.Ok(42);
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.False(ok.Equals(error));
         Assert.False(ok == error);
         Assert.True(ok != error);
@@ -724,7 +705,7 @@ public class ResultTests
     public void Equals_Value_OkEqualsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.True(ok.Equals(42));
         Assert.True(ok == 42);
         Assert.False(ok != 42);
@@ -734,7 +715,7 @@ public class ResultTests
     public void Equals_Value_OkNotEqualsDifferentValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.False(ok.Equals(100));
         Assert.False(ok == 100);
         Assert.True(ok != 100);
@@ -743,8 +724,8 @@ public class ResultTests
     [Fact]
     public void Equals_Value_ErrorNotEqualsAnyValue()
     {
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.False(error.Equals(42));
         Assert.False(error == 42);
         Assert.True(error != 42);
@@ -755,7 +736,7 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var error = Result<int>.Error(exception);
-        
+
         Assert.True(error.Equals(exception));
         Assert.True(error == exception);
         Assert.False(error != exception);
@@ -765,8 +746,8 @@ public class ResultTests
     public void Equals_Exception_ErrorNotEqualsDifferentException()
     {
         var error = Result<int>.Error(new InvalidOperationException());
-        var differentException = new ArgumentException();
-        
+        var differentException = new UnauthorizedAccessException();
+
         Assert.False(error.Equals(differentException));
         Assert.False(error == differentException);
         Assert.True(error != differentException);
@@ -776,8 +757,8 @@ public class ResultTests
     public void Equals_Exception_OkNotEqualsAnyException()
     {
         var ok = Result<int>.Ok(42);
-        var exception = new Exception();
-        
+        var exception = new InvalidOperationException();
+
         Assert.False(ok.Equals(exception));
         Assert.False(ok == exception);
         Assert.True(ok != exception);
@@ -787,15 +768,15 @@ public class ResultTests
     public void Equals_Bool_OkEqualsTrue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.True(ok.Equals(true));
     }
 
     [Fact]
     public void Equals_Bool_ErrorEqualsFalse()
     {
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         Assert.True(error.Equals(false));
     }
 
@@ -804,13 +785,13 @@ public class ResultTests
     {
         var ok = Result<int>.Ok(42);
         var error = Result<int>.Error(new InvalidOperationException());
-        
+
         Assert.True(ok.Equals((object)Result<int>.Ok(42)));
         Assert.True(ok.Equals((object)42));
         Assert.True(ok.Equals((object)true));
         Assert.False(ok.Equals((object)"string"));
         Assert.False(ok.Equals(null));
-        
+
         Assert.False(error.Equals((object)42));
         Assert.True(error.Equals((object)false));
     }
@@ -820,7 +801,7 @@ public class ResultTests
     {
         var ok1 = Result<int>.Ok(42);
         var ok2 = Result<int>.Ok(42);
-        
+
         Assert.Equal(ok1.GetHashCode(), ok2.GetHashCode());
     }
 
@@ -829,7 +810,7 @@ public class ResultTests
     {
         var ok1 = Result<int>.Ok(42);
         var ok2 = Result<int>.Ok(100);
-        
+
         Assert.NotEqual(ok1.GetHashCode(), ok2.GetHashCode());
     }
 
@@ -839,19 +820,17 @@ public class ResultTests
         var exception = new InvalidOperationException();
         var error1 = Result<int>.Error(exception);
         var error2 = Result<int>.Error(exception);
-        
+
         Assert.Equal(error1.GetHashCode(), error2.GetHashCode());
     }
+#endregion
 
-    #endregion
-
-    #region Boolean Operators
-
+#region Boolean Operators
     [Fact]
     public void TrueOperator_ReturnsTrueForOk()
     {
         var ok = Result<int>.Ok(42);
-        
+
         if (ok)
         {
             Assert.True(true);
@@ -865,8 +844,8 @@ public class ResultTests
     [Fact]
     public void FalseOperator_ReturnsFalseForError()
     {
-        var error = Result<int>.Error(new Exception());
-        
+        var error = Result<int>.Error(new InvalidOperationException());
+
         if (error)
         {
             Assert.Fail("Should not reach here");
@@ -876,16 +855,14 @@ public class ResultTests
             Assert.True(true);
         }
     }
+#endregion
 
-    #endregion
-
-    #region Formatting Tests
-
+#region Formatting Tests
     [Fact]
     public void ToString_OkResult_FormatsCorrectly()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.Equal("Ok(42)", ok.ToString());
     }
 
@@ -894,9 +871,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException("test error");
         var error = Result<int>.Error(exception);
-        
+
         var str = error.ToString();
-        
+
         Assert.StartsWith("Error(", str);
         Assert.Contains("InvalidOperationException", str);
     }
@@ -905,9 +882,9 @@ public class ResultTests
     public void ToString_WithFormat_FormatsOkValueCorrectly()
     {
         var ok = Result<double>.Ok(3.14159);
-        
+
         var formatted = ok.ToString("F2");
-        
+
         Assert.Equal("Ok(3.14)", formatted);
     }
 
@@ -915,9 +892,9 @@ public class ResultTests
     public void ToString_WithFormat_FormatsErrorCorrectly()
     {
         var error = Result<double>.Error(new Exception("test"));
-        
+
         var formatted = error.ToString("F2");
-        
+
         Assert.StartsWith("Error(", formatted);
     }
 
@@ -925,25 +902,23 @@ public class ResultTests
     public void ToString_OkWithNull_FormatsCorrectly()
     {
         var ok = Result<string>.Ok(null!);
-        
+
         Assert.Equal("Ok()", ok.ToString());
     }
+#endregion
 
-    #endregion
-
-    #region IEnumerable Tests
-
+#region IEnumerable Tests
     [Fact]
     public void GetEnumerator_Ok_YieldsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var values = new List<int>();
         foreach (var value in ok)
         {
             values.Add(value);
         }
-        
+
         Assert.Single(values);
         Assert.Equal(42, values[0]);
     }
@@ -952,13 +927,13 @@ public class ResultTests
     public void GetEnumerator_Error_YieldsNothing()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         var values = new List<int>();
         foreach (var value in error)
         {
             values.Add(value);
         }
-        
+
         Assert.Empty(values);
     }
 
@@ -966,15 +941,15 @@ public class ResultTests
     public void GetEnumerator_Ok_CanBeResetAndReused()
     {
         var ok = Result<int>.Ok(42);
-        
+
         using var enumerator = ok.GetEnumerator();
-        
+
         Assert.True(enumerator.MoveNext());
         Assert.Equal(42, enumerator.Current);
         Assert.False(enumerator.MoveNext());
-        
+
         enumerator.Reset();
-        
+
         Assert.True(enumerator.MoveNext());
         Assert.Equal(42, enumerator.Current);
         Assert.False(enumerator.MoveNext());
@@ -984,27 +959,25 @@ public class ResultTests
     public void GetEnumerator_Error_ResetDoesNothing()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         using var enumerator = error.GetEnumerator();
-        
+
         Assert.False(enumerator.MoveNext());
-        
+
         enumerator.Reset();
-        
+
         Assert.False(enumerator.MoveNext());
     }
+#endregion
 
-    #endregion
-
-    #region LINQ Select Tests
-
+#region LINQ Select Tests
     [Fact]
     public void Select_Selector_TransformsOkValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var result = ok.Select(x => x * 2);
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal(84, value);
@@ -1015,9 +988,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var error = Result<int>.Error(exception);
-        
+
         var result = error.Select(x => x * 2);
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var resultError));
         Assert.Same(exception, resultError);
@@ -1027,9 +1000,9 @@ public class ResultTests
     public void Select_SelectorCanChangeType()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var result = ok.Select(x => x.ToString());
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal("42", value);
@@ -1039,9 +1012,9 @@ public class ResultTests
     public void Select_ResultSelector_TransformsAndFlattens()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var result = ok.Select(x => Result<string>.Ok(x.ToString()));
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal("42", value);
@@ -1051,10 +1024,10 @@ public class ResultTests
     public void Select_ResultSelector_PropagatesInnerError()
     {
         var ok = Result<int>.Ok(42);
-        var innerException = new ArgumentException();
-        
+        var innerException = new InvalidOperationException();
+
         var result = ok.Select(x => Result<string>.Error(innerException));
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(innerException, error);
@@ -1065,9 +1038,9 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var error = Result<int>.Error(exception);
-        
+
         var result = error.Select(x => Result<string>.Ok(x.ToString()));
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var resultError));
         Assert.Same(exception, resultError);
@@ -1077,9 +1050,9 @@ public class ResultTests
     public void Select_OptionSelector_ConvertsOptionToResult()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var result = ok.Select(x => Option<string>.Some(x.ToString()));
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal("42", value);
@@ -1089,9 +1062,9 @@ public class ResultTests
     public void Select_OptionSelector_ConvertsNoneToError()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var result = ok.Select(x => Option<string>.None);
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.IsType<InvalidOperationException>(error);
@@ -1102,27 +1075,25 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var error = Result<int>.Error(exception);
-        
+
         var result = error.Select(x => Option<string>.Some(x.ToString()));
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var resultError));
         Assert.Same(exception, resultError);
     }
+#endregion
 
-    #endregion
-
-    #region LINQ SelectMany Tests
-
+#region LINQ SelectMany Tests
     [Fact]
     public void SelectMany_TransformsAndFlattens()
     {
         var ok = Result<int>.Ok(5);
-        
+
         var result = ok.SelectMany(
             keySelector: x => Result<int>.Ok(x * 2),
             newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal("5 * 2 = 10", value);
@@ -1133,11 +1104,11 @@ public class ResultTests
     {
         var exception = new InvalidOperationException();
         var error = Result<int>.Error(exception);
-        
+
         var result = error.SelectMany(
             keySelector: x => Result<int>.Ok(x * 2),
             newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var resultError));
         Assert.Same(exception, resultError);
@@ -1148,11 +1119,11 @@ public class ResultTests
     {
         var ok = Result<int>.Ok(5);
         var innerException = new ArgumentException();
-        
+
         var result = ok.SelectMany(
             keySelector: x => Result<int>.Error(innerException),
             newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(innerException, error);
@@ -1162,9 +1133,9 @@ public class ResultTests
     public void SelectMany_WithLinqSyntax()
     {
         var result = from x in Result<int>.Ok(5)
-                     from y in Result<int>.Ok(10)
-                     select x + y;
-        
+            from y in Result<int>.Ok(10)
+            select x + y;
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal(15, value);
@@ -1174,27 +1145,25 @@ public class ResultTests
     public void SelectMany_WithLinqSyntax_PropagatesError()
     {
         var exception = new InvalidOperationException();
-        
+
         var result = from x in Result<int>.Ok(5)
-                     from y in Result<int>.Error(exception)
-                     select x + y;
-        
+            from y in Result<int>.Error(exception)
+            select x + y;
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
     }
+#endregion
 
-    #endregion
-
-    #region Standard LINQ Method Tests
-
+#region Standard LINQ Method Tests
     [Fact]
     public void Where_Ok_FiltersProperly()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var filtered = ok.Where(x => x > 40);
-        
+
         Assert.Single(filtered);
         Assert.Equal(42, filtered.First());
     }
@@ -1203,9 +1172,9 @@ public class ResultTests
     public void Where_Ok_FiltersOut()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var filtered = ok.Where(x => x < 40);
-        
+
         Assert.Empty(filtered);
     }
 
@@ -1213,9 +1182,9 @@ public class ResultTests
     public void Where_Error_ReturnsEmpty()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         var filtered = error.Where(x => true);
-        
+
         Assert.Empty(filtered);
     }
 
@@ -1223,7 +1192,7 @@ public class ResultTests
     public void Any_Ok_ReturnsTrue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.True(ok.Any());
     }
 
@@ -1231,7 +1200,7 @@ public class ResultTests
     public void Any_Error_ReturnsFalse()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         Assert.False(error.Any());
     }
 
@@ -1239,7 +1208,7 @@ public class ResultTests
     public void First_Ok_ReturnsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.Equal(42, ok.First());
     }
 
@@ -1247,7 +1216,7 @@ public class ResultTests
     public void First_Error_Throws()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         Assert.Throws<InvalidOperationException>(() => error.First());
     }
 
@@ -1255,7 +1224,7 @@ public class ResultTests
     public void FirstOrDefault_Ok_ReturnsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         Assert.Equal(42, ok.FirstOrDefault());
     }
 
@@ -1263,7 +1232,7 @@ public class ResultTests
     public void FirstOrDefault_Error_ReturnsDefault()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         Assert.Equal(0, error.FirstOrDefault());
     }
 
@@ -1271,9 +1240,9 @@ public class ResultTests
     public void ToList_Ok_ContainsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var list = ok.ToList();
-        
+
         Assert.Single(list);
         Assert.Equal(42, list[0]);
     }
@@ -1282,9 +1251,9 @@ public class ResultTests
     public void ToList_Error_ReturnsEmptyList()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         var list = error.ToList();
-        
+
         Assert.Empty(list);
     }
 
@@ -1292,9 +1261,9 @@ public class ResultTests
     public void ToArray_Ok_ContainsValue()
     {
         var ok = Result<int>.Ok(42);
-        
+
         var array = ok.ToArray();
-        
+
         Assert.Single(array);
         Assert.Equal(42, array[0]);
     }
@@ -1303,21 +1272,19 @@ public class ResultTests
     public void ToArray_Error_ReturnsEmptyArray()
     {
         var error = Result<int>.Error(new Exception());
-        
+
         var array = error.ToArray();
-        
+
         Assert.Empty(array);
     }
+#endregion
 
-    #endregion
-
-    #region Edge Cases and Special Scenarios
-
+#region Edge Cases and Special Scenarios
     [Fact]
     public void Result_WithNullableValueType_Ok()
     {
         var ok = Result<int?>.Ok(42);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Equal(42, value);
@@ -1327,7 +1294,7 @@ public class ResultTests
     public void Result_WithNullableValueType_OkWithNull()
     {
         var ok = Result<int?>.Ok(null);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Null(value);
@@ -1337,7 +1304,7 @@ public class ResultTests
     public void Result_WithReferenceType_Ok()
     {
         var ok = Result<string>.Ok("test");
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Equal("test", value);
@@ -1347,7 +1314,7 @@ public class ResultTests
     public void Result_WithReferenceType_OkWithNull()
     {
         var ok = Result<string>.Ok(null!);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Null(value);
@@ -1358,7 +1325,7 @@ public class ResultTests
     {
         var person = new Person { Name = "Alice", Age = 30 };
         var ok = Result<Person>.Ok(person);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Same(person, value);
@@ -1371,7 +1338,7 @@ public class ResultTests
             .Select(x => x * 2)
             .Select(x => x + 10)
             .Select(x => x.ToString());
-        
+
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
         Assert.Equal("20", value);
@@ -1385,7 +1352,7 @@ public class ResultTests
             .Select(x => x * 2)
             .Select(x => x + 10)
             .Select(x => x.ToString());
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
@@ -1399,7 +1366,7 @@ public class ResultTests
             .Select(x => x * 2)
             .Select(x => Result<int>.Error(exception))
             .Select(x => x.ToString());
-        
+
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
@@ -1414,7 +1381,7 @@ public class ResultTests
     public void Result_WithVariousIntValues(int value)
     {
         var ok = Result<int>.Ok(value);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var actualValue));
         Assert.Equal(value, actualValue);
@@ -1427,22 +1394,19 @@ public class ResultTests
     public void Result_WithVariousStringValues(string value)
     {
         var ok = Result<string>.Ok(value);
-        
+
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var actualValue));
         Assert.Equal(value, actualValue);
     }
+#endregion
 
-    #endregion
-
-    #region Helper Class
-
+#region Helper Class
     private class Person
     {
         public string Name { get; set; } = string.Empty;
-        
+
         public int Age { get; set; }
     }
-
-    #endregion
+#endregion
 }

@@ -10,7 +10,6 @@ public class TypeNameTests
         Assert.Equal("〈null〉", TypeName.For(null));
     }
 
-
 #region C# type aliases
 
     public static TheoryData<Type, string> TypeAliasesData { get; } =
@@ -36,7 +35,6 @@ public class TypeNameTests
         (typeof(ValueTuple), "()"),
     ];
 
-
     [Theory]
     [MemberData(nameof(TypeAliasesData))]
     public void TypeAliasesWork(Type type, string expected)
@@ -45,7 +43,6 @@ public class TypeNameTests
     }
 
 #endregion
-
 
 #region Pointers
 
@@ -129,7 +126,6 @@ public class TypeNameTests
 
 #endregion
 
-
 #region Nullable Types
 
     public static TheoryData<Type, string> NullableData { get; } =
@@ -203,15 +199,12 @@ public class TypeNameTests
 #region Nested Types
 
     public static TheoryData<Type, string> NestedGenericTypesData { get; } = new()
-    {
-        (typeof(OuterGeneric<int>.InnerClass), "TypeNameTests.OuterGeneric<int>.InnerClass"),
-        (typeof(OuterGeneric<string>.InnerClass), "TypeNameTests.OuterGeneric<string>.InnerClass"),
-        (typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeNameTests.OuterGeneric<int>.InnerGeneric<string>"),
-        (
-            typeof(OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>),
-            "TypeNameTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"
-        ),
-    };
+                                                                             {
+                                                                                 (typeof(OuterGeneric<int>.InnerClass), "TypeNameTests.OuterGeneric<int>.InnerClass"),
+                                                                                 (typeof(OuterGeneric<string>.InnerClass), "TypeNameTests.OuterGeneric<string>.InnerClass"),
+                                                                                 (typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeNameTests.OuterGeneric<int>.InnerGeneric<string>"),
+                                                                                 (typeof(OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>),
+                                                                                  "TypeNameTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"), };
 
     [Theory]
     [MemberData(nameof(NestedGenericTypesData))]
@@ -243,12 +236,10 @@ public class TypeNameTests
         (typeof(ValueTuple<int, string, bool>), "(int, string, bool)"),
 
         // Max Length without TRest
-        (typeof(ValueTuple<char, bool, string, DateTime, TimeSpan, Guid, object>),
-            "(char, bool, string, DateTime, TimeSpan, Guid, object)"),
+        (typeof(ValueTuple<char, bool, string, DateTime, TimeSpan, Guid, object>), "(char, bool, string, DateTime, TimeSpan, Guid, object)"),
 
         // With TRest
-        (typeof((sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)),
-            "(sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)"),
+        (typeof((sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)), "(sbyte, byte, short, ushort, int, uint, long, ulong, float, double, decimal)"),
     ];
 
     [Theory]
@@ -259,7 +250,6 @@ public class TypeNameTests
     }
 
 #endregion
-
 
 #region Complex Combinations
 
@@ -359,18 +349,15 @@ public class TypeNameTests
 
 #endregion
 
-
 #region Combinations
 
-    public static TheoryData<Type, string> CombinationTypesData =>
-    [
-        (typeof(List<int?>[]), "List<int?>[]"),
-        (typeof(int[]*), "int[]*"),
-        (typeof(Dictionary<List<int?>, Dictionary<string, bool?[]>>),
-            "Dictionary<List<int?>, Dictionary<string, bool?[]>>"
-        ),
-
-    ];
+    public static TheoryData<Type, string> CombinationTypesData
+        =>
+        [
+            (typeof(List<int?>[]), "List<int?>[]"),
+            (typeof(int[]*), "int[]*"),
+            (typeof(Dictionary<List<int?>, Dictionary<string, bool?[]>>), "Dictionary<List<int?>, Dictionary<string, bool?[]>>"),
+        ];
 
     [Theory]
     [MemberData(nameof(CombinationTypesData))]
@@ -381,11 +368,14 @@ public class TypeNameTests
 
 #endregion
 
+#pragma warning disable
+
 #region Test Helper Types
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable UnusedTypeParameter
-// ReSharper disable UnusedType.Global
+
+    // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable UnusedTypeParameter
+    // ReSharper disable UnusedType.Global
     internal struct TestStruct
     {
         public int Value;
@@ -401,10 +391,7 @@ public class TypeNameTests
 
     internal interface ITestInterface { }
 
-
     internal delegate void TestDelegate();
-
-
 
     internal class OuterClass
     {
@@ -420,7 +407,6 @@ public class TypeNameTests
             Value,
         }
     }
-
 
     internal class OuterGeneric<T>
     {

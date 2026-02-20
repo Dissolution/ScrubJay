@@ -3,12 +3,25 @@ using ScrubJay.Memory;
 
 namespace ScrubJay.Reflection.Utilities;
 
+/// <summary>
+/// A utility class for working with <see cref="OpCode"/>.
+/// </summary>
 [PublicAPI]
 public static class OpCodeHelper
 {
+    /// <summary>
+    /// All of the <see cref="OpCode"/> values that take up one <see cref="byte"/>.
+    /// </summary>
     public static OpCode[] OneByteOpCodes { get; }
+    
+    /// <summary>
+    /// All of the <see cref="OpCode"/> values that take up two <see cref="byte"/>s.
+    /// </summary>
     public static OpCode[] TwoByteOpCodes { get; }
 
+    /// <summary>
+    /// Enumerate over all <see cref="OpCode"/>s.
+    /// </summary>
     public static IEnumerable<OpCode> OpCodes
     {
         get

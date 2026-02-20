@@ -1,3 +1,5 @@
+#pragma warning disable CA1721
+
 using ScrubJay.Functional;
 
 namespace ScrubJay.Reflection;

@@ -402,11 +402,11 @@ public readonly struct Result<T> :
         }
     }
 
-    public bool Equals(T? ok)
+    public bool Equals(T? other)
     {
         if (_isOk)
         {
-            return EqualityComparer<T>.Default.Equals(_value!, ok!);
+            return EqualityComparer<T>.Default.Equals(_value!, other!);
         }
 
         return false;
@@ -472,7 +472,9 @@ public readonly struct Result<T> :
         }
     }
 
-    public string ToString(string? format, IFormatProvider? provider = null)
+    public string ToString(string? format) => ToString(format, null);
+
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         string? str;
 
@@ -480,7 +482,7 @@ public readonly struct Result<T> :
         {
             if (_value is IFormattable)
             {
-                str = ((IFormattable)_value!).ToString(format, provider);
+                str = ((IFormattable)_value!).ToString(format, formatProvider);
             }
             else
             {

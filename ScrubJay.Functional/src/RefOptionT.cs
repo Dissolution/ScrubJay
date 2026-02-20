@@ -268,12 +268,9 @@ public readonly ref struct RefOption<T>
     /// <seealso href="https://doc.rust-lang.org/std/option/enum.Option.html#method.filter"/>
     public RefOption<T> Where(Func<T, bool> predicate)
     {
-        if (_isSome)
+        if (_isSome && predicate(_value!))
         {
-            if (predicate(_value!))
-            {
-                return this;
-            }
+            return this;
         }
 
         return None;

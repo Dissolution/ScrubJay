@@ -3,6 +3,7 @@ using System.Security.Authentication;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ScrubJay.Universal;
 
 namespace ScrubJay.Functional.Asp;
 
@@ -32,7 +33,7 @@ public static class ProblemDetailsHelper
             [typeof(FileNotFoundException)] = StatusCodes.Status404NotFound,
             [typeof(NotSupportedException)] = StatusCodes.Status405MethodNotAllowed,
             [typeof(TimeoutException)] = StatusCodes.Status408RequestTimeout,
-            
+
 #if NET8_0_OR_GREATER
             [typeof(OperationCanceledException)] = StatusCodes.Status499ClientClosedRequest,
             [typeof(TaskCanceledException)] = StatusCodes.Status499ClientClosedRequest,
@@ -40,7 +41,7 @@ public static class ProblemDetailsHelper
             [typeof(OperationCanceledException)] = 499,
             [typeof(TaskCanceledException)] = 499,
 #endif
-            
+
             [typeof(NullReferenceException)] = StatusCodes.Status500InternalServerError,
         };
     }
@@ -103,6 +104,33 @@ public static class ProblemDetailsHelper
         };
     }
 
+    public static Problem GetProblem<E>(E? error)
+    {
+        return error switch
+        {
+            null => new Problem()
+            {
+                Title = "Error",
+                Data =
+                {
+                    { "Type", TypeName.For(Any.GetType(error)) },
+                },
+            },
+            Problem problem => problem,
+            ProblemDetails problemDetails => problemDetails.ToProblem(),
+            _ => new Problem()
+            {
+                Title = "Error",
+                Details = Any.ToString(error),
+                Data =
+                {
+                    { "Type", TypeName.For(Any.GetType(error)) },
+                },
+            },
+        };
+    }
+
+
     public static ProblemDetails GetProblemDetails(Exception? exception)
     {
         Type exceptionType = exception?.GetType() ?? typeof(Exception);
@@ -149,30 +177,22 @@ public static class ProblemDetailsHelper
         return problem;
     }
 
-    public static Problem GetProblem<E>(E? error)
+    public static ProblemDetails GetProblemDetails<E>([AllowNull, MaybeNull] E? error)
     {
         return error switch
         {
-            Problem problem => problem,
-            ProblemDetails problemDetails => problemDetails.ToProblem(),
-            _ => new Problem(error?.ToString(), "Error")
+            null => new ProblemDetails()
             {
-                ["Type"] = (error?.GetType() ?? typeof(E)).Name,
+                Title = "Error",
+                Type = TypeName.For<E>(),
             },
-        };
-    }
-    
-    public static ProblemDetails GetProblemDetails<E>(E? error)
-    {
-        return error switch
-        {
             Problem problem => problem.ToProblemDetails(),
             ProblemDetails details => details,
             _ => new ProblemDetails
             {
                 Title = "Error",
-                Type = (error?.GetType() ?? typeof(E)).Name,
-                Detail = error?.ToString(),
+                Type = TypeName.For(Any.GetType<E>(error)),
+                Detail = error.ToString(),
             },
         };
     }

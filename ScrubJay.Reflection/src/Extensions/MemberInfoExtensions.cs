@@ -6,7 +6,7 @@ public static class MemberInfoExtensions
 {
     extension(MemberInfo? member)
     {
-        [return: NotNullIfNotNull("member")]
+        [NotNullIfNotNull(nameof(member))]
         public Type? ParentType
         {
             get

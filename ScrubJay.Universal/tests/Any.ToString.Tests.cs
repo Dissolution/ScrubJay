@@ -45,18 +45,14 @@ public class Any_ToString_Tests
         ReadOnlySpan<char> text;
         string str;
 
-        {
-            text = default;
-            str = Any.ToString<ReadOnlySpan<char>>(text);
-            Assert.NotNull(str);
-            Assert.True(str.Length == 0);
-        }
-       
-        {
-            text = "TRJ".AsSpan();
-            str = Any.ToString<ReadOnlySpan<char>>(text);
-            Assert.NotNull(str);
-            Assert.Equal("TRJ", str);
-        }
+        text = default;
+        str = Any.ToString<ReadOnlySpan<char>>(text);
+        Assert.NotNull(str);
+        Assert.True(str.Length == 0);
+
+        text = "TRJ".AsSpan();
+        str = Any.ToString<ReadOnlySpan<char>>(text);
+        Assert.NotNull(str);
+        Assert.Equal("TRJ", str);
     }
 }

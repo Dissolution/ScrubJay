@@ -57,8 +57,7 @@ public sealed class DecompiledMethod
         }
         else
         {
-            Debugger.Break();
-            throw new NotImplementedException();
+            throw Ex.ArgRange(method);
         }
 
         Body = method.GetMethodBody();
@@ -228,7 +227,7 @@ public sealed class DecompiledMethod
 
     public override string ToString()
     {
-        var builder = new TextBuilder();
+        using var builder = new TextBuilder();
 
         if (Module is not null)
         {
@@ -287,6 +286,6 @@ public sealed class DecompiledMethod
                 .Dedent()
                 .NewLine());
 
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 }

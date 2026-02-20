@@ -17,7 +17,7 @@ public sealed class ThisParameterInfo : ParameterInfo
     
     public ThisParameterInfo(MethodBase method)
     {
-        this.MemberImpl = Guard.IsNotStatic(method);;
+        this.MemberImpl = Guard.IsNotStatic(method);
         this.ClassImpl = method.DeclaringType.ThrowIfNull();
         this.NameImpl = "this";
         this.PositionImpl = 0;

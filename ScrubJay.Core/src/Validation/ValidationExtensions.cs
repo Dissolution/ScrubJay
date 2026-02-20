@@ -5,12 +5,15 @@ public static partial class ValidationExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNull]
-    public static T ThrowIfNull<T>([AllowNull, NotNull] this T value,
-        [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public static T ThrowIfNull<T>(
+        [AllowNull, NotNull] this T value,
+        string? info = null,
+        [CallerArgumentExpression(nameof(value))] 
+        string? valueName = null)
     {
         if (value is not null)
             return value;
-        throw new ArgumentNullException(valueName);
+        throw new ArgumentNullException(valueName, info);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
