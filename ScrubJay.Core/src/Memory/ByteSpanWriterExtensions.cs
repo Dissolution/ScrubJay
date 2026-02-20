@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace ScrubJay.Memory;
+﻿namespace ScrubJay.Memory;
 
 [PublicAPI]
 public static class ByteSpanWriterExtensions

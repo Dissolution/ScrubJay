@@ -1,7 +1,5 @@
 #pragma warning disable CA1032, RCS1194
 
-using System.Text;
-
 namespace ScrubJay.Functional;
 
 /// <summary>

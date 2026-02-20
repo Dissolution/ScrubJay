@@ -9,7 +9,6 @@
 #pragma warning disable CS0809
 
 using System.Buffers;
-using System.Text;
 
 
 namespace ScrubJay.Collections.Pooling;

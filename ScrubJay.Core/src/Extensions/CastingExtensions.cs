@@ -1,7 +1,6 @@
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable ConvertNullableToShortForm
 
-using InlineIL;
 using static InlineIL.IL;
 
 namespace ScrubJay.Extensions;

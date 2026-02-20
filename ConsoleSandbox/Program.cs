@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#pragma warning disable
+
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Text.Json;
 using ConsoleSandbox;
-using ScrubJay.Extensions;
 using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
 

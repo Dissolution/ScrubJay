@@ -1,6 +1,5 @@
 using System.Security;
 using System.Security.Authentication;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScrubJay.Universal;

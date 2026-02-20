@@ -1,7 +1,6 @@
 ﻿// Identifiers should have correct suffix
 
 using System.Buffers;
-using System.Text;
 
 
 #pragma warning disable CA1710

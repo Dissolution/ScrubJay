@@ -4,7 +4,6 @@
 
 using System.Linq.Expressions;
 using System.Reflection;
-using ScrubJay.Expressions;
 
 namespace ScrubJay.Extensions;
 

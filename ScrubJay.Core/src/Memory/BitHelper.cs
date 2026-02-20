@@ -1,6 +1,5 @@
 #pragma warning disable CS8500
 
-using System.Text;
 using static InlineIL.IL;
 using bytes = System.Span<byte>;
 using robytes = System.ReadOnlySpan<byte>;
