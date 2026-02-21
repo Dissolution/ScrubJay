@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ScrubJay.Sandboxes;
 
+#if NET9_0_OR_GREATER
+
 public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparable<TestRefStruct>
 {
     public readonly int Id;
@@ -41,3 +43,4 @@ public readonly ref struct TestRefStruct : IEquatable<TestRefStruct>, IComparabl
         return $"#{Id}: {Name}";
     }
 }
+#endif
