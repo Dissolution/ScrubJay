@@ -2,9 +2,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using ConsoleSandbox;
 using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
+using ScrubJay.Universal;
 using ScrubJay.Validation;
 
 /*
@@ -26,9 +29,9 @@ foreach (var method in methods)
 */
 
 
-var x = Ex.Arg<int>(147, "now");
+Util.Capture(147);
 
-Debugger.Break();
+
 
 return;
 
@@ -41,6 +44,17 @@ namespace ConsoleSandbox
     static class Util
     {
 
+        public static void Capture<T>(T? argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
+        {
+            var ex = new ArgumentException(null, argumentName);
+            var str = ex.ToString();
+            var message = TextBuilder.New
+                .Append($"Argument \"{argumentName}\": {Any.GetType<T>(argument)} = `{Any.ToString<T>(argument)}` was invalid")
+                .ToStringAndDispose();
+            var ex2 = new ArgumentException(message, argumentName);
+            var str2 =  ex2.ToString();
+            Debugger.Break();
+        }
     }
 
     public class FormattableClass : IFormattable, IRenderable

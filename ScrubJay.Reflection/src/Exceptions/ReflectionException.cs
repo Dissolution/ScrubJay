@@ -18,7 +18,7 @@ public class ReflectionException : Exception, IEnumerable
             .OneOrDefault()
             .ThrowIfNull("Could not find Exception._message field");
 
-        var dyn = DynamicMethod.New($"set_{messageField.Name}", typeof(void), typeof(Exception), typeof(string));
+        var dyn = DynamicMethod.New($"set_{messageField.Name}", typeof(void), [typeof(Exception), typeof(string)]);
         var gen = dyn.GetILGenerator();
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldarg_1);

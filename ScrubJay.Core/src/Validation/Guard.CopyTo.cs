@@ -12,7 +12,7 @@ partial class Guard
             return count;
 
         if (destArray is null)
-            throw Ex.ArgNull(destArrayName);
+            throw Ex.ArgNull<T[]>(destArrayName);
 
         if ((uint)destArrayIndex + (uint)count <= (uint)destArray.Length)
             return count;
@@ -45,7 +45,7 @@ partial class Guard
             return count;
 
         if (destArray is null)
-            throw Ex.ArgNull(destArrayName);
+            throw Ex.ArgNull<Array>(destArrayName);
 
         if ((uint)destArrayIndex + (uint)count <= (uint)destArray.Length)
             return count;

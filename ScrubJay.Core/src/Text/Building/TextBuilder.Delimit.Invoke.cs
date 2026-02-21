@@ -39,7 +39,7 @@ partial class TextBuilder
         return this;
     }
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
     public TextBuilder Delimit<T>(string? delimiter, scoped ReadOnlySpan<T> values, Action<TextBuilder, T>? build)
         => Delimit<T>(delimiter.AsSpan(), values, build);
 #endif
@@ -68,7 +68,7 @@ partial class TextBuilder
     public TextBuilder Delimit<T>(scoped text delimiter, T[]? values, Action<TextBuilder, T>? build)
         => Delimit<T>(delimiter, values.AsSpan(), build);
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
     public TextBuilder Delimit<T>(string? delimiter, T[]? values, Action<TextBuilder, T>? build)
         => Delimit<T>(delimiter.AsSpan(), values.AsSpan(), build);
 #endif
@@ -120,7 +120,7 @@ partial class TextBuilder
         return this;
     }
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
     public TextBuilder Delimit<T>(string? delimiter, IEnumerable<T>? values, Action<TextBuilder, T>? build)
         => Delimit<T>(delimiter.AsSpan(), values, build);
 #endif
@@ -193,7 +193,7 @@ partial class TextBuilder
         return this;
     }
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
     public TextBuilder Delimit<R, V>(string? delimiter, Iterable<R, V> iterable, Action<TextBuilder, V>? build)
         where R : struct, IIterator<V>
         => Delimit<R, V>(delimiter.AsSpan(), iterable, build);

@@ -18,7 +18,7 @@ partial class Validate
 
         if (str is null)
 
-            return Ex.ArgNull(strName);
+            return Ex.ArgNull<string>(strName);
 
         return str;
 
@@ -36,7 +36,7 @@ partial class Validate
 
         if (str is null)
 
-            return Ex.ArgNull(strName);
+            return Ex.ArgNull<string>(strName);
 
         if (str.Length == 0)
 
@@ -58,7 +58,7 @@ partial class Validate
 
         if (str is null)
 
-            return Ex.ArgNull(strName);
+            return Ex.ArgNull<string>(strName);
 
         if (str.Length == 0)
 

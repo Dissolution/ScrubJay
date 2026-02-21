@@ -28,7 +28,7 @@ partial class Validate
 
         if (destArray is null)
 
-            return Ex.ArgNull(destArrayName);
+            return Ex.ArgNull<T[]>(destArrayName);
 
 
 
@@ -94,7 +94,7 @@ partial class Validate
 
         if (destArray is null)
 
-            return Ex.ArgNull(destArrayName);
+            return Ex.ArgNull<Array>(destArrayName);
 
 
 

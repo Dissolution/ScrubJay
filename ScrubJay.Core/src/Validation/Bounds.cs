@@ -27,7 +27,7 @@ public static class Bounds
         if (upperBound.Condition > BoundCondition.Unbounded)
         {
             builder.Append(upperBound.Value);
-            
+
             if (upperBound.Condition == BoundCondition.Exclusive)
             {
                 builder.Append(')');
@@ -76,7 +76,7 @@ public readonly struct LowerBound<T>
         => new(tuple.Value, tuple.Condition);
 
     public static implicit operator LowerBound<T>(Bound<T> bound) => new(bound.Value, bound.Condition);
-    
+
     public static readonly LowerBound<T> Unbounded = new LowerBound<T>(default!, BoundCondition.Unbounded);
     public static LowerBound<T> Exclusive(T value) => new LowerBound<T>(value, BoundCondition.Exclusive);
     public static LowerBound<T> Inclusive(T value) => new LowerBound<T>(value, BoundCondition.Inclusive);
@@ -147,7 +147,7 @@ public readonly struct UpperBound<T>
 
     public static implicit operator UpperBound<T>(Bound<T> bound) => new(bound.Value, bound.Condition);
 
-    
+
     public static readonly UpperBound<T> Unbounded = new UpperBound<T>(default!, BoundCondition.Unbounded);
     public static UpperBound<T> Exclusive(T value) => new UpperBound<T>(value, BoundCondition.Exclusive);
     public static UpperBound<T> Inclusive(T value) => new UpperBound<T>(value, BoundCondition.Inclusive);

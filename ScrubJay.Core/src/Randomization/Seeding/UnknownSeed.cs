@@ -12,7 +12,7 @@ public sealed class UnknownSeed : RandSeed, IHasDefault<UnknownSeed>
 
     public override void FillSeeds(Span<ulong> buffer)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         using var rng = RandomNumberGenerator.Create();
         int bufferCount = buffer.Length;
         byte[] byteBuffer = new byte[bufferCount * 8];

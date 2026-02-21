@@ -7,7 +7,23 @@ namespace ScrubJay.Validation;
 
 partial class Ex
 {
-    internal static TextBuilder AppendArgument(this TextBuilder builder, string? argumentName, Type argumentType, string? argumentString)
+    internal static TextBuilder AppendArgument(
+        this TextBuilder builder,
+        string? argumentName,
+        Type argumentType)
+    {
+        return builder
+            .Append('"')
+            .Append(argumentName ?? "〈?〉")
+            .Append("\": ")
+            .Append(TypeName.For(argumentType));
+    }
+    
+    internal static TextBuilder AppendArgument(
+        this TextBuilder builder,
+        string? argumentName,
+        Type argumentType,
+        string? argumentString)
     {
         return builder
             .Append('"')
@@ -18,6 +34,13 @@ partial class Ex
             .IfNotEmpty(argumentString, static (tb, argStr) => tb.Write(argStr), static tb => tb.Write("〈null〉"))
             .Append('`');
     }
+
+    [MustDisposeResource]
+    internal static TextBuilder AppendArgument<T>(this TextBuilder builder, string? argumentName, T? argument)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        => builder.AppendArgument(argumentName, Any.GetType<T>(argument), Any.ToString<T>(argument));
 
     internal static string GetArgExceptionMessage(string? argumentName, Type argumentType, string? argumentString, string? info)
     {

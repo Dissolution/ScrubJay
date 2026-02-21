@@ -5,7 +5,7 @@ public static class ListExtensions
 {
     extension<T>(List<T>? list)
     {
-#if !NETSTANDARD
+#if !(NETSTANDARD || NETFRAMEWORK)
         public ref T FirstItemRef
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

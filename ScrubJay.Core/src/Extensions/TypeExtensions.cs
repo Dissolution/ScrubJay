@@ -34,7 +34,7 @@ public static class TypeExtensions
     {
         public bool IsRef => type is not null && (type.IsByRef || type.IsByRefLike);
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         public bool IsByRefLike => false;
 #endif
 

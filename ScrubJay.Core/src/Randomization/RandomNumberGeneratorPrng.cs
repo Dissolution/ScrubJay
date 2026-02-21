@@ -19,7 +19,7 @@ public sealed class RandomNumberGeneratorPrng : IPrng
 
     public ulong NextU64()
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         byte[] buffer = new byte[sizeof(ulong)];
         _provider.GetBytes(buffer);
 #else

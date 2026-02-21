@@ -1,4 +1,4 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0
+﻿#if NETSTANDARD2_0 || NETFRAMEWORK
 
 // ReSharper disable CheckNamespace
 // ReSharper disable ArrangeNamespaceBody

@@ -6,7 +6,7 @@
 [PublicAPI]
 public static class StackExtensions
 {
-// #if NETFRAMEWORK || NETSTANDARD2_0
+// #if NETSTANDARD2_0 || NETFRAMEWORK
 //     public static bool TryPeek<T>(this Stack<T> stack, [MaybeNullWhen(false)] out T value)
 //     {
 //         if (stack.Count > 0)

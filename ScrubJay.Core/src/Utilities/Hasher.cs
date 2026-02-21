@@ -80,7 +80,7 @@ public ref struct Hasher
     /// </summary>
     private static uint CreateSeed()
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         using var rng = RandomNumberGenerator.Create();
         byte[] bytes = new byte[sizeof(uint)];
         rng.GetBytes(bytes);

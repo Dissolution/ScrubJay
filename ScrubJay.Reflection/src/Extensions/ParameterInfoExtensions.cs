@@ -19,9 +19,9 @@ public static class ParameterInfoExtensions
                 {
                     if (parameter.HasDefaultValue)
                     {
-                        var def = parameter.DefaultValue;
+                        object? def = parameter.DefaultValue;
                         if (!ReferenceEquals(def, DBNull.Value))
-                            return Some(def);
+                            return Some<object?>(def);
                     }
                 }
                 catch

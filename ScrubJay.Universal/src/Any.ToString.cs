@@ -9,15 +9,22 @@ namespace ScrubJay.Universal;
 partial class Any
 {
     /// <summary>
-    /// Returns a <see cref="string"/> representation of a <typeparamref name="T"/> <paramref name="value"/>.
+    /// Returns the <see cref="string"/> representation of this <typeparamref name="T"/> <paramref name="value"/>.
     /// </summary>
-    /// <param name="value"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> instance to call <see cref="object.ToString"/> on.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/>.
+    /// </typeparam>
+    /// <returns>
+    /// <c>value?.ToString()</c>
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(T? value)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString<T>(T? value)
     {
-        return value?.ToString() ?? string.Empty;
+        return value?.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -42,8 +49,24 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
+    /// <summary>
+    /// Returns the <see cref="string"/> representation of this <typeparamref name="T"/> <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> instance to call <see cref="object.ToString"/> on.
+    /// </param>
+    /// <param name="_">
+    /// Ignored <see cref="TypeConstraints"/> to assist in method overloading.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/>, may be a <c>ref struct</c>.
+    /// </typeparam>
+    /// <returns>
+    /// <c>value?.ToString()</c>
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         return MethodCache<T>.ToString(value);
@@ -77,7 +100,7 @@ partial class MethodCache<T>
         // return the string on the stack
         generator.Emit(OpCodes.Ret);
 
-        if (!dynamicMethod.TryCreateDelegate<Func<T,string>>(out var func))
+        if (!dynamicMethod.TryCreateDelegate<Func<T, string>>(out var func))
         {
             func = FallbackToString;
         }
@@ -87,10 +110,11 @@ partial class MethodCache<T>
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString(T? value)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString(T? value)
     {
         if (value is null)
-            return string.Empty;
+            return null;
         return _lazyToStringFunc.Value(value);
     }
 }

@@ -9,7 +9,7 @@ public static class GuidExtensions
 {
     public static string ToUpperDigitsString(this Guid guid)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         string str = guid.ToString("N");
         str = str.ToUpper(CultureInfo.InvariantCulture);
         return str;

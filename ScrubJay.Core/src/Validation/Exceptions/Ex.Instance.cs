@@ -26,7 +26,7 @@ partial class Ex
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => ThisMethodIsNotSupported(typeof(T), info, innerException, methodName);
+        => ThisMethodIsNotSupported(typeof(T), info, methodName);
 
 
     public static NotSupportedException IsReadOnly<T>(

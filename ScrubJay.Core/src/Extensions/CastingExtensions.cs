@@ -81,7 +81,7 @@ public static class CastingExtensions
             {
                 if (typeof(T).CanBeNull)
                     return Result<T>.Ok(default!);
-                return Ex.ArgNull(obj);
+                return Ex.ArgNull<object>(nameof(obj));
             }
 
             return Ex.Arg(obj, $"cannot be a {TypeName.For<T>()} instance");

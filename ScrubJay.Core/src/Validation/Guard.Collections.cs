@@ -7,7 +7,7 @@ partial class Guard
         string? arrayName = null)
     {
         if (array is null)
-            throw Ex.ArgNull(arrayName);
+            throw Ex.ArgNull<T[]>(arrayName);
         if (array.Length == 0)
             throw Ex.Arg(array, "was empty", arrayName);
         return array;

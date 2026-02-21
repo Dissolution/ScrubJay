@@ -1,14 +1,26 @@
-namespace ScrubJay.Validation;
+﻿namespace ScrubJay.Validation;
 
 partial class Ex
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ArgumentNullException ArgNull(string? paramName)
+    public static ArgumentNullException ArgNull<T>(string? argumentName)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
-        return new ArgumentNullException(paramName);
-    }
+        string message = TextBuilder.New
+            .Append("Argument ")
+            .AppendArgument(argumentName, typeof(T))
+            .Append(" is null")
+            .ToStringAndDispose();
 
-    public static ArgumentNullException ArgNull<T>(T? argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
+        return new ArgumentNullException(argumentName, message);
+    }
+    
+    public static ArgumentNullException ArgNull<T>(
+        T? argument,
+        string? info,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
@@ -16,9 +28,29 @@ partial class Ex
         string message = TextBuilder.New
             .Append("Argument ")
             .AppendArgument(argumentName, typeof(T), null)
-            .Append(" was not supposed to be null!")
+            .Append(" is null")
+            .AppendOptionalInfo(info)
             .ToStringAndDispose();
 
-        return new ArgumentNullException(message);
+        return new ArgumentNullException(argumentName, message);
+    }
+
+    public static ArgumentNullException ArgNull<T>(
+        T? argument,
+        ref InterpolatedTextBuilder info,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        string message = TextBuilder.New
+            .Append("Argument ")
+            .AppendArgument(argumentName, typeof(T), null)
+            .Append(" is null")
+            .AppendOptionalInfo(ref info)
+            .ToStringAndDispose();
+
+        return new ArgumentNullException(argumentName, message);
     }
 }

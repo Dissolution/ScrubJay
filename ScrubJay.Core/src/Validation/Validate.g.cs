@@ -20,7 +20,7 @@ public static partial class Validate
 
             return actual;
 
-        return Ex.ArgNull(actualName);
+        return Ex.ArgNull<T>(actualName);
 
     }
 
@@ -38,7 +38,7 @@ public static partial class Validate
 
             return actual;
 
-        return Ex.ArgNull(actualName);
+        return Ex.ArgNull<T?>(actualName);
 
     }
 

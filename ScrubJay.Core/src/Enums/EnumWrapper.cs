@@ -39,7 +39,7 @@ public readonly struct EnumWrapper<E> :
 
     public static EnumWrapper<E> Parse(string str, IFormatProvider? _ = null)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         object obj = System.Enum.Parse(typeof(E), str, true);
         E e = obj.ThrowIfNot<E>();
         return new(e);

@@ -2,7 +2,7 @@
 
 namespace ScrubJay.Utilities;
 
-#if !NETFRAMEWORK && !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NETFRAMEWORK)
 /// <summary>
 /// Helper utility for working with <see cref="IDisposable"/> and <see cref="IAsyncDisposable"/>
 /// </summary>
@@ -27,7 +27,7 @@ public static class Disposable
         return new ActionDisposable(onDispose);
     }
 
-#if !NETFRAMEWORK && !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NETFRAMEWORK)
     /// <summary>
     /// Gets an <see cref="IDisposable"/> that will asynchronously invoke an <see cref="Action"/> when it is disposed
     /// </summary>
@@ -67,7 +67,7 @@ internal sealed class ActionDisposable : IDisposable
     public void Dispose() => _onDispose();
 }
 
-#if !NETFRAMEWORK && !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NETFRAMEWORK)
 internal sealed class ActionAsyncDisposable : IAsyncDisposable
 {
     private readonly Func<ValueTask> _onAsyncDispose;

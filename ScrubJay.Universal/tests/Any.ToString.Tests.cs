@@ -22,9 +22,9 @@ public class Any_ToString_Tests
     [InlineData("TRJ-147")]
     public void CanToStringString(string? str)
     {
-        string anystr = Any.ToString<string>(str);
-        Assert.NotNull(anystr);
-        Assert.Equal(str ?? string.Empty, anystr);
+        string? anystr = Any.ToString<string>(str);
+        Assert.True((anystr is null) == (str is null));
+        Assert.Equal(str, anystr);
     }
 
     [Theory]

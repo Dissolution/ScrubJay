@@ -7,7 +7,7 @@
 //     internal static void RenderGuidTo(Guid guid, TextBuilder builder)
 //     {
 //         var buffer = builder.Allocate(36);
-// #if NETFRAMEWORK || NETSTANDARD2_0
+// #if NETSTANDARD2_0 || NETFRAMEWORK
 //         string str = guid.ToString("N");
 //         TextHelper.Notsafe.CopyBlock(str, buffer, 36);
 // #else

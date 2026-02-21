@@ -18,7 +18,7 @@ partial class Validate
 
         if (array is null)
 
-            return Ex.ArgNull(arrayName);
+            return Ex.ArgNull<T[]>(arrayName);
 
         if (array.Length == 0)
 

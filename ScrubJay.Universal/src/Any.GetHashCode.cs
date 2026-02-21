@@ -35,7 +35,7 @@ partial class Any
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode(scoped text text)
     {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         // FNV-1a (https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV-1a_hash)
         // 32-bit
         unchecked

@@ -18,7 +18,7 @@ public static class EnumExtensions
         {
             if (value is string str)
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
                 if (Enum.TryParse(enumType, str, out var obj))
 #else
                 if (Enum.TryParse(enumType, str, true, out var obj))

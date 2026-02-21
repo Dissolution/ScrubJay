@@ -12,7 +12,7 @@ public static class DynamicMethodExtensions
         /// <param name="returnType"></param>
         /// <param name="parameterTypes"></param>
         /// <returns></returns>
-        public static DynamicMethod New(string name, Type? returnType, params Type[]? parameterTypes)
+        public static DynamicMethod New(string name, Type? returnType, Type[]? parameterTypes = null)
         {
             var dyn = new DynamicMethod(
                 name: name,

@@ -220,7 +220,7 @@ public ref struct DeterministicHasher
 
     public void Add(Guid guid)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         var buffer = guid.ToByteArray();
 #else
         Span<byte> buffer = stackalloc byte[16];

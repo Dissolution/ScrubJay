@@ -437,7 +437,7 @@ public readonly struct Result<T> :
 
     public override int GetHashCode()
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         if (_isOk)
         {
             if (_value is not null)

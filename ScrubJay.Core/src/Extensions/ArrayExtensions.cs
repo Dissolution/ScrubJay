@@ -24,7 +24,7 @@ public static class ArrayExtensions
             {
                 if (array is null)
                     return ref Notsafe.NullRef<T>();
-#if !NETSTANDARD
+#if !(NETSTANDARD || NETFRAMEWORK)
                 return ref MemoryMarshal.GetArrayDataReference(array);
 #else
                 if (array.Length == 0)
@@ -47,7 +47,7 @@ public static class ArrayExtensions
             {
                 if (array is null)
                     return ref Notsafe.NullRef<T>();
-#if !NETSTANDARD
+#if !(NETSTANDARD || NETFRAMEWORK)
                 return ref MemoryMarshal.GetArrayDataReference(array);
 #else
                 if (array.Length == 0)
@@ -228,7 +228,7 @@ public static class ArrayExtensions
             return Array.IndexOf<T>(array, item) >= 0;
         }
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         public Span<T> AsSpan(Range range)
         {
             if (array is null)
@@ -260,7 +260,7 @@ public static class ArrayExtensions
         {
             if (array is not null)
             {
-#if !NETSTANDARD2_0
+#if !(NETSTANDARD2_0 || NETFRAMEWORK)
                 Array.Reverse<T>(array);
 #else
                 int len = array.Length;

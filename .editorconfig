@@ -102,6 +102,9 @@ dotnet_diagnostic.MA0006.severity = none
 ### Us an overload of ToString() that takes IFormatProvider
 dotnet_diagnostic.MA0011.severity = none
 
+### NotSupportedException
+dotnet_diagnostic.MA0025.severity = suggestion
+
 ### File name must match type name
 dotnet_diagnostic.MA0048.severity = none
 MA0051.maximum_lines_per_method = 1024

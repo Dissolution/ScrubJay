@@ -8,7 +8,7 @@ public static partial class Guard
     {
         if (actual is not null)
             return actual;
-        throw Ex.ArgNull(actualName);
+        throw Ex.ArgNull<T>(actualName);
     }
     
     public static Nullable<T> IsNotNull<T>([AllowNull, NotNull] Nullable<T> actual,
@@ -17,7 +17,7 @@ public static partial class Guard
     {
         if (actual.HasValue)
             return actual;
-        throw Ex.ArgNull(actualName);
+        throw Ex.ArgNull<T?>(actualName);
     }
     
     public static T? IsNull<T>(T? actual,

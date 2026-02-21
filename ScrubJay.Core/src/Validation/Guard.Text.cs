@@ -7,7 +7,7 @@ partial class Guard
         string? strName = null)
     {
         if (str is null)
-            throw Ex.ArgNull(strName);
+            throw Ex.ArgNull<string>(strName);
         return str;
     }
     
@@ -16,7 +16,7 @@ partial class Guard
         string? strName = null)
     {
         if (str is null)
-            throw Ex.ArgNull(strName);
+            throw Ex.ArgNull<string>(strName);
         if (str.Length == 0)
             throw Ex.Arg(str, "was empty", strName);
         return str;
@@ -27,7 +27,7 @@ partial class Guard
         string? strName = null)
     {
         if (str is null)
-            throw Ex.ArgNull(strName);
+            throw Ex.ArgNull<string>(strName);
         if (str.Length == 0)
             throw Ex.Arg(str, "was empty", strName);
         for (int i = 0; i < str.Length; i++)

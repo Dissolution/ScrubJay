@@ -83,7 +83,7 @@ public static class TextExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string AsString(this scoped Span<char> text)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         unsafe
         {
             fixed (char* ptr = text)
@@ -102,7 +102,7 @@ public static class TextExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string AsString(this scoped text text)
     {
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         unsafe
         {
             fixed (char* ptr = text)
@@ -133,7 +133,7 @@ public static class TextExtensions
         if (list is null)
             return null;
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0 || NETFRAMEWORK
         Span<char> span = stackalloc char[list.Count];
         for (int i = list.Count - 1; i >= 0; i--)
         {
