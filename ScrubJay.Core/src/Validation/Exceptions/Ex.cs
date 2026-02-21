@@ -21,51 +21,12 @@ public static partial class Ex
         return builder;
     }
 
-    internal static TextBuilder AppendArgument<T>(
-        this TextBuilder builder,
-        T value, string? valueName = null)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        return builder
-            .Append('"')
-            .If(valueName is not null, valueName, "<???>")
-            .Append("\": ")
-            .IfNotNull(value,
-                static (tb, v) => tb.Append($"{typeof(T):@} = `{v}`"),
-                static tb => tb.Write("<null>"));
-    }
+ 
 
 
-#region InvalidOperationException
-    /// <summary>
-    /// Get a new <see cref="InvalidOperationException"/>
-    /// </summary>
-    public static InvalidOperationException Invalid(
-        InterpolatedTextBuilder message = default,
-        Exception? innerException = null)
-    {
-        return new InvalidOperationException(
-            message.ToStringAndClear(),
-            innerException);
-    }
-#endregion /InvalidOperationException
 
-#region NotImplementedException
-    /// <summary>
-    /// Get a new <see cref="NotImplementedException"/>
-    /// </summary>
-    public static NotImplementedException NotImplemented() => new();
 
-    /// <summary>
-    /// Get a new <see cref="NotImplementedException"/>
-    /// </summary>
-    public static NotImplementedException NotImplemented(InterpolatedTextBuilder message)
-    {
-        return new NotImplementedException(message.ToStringAndClear());
-    }
-#endregion /NotImplementedException
+
 
 #region UnreachableException
     /// <summary>
@@ -76,7 +37,7 @@ public static partial class Ex
         Exception? innerException = null)
     {
         return new UnreachableException(
-            message.ToStringAndClear(),
+            message.ToStringAndDispose(),
             innerException);
     }
 #endregion /UnreachableException

@@ -5,6 +5,7 @@ using System.Reflection;
 using ConsoleSandbox;
 using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
+using ScrubJay.Validation;
 
 /*
 var methods = AppDomain
@@ -25,14 +26,7 @@ foreach (var method in methods)
 */
 
 
-var thing = new FormattableClass()
-{
-    Id = 147,
-    Name = "TRJ",
-};
-var r = thing.Render();
-var r2 = (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).Render();
-
+var x = Ex.Arg<int>(147, "now");
 
 Debugger.Break();
 

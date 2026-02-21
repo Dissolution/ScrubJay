@@ -15,7 +15,7 @@ partial class Ex
     {
         string message = TextBuilder.New
             .Append("Argument ")
-            .AppendArgument(argument, argumentName)
+            .AppendArgument(argumentName, typeof(T), null)
             .Append(" was not supposed to be null!")
             .ToStringAndDispose();
 

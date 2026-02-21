@@ -72,4 +72,11 @@ public partial class TextBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(string? str) => Write(str.AsSpan());
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write([InterpolatedStringHandlerArgument("")] ref InterpolatedTextBuilder interpolatedText)
+    {
+        // already written
+        return;
+    }
 }

@@ -27,6 +27,7 @@ partial class Any
     /// <remarks>
     /// For non-<c>ref struct</c> values, this always succeeds.
     /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
     {
         boxed = (object?)value;

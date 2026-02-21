@@ -29,7 +29,7 @@ partial class Guard
         string? spanName = null)
     {
         if (span.IsEmpty)
-            throw Ex.Arg(span, "was empty", spanName);
+            throw Ex.Arg<T>(span, "was empty", spanName);
         return span;
     }
 

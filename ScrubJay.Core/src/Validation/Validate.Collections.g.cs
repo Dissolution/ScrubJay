@@ -62,7 +62,7 @@ partial class Validate
 
         if (span.IsEmpty)
 
-            return Ex.Arg(span, "was empty", spanName);
+            return Ex.Arg<T>(span, "was empty", spanName);
 
         return span;
 

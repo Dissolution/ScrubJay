@@ -37,7 +37,7 @@ partial class TextBuilder
         else
         {
             Write(interpolatedTextBuilder.AsSpan());
-            interpolatedTextBuilder.Clear();
+            interpolatedTextBuilder.Dispose();
             return this;
         }
     }

@@ -87,7 +87,7 @@ public static class MethodBaseExtensions
                 MethodInfo info => info.ReturnType,
                 ConstructorInfo { IsStatic: true } => typeof(void),
                 ConstructorInfo ctor => ctor.DeclaringType!,
-                _ => throw Ex.MethodNotSupported(method),
+                _ => throw Ex.ThisMethodIsNotSupported(method),
             };
     }
 

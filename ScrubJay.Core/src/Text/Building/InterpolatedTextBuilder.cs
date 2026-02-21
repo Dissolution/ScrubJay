@@ -14,16 +14,9 @@ namespace ScrubJay.Text.Building;
 /// </remarks>
 [PublicAPI]
 [InterpolatedStringHandler]
-public ref struct InterpolatedTextBuilder
+[MustDisposeResource(false)]
+public ref struct InterpolatedTextBuilder : IDisposable
 {
-    public static implicit operator InterpolatedTextBuilder(string? str)
-    {
-        if (str is null) return default;
-        var builder = new InterpolatedTextBuilder(str.Length, 0);
-        builder.AppendLiteral(str);
-        return builder;
-    }
-
     internal readonly TextBuilder? _builder;
     internal Buffer<char> _buffer;
 
@@ -279,7 +272,7 @@ public ref struct InterpolatedTextBuilder
 #endif
 
     [HandlesResourceDisposal]
-    public void Clear()
+    public void Dispose()
     {
         if (_builder is null)
         {
@@ -292,10 +285,10 @@ public ref struct InterpolatedTextBuilder
     }
 
     [HandlesResourceDisposal]
-    public string ToStringAndClear()
+    public string ToStringAndDispose()
     {
         string str = this.ToString();
-        this.Clear();
+        this.Dispose();
         return str;
     }
 

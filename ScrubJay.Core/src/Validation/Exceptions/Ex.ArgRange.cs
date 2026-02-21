@@ -2,43 +2,35 @@ namespace ScrubJay.Validation;
 
 partial class Ex
 {
-    public static ArgumentOutOfRangeException ArgRange<T>(T? argument,
+    public static ArgumentOutOfRangeException ArgRange<T>(
+        T? argument,
+        string? info = null,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
-    {
-        return new ArgumentOutOfRangeException(argumentName, argument, null);
-    }
-
-    public static ArgumentOutOfRangeException ArgRange<T>(T? argument,
-        [HandlesResourceDisposal] InterpolatedTextBuilder info,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null)
-    {
-        string message = info.ToStringAndClear();
-        return new ArgumentOutOfRangeException(argumentName, argument, message);
-    }
-
 #if NET9_0_OR_GREATER
-    public static ArgumentOutOfRangeException ArgRange<T>(T? argument,
-        TypeConstraints.AllowsRefStruct<T> _ = default,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null)
         where T : allows ref struct
-    {
-        return new ArgumentOutOfRangeException(argumentName, Any.TryBox(argument, out var boxed) ? boxed : Any.ToString(argument), null);
-    }
-
-    public static ArgumentOutOfRangeException ArgRange<T>(T? argument,
-        [HandlesResourceDisposal] InterpolatedTextBuilder info,
-        TypeConstraints.AllowsRefStruct<T> _ = default,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null)
-        where T : allows ref struct
-    {
-        string message = info.ToStringAndClear();
-        return new ArgumentOutOfRangeException(argumentName, Any.TryBox(argument, out var boxed) ? boxed : Any.ToString(argument), message);
-    }
-
-
 #endif
+    {
+        var message = GetArgExceptionMessage<T>(argument, argumentName, info);
+        if (!Any.TryBox(argument, out var boxed))
+            boxed = Any.ToString(argument);
+        return new ArgumentOutOfRangeException(argumentName, boxed, message);
+    }
+
+    public static ArgumentOutOfRangeException ArgRange<T>(
+        T? argument,
+        ref InterpolatedTextBuilder info,
+        TypeConstraints.AllowsRefStruct<T> _ = default,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        var message = GetArgExceptionMessage<T>(argument, argumentName, ref info);
+        if (!Any.TryBox(argument, out var boxed))
+            boxed = Any.ToString(argument);
+        return new ArgumentOutOfRangeException(argumentName, boxed, message);
+    }
+
 }

@@ -47,7 +47,7 @@ public readonly struct Trit :
 
     public static Trit operator ~(Trit value)
     {
-        throw Ex.MethodNotSupported();
+        throw Ex.ThisMethodIsNotSupported();
     }
 
     public static Result<Trit> TryParse(text text, IFormatProvider? provider = null)

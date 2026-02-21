@@ -2,33 +2,31 @@ namespace ScrubJay.Validation;
 
 partial class Ex
 {
-    public static NotSupportedException MethodNotSupported(
+    public static NotSupportedException ThisMethodIsNotSupported(
         Type? instanceType = null,
-        InterpolatedTextBuilder info = default,
-        Exception? innerException = null,
+        string? info = null,
         [CallerMemberName] string? methodName = null)
     {
         string message = TextBuilder
             .New
             .Append($"Cannot call {instanceType:@}.{methodName}")
             .IfNotEmpty(info,
-                static (builder, n) => builder.Append(": ").Append(ref n),
+                static (builder, n) => builder.Append(": ").Write(n),
                 builder => builder.If(instanceType!.IsRef,
                     tb => tb.Append($": {instanceType:@} is a ref struct and cannot be boxed")))
             .ToStringAndDispose();
 
-        return new NotSupportedException(message, innerException);
+        return new NotSupportedException(message);
     }
 
-    public static NotSupportedException MethodNotSupported<T>(
+    public static NotSupportedException ThisMethodIsNotSupported<T>(
         T? instance = default,
-        InterpolatedTextBuilder info = default,
-        Exception? innerException = null,
+        string? info = null,
         [CallerMemberName] string? methodName = null)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => MethodNotSupported(typeof(T), info, innerException, methodName);
+        => ThisMethodIsNotSupported(typeof(T), info, innerException, methodName);
 
 
     public static NotSupportedException IsReadOnly<T>(

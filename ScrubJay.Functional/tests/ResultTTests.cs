@@ -1118,7 +1118,7 @@ public class ResultTests
     public void SelectMany_PropagatesErrorFromKeySelector()
     {
         var ok = Result<int>.Ok(5);
-        var innerException = new ArgumentException();
+        var innerException = new InvalidOperationException();
 
         var result = ok.SelectMany(
             keySelector: x => Result<int>.Error(innerException),

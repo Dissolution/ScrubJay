@@ -40,8 +40,8 @@ public partial class TextBuilder
         return New.Invoke(state, buildStateOut).ToStringAndDispose();
     }
 
-    public static string Build(InterpolatedTextBuilder interpolatedTextBuilder)
+    public static string Build(ref InterpolatedTextBuilder interpolatedTextBuilder)
     {
-        return interpolatedTextBuilder.ToStringAndClear();
+        return interpolatedTextBuilder.ToStringAndDispose();
     }
 }

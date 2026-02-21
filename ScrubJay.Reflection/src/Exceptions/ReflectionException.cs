@@ -42,10 +42,10 @@ public class ReflectionException : Exception, IEnumerable
     public ReflectionException() : base() { }
     
     public ReflectionException(ref InterpolatedTextBuilder message) 
-        : base(message.ToStringAndClear()) { }
+        : base(message.ToStringAndDispose()) { }
     
     public ReflectionException(ref InterpolatedTextBuilder message, Exception? innerException) 
-        : base(message.ToStringAndClear(), innerException) { }
+        : base(message.ToStringAndDispose(), innerException) { }
     
     public ReflectionException(string? message) 
         : base(message) { }
