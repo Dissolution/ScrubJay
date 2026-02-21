@@ -3,8 +3,9 @@ using System.Reflection;
 namespace ScrubJay.Rendering.Rendition5;
 
 [PublicAPI]
-public static class MethodRenderer
+public static class ReflectionRenderers
 {
+
     [RenderToMethod]
     public static void RenderMethodTo(MethodBase method, TextBuilder builder)
     {
@@ -31,5 +32,14 @@ public static class MethodRenderer
             .Delimit(", ", method.GetParameters(), "@")
             .Append(')')
             .If(method, static m => m.Is<MethodInfo>(), static (tb, m) => tb.Render(m.ReturnType));
+    }
+
+    [RenderToMethod<ParameterInfo>]
+    public static void RenderParameterTo(ParameterInfo parameter, TextBuilder builder)
+    {
+        builder.Append(parameter.Name ?? "〈?〉")
+            .Append(": ")
+            .Render(parameter.ParameterType)
+            .If(parameter, static p => p.HasDefaultValue, static (tb, p) => tb.Render(p.DefaultValue));
     }
 }

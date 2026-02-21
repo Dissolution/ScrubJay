@@ -1,7 +1,8 @@
 
 
-using ScrubJay.Rendering.Rendition3;
 
+
+using ScrubJay.Rendering.Rendition5;
 #pragma warning disable CA1815, IDE0250, CA1001
 
 namespace ScrubJay.Text.Building;
@@ -14,7 +15,6 @@ namespace ScrubJay.Text.Building;
 /// </remarks>
 [PublicAPI]
 [InterpolatedStringHandler]
-[MustDisposeResource(false)]
 public ref struct InterpolatedTextBuilder : IDisposable
 {
     internal readonly TextBuilder? _builder;

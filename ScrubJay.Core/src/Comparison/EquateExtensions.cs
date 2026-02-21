@@ -7,67 +7,74 @@ namespace ScrubJay.Comparison;
 [PublicAPI]
 public static class EquateExtensions
 {
+#region Textual Types
+    // char, text, string?, char[]?
+
+#region char
+    extension(char ch)
+    {
+        public bool Equate(char other) => other == ch;
+
+        public bool Equate(scoped text other)
+        {
+            if (other.Length == 1)
+                return other[0] == ch;
+            return false;
+        }
+
+        public bool Equate(string? other)
+        {
+            if (other is not null && other.Length == 1)
+                return other[0] == ch;
+            return false;
+        }
+
+        public bool Equate(char[]? other)
+        {
+            if (other is not null && other.Length == 1)
+                return other[0] == ch;
+            return false;
+        }
+    }
+
     extension(in char ch)
     {
-        public bool Equate(in char other)
-            => ch == other;
-
-        public bool Equate(char[]? other)
-            => EquateExtensions.Equate(ch.AsSpan(), other.AsSpan());
-
-        public bool Equate(scoped text other)
-            => EquateExtensions.Equate(ch.AsSpan(), other);
-
-        public bool Equate(string? other)
-            => EquateExtensions.Equate(ch.AsSpan(), other.AsSpan());
-
         public bool Equate(in char other, StringComparison comparison)
-            => EquateExtensions.Equate(ch.AsSpan(), other.AsSpan(), comparison);
-
-        public bool Equate(char[]? other, StringComparison comparison)
-            => EquateExtensions.Equate(ch.AsSpan(), other.AsSpan(), comparison);
+        {
+            return MemoryExtensions.Equals(ch.AsSpan(), other.AsSpan(), comparison);
+        }
 
         public bool Equate(scoped text other, StringComparison comparison)
-            => EquateExtensions.Equate(ch.AsSpan(), other, comparison);
+        {
+            return MemoryExtensions.Equals(ch.AsSpan(), other, comparison);
+        }
 
         public bool Equate(string? other, StringComparison comparison)
-            => EquateExtensions.Equate(ch.AsSpan(), other.AsSpan(), comparison);
-    }
-
-    extension(char[]? chars)
-    {
-        public bool Equate(in char other)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan());
-
-        public bool Equate(char[]? other)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan());
-
-        public bool Equate(scoped text other)
-            => EquateExtensions.Equate(chars.AsSpan(), other);
-
-        public bool Equate(string? other)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan());
-
-        public bool Equate(in char other, StringComparison comparison)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan(), comparison);
+        {
+            return MemoryExtensions.Equals(ch.AsSpan(), other.AsSpan(), comparison);
+        }
 
         public bool Equate(char[]? other, StringComparison comparison)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan(), comparison);
-
-        public bool Equate(scoped text other, StringComparison comparison)
-            => EquateExtensions.Equate(chars.AsSpan(), other, comparison);
-
-        public bool Equate(string? other, StringComparison comparison)
-            => EquateExtensions.Equate(chars.AsSpan(), other.AsSpan(), comparison);
+        {
+            return MemoryExtensions.Equals(ch.AsSpan(), other.AsSpan(), comparison);
+        }
     }
+#endregion
 
+#region text
     extension(scoped text text)
     {
         public bool Equate(in char other)
-            => EquateExtensions.Equate(text, other.AsSpan());
+        {
+            if (text.Length == 1)
+                return text[0] == other;
+            return false;
+        }
 
         public bool Equate(char[]? other)
-            => EquateExtensions.Equate(text, other.AsSpan());
+        {
+            return MemoryExtensions.SequenceEqual<char>(text, other.AsSpan());
+        }
 
         public bool Equate(scoped text other)
         {
@@ -75,14 +82,14 @@ public static class EquateExtensions
         }
 
         public bool Equate(string? other)
-            => EquateExtensions.Equate(text, other.AsSpan());
-
+        {
+            return MemoryExtensions.SequenceEqual<char>(text, other.AsSpan());
+        }
 
         public bool Equate(in char other, StringComparison comparison)
-            => EquateExtensions.Equate(text, other.AsSpan(), comparison);
-
-        public bool Equate(char[]? other, StringComparison comparison)
-            => EquateExtensions.Equate(text, other.AsSpan(), comparison);
+        {
+            return MemoryExtensions.Equals(text, other.AsSpan(), comparison);
+        }
 
         public bool Equate(scoped text other, StringComparison comparison)
         {
@@ -90,38 +97,140 @@ public static class EquateExtensions
         }
 
         public bool Equate(string? other, StringComparison comparison)
-            => EquateExtensions.Equate(text, other.AsSpan(), comparison);
-    }
+        {
+            return MemoryExtensions.Equals(text, other.AsSpan(), comparison);
+        }
 
+        public bool Equate(char[]? other, StringComparison comparison)
+        {
+            return MemoryExtensions.Equals(text, other.AsSpan(), comparison);
+        }
+    }
+#endregion
+#region string
     extension(string? str)
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equate(in char other)
         {
             return str is not null && str.Length == 1 && str[0] == other;
         }
 
-        public bool Equate(char[]? other)
-            => EquateExtensions.Equate(str.AsSpan(), other.AsSpan());
-
         public bool Equate(scoped text other)
-            => MemoryExtensions.SequenceEqual(str.AsSpan(), other);
+        {
+            if (str is null)
+                return false;
+            return MemoryExtensions.SequenceEqual<char>(str.AsSpan(), other);
+        }
 
         public bool Equate(string? other)
-            => string.Equals(str, other, StringComparison.Ordinal);
+        {
+            return string.Equals(str, other, StringComparison.Ordinal);
+        }
+
+        public bool Equate(char[]? other)
+        {
+            if (str is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.SequenceEqual<char>(str.AsSpan(), other.AsSpan());
+        }
 
         public bool Equate(in char other, StringComparison comparison)
-            => EquateExtensions.Equate(str.AsSpan(), other.AsSpan(), comparison);
-
-        public bool Equate(char[]? other, StringComparison comparison)
-            => EquateExtensions.Equate(str.AsSpan(), other.AsSpan(), comparison);
+        {
+            if (str is null)
+                return false;
+            return MemoryExtensions.Equals(str.AsSpan(), other.AsSpan(), comparison);
+        }
 
         public bool Equate(scoped text other, StringComparison comparison)
-            => EquateExtensions.Equate(str.AsSpan(), other, comparison);
+        {
+            return MemoryExtensions.Equals(str.AsSpan(), other, comparison);
+        }
 
         public bool Equate(string? other, StringComparison comparison)
-            => EquateExtensions.Equate(str.AsSpan(), other.AsSpan(), comparison);
+        {
+            return string.Equals(str, other, comparison);
+        }
+
+        public bool Equate(char[]? other, StringComparison comparison)
+        {
+            if (str is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.Equals(str.AsSpan(), other.AsSpan(), comparison);
+        }
     }
+#endregion
+
+#region char[]?
+    extension(char[]? chars)
+    {
+        public bool Equate(in char other)
+        {
+            return chars is not null && chars.Length == 1 && chars[0] == other;
+        }
+
+        public bool Equate(scoped text other)
+        {
+            if (chars is null)
+                return false;
+            return MemoryExtensions.SequenceEqual<char>(chars.AsSpan(), other);
+        }
+
+        public bool Equate(string? other)
+        {
+            if (chars is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.SequenceEqual<char>(chars.AsSpan(), other.AsSpan());
+        }
+
+        public bool Equate(char[]? other)
+        {
+            if (chars is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.SequenceEqual<char>(chars.AsSpan(), other.AsSpan());
+        }
+
+        public bool Equate(in char other, StringComparison comparison)
+        {
+            if (chars is null)
+                return false;
+            return MemoryExtensions.Equals(chars.AsSpan(), other.AsSpan(), comparison);
+        }
+
+        public bool Equate(scoped text other, StringComparison comparison)
+        {
+            if (chars is null)
+                return false;
+            return MemoryExtensions.Equals(chars.AsSpan(), other, comparison);
+        }
+
+        public bool Equate(string? other, StringComparison comparison)
+        {
+            if (chars is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.Equals(chars.AsSpan(), other.AsSpan(), comparison);
+        }
+
+        public bool Equate(char[]? other, StringComparison comparison)
+        {
+            if (chars is null)
+                return other is null;
+            if (other is null)
+                return false;
+            return MemoryExtensions.Equals(chars.AsSpan(), other.AsSpan(), comparison);
+        }
+    }
+#endregion
+#endregion
 
     extension<T>(T? value)
     {

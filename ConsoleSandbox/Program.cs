@@ -53,6 +53,9 @@ namespace ConsoleSandbox
                 .ToStringAndDispose();
             var ex2 = new ArgumentException(message, argumentName);
             var str2 =  ex2.ToString();
+
+            var ex3 = new ArgException();
+            var str3 = ex3.Message;
             Debugger.Break();
         }
     }

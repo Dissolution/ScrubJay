@@ -1,8 +1,4 @@
-using ScrubJay.Rendering.Rendition3;
 // ReSharper disable MethodOverloadWithOptionalParameter
-
-
-
 namespace ScrubJay.Validation;
 
 partial class Ex

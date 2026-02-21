@@ -8,4 +8,12 @@ namespace ScrubJay.Rendering.Rendition5;
 /// </exception>
 [PublicAPI]
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class RenderToMethodAttribute : Attribute;
+public class RenderToMethodAttribute : Attribute;
+
+[PublicAPI]
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class RenderToMethodAttribute<T> : RenderToMethodAttribute
+#if NET9_0_OR_GREATER
+where T : allows ref struct
+#endif
+;

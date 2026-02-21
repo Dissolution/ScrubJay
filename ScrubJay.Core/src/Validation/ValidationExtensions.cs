@@ -15,6 +15,20 @@ public static partial class ValidationExtensions
             return value;
         throw new ArgumentNullException(valueName, info);
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNull]
+    public static T ThrowIfNull<T>(
+        [AllowNull, NotNull] this T value,
+        [HandlesResourceDisposal]
+        ref InterpolatedTextBuilder message,
+        [CallerArgumentExpression(nameof(value))] 
+        string? valueName = null)
+    {
+        if (value is not null)
+            return value;
+        throw new ArgumentNullException(valueName, message.ToStringAndDispose());
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ThrowIfNot<T>(this object? obj, [CallerArgumentExpression(nameof(obj))] string? objectName = null)
