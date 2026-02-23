@@ -263,4 +263,24 @@ public static class RendererCache
         value.RenderTo<T>(builder);
         return builder.ToString();
     }
+
+    public static string Render<T>(this ReadOnlySpan<T> span)
+    {
+        return TextBuilder.New
+            .Append('[')
+            .Delimit(", ", span, TBA<T>.Render)
+            .Append(']')
+            .ToStringAndDispose();
+
+    }
+    
+    public static string Render<T>(this Span<T> span)
+    {
+        return TextBuilder.New
+            .Append('[')
+            .Delimit(", ", span, TBA<T>.Render)
+            .Append(']')
+            .ToStringAndDispose();
+
+    }
 }

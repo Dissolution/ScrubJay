@@ -89,7 +89,7 @@ public readonly struct MetadataToken :
         }.Wrote(out charsWritten);
     }
 
-    public TextBuilder RenderTo(TextBuilder builder) => builder
+    public void RenderTo(TextBuilder builder) => builder
         .Render(TokenType)
         .Append('.')
         .Format(Identifier, "X6");

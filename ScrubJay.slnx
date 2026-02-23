@@ -6,6 +6,7 @@
   <Folder Name="/ScrubJay.Core/">
     <Project Path="ScrubJay.Core/build_tasks/BuildTasks.csproj" />
     <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
+    <Project Path="ScrubJay.Core/tests/ScrubJay.Core.Tests.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Functional/">
     <Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />

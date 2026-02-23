@@ -54,14 +54,28 @@ public static partial class Ex
     /// <summary>
     /// Get a new <see cref="UnreachableException"/>
     /// </summary>
-    public static UnreachableException Unreachable(
-        InterpolatedTextBuilder message = default,
-        Exception? innerException = null)
+    public static UnreachableException Unreachable()
     {
-        return new UnreachableException(
-            message.ToStringAndDispose(),
-            innerException);
+        return new UnreachableException();
     }
+    
+    /// <summary>
+    /// Get a new <see cref="UnreachableException"/>
+    /// </summary>
+    public static UnreachableException Unreachable(string? message)
+    {
+        return new UnreachableException(message);
+    }
+    
+    /// <summary>
+    /// Get a new <see cref="UnreachableException"/>
+    /// </summary>
+    public static UnreachableException Unreachable([HandlesResourceDisposal]ref InterpolatedTextBuilder info)
+    {
+        return new UnreachableException(info.ToStringAndDispose());
+    }
+    
+    
 #endregion /UnreachableException
 
 

@@ -143,9 +143,9 @@ public readonly struct ILOffset :
 
 
 
-    public TextBuilder RenderTo(TextBuilder builder)
+    public void RenderTo(TextBuilder builder)
     {
-        return builder.Append("IL_")
+        builder.Append("IL_")
             .If(_offset, static o => o >= 0,
                 static (tb, o) => tb.Format(o, "X4"),
                 static (tb, _) => tb.Append("????"));

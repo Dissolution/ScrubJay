@@ -3,36 +3,57 @@
 namespace ScrubJay.Parsing;
 
 /// <summary>
-/// A <see cref="ParseException"/> is a type of <see cref="InvalidOperationException"/>
-/// with a default message that contains the <see cref="InputText"/> and <see cref="DestinationType"/>
+/// A <see cref="ParseException"/> is a type of <see cref="ArgumentException"/> that contains additional information
+/// about the input that failed to parse and the <see cref="Type"/> it failed to parse into.
 /// </summary>
 /// <remarks>
-/// <see cref="ParseException"/> supports fluent instantiation of its <see cref="Exception.Data"/> with <see cref="Add"/>
+/// <see cref="ParseException"/> supports fluent instantiation of its <see cref="Exception.Data"/>.
 /// </remarks>
 [PublicAPI]
-public class ParseException : InvalidOperationException, IEnumerable
+public sealed class ParseException : ArgumentException, IEnumerable
 {
     /// <summary>
-    /// The input text that was being parsed
+    /// The <see cref="Type"/> of input that failed to parse.
     /// </summary>
-    public string? InputText { get; init; }
+    public required Type InputType { get; init; }
 
     /// <summary>
-    /// The <see cref="Type"/> the <see cref="InputText"/> was being parsed into, if known
+    /// A <see cref="string"/> representation of the input value that failed to parse.
     /// </summary>
-    public Type? DestinationType { get; init; }
+    public required string? InputString { get; init; }
 
-    public ParseException(string? message) : base(message)
+    /// <summary>
+    /// The <see cref="Type"/> that the input failed to parse into.
+    /// </summary>
+    public required Type OutputType { get; init; }
+
+    /// <summary>
+    /// Optional additional information about why parsing failed.
+    /// </summary>
+    public string? Info { get; init; }
+
+    public override string Message
     {
-
+        get
+        {
+            return TextBuilder.New
+                .Append("Unable to parse ")
+                .AppendArgument(ParamName, InputType, InputString)
+                .Append(" into a ")
+                .Append(TypeName.For(OutputType))
+                .Append(" value")
+                .AppendOptionalInfo(Info)
+                .ToStringAndDispose();
+        }
     }
 
-    public ParseException(string? message, Exception? innerException) : base(message, innerException)
+    internal ParseException(string? paramName, Exception? innerException = null)
+        : base(null, paramName, innerException)
     {
-
+        
     }
 
-     /// <summary>
+    /// <summary>
     /// Adds a key/value pair into <see cref="Exception.Data"/>
     /// </summary>
     /// <remarks>

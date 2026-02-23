@@ -10,7 +10,7 @@
         <CheckEolTargetFramework>false</CheckEolTargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         
-        <NoWarn>$(NoWarn);</NoWarn>
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
 
         <!-- Ensure that all Polyfilled types are public -->
         <PolyPublic>true</PolyPublic>
@@ -91,6 +91,10 @@
     <ItemGroup>
         <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Enums\TEMP\" />
     </ItemGroup>
 
 

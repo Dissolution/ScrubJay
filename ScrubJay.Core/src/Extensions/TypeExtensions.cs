@@ -180,5 +180,51 @@ public static class TypeExtensions
 #endif
 #pragma warning disable CA2263
             => type.Implements(typeof(T));
+        
+        
+        
+        internal (T Min, T Max) GetMinMaxValues<T>()
+        {
+            if (type == typeof(sbyte))
+            {
+                return (Notsafe.As<sbyte, T>(sbyte.MinValue), Notsafe.As<sbyte, T>(sbyte.MaxValue));
+            }
+            else if (type == typeof(byte))
+            {
+                return (Notsafe.As<byte, T>(byte.MinValue), Notsafe.As<byte, T>(byte.MaxValue));
+            }
+            else if (type == typeof(short))
+            {
+                return (Notsafe.As<short, T>(short.MinValue), Notsafe.As<short, T>(short.MaxValue));
+            }
+            else if (type == typeof(ushort))
+            {
+                return (Notsafe.As<ushort, T>(ushort.MinValue), Notsafe.As<ushort, T>(ushort.MaxValue));
+            }
+            else if (type == typeof(int))
+            {
+                return (Notsafe.As<int, T>(int.MinValue), Notsafe.As<int, T>(int.MaxValue));
+            }
+            else if (type == typeof(uint))
+            {
+                return (Notsafe.As<uint, T>(uint.MinValue), Notsafe.As<uint, T>(uint.MaxValue));
+            }
+            else if (type == typeof(long))
+            {
+                return (Notsafe.As<long, T>(long.MinValue), Notsafe.As<long, T>(long.MaxValue));
+            }
+            else if (type == typeof(ulong))
+            {
+                return (Notsafe.As<ulong, T>(ulong.MinValue), Notsafe.As<ulong, T>(ulong.MaxValue));
+            }
+            else if (type == typeof(char))
+            {
+                return (Notsafe.As<char, T>(char.MinValue), Notsafe.As<char, T>(char.MaxValue));
+            }
+            else
+            {
+                throw Ex.Arg(type);
+            }
+        }
     }
 }

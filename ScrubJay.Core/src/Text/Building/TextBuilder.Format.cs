@@ -154,7 +154,7 @@ partial class TextBuilder
     {
         if (format == '@')
         {
-            return this.Render<T>(value, _);
+            return this.Render<T>(value);
         }
 
         if (typeof(T).IsRef)

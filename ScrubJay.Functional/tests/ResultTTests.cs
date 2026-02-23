@@ -277,7 +277,7 @@ public class ResultTests
     {
         var result = Result<int>.Error(new InvalidOperationException());
 
-        Assert.False(result.IsErrorAnd(ex => ex is InvalidOperationException));
+        Assert.False(result.IsErrorAnd(ex => ex is ArgumentNullException));
     }
 
     [Fact]

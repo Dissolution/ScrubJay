@@ -3,13 +3,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using ConsoleSandbox;
 using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 using ScrubJay.Validation;
-
 /*
 var methods = AppDomain
     .CurrentDomain
@@ -29,13 +26,14 @@ foreach (var method in methods)
 */
 
 
-Util.Capture(147);
+var r = (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Render();
 
-
+Console.WriteLine(r);
+Debugger.Break();
 
 return;
 
-namespace ConsoleSandbox
+namespace ScrubJay.Sandboxes
 {
     [return: NotNullIfNotNull(nameof(value))]
     public delegate T? CheckNotNull<T>([AllowNull, NotNull] T value);
@@ -44,6 +42,12 @@ namespace ConsoleSandbox
     static class Util
     {
 
+        public static void OnEnum<E>(E @enum)
+            where E : struct, Enum
+        {
+            
+        }
+        
         public static void Capture<T>(T? argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
         {
             var ex = new ArgumentException(null, argumentName);

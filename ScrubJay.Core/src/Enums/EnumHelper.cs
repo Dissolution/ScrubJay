@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿#if !(NETFRAMEWORK || NETSTANDARD)
+using System.ComponentModel.DataAnnotations;
+#endif
+using ScrubJay.Rendering.Rendition5;
 
 namespace ScrubJay.Enums;
 
@@ -6,150 +9,53 @@ public static class EnumHelper
 {
     private static readonly ConcurrentTypeMap<EnumInfo> _cache = [];
 
-    [Flags]
-    public enum EnumParseOptions
+    private static EnumInfo CreateEnumInfo(Type enumType)
     {
-        None = 0,
-
-        IgnoreCase = 1 << 0,
-
-        IncludeDisplays = 1 << 1,
+        return Activator
+            .CreateInstance(typeof(EnumInfo<>).MakeGenericType(enumType))
+            .ThrowIfNot<EnumInfo>();
     }
 
-    public sealed class Attributes : IReadOnlyList<Attribute>
+    public static EnumInfo? GetEnumInfo(Type? enumType)
     {
-        private Attribute[] _attributes;
-
-        public int Count => _attributes.Length;
-
-        public Attribute this[int index]
-        {
-            get
-            {
-                return _attributes[Guard.Index(index, Count)];
-            }
-        }
-
-        internal Attributes(Attribute[] attributes)
-        {
-            _attributes = attributes;
-        }
-
-        public bool HasAttribute<A>()
-            where A : Attribute
-        {
-            return _attributes.OfType<A>().Any();
-        }
-
-        public bool HasAttribute<A>([NotNullWhen(true)] out A? attribute)
-            where A : Attribute
-        {
-            attribute = _attributes.OfType<A>().FirstOrDefault();
-            return attribute is not null;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IEnumerator<Attribute> GetEnumerator()
-        {
-            foreach (Attribute attribute in _attributes)
-            {
-                yield return attribute;
-            }
-        }
+        if (enumType is null)
+            return null;
+        if (!enumType.IsEnum)
+            return null;
+        return _cache.GetOrAdd(enumType, CreateEnumInfo);
     }
 
-    public class EnumMembers
-    {
-        
-    }
-
-    public class EnumMembers<E> : EnumMembers
+    public static EnumInfo<E> GetEnumInfo<E>()
         where E : struct, Enum
     {
-        
-    }
-    
-    internal abstract class EnumInfo
-    {
-        public Type EnumType { get; }
-        public Attributes Attributes { get; }
-        public bool IsFlags { get; }
-        public Type UnderlyingType { get; }
-        public EnumMembers Members { get; }
-
-        protected EnumInfo(Type enumType, EnumMembers members)
-        {
-            Debug.Assert(enumType.IsEnum);
-            this.EnumType = enumType;
-            this.Attributes = new(Attribute.GetCustomAttributes(enumType));
-            this.IsFlags = Attributes.HasAttribute<FlagsAttribute>();
-            this.UnderlyingType = Enum.GetUnderlyingType(enumType);
-            this.Members = members;
-        }
-
-        public bool IsDefined(Enum? @enum)
-        {
-            if (@enum is null)
-                return false;
-
-            try
-            {
-                return Enum.IsDefined(EnumType, @enum);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-
-        public Result<Enum> TryParse(Type enumType, string? str, EnumParseOptions options = EnumParseOptions.None)
-        {
-            throw Ex.NotImplemented();
-        }
-
-        public Result<Enum> TryParse(Type enumType, scoped text text, EnumParseOptions options = EnumParseOptions.None)
-        {
-            throw Ex.NotImplemented();
-        }
-
-        [return: NotNullIfNotNull(nameof(@enum))]
-        public string? GetName(Enum? @enum)
-        {
-            throw Ex.NotImplemented();
-        }
-
-        public string? GetDisplay(Enum? @enum)
-        {
-            throw Ex.NotImplemented();
-        }
+        return _cache.GetOrAdd<E>(CreateEnumInfo).ThrowIfNot<EnumInfo<E>>();
     }
 
-    internal sealed class EnumInfo<E> : EnumInfo
+    public static Result<E> TryParse<E>(string? str)
         where E : struct, Enum
     {
-        private static EnumMembers<E> GetEnumMembers()
-        {
-            var memberFields = typeof(E).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
-            
-        }
-        
-        private EnumInfo() : base(typeof(E))
-        {
+        var info = GetEnumInfo<E>();
+        return info.TryParse(str);
+    }
 
-        }
 
-        public bool IsDefined(E @enum)
+
+    [RenderToMethod]
+    public static void RenderEnumTo<E>(E @enum, TextBuilder builder)
+        where E : struct, Enum
+    {
+        EnumInfo<E> enumInfo = GetEnumInfo<E>();
+        if (enumInfo.IsFlags)
         {
-            try
+            builder.Delimit(" | ", @enum.EnumerateFlags(), (tb, flag) =>
             {
-                return Enum.IsDefined<E>(@enum);
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+                tb.Write(enumInfo.GetMember(flag)?.Rendered);
+            });
+        }
+        else
+        {
+            builder.Write(enumInfo.GetMember(@enum)?.Rendered);
         }
     }
+
 }

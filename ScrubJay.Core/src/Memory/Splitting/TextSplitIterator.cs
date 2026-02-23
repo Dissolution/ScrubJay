@@ -64,10 +64,12 @@ public ref struct TextSplitIterator : ISpanSplitIterator<char>
         int index;
         int skipLength;
 
+        var span = _span;
+
         TOP:
 
         scan = _scanStartIndex;
-        if (scan >= _span.Length)
+        if (scan >= span.Length)
         {
             segment = default;
             return false;
@@ -77,19 +79,19 @@ public ref struct TextSplitIterator : ISpanSplitIterator<char>
         {
             case SeparatorKind.Item:
             {
-                index = _span[scan..].IndexOf(_separator.AsSpan(), _comparison);
+                index = span[scan..].IndexOf(_separator.AsSpan(), _comparison);
                 skipLength = 1;
                 break;
             }
             case SeparatorKind.AnySpan:
             {
-                index = _span[scan..].IndexOfAny(_separators, _comparison);
+                index = span[scan..].IndexOfAny(_separators, _comparison);
                 skipLength = 1;
                 break;
             }
             case SeparatorKind.Span:
             {
-                index = _span[scan..].IndexOf(_separators, _comparison);
+                index = span[scan..].IndexOf(_separators, _comparison);
                 skipLength = _separators.Length;
                 break;
             }
@@ -115,8 +117,22 @@ public ref struct TextSplitIterator : ISpanSplitIterator<char>
         }
         else
         {
-            segmentEnd = _span.Length;
+            segmentEnd = span.Length;
             _scanStartIndex = segmentEnd;
+        }
+
+        if (_options.HasFlags(SplitOptions.Trim))
+        {
+            for (; segmentStart <= segmentEnd; segmentStart++)
+            {
+                if (!char.IsWhiteSpace(span[segmentStart]))
+                    break;
+            }
+            for (; segmentEnd >= segmentStart; segmentEnd--)
+            {
+                if (!char.IsWhiteSpace(span[segmentEnd]))
+                    break;
+            }
         }
 
         if (_options.HasFlags(SplitOptions.IgnoreEmpty))
@@ -129,7 +145,7 @@ public ref struct TextSplitIterator : ISpanSplitIterator<char>
         }
 
         var range = new Range(segmentStart, segmentEnd);
-        segment = new Segment<char>(range, _span[range]);
+        segment = new Segment<char>(range, span[range]);
         return true;
     }
 }
