@@ -1,6 +1,8 @@
 #pragma warning disable CS8620
 // ReSharper disable MethodOverloadWithOptionalParameter
 
+using InlineIL;
+using static InlineIL.IL;
 using System.Reflection;
 using System.Reflection.Emit;
 // ReSharper disable InvokeAsExtensionMember
@@ -10,52 +12,67 @@ namespace ScrubJay.Universal;
 partial class Any
 {
     /// <summary>
-    /// Compares two <typeparamref name="T"/> values and returns a <see cref="bool"/> indicating if they are equal.
+    /// Determines whether two <typeparamref name="T"/> values are equal.
     /// </summary>
-    /// <param name="value">
-    /// The first <typeparamref name="T"/> to equate.
+    /// <param name="left">
+    /// The first <typeparamref name="T"/> value to equate.
     /// </param>
-    /// <param name="other">
-    ///The second <typeparamref name="T"/> to equate.
+    /// <param name="right">
+    /// The second <typeparamref name="T"/> value to equate.
     /// </param>
     /// <typeparam name="T">
-    /// The <see cref="Type"/> of values being equated.
+    /// The <see cref="Type"/> of values to equate.
     /// </typeparam>
     /// <returns>
-    /// <c>true</c> if <paramref name="value"/> is equal to <paramref name="other"/><br/>
-    /// <c>false</c> if <paramref name="value"/> is not equal to <paramref name="other"/>
+    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(T? value, T? other)
-        => EqualityComparer<T>.Default.Equals(value!, other!);
+    public static bool Equals<T>(T? left, T? right)
+        => EqualityComparer<T>.Default.Equals(left!, right!);
 
     /// <summary>
-    /// Compares two <typeparamref name="T"/> values with an <see cref="IEqualityComparer{T}"/> and returns a <see cref="bool"/> indicating if they are equal.
+    /// Use an <see cref="IEqualityComparer{T}"/> to determine whether two <typeparamref name="T"/> values are equal.
     /// </summary>
-    /// <param name="value">
-    /// The first <typeparamref name="T"/> to equate.
+    /// <param name="left">
+    /// The first <typeparamref name="T"/> value to equate.
     /// </param>
-    /// <param name="other">
-    ///The second <typeparamref name="T"/> to equate.
+    /// <param name="right">
+    /// The second <typeparamref name="T"/> value to equate.
     /// </param>
     /// <param name="comparer">
-    /// The <see cref="IEqualityComparer{T}"/> used to determine quality between the values.<br/>
-    /// If <c>null</c>, <see cref="Equals{T}(T,T)"/> will be used.
+    /// The <see cref="IEqualityComparer{T}"/> that will determine equality.
     /// </param>
     /// <typeparam name="T">
-    /// The <see cref="Type"/> of values being equated.
+    /// The <see cref="Type"/> of values to equate.
     /// </typeparam>
     /// <returns>
-    /// <c>true</c> if the <paramref name="comparer"/> indicated that <paramref name="value"/> is equal to <paramref name="other"/><br/>
-    /// <c>false</c> if the <paramref name="comparer"/> indicated that <paramref name="value"/> is not equal to <paramref name="other"/>
+    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
-    public static bool Equals<T>(T? value, T? other, IEqualityComparer<T>? comparer)
+    public static bool Equals<T>(T? left, T? right, IEqualityComparer<T>? comparer)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
         if (comparer is null)
-            return Equals(value, other);
-        return comparer.Equals(value!, other!);
+            return Equals(left, right);
+        return comparer.Equals(left!, right!);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="ReadOnlySpan{T}"/>s are equal.
+    /// </summary>
+    /// <param name="left">
+    /// The first <see cref="ReadOnlySpan{T}"/> to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <see cref="ReadOnlySpan{T}"/> to equate.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of items in the <see cref="ReadOnlySpan{T}"/>s.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the sequences are equal; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool Equals<T>(scoped ReadOnlySpan<T> left, scoped ReadOnlySpan<T> right)
 #if !NET10_0_OR_GREATER
         where T : IEquatable<T>
@@ -64,6 +81,25 @@ partial class Any
         return MemoryExtensions.SequenceEqual(left, right);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="ReadOnlySpan{T}"/>s are equal by comparing their items with an <see cref="IEqualityComparer{T}"/>.
+    /// </summary>
+    /// <param name="left">
+    /// The first <see cref="ReadOnlySpan{T}"/> to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <see cref="ReadOnlySpan{T}"/> to equate.
+    /// </param>
+    /// <param name="comparer">
+    /// The <see cref="IEqualityComparer{T}"/> to use when comparing items,
+    /// or <see langword="null"/> to use <see cref="EqualityComparer{T}.Default"/>.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of items in the <see cref="ReadOnlySpan{T}"/>s.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the sequences are equal; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool Equals<T>(
         scoped ReadOnlySpan<T> left,
         scoped ReadOnlySpan<T> right,
@@ -91,12 +127,39 @@ partial class Any
         return true;
 #endif
     }
-
+    
+    /// <summary>
+    /// Determines if two <see cref="ReadOnlySpan{char}"/> texts have the same <see cref="StringComparison.Ordinal">Ordinal</see> characters.
+    /// </summary>
+    /// <param name="left">
+    /// The first <see cref="text"/> to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <see cref="text"/> to equate.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the texts are equal; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool Equals(scoped text left, scoped text right)
     {
         return MemoryExtensions.Equals(left, right, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Determines if two <see cref="ReadOnlySpan{char}"/> texts have the same characters according to a <see cref="StringComparison"/>.
+    /// </summary>
+    /// <param name="left">
+    /// The first <see cref="text"/> to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <see cref="text"/> to equate.
+    /// </param>
+    /// <param name="comparison">
+    /// A <see cref="StringComparison"/> that determines how the texts are compared.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the texts are equal; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool Equals(scoped text left, scoped text right, StringComparison comparison)
     {
         return MemoryExtensions.Equals(left, right, comparison);
@@ -106,39 +169,44 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
+    /// <summary>
+    /// Determines whether two <typeparamref name="T"/> values are equal.
+    /// </summary>
+    /// <param name="left">
+    /// The first <typeparamref name="T"/> value to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <typeparamref name="T"/> value to equate.
+    /// </param>
+    /// <param name="_">
+    /// Ignored <see cref="TypeConstraints"/> on <typeparamref name="T"/> that assists with method overload resolution.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values to equate, may be a <c>ref struct</c>.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(T? value, T? other,
+    public static bool Equals<T>(T? left, T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.Equals(value, other);
-    }
-
-    public static bool Equals<T>(T? value, T? other,
-        IEqualityComparer<T>? comparer,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (comparer is null)
-            return Equals(value, other);
-        return comparer.Equals(value, other);
+        return MethodCache<T>.LazyEquals.Value.Invoke(left, right);
     }
 }
 
-partial class MethodCache<T>
+internal partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T?, T?, bool>> _lazyEqualsFunc =
+    public static readonly Lazy<Func<T?, T?, bool>> LazyEquals =
         new(CreateEqualsFunc, LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static bool FallbackEquals(T? left, T? right)
+    private static bool EqualsFallback(T? left, T? right)
     {
-        if (left is null)
-            return right is null;
-        if (right is null)
-            return false;
-        if (Unsafe.AreSame<T>(in left, in right))
-            return true;
-        return false;
+        Emit.Ldarg_0();
+        Emit.Ldarg_1();
+        Emit.Ceq();
+        return Return<bool>();
     }
 
     private static Func<T?, T?, bool> CreateEqualsFunc()
@@ -147,10 +215,10 @@ partial class MethodCache<T>
         MethodInfo? equalsMethod = instanceType.FindMethod("Equals", typeof(bool), typeof(T));
 
         if (equalsMethod is null)
-            return FallbackEquals;
+            return EqualsFallback;
 
         // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"{TypeName.For<T>()}_Equals", typeof(bool), typeof(T), typeof(T));
+        var dynamicMethod = DynamicMethod.New($"Equals_{Type.Render<T>()}", typeof(bool), typeof(T), typeof(T));
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
@@ -164,16 +232,10 @@ partial class MethodCache<T>
 
         if (!dynamicMethod.TryCreateDelegate<Func<T?, T?, bool>>(out var func))
         {
-            func = FallbackEquals;
+            func = EqualsFallback;
         }
 
         return func;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals(T? value, T? other)
-    {
-        return _lazyEqualsFunc.Value.Invoke(value, other);
     }
 }
 

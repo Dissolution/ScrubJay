@@ -22,7 +22,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            var equate = EnumExtensions.Equate(left, right);
+            var equate = left.Equate(right);
             var eq = EqualityComparer<E>.Default.Equals(left, right);
             Assert.Equal(eq, equate);
         }
@@ -39,7 +39,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            int eeCompare = EnumExtensions.Compare(left, right);
+            int eeCompare = left.Compare(right);
             int cdCompare = Comparer<E>.Default.Compare(left, right);
             Assert.Equal(cdCompare < 0, eeCompare < 0);
             Assert.Equal(cdCompare == 0, eeCompare == 0);
@@ -56,7 +56,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            bool eeIs = EnumExtensions.IsLessThan(left, right);
+            bool eeIs = left.IsLessThan(right);
             bool compareIs = Comparer<E>.Default.Compare(left, right) < 0;
             Assert.Equal(compareIs, eeIs);
         }
@@ -71,7 +71,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            bool eeIs = EnumExtensions.IsLessThanOrEqualTo(left, right);
+            bool eeIs = left.IsLessThanOrEqualTo(right);
             bool compareIs = Comparer<E>.Default.Compare(left, right) <= 0;
             Assert.Equal(compareIs, eeIs);
         }
@@ -86,7 +86,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            bool eeIs = EnumExtensions.IsGreaterThan(left, right);
+            bool eeIs = left.IsGreaterThan(right);
             bool compareIs = Comparer<E>.Default.Compare(left, right) > 0;
             Assert.Equal(compareIs, eeIs);
         }
@@ -101,7 +101,7 @@ public class EnumExtensions_E_Tests
         foreach (var left in values)
         foreach (var right in values)
         {
-            bool eeIs = EnumExtensions.IsGreaterThanOrEqualTo(left, right);
+            bool eeIs = left.IsGreaterThanOrEqualTo(right);
             bool compareIs = Comparer<E>.Default.Compare(left, right) >= 0;
             Assert.Equal(compareIs, eeIs);
         }

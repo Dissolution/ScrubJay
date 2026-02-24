@@ -44,5 +44,15 @@ public static class TypeExtensions
                         genericDef.Name.StartsWith("ValueTuple`", StringComparison.Ordinal));
             }
         }
+
+        /// <summary>
+        /// Gets the rendering for this <see cref="Type"/>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string"/> render of this <see cref="Type"/>.
+        /// </returns>
+        /// <seealso cref="TypeRenderer"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string Render() => Type.Render(type);
     }
 }

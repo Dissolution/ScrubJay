@@ -31,6 +31,8 @@ var r = (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Rend
 Console.WriteLine(r);
 Debugger.Break();
 
+r = r.GetType().Render();
+
 return;
 
 namespace ScrubJay.Sandboxes

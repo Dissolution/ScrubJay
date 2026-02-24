@@ -36,21 +36,7 @@ partial class Any
     public static int GetHashCode(scoped text text)
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
-        // FNV-1a (https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV-1a_hash)
-        // 32-bit
-        unchecked
-        {
-            const uint FNV_PRIME = 16777619;
-            uint hash = 2166136261; // FNV_OFFSET
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                hash ^= text[i];
-                hash *= FNV_PRIME;
-            }
-
-            return (int)hash;
-        }
+        return FNV1aHasher.HashCharacters(text);
 #elif NETSTANDARD2_1
         HashCode hasher = new();
         foreach (char ch in text)
@@ -101,6 +87,11 @@ partial class MethodCache<T>
         CreateGetHashCodeFunc,
         LazyThreadSafetyMode.ExecutionAndPublication);
 
+    private static int GetHashCodeFallback(T value)
+    {
+        
+    }
+    
     private static Func<T, int>? CreateGetHashCodeFunc()
     {
         Type instanceType = typeof(T);
@@ -114,7 +105,7 @@ partial class MethodCache<T>
 
         // emit our dynamic method
         var dynamicMethod = DynamicMethod.New(
-            $"{TypeName.For<T>()}_GetHashCode",
+            $"{Type.Render<T>()}_GetHashCode",
             typeof(int),
             typeof(T));
 

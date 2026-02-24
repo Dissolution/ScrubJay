@@ -25,6 +25,6 @@ public static partial class Throw
         [CallerArgumentExpression(nameof(instance))] string? instanceName = null)
     {
         if (disposed)
-            throw new ObjectDisposedException(instanceName, $"{TypeName.For<T>()} instance was disposed");
+            throw new ObjectDisposedException(instanceName, $"{Type.Render<T>()} instance was disposed");
     }
 }

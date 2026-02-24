@@ -29,8 +29,8 @@ partial class Problem
         where T : allows ref struct
 #endif
     {
-        var builder = StringBuilder.Rent()
-            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {TypeName.For<T>()} = `{Any.ToString(argument)}` is invalid");
+        var builder = new StringBuilder()
+            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {Type.Render<T>()} = `{Any.ToString(argument)}` is invalid");
 
         if (info is not null)
         {
@@ -38,7 +38,7 @@ partial class Problem
                 .Append(info);
         }
 
-        string details = builder.ToStringAndReturn();
+        string details = builder.ToString();
 
         return new Problem
                {
@@ -76,9 +76,9 @@ partial class Problem
     /// </returns>
     public static Problem ArgumentNull<T>(T? argument,[CallerArgumentExpression(nameof(argument))] string? argumentName = null)
     {
-        string details = StringBuilder.Rent()
-            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {TypeName.For<T>()} is null")
-            .ToStringAndReturn();
+        string details = new StringBuilder()
+            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {Type.Render<T>()} is null")
+            .ToString();
 
         return new Problem
                {

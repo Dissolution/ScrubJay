@@ -12,7 +12,7 @@ partial class Ex
             .Append('"')
             .Append(argumentName ?? "〈?〉")
             .Append("\": ")
-            .Append(TypeName.For(argumentType));
+            .Append(Type.Render(argumentType));
     }
     
     internal static TextBuilder AppendArgument(
@@ -25,7 +25,7 @@ partial class Ex
             .Append('"')
             .Append(argumentName ?? "〈?〉")
             .Append("\": ")
-            .Append(TypeName.For(argumentType))
+            .Append(Type.Render(argumentType))
             .Append(" = `")
             .IfNotEmpty(argumentString, static (tb, argStr) => tb.Write(argStr), static tb => tb.Write("〈null〉"))
             .Append('`');

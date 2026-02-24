@@ -21,7 +21,7 @@ public static class ResultExtensions
         {
             if (T.TryParse(text, provider, out var value))
                 return value;
-            return new ArgumentException($"Could not parse '{text}' to a {TypeName.For<T>()} value", nameof(text));
+            return new ArgumentException($"Could not parse '{text}' to a {Type.Render<T>()} value", nameof(text));
         }
 
         public static Result<T> Parse<T>(
@@ -31,7 +31,7 @@ public static class ResultExtensions
         {
             if (T.TryParse(str, provider, out var value))
                 return value;
-            return new ArgumentException($"Could not parse \"{str}\" to a {TypeName.For<T>()} value", nameof(str));
+            return new ArgumentException($"Could not parse \"{str}\" to a {Type.Render<T>()} value", nameof(str));
         }
         
         public static Result<N> Parse<N>(
@@ -42,7 +42,7 @@ public static class ResultExtensions
         {
             if (N.TryParse(text, numberStyle, provider, out var value))
                 return value;
-            return new ArgumentException($"Could not parse '{text}' to a {TypeName.For<N>()} number", nameof(text));
+            return new ArgumentException($"Could not parse '{text}' to a {Type.Render<N>()} number", nameof(text));
         }
         
         public static Result<N> Parse<N>(
@@ -53,7 +53,7 @@ public static class ResultExtensions
         {
             if (N.TryParse(str, numberStyle, provider, out var value))
                 return value;
-            return new ArgumentException($"Could not parse \"{str}\" to a {TypeName.For<N>()} number", nameof(str));
+            return new ArgumentException($"Could not parse \"{str}\" to a {Type.Render<N>()} number", nameof(str));
         }
 #endif
 

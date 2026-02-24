@@ -13,61 +13,61 @@ public static class CompareExtensions
             => ch.CompareTo(other);
 
         public int Compare(char[]? other)
-            => CompareExtensions.Compare(ch.AsSpan(), other.AsSpan());
+            => ch.AsSpan().Compare(other.AsSpan());
 
         public int Compare(scoped text other)
-            => CompareExtensions.Compare(ch.AsSpan(), other);
+            => ch.AsSpan().Compare(other);
 
         public int Compare(string? other)
-            => CompareExtensions.Compare(ch.AsSpan(), other.AsSpan());
+            => ch.AsSpan().Compare(other.AsSpan());
 
         public int Compare(in char other, StringComparison comparison)
-            => CompareExtensions.Compare(ch.AsSpan(), other.AsSpan(), comparison);
+            => ch.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(char[]? other, StringComparison comparison)
-            => CompareExtensions.Compare(ch.AsSpan(), other.AsSpan(), comparison);
+            => ch.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(scoped text other, StringComparison comparison)
-            => CompareExtensions.Compare(ch.AsSpan(), other, comparison);
+            => ch.AsSpan().Compare(other, comparison);
 
         public int Compare(string? other, StringComparison comparison)
-            => CompareExtensions.Compare(ch.AsSpan(), other.AsSpan(), comparison);
+            => ch.AsSpan().Compare(other.AsSpan(), comparison);
     }
 
     extension(char[]? chars)
     {
         public int Compare(in char other)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan());
+            => chars.AsSpan().Compare(other.AsSpan());
 
         public int Compare(char[]? other)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan());
+            => chars.AsSpan().Compare(other.AsSpan());
 
         public int Compare(scoped text other)
-            => CompareExtensions.Compare(chars.AsSpan(), other);
+            => chars.AsSpan().Compare(other);
 
         public int Compare(string? other)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan());
+            => chars.AsSpan().Compare(other.AsSpan());
 
         public int Compare(in char other, StringComparison comparison)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan(), comparison);
+            => chars.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(char[]? other, StringComparison comparison)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan(), comparison);
+            => chars.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(scoped text other, StringComparison comparison)
-            => CompareExtensions.Compare(chars.AsSpan(), other, comparison);
+            => chars.AsSpan().Compare(other, comparison);
 
         public int Compare(string? other, StringComparison comparison)
-            => CompareExtensions.Compare(chars.AsSpan(), other.AsSpan(), comparison);
+            => chars.AsSpan().Compare(other.AsSpan(), comparison);
     }
 
     extension(scoped text text)
     {
         public int Compare(in char other)
-            => CompareExtensions.Compare(text, other.AsSpan());
+            => text.Compare(other.AsSpan());
 
         public int Compare(char[]? other)
-            => CompareExtensions.Compare(text, other.AsSpan());
+            => text.Compare(other.AsSpan());
 
         public int Compare(scoped text other)
         {
@@ -75,14 +75,14 @@ public static class CompareExtensions
         }
 
         public int Compare(string? other)
-            => CompareExtensions.Compare(text, other.AsSpan());
+            => text.Compare(other.AsSpan());
 
 
         public int Compare(in char other, StringComparison comparison)
-            => CompareExtensions.Compare(text, other.AsSpan(), comparison);
+            => text.Compare(other.AsSpan(), comparison);
 
         public int Compare(char[]? other, StringComparison comparison)
-            => CompareExtensions.Compare(text, other.AsSpan(), comparison);
+            => text.Compare(other.AsSpan(), comparison);
 
         public int Compare(scoped text other, StringComparison comparison)
         {
@@ -90,34 +90,34 @@ public static class CompareExtensions
         }
 
         public int Compare(string? other, StringComparison comparison)
-            => CompareExtensions.Compare(text, other.AsSpan(), comparison);
+            => text.Compare(other.AsSpan(), comparison);
     }
 
     extension(string? str)
     {
         public int Compare(in char other)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan());
+            => str.AsSpan().Compare(other.AsSpan());
 
         public int Compare(char[]? other)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan());
+            => str.AsSpan().Compare(other.AsSpan());
 
         public int Compare(scoped text other)
-            => CompareExtensions.Compare(str.AsSpan(), other);
+            => str.AsSpan().Compare(other);
 
         public int Compare(string? other)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan());
+            => str.AsSpan().Compare(other.AsSpan());
 
         public int Compare(in char other, StringComparison comparison)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan(), comparison);
+            => str.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(char[]? other, StringComparison comparison)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan(), comparison);
+            => str.AsSpan().Compare(other.AsSpan(), comparison);
 
         public int Compare(scoped text other, StringComparison comparison)
-            => CompareExtensions.Compare(str.AsSpan(), other, comparison);
+            => str.AsSpan().Compare(other, comparison);
 
         public int Compare(string? other, StringComparison comparison)
-            => CompareExtensions.Compare(str.AsSpan(), other.AsSpan(), comparison);
+            => str.AsSpan().Compare(other.AsSpan(), comparison);
     }
 
     extension<T>(T? value)

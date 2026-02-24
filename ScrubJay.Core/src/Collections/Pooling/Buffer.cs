@@ -418,7 +418,7 @@ public ref struct Buffer<T> : IDisposable
             GrowBy(1);
         }
 
-        Sequence.SelfCopy(_span, offset.._position, (offset + 1)..);
+        _span.SelfCopy(offset.._position, (offset + 1)..);
         _span[offset] = item;
         _position++;
     }
@@ -444,7 +444,7 @@ public ref struct Buffer<T> : IDisposable
             GrowBy(len);
         }
 
-        Sequence.SelfCopy(_span, offset.._position, (offset + len)..);
+        _span.SelfCopy(offset.._position, (offset + len)..);
         Sequence.CopyTo(items, _span.Slice(offset, len));
         _position += len;
     }
@@ -484,7 +484,7 @@ public ref struct Buffer<T> : IDisposable
                 GrowBy(itemCount);
             }
 
-            Sequence.SelfCopy(_span, offset.._position, (offset + itemCount)..);
+            _span.SelfCopy(offset.._position, (offset + itemCount)..);
             collection.CopyTo(_array!, offset);
             _position = newPos;
             return;
@@ -867,7 +867,7 @@ public ref struct Buffer<T> : IDisposable
             return None;
         }
 
-        Sequence.SelfCopy(Written, (offset + 1).., offset..);
+        Written.SelfCopy((offset + 1).., offset..);
         return true;
     }
 
@@ -888,7 +888,7 @@ public ref struct Buffer<T> : IDisposable
         }
 
         T item = Written[offset];
-        Sequence.SelfCopy(Written, (offset + 1).., offset..);
+        Written.SelfCopy((offset + 1).., offset..);
         return Some(item);
     }
 
@@ -909,7 +909,7 @@ public ref struct Buffer<T> : IDisposable
             return false;
         }
 
-        Sequence.SelfCopy(Written, (offset + length).., offset..);
+        Written.SelfCopy((offset + length).., offset..);
         return true;
     }
 
@@ -931,7 +931,7 @@ public ref struct Buffer<T> : IDisposable
         }
 
         T[] items = _span.Slice(offset, length).ToArray();
-        Sequence.SelfCopy(_span, (offset + length).., offset..);
+        _span.SelfCopy((offset + length).., offset..);
         return Some(items);
     }
 #pragma warning restore IDE0251

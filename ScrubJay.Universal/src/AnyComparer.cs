@@ -19,18 +19,21 @@ public sealed class AnyComparer<T> : IEqualityComparer<T>, IComparer<T>
 
     private AnyComparer() { }
 
+    /// <inheritdoc cref="Any.Equals{T}(T,T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
     {
         return Any.Equals<T>(x, y);
     }
 
+    /// <inheritdoc cref="Any.GetHashCode{T}(T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetHashCode(T obj)
     {
         return Any.GetHashCode<T>(obj);
     }
 
+    /// <inheritdoc cref="Any.Compare{T}(T,T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Compare(T? x, T? y)
     {

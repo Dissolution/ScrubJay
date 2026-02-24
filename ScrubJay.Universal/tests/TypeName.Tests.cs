@@ -2,12 +2,12 @@
 
 namespace ScrubJay.Universal.Tests;
 
-public class TypeNameTests
+public class TypeRendererTests
 {
     [Fact]
     public void NullWorks()
     {
-        Assert.Equal("〈null〉", TypeName.For(null));
+        Assert.Equal("〈null〉", Type.Render(null));
     }
 
 #region C# type aliases
@@ -39,7 +39,7 @@ public class TypeNameTests
     [MemberData(nameof(TypeAliasesData))]
     public void TypeAliasesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -60,7 +60,7 @@ public class TypeNameTests
     [MemberData(nameof(PointerTypeData))]
     public void PointersWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -81,7 +81,7 @@ public class TypeNameTests
     [MemberData(nameof(ReferenceTypeData))]
     public void ReferencesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -102,7 +102,7 @@ public class TypeNameTests
     [MemberData(nameof(ArrayTypeData))]
     public void NDArraysWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
     public static TheoryData<Type, string> ComplexArrayTestData { get; } =
@@ -121,7 +121,7 @@ public class TypeNameTests
     [MemberData(nameof(ComplexArrayTestData))]
     public void ComplexArraysWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -145,7 +145,7 @@ public class TypeNameTests
     [MemberData(nameof(NullableData))]
     public void NullableWorks(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -164,7 +164,7 @@ public class TypeNameTests
     [MemberData(nameof(NestedTypeData))]
     public void NestedTypesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -189,7 +189,7 @@ public class TypeNameTests
     [MemberData(nameof(GenericTypeData))]
     public void GenericTypesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -210,7 +210,7 @@ public class TypeNameTests
     [MemberData(nameof(NestedGenericTypesData))]
     public void NestedGenericTypesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -246,7 +246,7 @@ public class TypeNameTests
     [MemberData(nameof(TupleTypeData))]
     public void TuplesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -316,7 +316,7 @@ public class TypeNameTests
     [MemberData(nameof(ComplexTypeData))]
     public void ComplexTypesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -344,7 +344,7 @@ public class TypeNameTests
     [MemberData(nameof(DelegateTypesData))]
     public void DelegateTypesWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion
@@ -363,7 +363,7 @@ public class TypeNameTests
     [MemberData(nameof(CombinationTypesData))]
     public void CombinationsWork(Type type, string expected)
     {
-        Assert.Equal(expected, TypeName.For(type));
+        Assert.Equal(expected, Type.Render(type));
     }
 
 #endregion

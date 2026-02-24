@@ -69,17 +69,19 @@ partial class Any
     public static string? ToString<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.ToString(value);
+        if (value is null)
+            return null;
+        return MethodCache<T>.LazyToString.Value.Invoke(value);
     }
 }
 
 partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T, string>> _lazyToStringFunc =
+    public static readonly Lazy<Func<T, string>> LazyToString =
         new(CreateToStringFunc, LazyThreadSafetyMode.ExecutionAndPublication);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string FallbackToString(T value) => TypeName.For<T>();
+    private static string FallbackToString(T _) => $"({Type.Render<T>()})???";
 
     private static Func<T, string> CreateToStringFunc()
     {
@@ -90,7 +92,7 @@ partial class MethodCache<T>
             return FallbackToString;
 
         // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"{TypeName.For<T>()}_ToString", typeof(string), typeof(T));
+        var dynamicMethod = DynamicMethod.New($"{Type.Render<T>()}_ToString", typeof(string), typeof(T));
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
@@ -106,16 +108,6 @@ partial class MethodCache<T>
         }
 
         return func;
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString(T? value)
-    {
-        if (value is null)
-            return null;
-        return _lazyToStringFunc.Value(value);
     }
 }
 

@@ -40,7 +40,7 @@ public sealed class ParseException : ArgumentException, IEnumerable
                 .Append("Unable to parse ")
                 .AppendArgument(ParamName, InputType, InputString)
                 .Append(" into a ")
-                .Append(TypeName.For(OutputType))
+                .Append(Type.Render(OutputType))
                 .Append(" value")
                 .AppendOptionalInfo(Info)
                 .ToStringAndDispose();

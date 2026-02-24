@@ -71,7 +71,7 @@ public partial class Problem : IEnumerable<KeyValuePair<string, object?>>
         {
             this.Exception = exception;
             this.Details = details ?? exception.Message;
-            this.Title = title ?? TypeName.For(exception);
+            this.Title = title ?? exception.GetType().Render();
 
             if (exception.Data.Count > 0)
             {
@@ -116,7 +116,7 @@ public partial class Problem : IEnumerable<KeyValuePair<string, object?>>
 
     public override string ToString()
     {
-        StringBuilder builder = StringBuilder.Rent();
+        StringBuilder builder = new StringBuilder();
 
         builder.AppendLine("Problem:")
             .Append("    Title: ")
@@ -129,7 +129,7 @@ public partial class Problem : IEnumerable<KeyValuePair<string, object?>>
         if (Exception is not null)
         {
             builder.Append("    Error: ")
-                .Append(TypeName.For(Exception))
+                .Append(Exception.GetType().Render())
                 .AppendLine()
                 .Append("      ")
                 .Append(Exception.Message)
@@ -150,7 +150,7 @@ public partial class Problem : IEnumerable<KeyValuePair<string, object?>>
             }
         }
 
-        return builder.ToStringAndReturn();
+        return builder.ToString();
     }
 }
 

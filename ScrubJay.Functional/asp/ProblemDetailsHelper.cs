@@ -112,7 +112,7 @@ public static class ProblemDetailsHelper
                 Title = "Error",
                 Data =
                 {
-                    { "Type", TypeName.For(Any.GetType(error)) },
+                    { "Type", Any.GetType<E>(error).Render() },
                 },
             },
             Problem problem => problem,
@@ -123,7 +123,7 @@ public static class ProblemDetailsHelper
                 Details = Any.ToString(error),
                 Data =
                 {
-                    { "Type", TypeName.For(Any.GetType(error)) },
+                    { "Type", Any.GetType<E>(error).Render() },
                 },
             },
         };
@@ -183,14 +183,14 @@ public static class ProblemDetailsHelper
             null => new ProblemDetails()
             {
                 Title = "Error",
-                Type = TypeName.For<E>(),
+                Type = Type.Render<E>(),
             },
             Problem problem => problem.ToProblemDetails(),
             ProblemDetails details => details,
             _ => new ProblemDetails
             {
                 Title = "Error",
-                Type = TypeName.For(Any.GetType<E>(error)),
+                Type = Any.GetType<E>(error).Render(),
                 Detail = error.ToString(),
             },
         };

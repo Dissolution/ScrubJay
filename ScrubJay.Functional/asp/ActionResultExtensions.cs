@@ -41,7 +41,7 @@ public static class ActionResultExtensions
                 return Result<T, Problem>.Ok(default!);
             }
 
-            return Result<T, Problem>.Error(new Problem($"(IActionResult){TypeName.For<T>()} error: {actionResult}"));
+            return Result<T, Problem>.Error(new Problem($"(IActionResult){Type.Render<T>()} error: {actionResult}"));
         }
     }
 }

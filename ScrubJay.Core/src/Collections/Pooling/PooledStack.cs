@@ -150,7 +150,7 @@ public class PooledStack<T> : PooledArray<T>,
         }
 
         _version++;
-        Sequence.SelfCopy(_array, offset..end, (offset + 1)..);
+        _array.SelfCopy(offset..end, (offset + 1)..);
         _array[offset] = item;
         _size = newSize;
         return true;
@@ -182,7 +182,7 @@ public class PooledStack<T> : PooledArray<T>,
         }
 
         _version++;
-        Sequence.SelfCopy(_array, offset..end, (offset + itemCount)..);
+        _array.SelfCopy(offset..end, (offset + itemCount)..);
         Sequence.CopyTo(items, _array.AsSpan(offset, itemCount));
         _size = newSize;
         return true;
@@ -318,7 +318,7 @@ public class PooledStack<T> : PooledArray<T>,
             {
                 _version++;
                 _size = endIndex;
-                Sequence.SelfCopy(_array, (itemIndex + 1).., itemIndex..);
+                _array.SelfCopy((itemIndex + 1).., itemIndex..);
                 return true;
             }
         }
@@ -343,7 +343,7 @@ public class PooledStack<T> : PooledArray<T>,
         T item = _array[offset];
         if (offset != newSize)
         {
-            Sequence.SelfCopy(_array, (offset + 1)..end, offset..);
+            _array.SelfCopy((offset + 1)..end, offset..);
         }
 
         return Ok(item);

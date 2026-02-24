@@ -263,7 +263,7 @@ public static class ByteSpanReaderExtensions
         uint length,
         Endianness endianness = Endianness.System,
         Encoding? encoding = null)
-        => ReadString(ref reader, checked((int)length), endianness, encoding);
+        => reader.ReadString(checked((int)length), endianness, encoding);
 
     public static string ReadString(
         this ref SpanReader<byte> reader,
@@ -275,52 +275,52 @@ public static class ByteSpanReaderExtensions
         {
             case StringEncodingAffix.SevenBitEncodedLenPrefix:
             {
-                int len = Read7BitEncodedI32(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                int len = reader.Read7BitEncodedI32();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.U8Prefix:
             {
-                byte len = ReadU8(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                byte len = reader.ReadU8();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.U16Prefix:
             {
-                ushort len = ReadU16(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                ushort len = reader.ReadU16();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.U32Prefix:
             {
-                uint len = ReadU32(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                uint len = reader.ReadU32();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.U64Prefix:
             {
-                ulong len = ReadU64(ref reader);
+                ulong len = reader.ReadU64();
                 if (len > (ulong)int.MaxValue)
                     throw Ex.Invalid();
-                return ReadString(ref reader, (int)len, endianness, encoding);
+                return reader.ReadString((int)len, endianness, encoding);
             }
             case StringEncodingAffix.I8Prefix:
             {
-                sbyte len = ReadI8(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                sbyte len = reader.ReadI8();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.I16Prefix:
             {
-                short len = ReadI16(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                short len = reader.ReadI16();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.I32Prefix:
             {
-                int len = ReadI32(ref reader);
-                return ReadString(ref reader, len, endianness, encoding);
+                int len = reader.ReadI32();
+                return reader.ReadString(len, endianness, encoding);
             }
             case StringEncodingAffix.I64Prefix:
             {
-                long len = ReadI64(ref reader);
+                long len = reader.ReadI64();
                 if (len > (long)int.MaxValue)
                     throw Ex.Invalid();
-                return ReadString(ref reader, (int)len, endianness, encoding);
+                return reader.ReadString((int)len, endianness, encoding);
             }
             case StringEncodingAffix.NullTerminated:
             {
@@ -409,17 +409,17 @@ public static class ByteSpanReaderExtensions
         {
             case TimeEncodingAffix.Ticks:
             {
-                long ticks = ReadI64(ref reader);
+                long ticks = reader.ReadI64();
                 return new TimeSpan(ticks);
             }
             case TimeEncodingAffix.TimeU32:
             {
-                uint seconds = ReadU32(ref reader);
+                uint seconds = reader.ReadU32();
                 return TimeSpan.FromSeconds(seconds);
             }
             case TimeEncodingAffix.TimeU64:
             {
-                ulong seconds = ReadU64(ref reader);
+                ulong seconds = reader.ReadU64();
                 return TimeSpan.FromSeconds(seconds);
             }
             default:
@@ -435,17 +435,17 @@ public static class ByteSpanReaderExtensions
         {
             case TimeEncodingAffix.Ticks:
             {
-                long ticks = ReadI64(ref reader);
+                long ticks = reader.ReadI64();
                 return new DateTime(ticks);
             }
             case TimeEncodingAffix.TimeU32:
             {
-                uint seconds = ReadU32(ref reader);
+                uint seconds = reader.ReadU32();
                 return TimeEncodingAffix.OriginDateTime.AddSeconds(seconds);
             }
             case TimeEncodingAffix.TimeU64:
             {
-                ulong seconds = ReadU64(ref reader);
+                ulong seconds = reader.ReadU64();
                 return TimeEncodingAffix.OriginDateTime.AddSeconds(seconds);
             }
             default:

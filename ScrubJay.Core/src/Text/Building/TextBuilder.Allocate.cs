@@ -41,7 +41,7 @@ partial class TextBuilder
             GrowBy(length);
         }
 
-        Sequence.SelfCopy(_chars, Range.OffsetLength(offset, length), (offset+length)..);
+        _chars.SelfCopy(Range.OffsetLength(offset, length), (offset+length)..);
 
         // the hole we created
         Span<char> slice = _chars.AsSpan(offset, length);

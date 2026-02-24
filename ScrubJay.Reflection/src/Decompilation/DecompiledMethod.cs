@@ -235,7 +235,7 @@ public sealed class DecompiledMethod
         {
             builder.Append(DeclaringType.Namespace)
                 .Append('.')
-                .Append(TypeName.For(DeclaringType))
+                .Append(Type.Render(DeclaringType))
                 .Append('.');
         }
 

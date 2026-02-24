@@ -11,7 +11,7 @@ public static class TextBuilderExtensions
         if (!genericTypes.IsNullOrEmpty())
         {
             builder.Append('<')
-                .Delimit(", ", genericTypes, static (tb, type) => tb.Write(TypeName.For(type)))
+                .Delimit(", ", genericTypes, static (tb, type) => tb.Write(Type.Render(type)))
                 .Append('>');
         }
 

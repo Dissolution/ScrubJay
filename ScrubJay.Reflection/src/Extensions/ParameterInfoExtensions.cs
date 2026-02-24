@@ -132,7 +132,7 @@ public static class ParameterInfoExtensions
             return false;
         for (var i = 0; i < count; i++)
         {
-            if (!CanAcceptA(parameters[i], argTypes[i]))
+            if (!parameters[i].CanAcceptA(argTypes[i]))
                 return false;
         }
         return true;
@@ -163,7 +163,7 @@ public static class ParameterInfoExtensions
             return false;
         for (var i = 0; i < count; i++)
         {
-            if (!CanAccept(parameters[i], args[i]))
+            if (!parameters[i].CanAccept(args[i]))
                 return false;
         }
         return true;

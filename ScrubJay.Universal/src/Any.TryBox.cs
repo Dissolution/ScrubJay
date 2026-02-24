@@ -3,7 +3,6 @@
 #if NET9_0_OR_GREATER
 using InlineIL;
 using static InlineIL.IL;
-#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 #endif
 
 namespace ScrubJay.Universal;
@@ -14,18 +13,20 @@ partial class Any
     /// Try to box the given <typeparamref name="T"/> <paramref name="value"/> into an <see cref="object"/>.
     /// </summary>
     /// <param name="value">
-    /// The generic value to box
+    /// The <typeparamref name="T"/> value to box.
     /// </param>
     /// <param name="boxed">
-    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into.
+    /// The <see cref="object"/> that <paramref name="value"/> was boxed into.
     /// </param>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/> to attempt to box.
+    /// </typeparam>
     /// <returns>
-    /// <c>true</c> if <paramref name="value"/> was boxed,<br/>
-    /// <c>false</c> if it was not.
+    /// <see langword="true"/> if <paramref name="value"/> was boxed,<br/>
+    /// <see langword="false"/> if it was not.
     /// </returns>
     /// <remarks>
-    /// For non-<c>ref struct</c> values, this always succeeds.
+    /// This will always succeed for non-<c>ref struct</c> values.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
@@ -40,12 +41,12 @@ partial class Any
 {
     /* store the FastBox<T> method here and not in MethodCache<T>,
      * as MethodCache<T> would fail compilation for any T : ref struct values.
-     * Here we can abuse a compiler trick to ensure that only non-ref-struct Ts are ever boxed
+     * Here we can abuse a compiler trick to ensure that only non-ref-struct Ts are ever boxed.
      */
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
-        where T : allows ref struct // but _never_ will be
+        where T : allows ref struct //, but _never_ will be
     {
         Emit.Ldarg(nameof(value));
         Emit.Box<T>();
@@ -56,41 +57,40 @@ partial class Any
     /// Try to box the given <typeparamref name="T"/> <paramref name="value"/> into an <see cref="object"/>.
     /// </summary>
     /// <param name="value">
-    /// The generic value to box
+    /// The <typeparamref name="T"/> value to box.
     /// </param>
     /// <param name="boxed">
-    /// The <see cref="object"/> that <paramref name="value"/> will be boxed into
+    /// The <see cref="object"/> that <paramref name="value"/> was boxed into.
     /// </param>
-    /// <typeparam name="T"></typeparam>
+    /// <param name="_">
+    /// Ignored <see cref="TypeConstraints"/> on <typeparamref name="T"/> that assists with method overload resolution.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/> to attempt to box.
+    /// </typeparam>
     /// <returns>
-    /// <c>true</c> if <paramref name="value"/> was boxed,<br/>
-    /// <c>false</c> if it was not.
+    /// <see langword="true"/> if <paramref name="value"/> was boxed,<br/>
+    /// <see langword="false"/> if it was not.
     /// </returns>
     /// <remarks>
-    /// For non-<c>ref struct</c> values, this always succeeds; otherwise it always fails.
+    /// This will always succeed for non-<c>ref struct</c> values and will always fail for <c>ref struct</c> values.
     /// </remarks>
     public static bool TryBox<T>(T? value, out object? boxed, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (value is null)
-        {
-            boxed = null;
-            return true;
-        }
-
-        var type = typeof(T);
-
         // ref structs cannot be boxed
-        if (type.IsByRefLike)
+        if (typeof(T).IsByRefLike)
         {
             boxed = null;
             return false;
         }
 
-        /* Cannot do `boxed = (object?)value` -- does not compile:
-         *   Cannot cast expression of type 'T' to type 'object?'
+        /* Implementing this method is tricky. Even though we know that value is not a ref struct, the compiler doesn't.
+         * Cannot use:
+         *   `boxed = (object?)value`
+         * Compilation fails with: `Cannot cast expression of type 'T' to type 'object?'`
          *
-         * If we try to emit the box directly:
+         * Cannot emit the box directly with:
          *   Emit.Ldarg(nameof(boxed));
          *   Emit.Ldarg(nameof(value));
          *   Emit.Box(typeof(T));
@@ -98,12 +98,13 @@ partial class Any
          *   Emit.Ldc_I4_1();
          *   Emit.Ret();
          *   throw Unreachable();
-         * We get a compile-time exception when we pass in a ref-struct for T:
-         *   System.InvalidProgramException: Common Language Runtime detected an invalid program.
+         * We get a compile-time exception when we pass in a ref struct value:
+         *   `System.InvalidProgramException: Common Language Runtime detected an invalid program.`
          *
-         * There is a clever hack:
-         *   Using indirection, we can call another method that has the IL, and we know that no version
-         *   of that method will ever be compiled with a ref-struct for T, as we've eliminated them by this point.
+         * I came up with a clever hack. We can still use Emit, but instead of boxing the value in this method,
+         * we call another method that does the boxing.
+         * That method may still require the `allows ref struct` constraint, but as it will never be called
+         * with anything but a non-ref struct T, the compiler never sees an issue.
          */
 
         Emit.Ldarg(nameof(boxed)); // ref object boxed

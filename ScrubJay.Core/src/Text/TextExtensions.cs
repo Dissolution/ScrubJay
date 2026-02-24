@@ -15,7 +15,7 @@ public static class TextExtensions
         {
             if (comparison == StringComparison.Ordinal)
             {
-                return MemoryExtensions.IndexOfAny<char>(text, values);
+                return text.IndexOfAny<char>(values);
             }
 
             for (int i = 0; i < text.Length; i++)
@@ -178,13 +178,13 @@ public static class TextExtensions
 #region Matches
 
     public static bool Matches(this char ch, char other, StringMatch match)
-        => Matches(ch.AsSpan(), other.AsSpan(), match);
+        => ch.AsSpan().Matches(other.AsSpan(), match);
 
     public static bool Matches(this string? str, string? value, StringMatch match)
-        => Matches(str.AsSpan(), value.AsSpan(), match);
+        => str.AsSpan().Matches(value.AsSpan(), match);
 
     public static bool Matches(this text text, string? value, StringMatch match)
-        => Matches(text, value.AsSpan(), match);
+        => text.Matches(value.AsSpan(), match);
 
     public static bool Matches(this text text, text value, StringMatch match)
     {

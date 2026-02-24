@@ -135,11 +135,11 @@ static partial class EnumExtensions
 
         public E[] GetFlags()
         {
-            int flagCount = get_FlagCount(@enum);
+            int flagCount = @enum.FlagCount;
             var flags = new E[flagCount];
             int f = 0;
             int maxBits = Unsafe.SizeOf<E>() * 8;
-            ulong enumValue = ToUInt64(@enum);
+            ulong enumValue = @enum.ToUInt64();
             for (int shift = 0; shift < maxBits; shift++)
             {
                 ulong mask = 1UL << shift;

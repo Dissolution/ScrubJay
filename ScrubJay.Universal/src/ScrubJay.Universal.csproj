@@ -14,12 +14,7 @@
         </Description>
         <Version>1.1.0</Version>
     </PropertyGroup>
-
-    <!-- Global Usings -->
-    <ItemGroup>
-
-    </ItemGroup>
-
+    
     <ItemGroup>
         <PackageReference Include="Fody">
             <PrivateAssets>all</PrivateAssets>
@@ -28,7 +23,6 @@
         <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.ObjectPool"/>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
     </ItemGroup>

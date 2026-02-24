@@ -113,9 +113,7 @@ internal static class InternalExtensions
                 flags |= BindingFlags.DeclaredOnly;
             }
 
-            return FindMethod(
-                type,
-                flags,
+            return type.FindMethod(flags,
                 name,
                 returnType,
                 parameterTypes);

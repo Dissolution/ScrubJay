@@ -9,18 +9,24 @@ namespace ScrubJay.Universal;
 partial class Any
 {
     /// <summary>
-    /// Determine if a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
+    /// Determines whether a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="other"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static bool Equals<T>(T? value,
-        object? other)
+    /// <param name="value">
+    /// The <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="other">
+    /// The <see cref="object"/> to compare.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/> to compare to the <see cref="object"/>.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public static bool Equals<T>(T? value, object? other)
     {
         if (value is null)
             return other is null;
-
         return value.Equals(other);
     }
 }
@@ -28,39 +34,52 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <summary>
+    /// Determines whether a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
+    /// </summary>
+    /// <param name="value">
+    /// The <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="other">
+    /// The <see cref="object"/> to compare.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of <paramref name="value"/> to compare to the <see cref="object"/>.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
+    /// </returns>
     public static bool Equals<T>(T? value,
         object? other,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.Equals(
-            value,
-            other);
+        if (value is null)
+            return other is null;
+        return MethodCache<T>.LazyEqualsObject.Value.Invoke(value, other);
     }
 }
 
 partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T, object?, bool>?> _lazyEqualsObjectFunc = new(
+    public static readonly Lazy<Func<T, object?, bool>> LazyEqualsObject = new(
         CreateEqualsObjectFunc,
         LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static Func<T, object?, bool>? CreateEqualsObjectFunc()
+    private static bool EqualsObjectFallback(T value, object? obj) => false;
+    
+    private static Func<T, object?, bool> CreateEqualsObjectFunc()
     {
         Type instanceType = typeof(T);
 
-        MethodInfo? equalsMethod = instanceType.FindMethod(
-            "Equals",
-            typeof(bool),
-            typeof(object));
+        MethodInfo? equalsMethod = instanceType.FindMethod("Equals", typeof(bool), typeof(object));
 
         if (equalsMethod is null)
-            return null;
+            return EqualsObjectFallback;
 
         // emit our dynamic method
         var dynamicMethod = DynamicMethod.New(
-            $"{TypeName.For<T>()}_Equals_Object",
+            $"Equals_{Type.Render<T>()}_Object",
             typeof(bool),
             typeof(T),
             typeof(object));
@@ -82,7 +101,7 @@ partial class MethodCache<T>
 
         if (!dynamicMethod.TryCreateDelegate<Func<T?, object?, bool>>(out var func))
         {
-            return null;
+            return EqualsObjectFallback;
         }
 
         // try to execute it to see if it will even work
@@ -97,28 +116,10 @@ partial class MethodCache<T>
         catch
 #pragma warning restore
         {
-            return null;
+            return EqualsObjectFallback;
         }
 
         return func;
-    }
-
-    public static bool Equals(T? value,
-        object? other)
-    {
-        if (value is null)
-            return other is null;
-
-        var func = _lazyEqualsObjectFunc.Value;
-
-        if (func is not null)
-        {
-            return func.Invoke(
-                value,
-                other);
-        }
-
-        return other is not null; // only way we have to equate
     }
 }
 

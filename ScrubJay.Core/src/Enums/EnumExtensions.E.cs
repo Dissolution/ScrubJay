@@ -105,13 +105,13 @@ partial class EnumExtensions
             if (typeCode == TypeCode.Int32)
             {
                 if (i64 < int.MinValue || i64 > int.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<int>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<int>()}");
                 return Result<E>.Ok(Notsafe.As<int, E>((int)i64));
             }
             else if (typeCode == TypeCode.Byte)
             {
                 if (i64 < byte.MinValue || i64 > byte.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<byte>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<byte>()}");
                 return Result<E>.Ok(Notsafe.As<byte, E>((byte)i64));
             }
             else if (typeCode == TypeCode.Int64)
@@ -121,31 +121,31 @@ partial class EnumExtensions
             else if (typeCode == TypeCode.Int16)
             {
                 if (i64 < short.MinValue || i64 > short.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<short>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<short>()}");
                 return Result<E>.Ok(Notsafe.As<short, E>((short)i64));
             }
             else if (typeCode == TypeCode.UInt32)
             {
                 if (i64 < uint.MinValue || i64 > uint.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<uint>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<uint>()}");
                 return Result<E>.Ok(Notsafe.As<uint, E>((uint)i64));
             }
             else if (typeCode == TypeCode.UInt16)
             {
                 if (i64 < ushort.MinValue || i64 > ushort.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<ushort>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<ushort>()}");
                 return Result<E>.Ok(Notsafe.As<ushort, E>((ushort)i64));
             }
             else if (typeCode == TypeCode.SByte)
             {
                 if (i64 < sbyte.MinValue || i64 > sbyte.MaxValue)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<sbyte>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<sbyte>()}");
                 return Result<E>.Ok(Notsafe.As<sbyte, E>((sbyte)i64));
             }
             else if (typeCode == TypeCode.UInt64)
             {
                 if (i64 < 0L)
-                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {TypeName.For<ulong>()}");
+                    return Ex.Parse<long, E>(i64, $"out of range for underlying type {Type.Render<ulong>()}");
                 return Result<E>.Ok(Notsafe.As<ulong, E>((ulong)i64));
             }
             else
@@ -161,43 +161,43 @@ partial class EnumExtensions
             if (typeCode == TypeCode.Int32)
             {
                 if (u64 > int.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<int>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<int>()}");
                 return Result<E>.Ok(Notsafe.As<int, E>((int)u64));
             }
             else if (typeCode == TypeCode.Byte)
             {
                 if (u64 > byte.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<byte>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<byte>()}");
                 return Result<E>.Ok(Notsafe.As<byte, E>((byte)u64));
             }
             else if (typeCode == TypeCode.Int64)
             {
                 if (u64 > long.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<long>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<long>()}");
                 return Result<E>.Ok(Notsafe.As<long, E>((long)u64));
             }
             else if (typeCode == TypeCode.Int16)
             {
                 if (u64 > (ulong)short.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<short>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<short>()}");
                 return Result<E>.Ok(Notsafe.As<short, E>((short)u64));
             }
             else if (typeCode == TypeCode.UInt32)
             {
                 if (u64 > uint.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<uint>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<uint>()}");
                 return Result<E>.Ok(Notsafe.As<uint, E>((uint)u64));
             }
             else if (typeCode == TypeCode.UInt16)
             {
                 if (u64 > ushort.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<ushort>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<ushort>()}");
                 return Result<E>.Ok(Notsafe.As<ushort, E>((ushort)u64));
             }
             else if (typeCode == TypeCode.SByte)
             {
                 if (u64 > (ulong)sbyte.MaxValue)
-                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {TypeName.For<sbyte>()}");
+                    return Ex.Parse<ulong, E>(u64, $"out of range for underlying type {Type.Render<sbyte>()}");
                 return Result<E>.Ok(Notsafe.As<sbyte, E>((sbyte)u64));
             }
             else if (typeCode == TypeCode.UInt64)

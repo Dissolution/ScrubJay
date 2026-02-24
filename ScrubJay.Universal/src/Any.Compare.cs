@@ -12,49 +12,52 @@ partial class Any
     /// <summary>
     /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
     /// </summary>
-    /// <param name="value">
+    /// <param name="left">
     /// The first <typeparamref name="T"/> value to compare.
     /// </param>
-    /// <param name="other">
+    /// <param name="right">
     /// The second <typeparamref name="T"/> value to compare.
     /// </param>
     /// <typeparam name="T">
     /// The <see cref="Type"/> of values to compare.
     /// </typeparam>
     /// <returns>
-    /// <c>&lt;0</c> if <paramref name="value"/> is less than <paramref name="other"/><br/>
-    /// <c>0</c> if <paramref name="value"/> is equal to <paramref name="other"/><br/>
-    /// <c>&gt;0</c> if <paramref name="value"/> is greater than <paramref name="other"/>
+    /// <c>&lt;0</c> if <paramref name="left"/> is less than <paramref name="right"/><br/>
+    /// <c>0</c> if <paramref name="left"/> is equal to <paramref name="right"/><br/>
+    /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T? value, T? other) => Comparer<T>.Default.Compare(value!, other!);
+    public static int Compare<T>(T? left, T? right) => Comparer<T>.Default.Compare(left!, right!);
 
     /// <summary>
     /// Compares two <typeparamref name="T"/> values with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
     /// </summary>
-    /// <param name="value">
+    /// <param name="left">
     /// The first <typeparamref name="T"/> value to compare.
     /// </param>
-    /// <param name="other">
+    /// <param name="right">
     /// The second <typeparamref name="T"/> value to compare.
     /// </param>
     /// <param name="comparer">
-    /// The <see cref="IComparer{T}"/> that determines the relation between <paramref name="value"/> and <paramref name="other"/>.<br/>
+    /// The <see cref="IComparer{T}"/> that determines the relation between <paramref name="left"/> and <paramref name="right"/>.<br/>
     /// If <c>null</c>, <see cref="Compare{T}(T,T)"/> will be used.
     /// </param>
     /// <typeparam name="T">
     /// The <see cref="Type"/> of values to compare.
     /// </typeparam>
     /// <returns>
-    /// <c>&lt;0</c> if <paramref name="comparer"/> indicates that <paramref name="value"/> is less than <paramref name="other"/><br/>
-    /// <c>0</c> if <paramref name="comparer"/> indicates that<paramref name="value"/> is equal to <paramref name="other"/><br/>
-    /// <c>&gt;0</c> if <paramref name="comparer"/> indicates that<paramref name="value"/> is greater than <paramref name="other"/>
+    /// <c>&lt;0</c> if <paramref name="comparer"/> indicates that <paramref name="left"/> is less than <paramref name="right"/><br/>
+    /// <c>0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is equal to <paramref name="right"/><br/>
+    /// <c>&gt;0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is greater than <paramref name="right"/>
     /// </returns>
-    public static int Compare<T>(T? value, T? other, IComparer<T>? comparer)
+    public static int Compare<T>(T? left, T? right, IComparer<T>? comparer)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
         if (comparer is null)
-            return Compare(value, other);
-        return comparer.Compare(value!, other!);
+            return Compare<T>(left, right);
+        return comparer.Compare(left!, right!);
     }
 
     /// <summary>
@@ -119,7 +122,7 @@ partial class Any
     {
         return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
     }
-    
+
     /// <summary>
     /// Compares two <see cref="text"/> values with a <see cref="StringComparison"/> and returns an <see cref="int"/> indicating their relation.
     /// </summary>
@@ -136,55 +139,41 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
+    /// <summary>
+    /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
+    /// </summary>
+    /// <param name="left">
+    /// The first <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="right">
+    /// The second <typeparamref name="T"/> value to compare.
+    /// </param>
+    /// <param name="_">
+    /// Ignored <see cref="TypeConstraints"/> on <typeparamref name="T"/> that assists with method overload resolution.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values to compare, may be a <see langword="ref struct"/>.
+    /// </typeparam>
+    /// <returns>
+    /// <c>&lt;0</c> if <paramref name="left"/> is less than <paramref name="right"/><br/>
+    /// <c>0</c> if <paramref name="left"/> is equal to <paramref name="right"/> <b>or</b> if values are not comparable.<br/>
+    /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T? value, T? other,
+    public static int Compare<T>(T? left, T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.Compare(value, other);
-    }
-
-    public static int Compare<T>(T? value, T? other,
-        IComparer<T>? comparer,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (comparer is null)
-            return Compare(value, other);
-        return comparer.Compare(value, other);
+        return MethodCache<T>.LazyCompare.Value.Invoke(left, right);
     }
 }
 
-partial class MethodCache<T>
+internal partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T?, T?, int>> _lazyCompareFunc =
+    public static readonly Lazy<Func<T?, T?, int>> LazyCompare =
         new(CreateCompareFunc, LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static int FallbackCompare(T? left, T? right)
-    {
-        if (left is null)
-        {
-            if (right is null)
-            {
-                return 0; // nulls are the same
-            }
-            else
-            {
-                return -1; // null is the 'smallest' value
-            }
-        }
-        else
-        {
-            if (right is null)
-            {
-                return 1; // everything is 'bigger' than null
-            }
-            else
-            {
-                return 0; // we have no other way to compare these values
-            }
-        }
-    }
+    private static int CompareFallback(T? left, T? right) => 0;
 
     private static Func<T?, T?, int> CreateCompareFunc()
     {
@@ -192,10 +181,10 @@ partial class MethodCache<T>
         MethodInfo? compareToMethod = instanceType.FindMethod("CompareTo", typeof(int), typeof(T));
 
         if (compareToMethod is null)
-            return FallbackCompare;
+            return CompareFallback;
 
         // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"{TypeName.For<T>()}_Compare", typeof(int), typeof(T), typeof(T));
+        var dynamicMethod = DynamicMethod.New($"Compare_{Type.Render<T>()}", typeof(int), typeof(T), typeof(T));
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
@@ -209,16 +198,10 @@ partial class MethodCache<T>
 
         if (!dynamicMethod.TryCreateDelegate<Func<T?, T?, int>>(out var func))
         {
-            func = FallbackCompare;
+            func = CompareFallback;
         }
 
         return func;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare(T? value, T? other)
-    {
-        return _lazyCompareFunc.Value.Invoke(value, other);
     }
 }
 
