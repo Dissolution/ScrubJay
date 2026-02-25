@@ -23,6 +23,28 @@ internal static class InternalExtensions
 
             return dynamicMethod;
         }
+        
+        public static DynamicMethod New<D>(string methodName)
+            where D : Delegate
+        {
+            var invokeMethod = typeof(D).GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            if (invokeMethod is null)
+            {
+                Debugger.Break();
+                throw new InvalidOperationException();
+            }
+
+            var dynamicMethod = new DynamicMethod(
+                name: methodName,
+                attributes: MethodAttributes.Public | MethodAttributes.Static,
+                callingConvention: CallingConventions.Standard,
+                returnType: invokeMethod.ReturnType,
+                parameterTypes: Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType),
+                m: typeof(InternalExtensions).Module,
+                skipVisibility: true);
+
+            return dynamicMethod;
+        }
     }
 
     extension(DynamicMethod dynamicMethod)
@@ -88,6 +110,15 @@ internal static class InternalExtensions
             return null;
         }
 
+        public MethodInfo? FindBestMethod(string name, Type returnType, params Type[] parameterTypes)
+        {
+            if (type is null)
+                return null;
+
+            throw new NotImplementedException();
+        }
+
+        
         public MethodInfo? FindMethod(string name,
             Type returnType,
             params Type[] parameterTypes)
@@ -122,23 +153,7 @@ internal static class InternalExtensions
 
     extension(ILGenerator generator)
     {
-        public void EmitLoadInstance(Type instanceType)
-        {
-            // stack types
-            if (instanceType.IsEnum || instanceType.IsByRef || instanceType.IsByRefLike || instanceType.IsValueType)
-            {
-                // load a ref to this value
-                generator.Emit(
-                    OpCodes.Ldarga_S,
-                    0);
-            }
-            // heap types
-            else
-            {
-                // load the value directly
-                generator.Emit(OpCodes.Ldarg_0);
-            }
-        }
+      
 
         public void EmitCallMethod(Type instanceType,
             MethodInfo method)

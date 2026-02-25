@@ -89,7 +89,7 @@ partial class MethodCache<T>
 
     private static int GetHashCodeFallback(T value)
     {
-        
+        throw new NotImplementedException();
     }
     
     private static Func<T, int>? CreateGetHashCodeFunc()
@@ -112,7 +112,7 @@ partial class MethodCache<T>
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
-        generator.EmitLoadInstance(instanceType);
+        EmitLoadInstance(generator, instanceType);
 
         // call the method
         generator.EmitCallMethod(

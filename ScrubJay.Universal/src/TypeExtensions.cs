@@ -44,7 +44,22 @@ public static class TypeExtensions
                         genericDef.Name.StartsWith("ValueTuple`", StringComparison.Ordinal));
             }
         }
-
+        
+        /// <summary>
+        /// Enumerate over all base types for this <see cref="Type"/>
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Type> BaseTypes()
+        {
+            if (type is null)
+                yield break;
+            for (Type? baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
+            {
+                yield return baseType;
+            }
+        }
+        
+        
         /// <summary>
         /// Gets the rendering for this <see cref="Type"/>.
         /// </summary>

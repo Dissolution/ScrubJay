@@ -73,21 +73,6 @@ public static class TypeExtensions
             return false;
         }
 
-
-        /// <summary>
-        /// Enumerate over all base types for this <see cref="Type"/>
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Type> BaseTypes()
-        {
-            if (type is null)
-                yield break;
-            for (Type? baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
-            {
-                yield return baseType;
-            }
-        }
-
         /// <summary>
         /// Does this <see cref="Type"/> have the given <paramref name="genericTypeDefinition"/>?
         /// </summary>

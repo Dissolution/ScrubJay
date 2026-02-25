@@ -87,7 +87,7 @@ partial class MethodCache<T>
         var generator = dynamicMethod.GetILGenerator();
 
         // load instance
-        generator.EmitLoadInstance(instanceType);
+        EmitLoadInstance(generator, instanceType);
         // load value to compare to
         generator.Emit(OpCodes.Ldarg_1);
 
