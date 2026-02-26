@@ -37,17 +37,20 @@ foreach (var method in methods)
 #if NET9_0_OR_GREATER
 
 
-TestType.RefStruct instance = new();
+TestType.SealedClass instance = new();
 
-//string str = instance.ToString();
+string str = instance.ToString();
 
-//string str2 = Any.ToString(ref instance);
+string str1 = RRM1(ref instance);
 
-string str3 = RefReadonlyMethod(ref instance);
+string str2 = RRM2(ref instance);
 
-string str4 = RRM2(ref instance);
+string str3 = RRM3(ref instance);
 
-var methods = typeof(TestType.RefStruct).GetMethods(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
+var methods = Any.GetType(instance)
+    .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+    .Where(static method => method.Name == "ToString")
+    .ToList();
 
 #endif
 
@@ -56,20 +59,26 @@ Debugger.Break();
 
 return;
 
-static string RefReadonlyMethod(ref readonly TestType.RefStruct rs)
-//static string RefReadonlyMethod(ref readonly ReadOnlySpan<byte> rs)
+static string RRM1(ref readonly TestType.SealedClass instance)
 {
-    //return rs.ToString();
-    return null!;
+    return instance.ToString();
 }
 
-static string RRM2(ref readonly TestType.RefStruct rs)
-//static string RRM2(ref readonly ReadOnlySpan<byte> rs)
+static string RRM2(ref readonly TestType.SealedClass instance)
+{
+//    Emit.Ldarg_0();
+//    Emit.Call(MethodRef.Method(typeof(object), "ToString", returnType: typeof(string), genericParameterCount: 0, parameterTypes: []));
+//    return Return<string>();
+    return null;
+}
+
+static string RRM3(ref readonly TestType.SealedClass instance)
 {
     Emit.Ldarg_0();
-    Emit.Constrained(typeof(TestType.RefStruct));
-    Emit.Callvirt(MethodRef.Method(typeof(TestType.RefStruct), "ToString"));
+    Emit.Constrained(typeof(object));
+    Emit.Callvirt(MethodRef.Method(typeof(object), "ToString", returnType: typeof(string), genericParameterCount: 0, parameterTypes: []));
     return Return<string>();
+    //return null;
 }
 
 

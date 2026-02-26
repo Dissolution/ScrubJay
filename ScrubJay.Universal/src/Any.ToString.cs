@@ -124,6 +124,10 @@ partial class MethodCache<T>
         var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{Type.Render<T>()}_ToString");
         var generator = dynamicMethod.GetILGenerator();
 
+        // how we continue depends on the relationship between the instance and the ToString method
+        
+      
+        
 
         if (instanceType.IsByRef || instanceType.IsByRefLike)
         {
