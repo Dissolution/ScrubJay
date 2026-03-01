@@ -28,19 +28,19 @@ partial class Any
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(scoped ReadOnlySpan<T> span)
+    public static string ToString<T>(ref readonly ReadOnlySpan<T> span)
     {
         return span.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(scoped Span<T> span)
+    public static string ToString<T>(ref readonly Span<T> span)
     {
         return span.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString(scoped text text)
+    public static string ToString(ref readonly text text)
     {
         return text.ToString();
     }
@@ -83,39 +83,12 @@ partial class MethodCache<T>
         new(CreateToStringFunc, LazyThreadSafetyMode.ExecutionAndPublication);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string FallbackToString(ref readonly T _) => $"({Type.Render<T>()})???";
-
-    
-    private static MethodInfo? FindBestToStringMethod(Type? type)
-    {
-        while (type is not null)
-        {
-            MethodInfo? toStringMethod = GetDeclaredToStringMethod(type);
-            if (toStringMethod is not null)
-                return toStringMethod;
-            type = type.BaseType;
-        }
-        
-        return null;
-    }
-
-    private static MethodInfo? GetDeclaredToStringMethod(Type type)
-    {
-        return type
-            .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .Where(IsToStringMethod)
-            .FirstOrDefault();
-    }
-    
-    private static bool IsToStringMethod(MethodInfo method)
-    {
-        return method.Name == nameof(ToString) && method.ReturnType == typeof(string) && method.GetParameters().Length == 0;
-    }
+    private static string FallbackToString(ref readonly T _) => $"{Type.Render<T>()} instance";
     
     private static AnyToString CreateToStringFunc()
     {
         Type instanceType = typeof(T);
-        MethodInfo? toStringMethod = FindBestToStringMethod(instanceType);
+        MethodInfo? toStringMethod = FindBestMethod<AnyToString>(instanceType, nameof(object.ToString));
 
         if (toStringMethod is null)
             return FallbackToString;
@@ -123,22 +96,12 @@ partial class MethodCache<T>
         // emit our dynamic method
         var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{Type.Render<T>()}_ToString");
         var generator = dynamicMethod.GetILGenerator();
-
-        // how we continue depends on the relationship between the instance and the ToString method
         
-      
+        generator.Emit(OpCodes.Ldarg_0);
+        generator.Emit(OpCodes.Constrained, instanceType);
+        generator.Emit(OpCodes.Callvirt, toStringMethod);
+        generator.Emit(OpCodes.Ret);
         
-
-        if (instanceType.IsByRef || instanceType.IsByRefLike)
-        {
-            // ref struct have to have tostring directly declared
-            generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Constrained, instanceType);
-            generator.Emit(OpCodes.Callvirt, toStringMethod);
-        }
-
-
-
         if (!dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
         {
             func = FallbackToString;

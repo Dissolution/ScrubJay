@@ -26,4 +26,11 @@
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
     </ItemGroup>
+    
+    <!-- Expose our internals to Tests and Benchmarks -->
+    <ItemGroup>
+        <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
+        <InternalsVisibleTo Include="ScrubJay.Universal.Benchmarks"/>
+
+    </ItemGroup>
 </Project>

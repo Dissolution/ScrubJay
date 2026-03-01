@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
@@ -21,24 +22,44 @@ public static partial class Any
 internal static partial class MethodCache<T>
     where T : allows ref struct
 {
-    private static void EmitLoadInstance(ILGenerator generator, Type instanceType)
+    private static MethodInfo? FindBestMethod<D>(Type? type, string name)
+        where D : Delegate
     {
-        // stack types
-        if (instanceType.IsEnum || instanceType.IsByRef || instanceType.IsByRefLike || instanceType.IsValueType)
+        var invokeMethod = typeof(D).GetMethod("Invoke")!;
+        Type returnType = invokeMethod.ReturnType;
+        Type[] parameterTypes = Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType);
+
+        Func<MethodInfo, bool> isMatchingMethod = m =>
         {
-            // load a ref to this value
-            generator.Emit(
-                OpCodes.Ldarga_S,
-                0);
-        }
-        // heap types
-        else
+            if (m.Name != name || !m.ReturnType.IsAssignableTo(returnType))
+                return false;
+            var mp = m.GetParameters();
+            if (mp.Length != parameterTypes.Length)
+                return false;
+            for (var i = 0; i < mp.Length; i++)
+            {
+                if (!mp[i].ParameterType.IsAssignableFrom(parameterTypes[i]))
+                    return false;
+            }
+            return true;
+        };
+        
+        // go through type and all subtypes to find a matching method
+        
+        while (type is not null)
         {
-            // load the value directly
-            generator.Emit(OpCodes.Ldarg_0);
+            MethodInfo? method = type
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                .Where(isMatchingMethod)
+                .FirstOrDefault();
+            if (method is not null)
+                return method;
+            if (type.IsByRefLike)
+                return null; // only methods declared directly on the ref struct can be used
+            type = type.BaseType;
         }
+        return null;
     }
-    
     
 }
 #endif

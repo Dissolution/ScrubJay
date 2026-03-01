@@ -19,7 +19,7 @@ partial class Any
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode<T>(T? value)
+    public static int GetHashCode<T>(ref readonly T? value)
     {
         if (value is null)
             return 0;
@@ -33,7 +33,7 @@ partial class Any
     /// <param name="text"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode(scoped text text)
+    public static int GetHashCode(ref readonly text text)
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
         return FNV1aHasher.HashCharacters(text);
@@ -73,26 +73,30 @@ partial class Any
     /// and for maximum compatability with <see cref="object"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode<T>(T? value,
+    public static int GetHashCode<T>(ref readonly T? value,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.GetHashCode(value);
+        if (value is null)
+            return 0;
+        return MethodCache<T>.La
     }
 }
 
 partial class MethodCache<T>
 {
-    private static readonly Lazy<Func<T, int>?> _lazyGetHashCodeFunc = new(
+    public delegate int AnyGetHashCode(ref readonly T value);
+    
+    public static readonly Lazy<AnyGetHashCode> LazyGetHashCode = new(
         CreateGetHashCodeFunc,
         LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static int GetHashCodeFallback(T value)
+    private static int GetHashCodeFallback(ref readonly T value)
     {
-        throw new NotImplementedException();
+        
     }
-    
-    private static Func<T, int>? CreateGetHashCodeFunc()
+
+    private static AnyGetHashCode CreateGetHashCodeFunc()
     {
         Type instanceType = typeof(T);
 
@@ -145,7 +149,7 @@ partial class MethodCache<T>
     {
         if (value is not null)
         {
-            var func = _lazyGetHashCodeFunc.Value;
+            var func = LazyGetHashCode.Value;
 
             if (func is not null)
             {

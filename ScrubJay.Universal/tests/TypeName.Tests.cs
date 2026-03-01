@@ -73,7 +73,7 @@ public class TypeRendererTests
         (typeof(string).MakeByRefType(), "string&"),
         (typeof(Span<double>).MakeByRefType(), "Span<double>&"),
         (typeof(double).MakeByRefType(), "double&"),
-        (typeof(TestStruct).MakeByRefType(), "TypeNameTests.TestStruct&"),
+        (typeof(TestStruct).MakeByRefType(), "TypeRendererTests.TestStruct&"),
         (typeof(List<int>).MakeByRefType(), "List<int>&"),
     ];
 
@@ -154,10 +154,10 @@ public class TypeRendererTests
 
     public static TheoryData<Type, string> NestedTypeData { get; } =
     [
-        (typeof(OuterClass.InnerClass), "TypeNameTests.OuterClass.InnerClass"),
-        (typeof(OuterClass.InnerStruct), "TypeNameTests.OuterClass.InnerStruct"),
-        (typeof(OuterClass.InnerEnum), "TypeNameTests.OuterClass.InnerEnum"),
-        (typeof(OuterClass.InnerClass.DeeplyNestedClass), "TypeNameTests.OuterClass.InnerClass.DeeplyNestedClass"),
+        (typeof(OuterClass.InnerClass), "TypeRendererTests.OuterClass.InnerClass"),
+        (typeof(OuterClass.InnerStruct), "TypeRendererTests.OuterClass.InnerStruct"),
+        (typeof(OuterClass.InnerEnum), "TypeRendererTests.OuterClass.InnerEnum"),
+        (typeof(OuterClass.InnerClass.DeeplyNestedClass), "TypeRendererTests.OuterClass.InnerClass.DeeplyNestedClass"),
     ];
 
     [Theory]
@@ -200,11 +200,11 @@ public class TypeRendererTests
 
     public static TheoryData<Type, string> NestedGenericTypesData { get; } = new()
                                                                              {
-                                                                                 (typeof(OuterGeneric<int>.InnerClass), "TypeNameTests.OuterGeneric<int>.InnerClass"),
-                                                                                 (typeof(OuterGeneric<string>.InnerClass), "TypeNameTests.OuterGeneric<string>.InnerClass"),
-                                                                                 (typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeNameTests.OuterGeneric<int>.InnerGeneric<string>"),
+                                                                                 (typeof(OuterGeneric<int>.InnerClass), "TypeRendererTests.OuterGeneric<int>.InnerClass"),
+                                                                                 (typeof(OuterGeneric<string>.InnerClass), "TypeRendererTests.OuterGeneric<string>.InnerClass"),
+                                                                                 (typeof(OuterGeneric<int>.InnerGeneric<string>), "TypeRendererTests.OuterGeneric<int>.InnerGeneric<string>"),
                                                                                  (typeof(OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>),
-                                                                                  "TypeNameTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"), };
+                                                                                  "TypeRendererTests.OuterGeneric<List<int>>.InnerGeneric<Dictionary<string, bool>>"), };
 
     [Theory]
     [MemberData(nameof(NestedGenericTypesData))]
@@ -336,8 +336,8 @@ public class TypeRendererTests
         (typeof(Func<int, string>), "Func<int, string>"),
         (typeof(Func<int, string, bool>), "Func<int, string, bool>"),
         (typeof(Predicate<int>), "Predicate<int>"),
-        (typeof(DoThing), "TypeNameTests.DoThing"),
-        (typeof(DoThing<int, string, char?>), "TypeNameTests.DoThing<int, string, char?>"),
+        (typeof(DoThing), "TypeRendererTests.DoThing"),
+        (typeof(DoThing<int, string, char?>), "TypeRendererTests.DoThing<int, string, char?>"),
     ];
 
     [Theory]

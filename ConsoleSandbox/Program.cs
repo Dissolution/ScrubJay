@@ -10,76 +10,39 @@ using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Sandboxes;
 using ScrubJay.Text.Building;
 using ScrubJay.Universal;
+using ScrubJay.Universal.Tests.Internal;
 using ScrubJay.Validation;
+using Xunit;
 using static InlineIL.IL;
 
-/*
+var code = new TextBuilder();
 
-var methods = AppDomain
-    .CurrentDomain
-    .GetAssemblies()
-    .SelectMany(static assembly => assembly.GetTypes())
-    .SelectMany(static type => type.GetMethods(BindingFlags.All))
-    .Where(method => method.GetMethodBody()?.GetILAsByteArray() is not null)
-    //.OrderBy(method => method.GetMethodBody()!.GetILAsByteArray()!.Length)
-    .ToList();
-
-foreach (var method in methods)
+foreach (var type in typeof(TestTypes).GetNestedTypes(BindingFlags.Public | BindingFlags.Instance))
 {
-    var d = new DecompiledMethod(method);
-    var str = d.ToString();
-    Debugger.Break();
+    var csType = type.Name;
+
+    code.AppendLine($$"""
+        [Fact]
+        public void Any_ToString_{{csType}}_Works()
+        {
+            {{csType}} instance = new();
+            string? anyStr = Any.ToString(in instance);
+            Assert.NotNull(anyStr);     
+            string? str = instance.ToString();
+            Assert.Equal(str, anyStr);
+        }    
+        """).NewLine();
 }
 
-*/
+var c = code.ToStringAndDispose();
 
 
-#if NET9_0_OR_GREATER
-
-
-TestType.SealedClass instance = new();
-
-string str = instance.ToString();
-
-string str1 = RRM1(ref instance);
-
-string str2 = RRM2(ref instance);
-
-string str3 = RRM3(ref instance);
-
-var methods = Any.GetType(instance)
-    .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-    .Where(static method => method.Name == "ToString")
-    .ToList();
-
-#endif
 
 
 Debugger.Break();
 
 return;
 
-static string RRM1(ref readonly TestType.SealedClass instance)
-{
-    return instance.ToString();
-}
-
-static string RRM2(ref readonly TestType.SealedClass instance)
-{
-//    Emit.Ldarg_0();
-//    Emit.Call(MethodRef.Method(typeof(object), "ToString", returnType: typeof(string), genericParameterCount: 0, parameterTypes: []));
-//    return Return<string>();
-    return null;
-}
-
-static string RRM3(ref readonly TestType.SealedClass instance)
-{
-    Emit.Ldarg_0();
-    Emit.Constrained(typeof(object));
-    Emit.Callvirt(MethodRef.Method(typeof(object), "ToString", returnType: typeof(string), genericParameterCount: 0, parameterTypes: []));
-    return Return<string>();
-    //return null;
-}
 
 
 namespace ScrubJay.Sandboxes
