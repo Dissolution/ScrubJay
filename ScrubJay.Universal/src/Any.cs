@@ -22,6 +22,25 @@ public static partial class Any
 internal static partial class MethodCache<T>
     where T : allows ref struct
 {
+    private static void EmitLoadInstance(ILGenerator generator, Type instanceType)
+    {
+        // stack types
+        if (instanceType.IsEnum || instanceType.IsByRef || instanceType.IsByRefLike || instanceType.IsValueType)
+        {
+            // load a ref to this value
+            generator.Emit(
+                OpCodes.Ldarga_S,
+                0);
+        }
+        // heap types
+        else
+        {
+            // load the value directly
+            generator.Emit(OpCodes.Ldarg_0);
+        }
+    }
+
+    
     private static MethodInfo? FindBestMethod<D>(Type? type, string name)
         where D : Delegate
     {

@@ -290,6 +290,19 @@ partial class TextBuilder
 
         return this;
     }
+    
+    public TextBuilder IfNotEmpty(string? str, string? fallback)
+    {
+        if (string.IsNullOrEmpty(str))
+        {
+            return Append(fallback);
+        }
+        else
+        {
+            return Append(str);
+        }
+    }
+    
 
 #if !NET9_0_OR_GREATER
     public delegate void BuildWithSpan<T>(TextBuilder builder, ReadOnlySpan<T> span);

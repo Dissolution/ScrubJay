@@ -94,10 +94,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Enums\TEMP\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="..\..\..\..\Users\Timothy\.nuget\packages\polyfill\9.9.0\contentFiles\cs\netstandard2.1\Trimming\DynamicDependencyAttribute.cs" />
       <Compile Remove="..\..\..\..\Users\Timothy\.nuget\packages\polyfill\9.9.0\contentFiles\cs\netstandard2.0\Trimming\DynamicDependencyAttribute.cs" />
     </ItemGroup>

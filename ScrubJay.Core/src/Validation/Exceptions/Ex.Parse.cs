@@ -58,4 +58,36 @@ partial class Ex
             Info = info,
         };
     }
+    
+    public static ParseException Parse(
+        scoped text input,
+        Type outputType,
+        string? info = null,
+        [CallerArgumentExpression(nameof(input))]
+        string? inputName = null)
+    {
+        return new ParseException(inputName)
+        {
+            InputType = typeof(text),
+            InputString = input.ToString(),
+            OutputType = outputType,
+            Info = info,
+        };
+    }
+    
+    public static ParseException Parse(
+        string? input,
+        Type outputType,
+        string? info = null,
+        [CallerArgumentExpression(nameof(input))]
+        string? inputName = null)
+    {
+        return new ParseException(inputName)
+        {
+            InputType = typeof(string),
+            InputString = input,
+            OutputType = outputType,
+            Info = info,
+        };
+    }
 }

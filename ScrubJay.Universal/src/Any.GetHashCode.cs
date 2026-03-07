@@ -8,6 +8,65 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
+internal static class MiniFNV1a
+{
+    private const uint FNV_PRIME = 16777619U;
+    private const uint FNV_OFFSET = 2166136261U;
+
+    internal static int HashBytes<T>(ref readonly T value)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        ref T mutable = ref Unsafe.AsRef(in value);
+        ref byte currentByte = ref Unsafe.As<T, byte>(ref mutable);
+        var length = Unsafe.SizeOf<T>();
+
+        uint hash = FNV_OFFSET;
+
+        unchecked
+        {
+            // 4-byte chunks
+            while (length >= 4)
+            {
+                uint slice = Unsafe.ReadUnaligned<uint>(ref currentByte);
+
+                hash ^= slice;
+                hash *= FNV_PRIME;
+
+                currentByte = ref Unsafe.Add(ref currentByte, 4);
+                length -= 4;
+            }
+
+            // remaining bytes
+            while (length > 0)
+            {
+                hash ^= currentByte;
+                hash *= FNV_PRIME;
+
+                currentByte = ref Unsafe.Add(ref currentByte, 1);
+                length--;
+            }
+
+            return (int)hash;
+        }
+    }
+
+    internal static int HashText(scoped ReadOnlySpan<char> text)
+    {
+        uint hash = FNV_OFFSET;
+        unchecked
+        {
+            foreach (var ch in text)
+            {
+                hash ^= ch;
+                hash *= FNV_PRIME;
+            }
+            return (int)hash;
+        }
+    }
+}
+
 partial class Any
 {
     /// <summary>
@@ -36,7 +95,8 @@ partial class Any
     public static int GetHashCode(ref readonly text text)
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
-        return FNV1aHasher.HashCharacters(text);
+        // simple FNV1a
+        return MiniFNV1a.HashText(text);
 #elif NETSTANDARD2_1
         HashCode hasher = new();
         foreach (char ch in text)
@@ -79,7 +139,7 @@ partial class Any
     {
         if (value is null)
             return 0;
-        return MethodCache<T>.La
+        return MethodCache<T>.LazyGetHashCode.Value.Invoke(in value);
     }
 }
 
@@ -91,73 +151,34 @@ partial class MethodCache<T>
         CreateGetHashCodeFunc,
         LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static int GetHashCodeFallback(ref readonly T value)
+    private static int FallbackGetHashCode(ref readonly T value)
     {
-        
+        return MiniFNV1a.HashBytes<T>(in value);
     }
 
     private static AnyGetHashCode CreateGetHashCodeFunc()
     {
         Type instanceType = typeof(T);
-
-        MethodInfo? getHashCodeMethod = instanceType.FindMethod(
-            "GetHashCode",
-            typeof(int));
+        MethodInfo? getHashCodeMethod = FindBestMethod<AnyGetHashCode>(instanceType, nameof(object.GetHashCode));
 
         if (getHashCodeMethod is null)
-            return null;
+            return FallbackGetHashCode;
 
         // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New(
-            $"{Type.Render<T>()}_GetHashCode",
-            typeof(int),
-            typeof(T));
-
+        var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{Type.Render<T>()}_GetHashCode");
         var generator = dynamicMethod.GetILGenerator();
-
-        // load instance
-        EmitLoadInstance(generator, instanceType);
-
-        // call the method
-        generator.EmitCallMethod(
-            instanceType,
-            getHashCodeMethod);
-
-        // return the int on the stack
+        
+        generator.Emit(OpCodes.Ldarg_0);
+        generator.Emit(OpCodes.Constrained, instanceType);
+        generator.Emit(OpCodes.Callvirt, getHashCodeMethod);
         generator.Emit(OpCodes.Ret);
-
-        if (!dynamicMethod.TryCreateDelegate<Func<T, int>>(out var func))
-            return null;
-
-        // try to execute it to see if it will even work
-        // Span + ReadOnlySpan throw
-        try
+        
+        if (!dynamicMethod.TryCreateDelegate<AnyGetHashCode>(out var func))
         {
-            _ = func(default!);
-        }
-#pragma warning disable
-        catch
-#pragma warning restor
-        {
-            return null;
+            func = FallbackGetHashCode;
         }
 
         return func;
-    }
-
-    public static int GetHashCode(T? value)
-    {
-        if (value is not null)
-        {
-            var func = LazyGetHashCode.Value;
-
-            if (func is not null)
-            {
-                return func(value);
-            }
-        }
-
-        return 0;
     }
 }
 
