@@ -20,7 +20,7 @@
     <Project Path="ScrubJay.Reflection/tests/ScrubJay.Reflection.Tests.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Text/">
-    <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
+    <Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Universal/">
     <File Path="ScrubJay.Universal\README.md" />

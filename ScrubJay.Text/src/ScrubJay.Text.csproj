@@ -12,17 +12,16 @@
     <!-- NuGet -->
     <PropertyGroup>
         <IsPackable>true</IsPackable>
-        <PackageId>ScrubJay.Functional</PackageId>
-        <Title>ScrubJay - Functional</Title>
+        <PackageId>ScrubJay.Text</PackageId>
+        <Title>ScrubJay - Text</Title>
         <Description>
-            Functional types and extensions for C#.
+            Utilities for working with text.
         </Description>
         <Version>0.91.0-alpha</Version>
     </PropertyGroup>
 
     <!-- Global Usings -->
     <ItemGroup>
-        <!-- Consume my own Prelude -->
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Universal"/>
     </ItemGroup>
@@ -34,9 +33,5 @@
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
-    </ItemGroup>
-
+    
 </Project>

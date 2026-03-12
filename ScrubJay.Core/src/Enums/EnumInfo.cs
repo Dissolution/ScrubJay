@@ -33,7 +33,7 @@ public abstract class EnumInfo
         {
             return Enum.IsDefined(EnumType, @enum);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return false;
         }

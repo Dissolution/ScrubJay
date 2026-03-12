@@ -177,7 +177,7 @@ public ref struct InterpolatedTextBuilder : IDisposable
     {
         if (_builder is null)
         {
-            _buffer.AddMany(Any.ToString<T>(in value));
+            _buffer.AddMany(Any.ToString<T>(value));
         }
         else
         {
