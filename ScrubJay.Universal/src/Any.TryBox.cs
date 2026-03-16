@@ -1,13 +1,7 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
-
-#if NET9_0_OR_GREATER
-using InlineIL;
-using static InlineIL.IL;
-#endif
-
 namespace ScrubJay.Universal;
 
-partial class Any
+static partial class Any
 {
     /// <summary>
     /// Try to box the given <typeparamref name="T"/> <paramref name="value"/> into an <see cref="object"/>.
@@ -39,11 +33,6 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
-    /* store the FastBox<T> method here and not in MethodCache<T>,
-     * as MethodCache<T> would fail compilation for any T : ref struct values.
-     * Here we can abuse a compiler trick to ensure that only non-ref-struct Ts are ever boxed.
-     */
-    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
         where T : allows ref struct //, but _never_ will be

@@ -1,4 +1,4 @@
-﻿namespace ScrubJay.Tests.EnumTests;
+﻿namespace ScrubJay.Enums.Tests.EnumTests;
 
 public static class TestEnums
 {

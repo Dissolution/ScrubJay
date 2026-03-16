@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+static partial class Any
 {
     /// <summary>
     /// Returns the <see cref="string"/> representation of this <typeparamref name="T"/> <paramref name="value"/>.
@@ -47,7 +47,7 @@ partial class Any
 }
 
 #if NET9_0_OR_GREATER
-partial class Any
+static partial class Any
 {
     /// <summary>
     /// Returns the <see cref="string"/> representation of this <typeparamref name="T"/> <paramref name="value"/>.
@@ -71,44 +71,39 @@ partial class Any
     {
         if (value is null)
             return null;
-        return MethodCache<T>.LazyToString.Value.Invoke(in value);
+        return ToStringCache<T>.Invoke(in value);
     }
-}
 
-partial class MethodCache<T>
-{
-    public delegate string AnyToString(ref readonly T value);
-    
-    public static readonly Lazy<AnyToString> LazyToString =
-        new(CreateToStringFunc, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string FallbackToString(ref readonly T _) => $"{Type.Render<T>()} instance";
-    
-    private static AnyToString CreateToStringFunc()
+    private static class ToStringCache<T>
+        where T : allows ref struct
     {
-        Type instanceType = typeof(T);
-        MethodInfo? toStringMethod = FindBestMethod<AnyToString>(instanceType, nameof(object.ToString));
+        public delegate string AnyToString(ref readonly T value);
 
-        if (toStringMethod is null)
-            return FallbackToString;
+        public static readonly AnyToString Invoke;
 
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{Type.Render<T>()}_ToString");
-        var generator = dynamicMethod.GetILGenerator();
-        
-        generator.Emit(OpCodes.Ldarg_0);
-        generator.Emit(OpCodes.Constrained, instanceType);
-        generator.Emit(OpCodes.Callvirt, toStringMethod);
-        generator.Emit(OpCodes.Ret);
-        
-        if (!dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
+        static ToStringCache()
         {
-            func = FallbackToString;
-        }
+            Type instanceType = typeof(T);
+            MethodInfo? toStringMethod = instanceType.FindBestMethod<AnyToString>(nameof(object.ToString));
 
-        return func;
+            if (toStringMethod is not null)
+            {
+                var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{Type.Render<T>()}_ToString");
+                var generator = dynamicMethod.GetILGenerator();
+
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Constrained, instanceType);
+                generator.Emit(OpCodes.Callvirt, toStringMethod);
+                generator.Emit(OpCodes.Ret);
+
+                if (dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
+                {
+                    Invoke = func;
+                    return;
+                }
+            }
+            Invoke = (ref readonly _) => $"{Type.Render<T>()} instance";
+        }
     }
 }
-
 #endif

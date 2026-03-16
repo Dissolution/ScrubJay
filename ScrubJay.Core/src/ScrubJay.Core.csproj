@@ -46,11 +46,11 @@
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Prelude" Static="true"/>
         <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Enums"/>
 
         <Using Include="ScrubJay.Collections"/>
         <Using Include="ScrubJay.Collections.Pooling"/>
         <Using Include="ScrubJay.Comparison"/>
-        <Using Include="ScrubJay.Enums"/>
         <Using Include="ScrubJay.Extensions"/>
         <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Memory"/>
@@ -89,15 +89,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />
         <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="..\..\..\..\Users\Timothy\.nuget\packages\polyfill\9.9.0\contentFiles\cs\netstandard2.1\Trimming\DynamicDependencyAttribute.cs" />
-      <Compile Remove="..\..\..\..\Users\Timothy\.nuget\packages\polyfill\9.9.0\contentFiles\cs\netstandard2.0\Trimming\DynamicDependencyAttribute.cs" />
-    </ItemGroup>
-
 
     <UsingTask TaskName="GenerateValidateFilesTask" AssemblyFile="$(MSBuildProjectDirectory)\..\build_tasks\bin\$(Configuration)\netstandard2.0\BuildTasks.dll"/>
 

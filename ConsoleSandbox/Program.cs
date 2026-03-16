@@ -3,17 +3,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using InlineIL;
-using ScrubJay.Extensions;
-using ScrubJay.Reflection.Decompilation;
+using ScrubJay.Enums;
 using ScrubJay.Rendering.Rendition5;
-using ScrubJay.Sandboxes;
 using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 using ScrubJay.Universal.Tests.Internal;
 using ScrubJay.Validation;
-using Xunit;
-using static InlineIL.IL;
 
 var code = new TextBuilder();
 
@@ -35,6 +30,9 @@ foreach (var type in typeof(TestTypes).GetNestedTypes(BindingFlags.Public | Bind
 }
 
 var c = code.ToStringAndDispose();
+
+BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
+Enum num = MethodImplAttributes.Async;
 
 
 
@@ -81,7 +79,7 @@ namespace ScrubJay.Sandboxes
         public static void OnEnum<E>(E @enum)
             where E : struct, Enum
         {
-
+            
         }
 
         public static void Capture<T>(T? argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)

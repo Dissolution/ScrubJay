@@ -1,8 +1,21 @@
-﻿namespace ScrubJay.Reflection;
+﻿using System.Reflection;
 
+namespace ScrubJay.Reflection;
+
+[PublicAPI]
 public sealed class Attributes : IReadOnlyList<Attribute>
 {
-    private Attribute[] _attributes;
+    public static Attributes For(MemberInfo member, bool inherit = true)
+    {
+        return new(Attribute.GetCustomAttributes(member, inherit));
+    }
+    
+    public static Attributes For(ParameterInfo parameter, bool inherit = true)
+    {
+        return new(Attribute.GetCustomAttributes(parameter, inherit));
+    }
+    
+    private readonly Attribute[] _attributes;
 
     public int Count => _attributes.Length;
 
@@ -19,13 +32,13 @@ public sealed class Attributes : IReadOnlyList<Attribute>
         _attributes = attributes;
     }
 
-    public bool HasAttribute<A>()
+    public bool Contains<A>()
         where A : Attribute
     {
         return _attributes.OfType<A>().Any();
     }
 
-    public bool HasAttribute<A>([NotNullWhen(true)] out A? attribute)
+    public bool Contains<A>([NotNullWhen(true)] out A? attribute)
         where A : Attribute
     {
         attribute = _attributes.OfType<A>().FirstOrDefault();

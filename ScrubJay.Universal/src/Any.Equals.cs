@@ -1,8 +1,6 @@
 #pragma warning disable CS8620
 // ReSharper disable MethodOverloadWithOptionalParameter
 
-using InlineIL;
-using static InlineIL.IL;
 using System.Reflection;
 using System.Reflection.Emit;
 // ReSharper disable InvokeAsExtensionMember
@@ -127,7 +125,7 @@ partial class Any
         return true;
 #endif
     }
-    
+
     /// <summary>
     /// Determines if two <see cref="ReadOnlySpan{char}"/> texts have the same <see cref="StringComparison.Ordinal">Ordinal</see> characters.
     /// </summary>
@@ -188,55 +186,55 @@ partial class Any
     /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(T? left, T? right,
+    public static bool Equals<T>(ref readonly T? left, T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.LazyEquals.Value.Invoke(left, right);
-    }
-}
-
-internal partial class MethodCache<T>
-{
-    public static readonly Lazy<Func<T?, T?, bool>> LazyEquals =
-        new(CreateEqualsFunc, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static bool EqualsFallback(T? left, T? right)
-    {
-        Emit.Ldarg_0();
-        Emit.Ldarg_1();
-        Emit.Ceq();
-        return Return<bool>();
+        return EqualsCache<T>.Invoke(in left, right);
     }
 
-    private static Func<T?, T?, bool> CreateEqualsFunc()
+    private static class EqualsCache<T>
+        where T : allows ref struct
     {
-        Type instanceType = typeof(T);
-        MethodInfo? equalsMethod = instanceType.FindMethod("Equals", typeof(bool), typeof(T));
+        public delegate bool AnyEquals(ref readonly T? value, T? other);
 
-        if (equalsMethod is null)
-            return EqualsFallback;
+        public static readonly AnyEquals Invoke;
 
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"Equals_{Type.Render<T>()}", typeof(bool), typeof(T), typeof(T));
-        var generator = dynamicMethod.GetILGenerator();
-
-        // load instance
-        EmitLoadInstance(generator, instanceType);
-        // load value to compare to
-        generator.Emit(OpCodes.Ldarg_1);
-        // call the method
-        generator.EmitCallMethod(instanceType, equalsMethod);
-        // return the bool on the stack
-        generator.Emit(OpCodes.Ret);
-
-        if (!dynamicMethod.TryCreateDelegate<Func<T?, T?, bool>>(out var func))
+        static EqualsCache()
         {
-            func = EqualsFallback;
+            Type instanceType = typeof(T);
+            MethodInfo? equalsMethod = instanceType.FindBestMethod<AnyEquals>(nameof(object.Equals));
+
+            if (equalsMethod is not null)
+            {
+                var dynamicMethod = DynamicMethod.New<AnyEquals>($"Any_{Type.Render<T>()}_Equals");
+                var generator = dynamicMethod.GetILGenerator();
+
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Constrained, instanceType);
+                generator.Emit(OpCodes.Callvirt, equalsMethod);
+                generator.Emit(OpCodes.Ret);
+
+                if (dynamicMethod.TryCreateDelegate<AnyEquals>(out var func))
+                {
+                    Invoke = func;
+                    return;
+                }
+            }
+            Invoke = EqualsFallback;
         }
 
-        return func;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool EqualsFallback(ref readonly T? left, T? right)
+        {
+            Emit.Ldarg_0();
+            Emit.Ldobj<T>();
+            Emit.Ldarg_1();
+            Emit.Ceq();
+            return Return<bool>();
+        }
     }
-}
 
+}
 #endif

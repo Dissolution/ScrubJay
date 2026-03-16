@@ -58,7 +58,12 @@ public static class TypeExtensions
                 yield return baseType;
             }
         }
-        
+
+        /// <summary>
+        /// Gets the underlying <see cref="TypeCode"/> for <paramref name="type"/>.
+        /// </summary>
+        /// <returns></returns>
+        public TypeCode GetTypeCode() => Type.GetTypeCode(type);
         
         /// <summary>
         /// Gets the rendering for this <see cref="Type"/>.

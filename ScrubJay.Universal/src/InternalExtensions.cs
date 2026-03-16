@@ -110,14 +110,44 @@ internal static class InternalExtensions
             return null;
         }
 
-        public MethodInfo? FindBestMethod(string name, Type returnType, params Type[] parameterTypes)
+        internal MethodInfo? FindBestMethod<D>(string name)
+            where D : Delegate
         {
-            if (type is null)
-                return null;
+            var invokeMethod = typeof(D).GetMethod("Invoke")!;
+            Type returnType = invokeMethod.ReturnType;
+            Type[] parameterTypes = Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType);
 
-            throw new NotImplementedException();
+            Func<MethodInfo, bool> isMatchingMethod = m =>
+            {
+                if (m.Name != name || !m.ReturnType.IsAssignableTo(returnType))
+                    return false;
+                var mp = m.GetParameters();
+                if (mp.Length != parameterTypes.Length)
+                    return false;
+                for (var i = 0; i < mp.Length; i++)
+                {
+                    if (!mp[i].ParameterType.IsAssignableFrom(parameterTypes[i]))
+                        return false;
+                }
+                return true;
+            };
+        
+            // go through type and all subtypes to find a matching method
+        
+            while (type is not null)
+            {
+                MethodInfo? method = type
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                    .Where(isMatchingMethod)
+                    .FirstOrDefault();
+                if (method is not null)
+                    return method;
+                if (type.IsByRefLike)
+                    return null; // only methods declared directly on the ref struct can be used
+                type = type.BaseType;
+            }
+            return null;
         }
-
         
         public MethodInfo? FindMethod(string name,
             Type returnType,

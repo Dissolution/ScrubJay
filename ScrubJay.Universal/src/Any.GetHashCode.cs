@@ -3,26 +3,42 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 
 #pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 
 namespace ScrubJay.Universal;
 
-internal static class MiniFNV1a
+internal static class MiniFNV1A
 {
     private const uint FNV_PRIME = 16777619U;
     private const uint FNV_OFFSET = 2166136261U;
+    private static readonly uint _startHash;
+
+    static MiniFNV1A()
+    {
+#if NETFRAMEWORK || NETSTANDARD2_0
+        using var rng = RandomNumberGenerator.Create();
+        byte[] seed = new byte[sizeof(uint)];
+        rng.GetBytes(seed);
+        _startHash = (FNV_OFFSET ^ BitConverter.ToUInt32(seed, 0)) * FNV_PRIME;
+#else
+        Span<byte> seed = stackalloc byte[sizeof(uint)];
+        RandomNumberGenerator.Fill(seed);
+        _startHash = (FNV_OFFSET ^ BitConverter.ToUInt32(seed)) * FNV_PRIME;
+#endif
+    }
 
     internal static int HashBytes<T>(ref readonly T value)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        ref T mutable = ref Unsafe.AsRef(in value);
+        ref T mutable = ref Unsafe.AsRef<T>(in value);
         ref byte currentByte = ref Unsafe.As<T, byte>(ref mutable);
         var length = Unsafe.SizeOf<T>();
 
-        uint hash = FNV_OFFSET;
+        uint hash = _startHash;
 
         unchecked
         {
@@ -54,7 +70,7 @@ internal static class MiniFNV1a
 
     internal static int HashText(scoped ReadOnlySpan<char> text)
     {
-        uint hash = FNV_OFFSET;
+        uint hash = _startHash;
         unchecked
         {
             foreach (var ch in text)
@@ -95,8 +111,7 @@ partial class Any
     public static int GetHashCode(ref readonly text text)
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
-        // simple FNV1a
-        return MiniFNV1a.HashText(text);
+        return MiniFNV1A.HashText(text);
 #elif NETSTANDARD2_1
         HashCode hasher = new();
         foreach (char ch in text)
@@ -130,7 +145,7 @@ partial class Any
     /// <remarks>
     /// This method may not have to exist, as <c>ref struct</c> values cannot currently be stored in a HashSet nor Dictionary.
     /// But it does to allow for the possibility that more stack-based collections could exist in the future,
-    /// and for maximum compatability with <see cref="object"/>.
+    /// and for maximum compatibility with <see cref="object"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode<T>(ref readonly T? value,
@@ -139,47 +154,76 @@ partial class Any
     {
         if (value is null)
             return 0;
-        return MethodCache<T>.LazyGetHashCode.Value.Invoke(in value);
+        return GetHashCodeCache<T>.Invoke(in value);
     }
-}
-
-partial class MethodCache<T>
-{
-    public delegate int AnyGetHashCode(ref readonly T value);
     
-    public static readonly Lazy<AnyGetHashCode> LazyGetHashCode = new(
-        CreateGetHashCodeFunc,
-        LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static int FallbackGetHashCode(ref readonly T value)
+    private static class GetHashCodeCache<T>
+        where T : allows ref struct
     {
-        return MiniFNV1a.HashBytes<T>(in value);
-    }
+        public delegate int AnyGetHashCode(ref readonly T value);
 
-    private static AnyGetHashCode CreateGetHashCodeFunc()
-    {
-        Type instanceType = typeof(T);
-        MethodInfo? getHashCodeMethod = FindBestMethod<AnyGetHashCode>(instanceType, nameof(object.GetHashCode));
-
-        if (getHashCodeMethod is null)
-            return FallbackGetHashCode;
-
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{Type.Render<T>()}_GetHashCode");
-        var generator = dynamicMethod.GetILGenerator();
+        private static AnyGetHashCode _anyGetHashCode;
+        private static bool _isTested;
         
-        generator.Emit(OpCodes.Ldarg_0);
-        generator.Emit(OpCodes.Constrained, instanceType);
-        generator.Emit(OpCodes.Callvirt, getHashCodeMethod);
-        generator.Emit(OpCodes.Ret);
-        
-        if (!dynamicMethod.TryCreateDelegate<AnyGetHashCode>(out var func))
+        static GetHashCodeCache()
         {
-            func = FallbackGetHashCode;
+            Type instanceType = typeof(T);
+            MethodInfo? getHashCodeMethod = instanceType.FindBestMethod<AnyGetHashCode>(nameof(object.GetHashCode));
+
+            if (getHashCodeMethod is not null)
+            {
+                var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{Type.Render<T>()}_GetHashCode");
+                var generator = dynamicMethod.GetILGenerator();
+
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Constrained, instanceType);
+                generator.Emit(OpCodes.Callvirt, getHashCodeMethod);
+                generator.Emit(OpCodes.Ret);
+
+                if (dynamicMethod.TryCreateDelegate<AnyGetHashCode>(out var func))
+                {
+                    _anyGetHashCode = func;
+                    _isTested = false;
+                    return;
+                }
+            }
+
+            _anyGetHashCode = (ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
+            _isTested = true;
         }
 
-        return func;
+        public static int Invoke(ref readonly T value)
+        {
+            if (_isTested)
+            {
+                Debug.Assert(_anyGetHashCode is not null);
+                return _anyGetHashCode!(in value);
+            }
+
+            return untestedInvoke(in value);
+
+            // Span<T> and ReadOnlySpan<T> both throw when you try to use their GetHashCode
+            static int untestedInvoke(ref readonly T value)
+            {
+                int hashCode;
+                try
+                {
+                    hashCode = _anyGetHashCode(in value);
+                    return hashCode;
+                }
+                catch
+                {
+                    _anyGetHashCode = (ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
+                    return _anyGetHashCode(in value);
+                }
+                finally
+                {
+                    _isTested = true;
+                }
+            }
+        }
     }
 }
+
 
 #endif

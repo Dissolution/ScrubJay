@@ -1,11 +1,9 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
 
-using System.Reflection;
-using System.Reflection.Emit;
 #pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 namespace ScrubJay.Universal;
 
-partial class Any
+static partial class Any
 {
     /// <summary>
     /// Gets the <see cref="Type"/> of a <typeparamref name="T"/> <paramref name="value"/>.
@@ -26,13 +24,15 @@ partial class Any
         {
             return value.GetType();
         }
-
-        return typeof(T);
+        else
+        {
+            return typeof(T);
+        }
     }
 }
 
 #if NET9_0_OR_GREATER
-partial class Any
+static partial class Any
 {
     /// <summary>
     /// Gets the <see cref="Type"/> of a <typeparamref name="T"/> <paramref name="value"/>.
@@ -45,49 +45,12 @@ partial class Any
     /// </typeparam>
     /// <returns><c>typeof(T)</c></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable RCS1163
     public static Type GetType<T>(ref readonly T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+#pragma warning restore RCS1163
         where T : allows ref struct
     {
-        if (value is null)
-            return typeof(T);
-        return MethodCache<T>.LazyGetType.Value.Invoke(in value);
+        return typeof(T);
     }
 }
-
-partial class MethodCache<T>
-{
-    public delegate Type AnyGetType(ref readonly T value);
-
-    public static readonly Lazy<AnyGetType> LazyGetType = new(CreateGetTypeFunc, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Type FallbackGetType(ref readonly T _) => typeof(T);
-    
-    private static AnyGetType CreateGetTypeFunc()
-    {
-        Type instanceType = typeof(T);
-        MethodInfo? getTypeMethod = FindBestMethod<AnyGetType>(instanceType, nameof(object.GetType));
-
-        if (getTypeMethod is null)
-            return FallbackGetType;
-
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New<AnyGetType>($"Any_{Type.Render<T>()}_GetType");
-        var generator = dynamicMethod.GetILGenerator();
-        
-        generator.Emit(OpCodes.Ldarg_0);
-        generator.Emit(OpCodes.Constrained, instanceType);
-        generator.Emit(OpCodes.Callvirt, getTypeMethod);
-        generator.Emit(OpCodes.Ret);
-        
-        if (!dynamicMethod.TryCreateDelegate<AnyGetType>(out var func))
-        {
-            func = FallbackGetType;
-        }
-
-        return func;
-    }
-}
-
-
 #endif
