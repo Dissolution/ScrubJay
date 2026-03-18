@@ -69,7 +69,7 @@ public static class TypeRenderer
         if (!elementType!.IsArray)
         {
             return builder
-                .AppendTypeName(elementType)
+                .RenderType(elementType)
                 .Append('[')
                 .Append(',', arrayType.GetArrayRank() - 1)
                 .Append(']');
@@ -85,7 +85,7 @@ public static class TypeRenderer
             elementType = elementType.GetElementType();
         }
 
-        builder.AppendTypeName(elementType);
+        builder.RenderType(elementType);
         foreach (int rank in ranks)
         {
             builder.Append('[')
@@ -115,10 +115,10 @@ public static class TypeRenderer
 
         if (genericTypes.Length > 0)
         {
-            builder.Append('<').AppendTypeName(genericTypes[0]);
+            builder.Append('<').RenderType(genericTypes[0]);
             for (i = 1; i < genericTypes.Length; i++)
             {
-                builder.Append(sep).AppendTypeName(genericTypes[i]);
+                builder.Append(sep).RenderType(genericTypes[i]);
             }
 
             builder.Append('>');
@@ -209,7 +209,7 @@ public static class TypeRenderer
         {
             if (!t.IsTuple)
             {
-                sb.AppendTypeName(t);
+                sb.RenderType(t);
             }
             else
             {
@@ -220,22 +220,22 @@ public static class TypeRenderer
     
     
 
-    private static StringBuilder AppendTypeName(this StringBuilder builder, Type? type)
+    internal static StringBuilder RenderType(this StringBuilder builder, Type? type)
     {
         if (type is null)
-            return builder.Append("〈null〉");
+            return builder.Append("`null`");
 
         if (_typeAliases.TryGetValue(type, out var alias))
             return builder.Append(alias);
 
         if (type.IsPointer)
         {
-            return builder.AppendTypeName(type.GetElementType()).Append('*');
+            return builder.RenderType(type.GetElementType()).Append('*');
         }
 
         if (type.IsByRef)
         {
-            return builder.AppendTypeName(type.GetElementType()).Append('&');
+            return builder.RenderType(type.GetElementType()).Append('&');
         }
 
         if (type.IsArray)
@@ -253,7 +253,7 @@ public static class TypeRenderer
                 return AppendComplexNestedName(builder, type, parent, genericTypes);
             }
 
-            builder.AppendTypeName(parent).Append('.');
+            builder.RenderType(parent).Append('.');
         }
 
         if (type.IsGenericType)
@@ -271,7 +271,7 @@ public static class TypeRenderer
             if (genericTypeDefinition == typeof(Nullable<>))
             {
                 Debug.Assert(genericTypes.Length == 1);
-                return builder.AppendTypeName(genericTypes[0]).Append('?');
+                return builder.RenderType(genericTypes[0]).Append('?');
             }
 
             return AppendNameAndGenericTypes(builder, type, genericTypes);
@@ -305,7 +305,7 @@ public static class TypeRenderer
 #endif
         {
             return new StringBuilder()
-                .AppendTypeName(typeof(T))
+                .RenderType(typeof(T))
                 .ToString();
         }
         
@@ -322,10 +322,10 @@ public static class TypeRenderer
         public static string Render(Type? type)
         {
             if (type is null)
-                return "〈null〉";
+                return "`null`";
 
             return new StringBuilder()
-                .AppendTypeName(type)
+                .RenderType(type)
                 .ToString();
         }
     }

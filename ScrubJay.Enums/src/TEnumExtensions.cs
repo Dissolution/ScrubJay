@@ -156,6 +156,18 @@ public static class TEnumExtensions
             get => EnumHelper<TEnum>.IsSigned;
         }
 
+        public static TEnum From(ulong u64)
+        {
+            Emit.Ldarg(nameof(u64));
+            return Return<TEnum>();
+        }
+        
+        public static TEnum From(long i64)
+        {
+            Emit.Ldarg(nameof(i64));
+            return Return<TEnum>();
+        }
+        
         
         public static Result<TEnum> TryParse(scoped text text, bool ignoreCase = true, bool includeAttributes = true)
         {

@@ -41,5 +41,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
         <InternalsVisibleTo Include="ScrubJay.Universal.Benchmarks"/>
+        <InternalsVisibleTo Include="ScrubJay.Enums"/>
+        <InternalsVisibleTo Include="ScrubJay.Exceptions"/>
     </ItemGroup>
 </Project>

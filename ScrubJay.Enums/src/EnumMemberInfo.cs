@@ -1,7 +1,16 @@
+#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-using System.ComponentModel;
+#elif NET6_0_OR_GREATER
+using System.Collections.Immutable;
+#else
+using System.Collections.ObjectModel;
+#endif
+
+#if NET6_0_OR_GREATER
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+#endif
+
+using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -10,77 +19,85 @@ namespace ScrubJay.Enums;
 [PublicAPI]
 public abstract class EnumMemberInfo
 {
-    protected readonly Enum _enumMember;
+    protected readonly Enum _enum;
     protected readonly string _name;
-    protected readonly FrozenDictionary<string, string?> _aliases;
+#if NET8_0_OR_GREATER
+    protected readonly FrozenDictionary<string, string> _aliases;
+#elif NET6_0_OR_GREATER
+    protected readonly ImmutableDictionary<string, string> _aliases;
+#else
+    protected readonly ReadOnlyDictionary<string, string> _aliases;
+#endif
     protected readonly Attribute[] _attributes;
 
-    public Enum Member => _enumMember;
+    public Enum Enum => _enum;
 
     protected EnumMemberInfo(FieldInfo memberField)
     {
-        _enumMember = (Enum)memberField.GetValue(null)!;
+        _enum = (Enum)memberField.GetValue(null)!;
         _name = memberField.Name;
         _attributes = Attribute.GetCustomAttributes(memberField);
-        
-        var aliases = new Dictionary<string, string?>();
+
+        var aliases = new Dictionary<string, string>();
         foreach (var attribute in _attributes)
         {
+#if NET6_0_OR_GREATER
             if (attribute is DisplayAttribute displayAttribute)
             {
-                aliases["Display.Name"] = displayAttribute.Name;
+                addAlias("Display.Name", displayAttribute.Name);
+                addAlias("Display.Description", displayAttribute.Description);
+                addAlias("Display.ShortName", displayAttribute.ShortName);
+                addAlias("Display", displayAttribute.Name ?? displayAttribute.Description ?? displayAttribute.ShortName);
+            }
+            else
+#endif
+            if (attribute is DescriptionAttribute descriptionAttribute)
+            {
+                addAlias("Description", descriptionAttribute.Description);
             }
             else if (attribute is EnumMemberAttribute enumMemberAttribute)
             {
-                if (enumMemberAttribute.IsValueSetExplicitly)
-                {
-                    aliases["EnumMember.Value"] = enumMemberAttribute.Value;
-                }
+                addAlias("EnumMember", enumMemberAttribute.Value);
             }
-            else if (attribute is DescriptionAttribute descriptionAttribute)
+            else if (attribute is DataMemberAttribute dataMemberAttribute)
             {
-                
+                addAlias("DataMember", dataMemberAttribute.Name);
             }
         }
 
-    }
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
+        aliases.TrimExcess();
+#endif
+#if NET8_0_OR_GREATER
+        _aliases = aliases.ToFrozenDictionary();
+#elif NET6_0_OR_GREATER
+        _aliases = aliases.ToImmutableDictionary();
+#else
+        _aliases = new(aliases);
+#endif
 
-    public Result<Enum> TryParse(scoped text text, StringComparison comparison = StringComparison.Ordinal)
-    {
-        if (text.Equate(_name, comparison))
-            return _enumMember;
-        if (_aliases is not null)
+        return;
+
+        void addAlias(string name, string? alias)
         {
-            foreach (var alias in _aliases)
+            if (alias is not null)
             {
-                if (text.Equate(alias, comparison))
-                    return _enumMember;
+                aliases[name] = alias;
             }
         }
-        if (long.TryParse(text, NumberStyles.Any, null, out var i64))
-        {
-            if (i64 == _i64Value)
-                return _enumMember;
-        }
-        return Ex.Parse(text, )
     }
 }
 
-public class EnumMemberInfo<E> : EnumMemberInfo
-    where E : struct, Enum
+[PublicAPI]
+public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
+    where TEnum : struct, Enum
 {
-    protected readonly E _enum;
+    internal readonly TEnum _tenum;
 
-    public new E Member => _enum;
+    public TEnum Member => _tenum;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public long ToInt64() => _enum.ToInt64();
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong ToUInt64() => _enum.ToUInt64();
-    
-    public new Result<Enum> TryParse(scoped text text)
+    internal EnumMemberInfo(FieldInfo memberField) : base(memberField)
     {
-        
+        _tenum = (TEnum)memberField.GetValue(null)!;
     }
 }

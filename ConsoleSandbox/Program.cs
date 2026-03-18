@@ -29,12 +29,17 @@ foreach (var type in typeof(TestTypes).GetNestedTypes(BindingFlags.Public | Bind
         """).NewLine();
 }
 
+
 var c = code.ToStringAndDispose();
 
 BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
 Enum num = MethodImplAttributes.Async;
 
 
+var argex = new ArgumentException("didn't pass the smell test", "value");
+
+var message = argex.Message;
+var str = argex.ToString();
 
 
 Debugger.Break();

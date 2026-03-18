@@ -12,6 +12,9 @@
     <Project Path="ScrubJay.Enums/ScrubJay.Enums.Tests/ScrubJay.Enums.Tests.csproj" />
     <Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj" />
   </Folder>
+  <Folder Name="/ScrubJay.Exceptions/">
+    <Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj" />
+  </Folder>
   <Folder Name="/ScrubJay.Functional/">
     <Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
     <Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj" />

@@ -17,6 +17,8 @@ public static class EnumHelper<TEnum>
     public static readonly bool CanFitInI32;
     public static readonly bool CanFitInU64;
 
+    public static readonly int Size = Unsafe.SizeOf<TEnum>();
+    
     static EnumHelper()
     {
         var type = typeof(TEnum);
