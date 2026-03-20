@@ -1,265 +1,399 @@
-//
-//
-//#pragma warning disable CA1815, IDE0250, CA1001
-//
-//namespace ScrubJay.Text;
-//
-///// <summary>
-///// Provides a handler used to append interpolated strings into <see cref="TextBuilder"/> instances.
-///// </summary>
-///// <remarks>
-///// Heavily inspired by <see cref="DefaultInterpolatedStringHandler"/> and System.Text.AppendInterpolatedStringHandler
-///// </remarks>
-//[PublicAPI]
-//[InterpolatedStringHandler]
-//[MustDisposeResource(true)]
-//public ref struct InterpolatedText : IDisposable
-//{
-//    private Buffer<char> _buffer;
-//
-//    public readonly int Length
-//    {
-//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//        get => _buffer.Count;
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public InterpolatedText()
-//    {
-//        _buffer = new();
-//    }
-//    
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public InterpolatedText(Buffer<char> buffer)
-//    {
-//        _buffer = buffer;
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public InterpolatedText(int literalLength, int formattedCount)
-//    {
-//        _buffer = new(literalLength + (formattedCount * 16));
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public InterpolatedText(int literalLength, int formattedCount, Buffer<char> buffer)
-//    {
-//        _buffer = buffer;
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void AppendLiteral(string str)
-//    {
-//        _buffer.AddMany(str.AsSpan());
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void AppendFormatted(char ch)
-//    {
-//        _buffer.Add(ch);
-//    }
-//    
-//    public void AppendFormatted(char ch, int alignment)
-//    {
-//        if (alignment == 0)
-//            return;
-//
-//        if (alignment < 0)
-//        {
-//            // left align
-//            var span = _buffer.Allocate(-alignment);
-//            span[0] = ch;
-//            span[1..].Fill(' ');
-//        }
-//        else
-//        {
-//            // right align
-//            var span = _buffer.Allocate(alignment);
-//            span[..^1].Fill(' ');
-//            span[^1] = ch;
-//        }
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void AppendFormatted(string? str)
-//    {
-//        _buffer.AddMany(str.AsSpan());
-//    }
-//
-//    public void AppendFormatted(string? str, int alignment)
-//        => AppendFormatted(str.AsSpan(), alignment);
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void AppendFormatted(scoped text text)
-//    {
-//        _buffer.AddMany(text);
-//    }
-//
-//
-//    public void AppendFormatted(scoped text text, int alignment)
-//    {
-//        if (alignment == 0)
-//            return;
-//
-//
-//        if (alignment < 0)
-//        {
-//            // left align
-//            var span = _buffer.Allocate(-alignment);
-//            if (text.Length > span.Length)
-//            {
-//                text[..span.Length].CopyTo(span);
-//                return;
-//            }
-//
-//            span[..text.Length].CopyFrom(text);
-//            span[text.Length..].Fill(' ');
-//        }
-//        else
-//        {
-//            // right align
-//            var span = _buffer.Allocate(alignment);
-//            if (text.Length > span.Length)
-//            {
-//                text[^span.Length..].CopyTo(span);
-//                return;
-//            }
-//
-//            span[..text.Length].Fill(' ');
-//            span[text.Length..].CopyFrom(text);
-//        }
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void AppendFormatted<T>(T? value)
-//#if NET9_0_OR_GREATER
-//        where T : allows ref struct
-//#endif
-//    {
-//        _buffer.AddMany(Any.ToString<T>(value));
-//    }
-//
-//    public void AppendFormatted<T>(T? value, scoped text format)
-//#if NET9_0_OR_GREATER
-//        where T : allows ref struct
-//#endif
-//    {
-//        if (format.Length == 0)
-//        {
-//            AppendFormatted<T>(value);
-//        }
-//        else if (format.Equate('@'))
-//        {
-//            // render
-//            _buffer.AddMany(value.Render());
-//        }
-//        else
-//        {
-//            // no other valid formats?
-//            Debugger.Break();
-//            throw Ex.NotImplemented();
-//        }
-//    }
-//
-//    public void AppendFormatted<T>(T? value, string? format)
-//    {
-//        if (_builder is null)
-//        {
-//            if (format.Equate('@'))
-//            {
-//                // render this value
-//                _buffer.AddMany(value.Render());
-//            }
-//            else if (value is IFormattable)
-//            {
-//#if NET6_0_OR_GREATER
-//                if (value is ISpanFormattable)
-//                {
-//                    int charsWritten;
-//                    while (!((ISpanFormattable)value).TryFormat(_buffer.Available, out charsWritten, format, null))
-//                    {
-//                        _buffer.Grow();
-//                    }
-//
-//                    _buffer.Count += charsWritten;
-//                    return;
-//                }
-//#endif
-//
-//                _buffer.AddMany(((IFormattable)value).ToString(format, null));
-//            }
-//            else if (value is not null)
-//            {
-//                _buffer.AddMany(value.ToString());
-//            }
-//        }
-//        else
-//        {
-//            _builder.Format<T>(value, format);
-//        }
-//    }
-//
-//#if !NET9_0_OR_GREATER
-//    public void AppendFormatted<T>(ReadOnlySpan<T> span)
-//    {
-//        AppendLiteral(span.ToString());
-//    }
-//
-//    public void AppendFormatted<T>(ReadOnlySpan<T> span, string? format)
-//    {
-//        if (format.Equate('@'))
-//        {
-//            AppendLiteral(span.Render());
-//        }
-//        else
-//        {
-//            AppendLiteral(span.ToString());
-//        }
-//    }
-//#endif
-//
-//    [HandlesResourceDisposal]
-//    public void Dispose()
-//    {
-//        if (_builder is null)
-//        {
-//            _buffer.Dispose();
-//        }
-//        else
-//        {
-//            Debug.Assert(_buffer.Count == 0);
-//        }
-//    }
-//
-//    [HandlesResourceDisposal]
-//    public string ToStringAndDispose()
-//    {
-//        string str = this.ToString();
-//        this.Dispose();
-//        return str;
-//    }
-//
-//    public Span<char> AsSpan()
-//    {
-//        if (_builder is null)
-//        {
-//            return _buffer.Written;
-//        }
-//        else
-//        {
-//            return _builder.Written;
-//        }
-//    }
-//
-//    public override string ToString()
-//    {
-//        if (_builder is null)
-//        {
-//            return _buffer.Written.AsString();
-//        }
-//        else
-//        {
-//            return _builder.ToString();
-//        }
-//    }
-//}
+using ScrubJay.Text.Pooling;
+using ScrubJay.Text.Utilities;
+// ReSharper disable MergeCastWithTypeCheck
+
+namespace ScrubJay.Text;
+
+[PublicAPI]
+[InterpolatedStringHandler]
+public ref struct InterpolatedText
+{
+    // more aggressive that DefaultISH
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static int GetDefaultLength(int literalLength, int formattedCount)
+        => literalLength + (formattedCount * 16);
+
+
+    private char[]? _charArray;
+    private Span<char> _charSpan;
+    private int _position;
+
+    public Span<char> Written
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _charSpan.Slice(0, _position);
+    }
+
+    internal Span<char> Available
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _charSpan.Slice(_position);
+    }
+
+    public readonly int Length
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _position;
+    }
+
+    public readonly int Capacity
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _charSpan.Length;
+    }
+
+    public InterpolatedText(int literalLength, int formattedCount)
+    {
+        _charSpan = _charArray = TextPool.Rent(GetDefaultLength(literalLength, formattedCount));
+        _position = 0;
+    }
+
+    public InterpolatedText(int literalLength, int formattedCount, Span<char> initialBuffer)
+    {
+        _charSpan = initialBuffer;
+        _position = 0;
+    }
+
+    public InterpolatedText(Span<char> initialBuffer)
+    {
+        _charSpan = initialBuffer;
+        _position = 0;
+    }
+
+#region Grow
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void GrowBy(int additionalChars)
+    {
+        Debug.Assert(additionalChars > _charSpan.Length - _position);
+        char[] newArray = TextPool.Rent((_charSpan.Length + additionalChars) * 2);
+        TextHelper.Notsafe.CopyBlock(_charSpan, newArray, _position);
+        char[]? toReturn = _charArray;
+        _charSpan = _charArray = newArray;
+        TextPool.Return(toReturn);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void Grow()
+    {
+        char[] newArray = TextPool.Rent(_charSpan.Length * 2);
+        TextHelper.Notsafe.CopyBlock(_charSpan, newArray, _position);
+        char[]? toReturn = _charArray;
+        _charSpan = _charArray = newArray;
+        TextPool.Return(toReturn);
+    }
+
+    
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void GrowThenCopyString(string str)
+    {
+        int len = str.Length;
+        GrowBy(len);
+        TextHelper.Notsafe.CopyBlock(str, Available, len);
+        _position += len;
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void GrowThenCopySpan(scoped text text)
+    {
+        int len = text.Length;
+        GrowBy(len);
+        TextHelper.Notsafe.CopyBlock(text, Available, len);
+        _position += len;
+    }
+#endregion
+
+
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AppendLiteral(string str)
+    {
+        Debug.Assert(str is not null);
+        if (TextHelper.TryCopyTo(str, Available))
+        {
+            _position += str.Length;
+        }
+        else
+        {
+            GrowThenCopyString(str);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AppendFormatted(ref readonly char ch)
+    {
+        if (_position < Capacity)
+        {
+            _charSpan[_position] = ch;
+            _position++;
+        }
+        else
+        {
+            GrowThenCopySpan(ch.AsSpan());
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AppendFormatted(scoped text text)
+    {
+        if (TextHelper.TryCopyTo(text, Available))
+        {
+            _position += text.Length;
+        }
+        else
+        {
+            GrowThenCopySpan(text);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AppendFormatted(string? str)
+    {
+        if (str is not null)
+        {
+            AppendLiteral(str);
+        }
+    }
+
+    public void AppendFormatted<T>(T value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        string? str;
+
+        if (value is IFormattable)
+        {
+#if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                // constrained call avoiding boxing for value types
+                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
+                {
+                    Grow();
+                }
+
+                _position += charsWritten;
+                return;
+            }
+#endif
+
+            // constrained call avoiding boxing for value types
+            str = ((IFormattable)value).ToString(default, default);
+        }
+        else
+        {
+            str = value.ToString();
+        }
+
+        if (str is not null)
+        {
+            AppendLiteral(str);
+        }
+    }
+
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        string? str;
+
+        if (value is IFormattable)
+        {
+            #if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                // constrained call avoiding boxing for value types
+                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, format, default))
+                {
+                    Grow();
+                }
+
+                _position += charsWritten;
+                return;
+            }
+#endif
+            // constrained call avoiding boxing for value types
+            str = ((IFormattable)value).ToString(format, default);
+        }
+        else
+        {
+            str = value.ToString();
+        }
+
+        if (str is not null)
+        {
+            AppendLiteral(str);
+        }
+    }
+
+    /*
+
+
+
+
+
+    /// <summary>Writes the specified value to the handler.</summary>
+    /// <param name="value">The value to write.</param>
+    /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+    /// <typeparam name="T">The type of the value to write.</typeparam>
+    public void AppendFormatted<T>(T value, int alignment)
+    {
+        int startingPos = _position;
+        AppendFormatted(value);
+        if (alignment != 0)
+        {
+            AppendOrInsertAlignmentIfNeeded(startingPos, alignment);
+        }
+    }
+
+    /// <summary>Writes the specified value to the handler.</summary>
+    /// <param name="value">The value to write.</param>
+    /// <param name="format">The format string.</param>
+    /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+    /// <typeparam name="T">The type of the value to write.</typeparam>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        int startingPos = _position;
+        AppendFormatted(value, format);
+        if (alignment != 0)
+        {
+            AppendOrInsertAlignmentIfNeeded(startingPos, alignment);
+        }
+    }
+
+
+
+    /// <summary>Writes the specified string of chars to the handler.</summary>
+    /// <param name="value">The span to write.</param>
+    /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+    /// <param name="format">The format string.</param>
+    public void AppendFormatted(scoped text value, int alignment = 0, string? format = null)
+    {
+        bool leftAlign = false;
+        if (alignment < 0)
+        {
+            leftAlign = true;
+            alignment = -alignment;
+        }
+
+        int paddingRequired = alignment - value.Length;
+        if (paddingRequired <= 0)
+        {
+            // The value is as large or larger than the required amount of padding,
+            // so just write the value.
+            AppendFormatted(value);
+            return;
+        }
+
+        // Write the value along with the appropriate padding.
+        EnsureCapacityForAdditionalChars(value.Length + paddingRequired);
+        if (leftAlign)
+        {
+            value.CopyTo(_charSpan.Slice(_position));
+            _position += value.Length;
+            _charSpan.Slice(_position, paddingRequired).Fill(' ');
+            _position += paddingRequired;
+        }
+        else
+        {
+            _charSpan.Slice(_position, paddingRequired).Fill(' ');
+            _position += paddingRequired;
+            value.CopyTo(_charSpan.Slice(_position));
+            _position += value.Length;
+        }
+    }
+
+    /// <summary>Writes the specified value to the handler.</summary>
+    /// <param name="value">The value to write.</param>
+    /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+    /// <param name="format">The format string.</param>
+    public void AppendFormatted(string? value, int alignment = 0, string? format = null) =>
+        // Format is meaningless for strings and doesn't make sense for someone to specify.  We have the overload
+        // simply to disambiguate between ROS<char> and object, just in case someone does specify a format, as
+        // string is implicitly convertible to both. Just delegate to the T-based implementation.
+        AppendFormatted<string?>(value, alignment, format);
+
+
+    /// <summary>Handles adding any padding required for aligning a formatted value in an interpolation expression.</summary>
+    /// <param name="startingPos">The position at which the written value started.</param>
+    /// <param name="alignment">Non-zero minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+    private void AppendOrInsertAlignmentIfNeeded(int startingPos, int alignment)
+    {
+        Debug.Assert(startingPos >= 0 && startingPos <= _position);
+        Debug.Assert(alignment != 0);
+
+        int charsWritten = _position - startingPos;
+
+        bool leftAlign = false;
+        if (alignment < 0)
+        {
+            leftAlign = true;
+            alignment = -alignment;
+        }
+
+        int paddingNeeded = alignment - charsWritten;
+        if (paddingNeeded > 0)
+        {
+            EnsureCapacityForAdditionalChars(paddingNeeded);
+
+            if (leftAlign)
+            {
+                _charSpan.Slice(_position, paddingNeeded).Fill(' ');
+            }
+            else
+            {
+                _charSpan.Slice(startingPos, charsWritten).CopyTo(_charSpan.Slice(startingPos + paddingNeeded));
+                _charSpan.Slice(startingPos, paddingNeeded).Fill(' ');
+            }
+
+            _position += paddingNeeded;
+        }
+    }
+
+    /// <summary>Ensures <see cref="_charSpan"/> has the capacity to store <paramref name="additionalChars"/> beyond <see cref="_position"/>.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void EnsureCapacityForAdditionalChars(int additionalChars)
+    {
+        if (_charSpan.Length - _position < additionalChars)
+        {
+            GrowBy(additionalChars);
+        }
+    }
+
+    */
+
+
+
+
+
+    [HandlesResourceDisposal]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Dispose()
+    {
+        char[]? toReturn = _charArray;
+
+        // Defensive clear
+        this = default;
+
+        TextPool.Return(toReturn);
+    }
+    
+    [HandlesResourceDisposal]
+    public string ToStringAndDispose()
+    {
+        string result = ToString();
+        Dispose();
+        return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override string ToString() => Written.ToString();
+}

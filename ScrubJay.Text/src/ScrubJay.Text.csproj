@@ -5,7 +5,9 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
         <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
     </PropertyGroup>
 
@@ -17,21 +19,35 @@
         <Description>
             Utilities for working with text.
         </Description>
-        <Version>0.91.0-alpha</Version>
+        <Version>0.1.0-alpha</Version>
     </PropertyGroup>
 
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Universal"/>
+        
+        <Using Include="ScrubJay.Text.Extensions"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.ObjectPool" />
         <PackageReference Include="Polyfill">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Fody">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="InlineIL.Fody">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>        
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Functional\src\ScrubJay.Functional.csproj" />
+      <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
     </ItemGroup>
     
 </Project>
