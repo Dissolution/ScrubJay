@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Polyfill"/>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
         <PackageReference Include="Fody">

@@ -17,6 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.Text.Json" />
         <ProjectReference Include="..\ScrubJay.Core\src\ScrubJay.Core.csproj"/>
         <ProjectReference Include="..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />
         <ProjectReference Include="..\ScrubJay.Exceptions\src\ScrubJay.Exceptions.csproj" />

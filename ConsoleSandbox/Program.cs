@@ -1,14 +1,16 @@
-﻿#pragma warning disable
+﻿#pragma warning disable all
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using ScrubJay.Enums;
+using System.Runtime.ExceptionServices;
+using ScrubJay.Exceptions;
 using ScrubJay.Rendering.Rendition5;
 using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 using ScrubJay.Universal.Tests.Internal;
 using ScrubJay.Validation;
+using Ex = ScrubJay.Exceptions.Ex;
 
 var code = new TextBuilder();
 
@@ -30,6 +32,27 @@ foreach (var type in typeof(TestTypes).GetNestedTypes(BindingFlags.Public | Bind
 }
 
 
+Index index = ^2;
+
+//var ex = new ArgumentOutOfRangeException(
+//    message: "was invalid", 
+//    paramName: nameof(index), 
+//    actualValue: index);
+
+
+
+var ex = Ex.Argument(index);
+
+var edi = ExceptionDispatchInfo.Capture(ex);
+var sex = edi.SourceException;
+
+var exStr = ex.ToString();
+var exMsg = ex.Message;
+var info = ex.HResultInfo;
+
+Debugger.Break();
+
+
 var c = code.ToStringAndDispose();
 
 BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
@@ -40,6 +63,7 @@ var argex = new ArgumentException("didn't pass the smell test", "value");
 
 var message = argex.Message;
 var str = argex.ToString();
+
 
 
 Debugger.Break();

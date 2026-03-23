@@ -168,7 +168,7 @@ partial class Any
         static GetHashCodeCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? getHashCodeMethod = instanceType.FindBestMethod<AnyGetHashCode>(nameof(object.GetHashCode));
+            MethodInfo? getHashCodeMethod = instanceType.FindBestMethod("GetHashCode", typeof(int), []);
 
             if (getHashCodeMethod is not null)
             {

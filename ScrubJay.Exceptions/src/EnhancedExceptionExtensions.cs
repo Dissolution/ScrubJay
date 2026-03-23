@@ -5,7 +5,7 @@ namespace ScrubJay.Exceptions;
 public static class EnhancedExceptionExtensions
 {
     extension<E>(E ex)
-        where E : Exception, IEnhancedException
+        where E : Exception
     {
         public Uri HResultInfo => new HResult(ex.HResult).InfoUri;
 
@@ -20,20 +20,18 @@ public static class EnhancedExceptionExtensions
 
     internal static StringBuilder RenderArgument(this StringBuilder builder, Argument argument)
     {
-        builder.Append("Argument (");
-        
         if (argument.IsNull)
         {
-            return builder.Append("null)");
+            return builder.Append("null");
         }
         
         if (argument.Name is not null)
         {
-            builder.Append(argument.Name);
+            builder.Append($"\"{argument.Name}\"");
             
             if (argument.Type is not null)
             {
-                builder.Append(": ");
+                builder.Append(' ');
             }
             else if (argument.ValueString is not null)
             {
@@ -41,29 +39,32 @@ public static class EnhancedExceptionExtensions
             }
             else
             {
-                return builder.Append(" = null)");
+                return builder.Append(" = null");
             }
         }
 
         if (argument.Type is not null)
         {
-            builder.RenderType(argument.Type);
+            builder
+                .Append('(')
+                .RenderType(argument.Type)
+                .Append(')');
             
             if (argument.ValueString is not null)
             {
                 builder.Append(" = ");
             }
         }
-
+        
         if (argument.ValueString is not null)
         {
-            builder.Append(argument.ValueString);
+            builder.Append($"`{argument.ValueString}`");
         }
         else
         {
             builder.Append("null");
         }
 
-        return builder.Append(')');
+        return builder;
     }
 }

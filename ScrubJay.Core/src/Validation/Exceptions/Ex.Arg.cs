@@ -36,7 +36,7 @@ partial class Ex
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => builder.AppendArgument(argumentName, Any.GetType<T>(argument), Any.ToString<T>(argument));
+        => builder.AppendArgument(argumentName, Any.GetType<T>(in argument), Any.ToString<T>(in argument));
 
     internal static string GetArgExceptionMessage(string? argumentName, Type argumentType, string? argumentString, string? info)
     {
@@ -67,7 +67,7 @@ partial class Ex
     {
         return TextBuilder.New
             .Append("Argument ")
-            .AppendArgument(argumentName, Any.GetType<T>(argument), Any.ToString(argument))
+            .AppendArgument(argumentName, Any.GetType<T>(in argument), Any.ToString(in argument))
             .Append("was invalid")
             .IfNotEmpty(info, static (tb, n) => tb.Append(": ").Write(n))
             .ToStringAndDispose();
@@ -82,7 +82,7 @@ partial class Ex
     {
         return TextBuilder.New
             .Append("Argument ")
-            .AppendArgument(argumentName, Any.GetType<T>(argument), Any.ToString(argument))
+            .AppendArgument(argumentName, Any.GetType<T>(in argument), Any.ToString(in argument))
             .Append("was invalid")
             .IfNotEmpty(ref info, static (tb, ref n) => tb.Append(": ").Append(ref n))
             .ToStringAndDispose();

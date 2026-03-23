@@ -384,7 +384,7 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return Any.GetHashCode<T>(_value);
+            return Any.GetHashCode<T>(in _value);
         }
 
         return _error!.GetHashCode();
@@ -395,7 +395,7 @@ public readonly ref struct RefResult<T>
         if (_isOk)
         {
 #if NET9_0_OR_GREATER
-            return $"Ok({Any.ToString(_value)})";
+            return $"Ok({Any.ToString(in _value)})";
 #else
             return $"Ok({_value})";
 #endif

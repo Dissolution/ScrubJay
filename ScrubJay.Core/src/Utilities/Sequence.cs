@@ -410,47 +410,47 @@ public static class Sequence
 #region where T : IComparable<T>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T[]? left, T[]? right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(T[]? left, T[]? right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => new ReadOnlySpan<T>(left).SequenceCompareTo(new ReadOnlySpan<T>(right));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T[]? left, Span<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(T[]? left, Span<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => new ReadOnlySpan<T>(left).SequenceCompareTo(right);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T[]? left, ReadOnlySpan<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(T[]? left, ReadOnlySpan<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => new ReadOnlySpan<T>(left).SequenceCompareTo(right);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(Span<T> left, T[]? right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(Span<T> left, T[]? right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(new ReadOnlySpan<T>(right));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(Span<T> left, Span<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(Span<T> left, Span<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(right);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(Span<T> left, ReadOnlySpan<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(Span<T> left, ReadOnlySpan<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(right);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(ReadOnlySpan<T> left, T[]? right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(ReadOnlySpan<T> left, T[]? right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(new ReadOnlySpan<T>(right));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(ReadOnlySpan<T> left, Span<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(ReadOnlySpan<T> left, Span<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(right);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(ReadOnlySpan<T> left, ReadOnlySpan<T> right, TypeConstraints.IsComparable<T> _ = default)
+    public static int Compare<T>(ReadOnlySpan<T> left, ReadOnlySpan<T> right, TypeConstraints.HasIComparable<T> _ = default)
         where T : IComparable<T>
         => left.SequenceCompareTo(right);
 
@@ -1267,11 +1267,11 @@ public static class Sequence
 
 #region StartsWith
 
-    public static bool StartsWith<T>(ReadOnlySpan<T> source, ReadOnlySpan<T> match, TypeConstraints.IsEquatable<T> _ = default)
+    public static bool StartsWith<T>(ReadOnlySpan<T> source, ReadOnlySpan<T> match, TypeConstraints.HasIEquatable<T> _ = default)
         where T : IEquatable<T>
         => source.StartsWith(match);
 
-    public static bool StartsWith<T>(ReadOnlySpan<T> source, T[]? match, TypeConstraints.IsEquatable<T> _ = default)
+    public static bool StartsWith<T>(ReadOnlySpan<T> source, T[]? match, TypeConstraints.HasIEquatable<T> _ = default)
         where T : IEquatable<T>
         => source.StartsWith(new ReadOnlySpan<T>(match));
 
@@ -1294,11 +1294,11 @@ public static class Sequence
 
 #region EndsWith
 
-    public static bool EndsWith<T>(ReadOnlySpan<T> source, ReadOnlySpan<T> match, TypeConstraints.IsEquatable<T> _ = default)
+    public static bool EndsWith<T>(ReadOnlySpan<T> source, ReadOnlySpan<T> match, TypeConstraints.HasIEquatable<T> _ = default)
         where T : IEquatable<T>
         => source.EndsWith(match);
 
-    public static bool EndsWith<T>(ReadOnlySpan<T> source, T[]? match, TypeConstraints.IsEquatable<T> _ = default)
+    public static bool EndsWith<T>(ReadOnlySpan<T> source, T[]? match, TypeConstraints.HasIEquatable<T> _ = default)
         where T : IEquatable<T>
         => source.EndsWith(new ReadOnlySpan<T>(match));
 

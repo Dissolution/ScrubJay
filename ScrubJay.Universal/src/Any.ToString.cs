@@ -84,7 +84,7 @@ static partial class Any
         static ToStringCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? toStringMethod = instanceType.FindBestMethod<AnyToString>(nameof(object.ToString));
+            MethodInfo? toStringMethod = instanceType.FindBestMethod("ToString", typeof(string), []);
 
             if (toStringMethod is not null)
             {

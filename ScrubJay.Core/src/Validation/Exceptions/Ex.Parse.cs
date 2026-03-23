@@ -16,8 +16,8 @@ partial class Ex
     {
         return new ParseException(inputName)
         {
-            InputType = Any.GetType<I>(input),
-            InputString = Any.ToString<I>(input),
+            InputType = Any.GetType<I>(in input),
+            InputString = Any.ToString<I>(in input),
             OutputType = typeof(O),
             Info = info,
         };

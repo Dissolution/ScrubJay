@@ -6,6 +6,7 @@ namespace ScrubJay.Text;
 
 [PublicAPI]
 [InterpolatedStringHandler]
+[MustDisposeResource(true)]
 public ref struct InterpolatedText
 {
     // more aggressive that DefaultISH
@@ -395,5 +396,5 @@ public ref struct InterpolatedText
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override string ToString() => Written.ToString();
+    public readonly override string ToString() => _charSpan.Slice(0, _position).ToString();
 }

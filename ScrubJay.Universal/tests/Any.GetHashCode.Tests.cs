@@ -10,7 +10,7 @@ public class Any_GetHashCode_Tests
     [InlineData(int.MaxValue)]
     public void CanGetHashCodeInt(int i32)
     {
-        int hashcode = Any.GetHashCode<int>(i32);
+        int hashcode = Any.GetHashCode<int>(in i32);
 
         Assert.Equal(
             i32.GetHashCode(),
@@ -25,7 +25,7 @@ public class Any_GetHashCode_Tests
     [InlineData("TRJ-147")]
     public void CanGetHashCodeString(string? str)
     {
-        int hashcode = Any.GetHashCode<string>(str);
+        int hashcode = Any.GetHashCode<string>(in str);
 
         Assert.Equal(
             str?.GetHashCode() ?? 0,
@@ -39,7 +39,7 @@ public class Any_GetHashCode_Tests
     [InlineData((char)0xD800)]
     public void CanGetHashCodeChar(char ch)
     {
-        int hashcode = Any.GetHashCode<char>(ch);
+        int hashcode = Any.GetHashCode<char>(in ch);
 
         Assert.Equal(
             ch.GetHashCode(),
@@ -67,7 +67,7 @@ public class Any_GetHashCode_Tests
             Assert.IsType<NotSupportedException>(ex);
         }
 
-        hashcode = Any.GetHashCode(ros);
+        hashcode = Any.GetHashCode(in ros);
         Assert.True(hashcode == 0);
     }
 }

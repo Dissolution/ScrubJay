@@ -104,7 +104,7 @@ partial class Validate
 
     {
 
-        if (Any.Equals(actual, expected))
+        if (Any.Equals(in actual, expected))
 
             return actual;
 
@@ -124,7 +124,7 @@ partial class Validate
 
     {
 
-        if (!Any.Equals(actual, expected))
+        if (!Any.Equals(in actual, expected))
 
             return actual;
 

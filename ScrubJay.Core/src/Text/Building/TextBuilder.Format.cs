@@ -48,7 +48,7 @@ partial class TextBuilder
         }
         else if (format.Equate("@T"))
         {
-            return this.Render(Any.GetType(value));
+            return this.Render(Any.GetType(in value));
         }
         else if (value is IFormattable)
         {
@@ -87,7 +87,7 @@ partial class TextBuilder
         }
         else if (format.Equate("@T"))
         {
-            return this.Render(Any.GetType(value));
+            return this.Render(Any.GetType(in value));
         }
         else if (value is IFormattable)
         {

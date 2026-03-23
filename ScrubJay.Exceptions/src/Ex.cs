@@ -42,13 +42,13 @@ public static partial class Ex
     }
 
     public static EnhancedArgumentException Argument<T>(
-        T? argument,
+        ref readonly T? argument,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        return new(Exceptions.Argument.Create<T>(argument, argumentName));
+        return new(Exceptions.Argument.Create<T>(in argument, argumentName));
     }
 }

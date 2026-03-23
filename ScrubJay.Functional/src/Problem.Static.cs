@@ -30,7 +30,7 @@ partial class Problem
 #endif
     {
         var builder = new StringBuilder()
-            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {Type.Render<T>()} = `{Any.ToString(argument)}` is invalid");
+            .Append($"Argument \"{argumentName ?? nameof(argument)}\": {Type.Render<T>()} = `{Any.ToString(in argument)}` is invalid");
 
         if (info is not null)
         {
@@ -50,8 +50,8 @@ partial class Problem
                    Data =
                    {
                        { "ArgumentName", argumentName },
-                       { "ArgumentType", Any.GetType(argument) },
-                       { "ArgumentValueString", Any.ToString(argument) },
+                       { "ArgumentType", Any.GetType(in argument) },
+                       { "ArgumentValueString", Any.ToString(in argument) },
                    },
                };
     }
@@ -88,7 +88,7 @@ partial class Problem
                    Data =
                    {
                        { "ArgumentName", argumentName },
-                       { "ArgumentType", Any.GetType(argument) },
+                       { "ArgumentType", Any.GetType(in argument) },
                    },
                };
     }

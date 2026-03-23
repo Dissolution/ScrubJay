@@ -13,7 +13,7 @@ partial class Ex
     {
         var message = GetArgExceptionMessage<T>(argument, argumentName, info);
         if (!Any.TryBox(argument, out var boxed))
-            boxed = Any.ToString(argument);
+            boxed = Any.ToString(in argument);
         return new ArgumentOutOfRangeException(argumentName, boxed, message);
     }
 
@@ -29,7 +29,7 @@ partial class Ex
     {
         var message = GetArgExceptionMessage<T>(argument, argumentName, ref info);
         if (!Any.TryBox(argument, out var boxed))
-            boxed = Any.ToString(argument);
+            boxed = Any.ToString(in argument);
         return new ArgumentOutOfRangeException(argumentName, boxed, message);
     }
 

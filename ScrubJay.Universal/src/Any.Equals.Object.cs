@@ -43,6 +43,7 @@ partial class Any
     /// <param name="other">
     /// The <see cref="object"/> to compare.
     /// </param>
+    /// <param name="_"></param>
     /// <typeparam name="T">
     /// The <see cref="Type"/> of <paramref name="value"/> to compare to the <see cref="object"/>.
     /// </typeparam>
@@ -72,7 +73,7 @@ partial class MethodCache<T>
     {
         Type instanceType = typeof(T);
 
-        MethodInfo? equalsMethod = instanceType.FindMethod("Equals", typeof(bool), typeof(object));
+        MethodInfo? equalsMethod = instanceType.FindBestMethod("Equals", typeof(bool), typeof(object));
 
         if (equalsMethod is null)
             return EqualsObjectFallback;

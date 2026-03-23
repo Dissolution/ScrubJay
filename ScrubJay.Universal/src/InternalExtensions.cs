@@ -69,54 +69,8 @@ internal static class InternalExtensions
 
     extension(Type? type)
     {
-        private MethodInfo? FindMethod(BindingFlags flags,
-            string name,
-            Type returnType,
-            params Type[] parameterTypes)
+        internal MethodInfo? FindBestMethod(string name, Type returnType, params Type[] parameterTypes)
         {
-            if (type is null)
-                return null;
-
-            var methods = type.GetMethods(flags);
-
-            foreach (var method in methods)
-            {
-                if (method.Name.Equals(
-                        name,
-                        StringComparison.OrdinalIgnoreCase)
-                    && method.ReturnType == returnType)
-                {
-                    var parameters = method.GetParameters();
-
-                    if (parameters.Length != parameterTypes.Length)
-                        continue;
-
-                    bool match = true;
-
-                    for (var p = 0; p < parameters.Length; p++)
-                    {
-                        if (parameters[p].ParameterType != parameterTypes[p])
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-
-                    if (match)
-                        return method;
-                }
-            }
-
-            return null;
-        }
-
-        internal MethodInfo? FindBestMethod<D>(string name)
-            where D : Delegate
-        {
-            var invokeMethod = typeof(D).GetMethod("Invoke")!;
-            Type returnType = invokeMethod.ReturnType;
-            Type[] parameterTypes = Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType);
-
             Func<MethodInfo, bool> isMatchingMethod = m =>
             {
                 if (m.Name != name || !m.ReturnType.IsAssignableTo(returnType))
@@ -147,37 +101,6 @@ internal static class InternalExtensions
                 type = type.BaseType;
             }
             return null;
-        }
-        
-        public MethodInfo? FindMethod(string name,
-            Type returnType,
-            params Type[] parameterTypes)
-        {
-            if (type is null)
-                return null;
-
-            BindingFlags flags;
-
-            // Enums
-            if (type.IsEnum)
-            {
-                // Enum instances use the methods on Enum
-                type = typeof(Enum);
-            }
-
-            // look for an instance method
-            flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-
-            // enum, ref-like, and value types we constrain
-            if (type.IsEnum || type.IsByRefLike || type.IsByRefLike || type.IsValueType)
-            {
-                flags |= BindingFlags.DeclaredOnly;
-            }
-
-            return type.FindMethod(flags,
-                name,
-                returnType,
-                parameterTypes);
         }
     }
 

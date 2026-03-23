@@ -178,7 +178,7 @@ internal partial class MethodCache<T>
     private static Func<T?, T?, int> CreateCompareFunc()
     {
         Type instanceType = typeof(T);
-        MethodInfo? compareToMethod = instanceType.FindMethod("CompareTo", typeof(int), typeof(T));
+        MethodInfo? compareToMethod = instanceType.FindBestMethod("CompareTo", typeof(int), typeof(T));
 
         if (compareToMethod is null)
             return CompareFallback;

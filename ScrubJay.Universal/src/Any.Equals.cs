@@ -9,6 +9,33 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /*public static bool Equal<T>(in T? leftR, in T? rightR)
+    {
+
+    }
+
+    public static bool Equal<T>(ref readonly T? left, ref readonly T? right)
+    {
+        return EqualityComparer<T>.Default.Equals(left, right);
+    }
+
+    public static bool Equal<E>(ref readonly E? left, ref readonly E? right, TypeConstraints.HasIEquatable<E> _ = default)
+        where E : IEquatable<E>
+    {
+        if (left is not null)
+            return left.Equals(right);
+        if (right is not null)
+            return right.Equals(left);
+        return ReferenceEquals(left, right);
+    }
+
+    public static bool Equal<E>(ref readonly E? left, ref readonly E? right, TypeConstraints.HasIEqualityOperators<E> _ = default)
+        where E : IEqualityOperators<E, E, bool>
+    {
+        return left == right;
+    }*/
+
+
     /// <summary>
     /// Determines whether two <typeparamref name="T"/> values are equal.
     /// </summary>
@@ -46,13 +73,19 @@ partial class Any
     /// <returns>
     /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
-    public static bool Equals<T>(T? left, T? right, IEqualityComparer<T>? comparer)
+    public static bool Equals<T>(in T? left, T? right, IEqualityComparer<T>? comparer)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
         if (comparer is null)
+        {
+#if NET9_0_OR_GREATER
+            return Equals(in left, right);
+#else
             return Equals(left, right);
+#endif
+        }
         return comparer.Equals(left!, right!);
     }
 
@@ -203,7 +236,7 @@ partial class Any
         static EqualsCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? equalsMethod = instanceType.FindBestMethod<AnyEquals>(nameof(object.Equals));
+            MethodInfo? equalsMethod = instanceType.FindBestMethod("Equals", typeof(bool), [typeof(T)]);
 
             if (equalsMethod is not null)
             {

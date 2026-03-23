@@ -326,7 +326,7 @@ public readonly ref struct RefOption<T>
     {
         if (_isSome)
         {
-            return Any.GetHashCode<T>(_value);
+            return Any.GetHashCode<T>(in _value);
         }
 
         return 0;
@@ -337,7 +337,7 @@ public readonly ref struct RefOption<T>
         if (_isSome)
         {
 #if NET9_0_OR_GREATER
-            return $"Some({Any.ToString(_value)})";
+            return $"Some({Any.ToString(in _value)})";
 #else
             return $"Some({_value})";
 #endif

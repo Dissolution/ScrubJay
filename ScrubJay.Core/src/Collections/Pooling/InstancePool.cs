@@ -46,13 +46,13 @@ public static class InstancePool
     }
 
 
-    public static InstancePool<T> Default<T>(TypeConstraints.IsNew<T> _ = default)
+    public static InstancePool<T> Default<T>(TypeConstraints.HasNew<T> _ = default)
         where T : class, new()
         => new(new InstancePoolPolicy<T>(static () => new()));
 
     public static InstancePool<T> Default<T>(
-        TypeConstraints.IsDisposable<T> _ = default,
-        TypeConstraints.IsNew<T> __ = default)
+        TypeConstraints.HasIDisposable<T> _ = default,
+        TypeConstraints.HasNew<T> __ = default)
         where T : class, IDisposable, new()
         => new(new InstancePoolPolicy<T>(
             createInstance: static () => new(),

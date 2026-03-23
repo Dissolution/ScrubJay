@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <!--        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;net48;</TargetFrameworks>-->
+        <TargetFrameworks>net10.0;net6.0;</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Optimize>true</Optimize>
+        <IsPackable>false</IsPackable>
+
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <NoWarn>$(NoWarn);CS1591;CA1515;NU5104;</NoWarn>
+        <EnableNETAnalyzers>false</EnableNETAnalyzers>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>None</AnalysisMode>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\ScrubJay.Text.csproj"/>
+
+        <PackageReference Include="BenchmarkDotNet"/>
+        <PackageReference Include="JetBrains.Annotations"/>
+
+        <Using Include="BenchmarkDotNet.Attributes"/>
+        <Using Include="BenchmarkDotNet.Running"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="..\README.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Link>README.md</Link>
+        </None>
+        <None Update="..\..\LICENSE.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Link>LICENSE.txt</Link>
+        </None>
+    </ItemGroup>
+
+</Project>

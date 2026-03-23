@@ -1,5 +1,3 @@
-using ScrubJay.Functional;
-
 namespace ScrubJay.Enums;
 
 /// <summary>

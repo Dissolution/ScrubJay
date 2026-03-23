@@ -8,6 +8,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         
         <!-- Individual suppressions are located in `.editorconfig` -->
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
     </PropertyGroup>
 
     <!-- set code analysis rules -->
@@ -16,8 +17,11 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <AnalysisLevel>latest</AnalysisLevel>
         <AnalysisMode>All</AnalysisMode>
+        
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+        <WarningsAsErrors>CS9195;CS9192;</WarningsAsErrors>
+        
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 

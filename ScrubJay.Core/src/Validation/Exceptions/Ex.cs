@@ -39,7 +39,7 @@ public static partial class Ex
     {
         if (Any.TryBox<T>(argument, out object? boxed))
             return boxed;
-        return (object?)Any.ToString<T>(argument);
+        return (object?)Any.ToString<T>(in argument);
     }
 
 

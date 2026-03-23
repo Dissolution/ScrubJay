@@ -23,14 +23,18 @@ public sealed class AnyComparer<T> : IEqualityComparer<T>, IComparer<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
     {
-        return Any.Equals<T>(x, y);
+#if NET9_0_OR_GREATER
+        return Any.Equals<T>(in x, y);
+#else
+        return Any.Equals<T>(x,y);
+#endif
     }
 
-    /// <inheritdoc cref="Any.GetHashCode{T}(T)"/>
+    /// <inheritdoc cref="Any.GetHashCode{T}(ref readonly T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetHashCode(T obj)
     {
-        return Any.GetHashCode<T>(obj);
+        return Any.GetHashCode<T>(in obj);
     }
 
     /// <inheritdoc cref="Any.Compare{T}(T,T)"/>

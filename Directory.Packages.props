@@ -1,38 +1,39 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Helpful -->
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="Fody" Version="6.9.3" />
+    <PackageVersion Include="InlineIL.Fody" Version="1.10.1" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+    <PackageVersion Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+    <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.5" />
+    <PackageVersion Include="Polyfill" Version="9.22.0" />
+    <!-- Analyzers -->
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.302" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.19.0.132793" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.5" />
+    <PackageVersion Include="xunit.analyzers" Version="1.27.0" />
+   
+    <!-- Build -->
+    <PackageVersion Include="Microsoft.Build.Framework" Version="18.4.0" />
+    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.4.0" />
 
-    <ItemGroup>
-        <!-- Helpful -->
-        <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
-        <PackageVersion Include="Fody" Version="6.9.3"/>
-        <PackageVersion Include="InlineIL.Fody" Version="1.10.1"/>
-        <PackageVersion Include="System.Memory" Version="4.6.3"/>
-        <PackageVersion Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
-        <PackageVersion Include="System.Reflection.Emit" Version="4.7.0"/>
-        <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="4.7.0"/>
-        <PackageVersion Include="System.Text.Json" Version="10.0.3"/>
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0"/>
-        <PackageVersion Include="Microsoft.Extensions.ObjectPool" Version="10.0.3"/>
-        <PackageVersion Include="Polyfill" Version="9.9.0"/>
-
-        <!-- Analyzers -->
-        <PackageVersion Include="Meziantou.Analyzer" Version="2.0.302"/>
-        <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.19.0.132793"/>
-        <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0"/>
-        <PackageVersion Include="xunit.analyzers" Version="1.27.0"/>
-
-        <!-- Testing -->
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
-        <PackageVersion Include="xunit.v3" Version="3.2.2"/>
-        <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2"/>
-        <PackageVersion Include="xunit.v3.runner.msbuild" Version="3.2.2"/>
-        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
-
-        <!-- Build -->
-        <PackageVersion Include="Microsoft.Build.Framework" Version="18.3.3"/>
-        <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.3.3"/>
-    </ItemGroup>
-
+    <!-- Testing -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.msbuild" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    
+    <!-- Benchmarking -->
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8"/>
+  </ItemGroup>
 </Project>

@@ -1,10 +1,8 @@
-// ReSharper disable CheckNamespace
-
 #if NETSTANDARD2_0 || NETFRAMEWORK
 /* This file only exists to provide support for several attributes in .net standard 2.0 environments */
 
 
-
+// ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
 {
     /// <summary>Specifies that null is disallowed as an input even if the corresponding type allows it.</summary>
@@ -42,23 +40,5 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>Gets the return value condition.</summary>
         public bool ReturnValue { get; }
     }
-}
-#endif
-
-#if NETSTANDARD2_1
-
-
-namespace System.Runtime.CompilerServices
-{
-    internal static class Unsafe
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int SizeOf<T>()
-        {
-            Emit.Sizeof<T>();
-            return Return<int>();
-        }
-    }
-
 }
 #endif

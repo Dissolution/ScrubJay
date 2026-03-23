@@ -50,7 +50,7 @@ partial class Guard
         [CallerArgumentExpression(nameof(actual))] string? actualName = null)
         where T : allows ref struct
     {
-        if (Any.Equals(actual, expected))
+        if (Any.Equals(in actual, expected))
             return actual;
         throw Ex.Arg(actual, $"was not equal to {expected}", actualName);
     }
@@ -60,7 +60,7 @@ partial class Guard
         [CallerArgumentExpression(nameof(actual))] string? actualName = null)
         where T : allows ref struct
     {
-        if (!Any.Equals(actual, expected))
+        if (!Any.Equals(in actual, expected))
             return actual;
         throw Ex.Arg(actual, $"was equal to {expected}", actualName);
     }

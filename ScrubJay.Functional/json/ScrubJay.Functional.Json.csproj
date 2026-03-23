@@ -8,12 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Text.Json"/>
+        <ProjectReference Include="..\src\ScrubJay.Functional.csproj" />
     </ItemGroup>
     
-    <ItemGroup>
-        <ProjectReference Include="..\src\ScrubJay.Functional.csproj"/>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+      <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+      <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+      <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
 

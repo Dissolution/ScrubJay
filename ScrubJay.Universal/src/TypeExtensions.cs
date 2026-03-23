@@ -19,8 +19,8 @@ public static class TypeExtensions
                 if (type is null)
                     return null;
                 return type.DeclaringType ??
-                       type.ReflectedType ??
-                       type.Module.GetType();
+                    type.ReflectedType ??
+                    type.Module.GetType();
             }
         }
 
@@ -40,11 +40,28 @@ public static class TypeExtensions
                     return false;
                 var genericDef = type.GetGenericTypeDefinition();
                 return string.Equals(genericDef.Namespace, "System", StringComparison.Ordinal) &&
-                       (genericDef.Name.StartsWith("Tuple`", StringComparison.Ordinal) ||
+                    (genericDef.Name.StartsWith("Tuple`", StringComparison.Ordinal) ||
                         genericDef.Name.StartsWith("ValueTuple`", StringComparison.Ordinal));
             }
         }
-        
+
+        [NotNullIfNotNull(nameof(type))]
+        internal Type? RootType
+        {
+            [return: NotNullIfNotNull(nameof(type))]
+            get
+            {
+                if (type is null)
+                    return null;
+                if (type.IsByRef)
+                    return type.GetElementType()!;
+                var underType = Nullable.GetUnderlyingType(type);
+                if (underType is not null)
+                    return underType;
+                return type;
+            }
+        }
+
         /// <summary>
         /// Enumerate over all base types for this <see cref="Type"/>
         /// </summary>
@@ -60,11 +77,11 @@ public static class TypeExtensions
         }
 
         /// <summary>
-        /// Gets the underlying <see cref="TypeCode"/> for <paramref name="type"/>.
+        /// Gets the underlying <see cref="TypeCode"/> for this <see cref="Type"/>.
         /// </summary>
         /// <returns></returns>
         public TypeCode GetTypeCode() => Type.GetTypeCode(type);
-        
+
         /// <summary>
         /// Gets the rendering for this <see cref="Type"/>.
         /// </summary>

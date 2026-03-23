@@ -56,7 +56,7 @@ partial class TextBuilder
     public TextBuilder Append<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        Write(Any.ToString<T>(value));
+        Write(Any.ToString<T>(in value));
         return this;
     }
 #endif

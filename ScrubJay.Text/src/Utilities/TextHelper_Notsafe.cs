@@ -1,3 +1,5 @@
+// ReSharper disable EntityNameCapturedOnly.Global
+
 using static InlineIL.IL;
 
 namespace ScrubJay.Text.Utilities;
@@ -6,371 +8,794 @@ public static partial class TextHelper
 {
     public static unsafe class Notsafe
     {
-#region Copy
+#region CopyBlock
+        /* All the methods in here use the Cpblk instruction and have been specialized for use on char.
+         *
+         *`Cpblk(void* destination, void* source, nuint byteCount)`
+         *
+         * Source Types: void*, char*, ref readonly char, ReadOnlySpan<char>, Span<char>, char[], string
+         * Destin Types: void*, char*, ref char, Span<char>, char[]
+         */
+
+#region Source: void*
         /// <summary>
-        /// Copies a specified <paramref name="count"/> of <see cref="char">chars</see>
-        /// from a <paramref name="source"/> to a <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The readonly reference (<c>in</c>) to the first character in the block to copy from
+        /// The source <see langword="void*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The reference (<c>ref</c>) to the first character in the block to copy to
+        /// The destination <see langword="void*"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of characters to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyCharBlock(in char source, ref char destination, int count)
+        public static void CopyBlock(void* source, void* destination, int count)
         {
-            // dest: void*, source: void*, byte_count: nuint
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
             Emit.Ldarg(nameof(count));
-
-            // The count of characters must be converted to a count of bytes
             Emit.Sizeof<char>();
             Emit.Mul();
-
-            // CopyBlock
             Emit.Cpblk();
         }
 
-
-        /* All the public methods for CopyBlock allow for the most efficient conversion of
-         * source + dest to what CpBlk is expecting
-         *
-         * Source types: `in char`, `char[]`, `Span<char>`, `ReadOnlySpan<char>`, `string`
-         * Destination types: `ref char`, `char[]`, `Span<char>`
-         */
-
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// An <c>in char</c> reference to the start of some text
+        /// The source <see langword="void*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A <c>ref char</c> reference to the start of a writeable text buffer
+        /// The destination <see langword="char*"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(in char source, ref char destination, int count)
-            => Notsafe.CopyCharBlock(in source, ref destination, count);
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// An <c>in char</c> reference to the start of some text
-        /// </param>
-        /// <param name="destination">
-        /// A character array (<c>char[]</c>) to be written to
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(in char source, char[] destination, int count)
-#if NET5_0_OR_GREATER
-            => Notsafe.CopyCharBlock(in source, ref MemoryMarshal.GetArrayDataReference<char>(destination), count);
-#else
+        public static void CopyBlock(void* source, char* destination, int count)
         {
-            Notsafe.CopyCharBlock(
-                in source,
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
         }
-#endif
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// An <c>in char</c> reference to the start of some text
+        /// The source <see langword="void*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A character span (<c>Span&lt;char&gt;</c>) to be written to
+        /// The destination <see langword="ref char"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(in char source, Span<char> destination, int count)
-            => Notsafe.CopyCharBlock(in source, ref MemoryMarshal.GetReference<char>(destination), count);
+        public static void CopyBlock(void* source, ref char destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A character array (<c>char[]</c>) to be read from
+        /// The source <see langword="void*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A <c>ref char</c> reference to the start of a writeable text buffer
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(void* source, Span<char> destination, int count)
+            => CopyBlock(source, ref MemoryMarshal.GetReference(destination), count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="void*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(void* source, char[] destination, int count)
+            => CopyBlock(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: void*
+
+#region Source: char*
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="char*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="void*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char* source, void* destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="char*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char* source, char* destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="char*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="ref char"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char* source, ref char destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="char*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char* source, Span<char> destination, int count)
+            => CopyBlock(source, ref MemoryMarshal.GetReference(destination), count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="char*"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char* source, char[] destination, int count)
+            => CopyBlock(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: char*
+        
+#region Source: ref readonly char
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="void*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(ref readonly char source, void* destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(ref readonly char source, char* destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="ref char"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(ref readonly char source, ref char destination, int count)
+        {
+            Emit.Ldarg(nameof(destination));
+            Emit.Ldarg(nameof(source));
+            Emit.Ldarg(nameof(count));
+            Emit.Sizeof<char>();
+            Emit.Mul();
+            Emit.Cpblk();
+        }
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(ref readonly char source, Span<char> destination, int count)
+            => CopyBlock(in source, ref MemoryMarshal.GetReference(destination), count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(ref readonly char source, char[] destination, int count)
+            => CopyBlock(in source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: ref readonly char
+
+#region Source: ReadOnlySpan<char>
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="void*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped ReadOnlySpan<char> source, void* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped ReadOnlySpan<char> source, char* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="ref char"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped ReadOnlySpan<char> source, ref char destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped ReadOnlySpan<char> source, Span<char> destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped ReadOnlySpan<char> source, char[] destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: ReadOnlySpan<char>
+
+#region Source: Span<char>
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="void*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped Span<char> source, void* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped Span<char> source, char* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="ref char"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped Span<char> source, ref char destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped Span<char> source, Span<char> destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(scoped Span<char> source, char[] destination, int count)
+            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: Span<char>
+        
+#region Source: char[]
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="void*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char[] source, void* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char*"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(char[] source, char* destination, int count)
+            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="ref char"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(char[] source, ref char destination, int count)
-#if NET5_0_OR_GREATER
-            => Notsafe.CopyCharBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref destination, count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source),
-                ref destination,
-                count);
-        }
-#endif
+            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref destination, count);
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A character array (<c>char[]</c>) to be read from
+        /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A character array (<c>char[]</c>) to be written to
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, char[] destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetArrayDataReference<char>(source),
-                ref MemoryMarshal.GetArrayDataReference<char>(destination), count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
-#endif
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// A character array (<c>char[]</c>) to be read from
-        /// </param>
-        /// <param name="destination">
-        /// A character span (<c>Span&lt;char&gt;</c>) to be written to
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(char[] source, Span<char> destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetArrayDataReference<char>(source),
-                ref MemoryMarshal.GetReference<char>(destination), count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
-#endif
+            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A <c>Span&lt;char&gt;</c> to be read from
+        /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A <c>ref char</c> reference to the start of a writeable text buffer
+        /// The destination <see langword="char[]"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
-        public static void CopyBlock(Span<char> source, ref char destination, int count)
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// A <c>Span&lt;char&gt;</c> to be read from
-        /// </param>
-        /// <param name="destination">
-        /// A character array (<c>char[]</c>) to be written to
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(Span<char> source, char[] destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetArrayDataReference<char>(destination), count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
-#endif
+        public static void CopyBlock(char[] source, char[] destination, int count)
+            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: char[]
 
+#region Source: string
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A <c>Span&lt;char&gt;</c> to be read from
+        /// The source <see cref="string"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A character span (<c>Span&lt;char&gt;</c>) to be written to
+        /// The destination <see langword="void*"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(Span<char> source, Span<char> destination, int count)
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination),
-                count);
+        public static void CopyBlock(string source, void* destination, int count)
+            => CopyBlock(in source.GetPinnableReference(), destination, count);
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A <c>ReadOnlySpan&lt;char&gt;</c> to be read from
+        /// The source <see cref="string"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A <c>ref char</c> reference to the start of a writeable text buffer
+        /// The destination <see langword="char*"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
-        public static void CopyBlock(text source, ref char destination, int count)
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// A <c>ReadOnlySpan&lt;char&gt;</c> to be read from
-        /// </param>
-        /// <param name="destination">
-        /// A character array (<c>char[]</c>) to be written to
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(text source, char[] destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetArrayDataReference<char>(destination), count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
-#endif
+        public static void CopyBlock(string source, char* destination, int count)
+            => CopyBlock(in source.GetPinnableReference(), destination, count);
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A <c>ReadOnlySpan&lt;char&gt;</c> to be read from
+        /// The source <see cref="string"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A character span (<c>Span&lt;char&gt;</c>) to be written to
+        /// The destination <see langword="ref char"/> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(text source, Span<char> destination, int count)
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination),
-                count);
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// A <see cref="string"/> to be read from
-        /// </param>
-        /// <param name="destination">
-        /// A <c>ref char</c> reference to the start of a writeable text buffer
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(string source, ref char destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source.AsSpan()),
-                ref destination,
-                count);
-        }
-#endif
+            => CopyBlock(in source.GetPinnableReference(), ref destination, count);
 
         /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// A <see cref="string"/> to be read from
+        /// The source <see cref="string"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// A character array (<c>char[]</c>) to be written to
+        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
+        /// The total number of characters to copy.
         /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, char[] destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source),
-                ref MemoryMarshal.GetArrayDataReference<char>(destination), count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source.AsSpan()),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
-#endif
-
-        /// <summary>
-        /// Copies a block of <see cref="char">characters</see> from <paramref name="source"/> to <paramref name="destination"/>
-        /// </summary>
-        /// <param name="source">
-        /// A <see cref="string"/> to be read from
-        /// </param>
-        /// <param name="destination">
-        /// A character span (<c>Span&lt;char&gt;</c>) to be written to
-        /// </param>
-        /// <param name="count">
-        /// The total number of <see cref="char">characters</see> to copy from <paramref name="source"/> to <paramref name="destination"/>
-        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(string source, Span<char> destination, int count)
-#if NET5_0_OR_GREATER
-            => CopyCharBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination),
-                count);
-#else
-        {
-            CopyCharBlock(
-                in MemoryMarshal.GetReference<char>(source.AsSpan()),
-                ref MemoryMarshal.GetReference<char>(destination),
-                count);
-        }
+            => CopyBlock(in source.GetPinnableReference(), ref MemoryMarshal.GetReference<char>(destination), count);
 
-#endif
+        /// <summary>
+        /// Copy <paramref name="count"/> <see cref="char">characters</see>
+        /// from <paramref name="source"/> to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The source <see cref="string"/> to copy characters from.
+        /// </param>
+        /// <param name="destination">
+        /// The destination <see langword="char[]"/> to copy characters to.
+        /// </param>
+        /// <param name="count">
+        /// The total number of characters to copy.
+        /// </param>
+        /// <remarks>
+        /// No validation nor bounds checks are performed in this method.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyBlock(string source, char[] destination, int count)
+            => CopyBlock(in source.GetPinnableReference(), ref MemoryMarshal.GetArrayDataReference(destination), count);
+#endregion /Source: string
+
+
+
 
 //        public static void SelfCopy(Span<char> chars, Range source, Range destination)
 //        {
@@ -386,7 +811,7 @@ public static partial class TextHelper
 //            Debug.Assert(destinationLength >= sourceLen);
 //            ref char src = ref chars[sourceOffset];
 //            ref char dst = ref chars[destinationOffset];
-//            CopyCharBlock(in src, ref dst, sourceLen);
+//            CopyBlock(in src, ref dst, sourceLen);
 //        }
 #endregion
 
@@ -432,7 +857,7 @@ public static partial class TextHelper
 #if NET5_0_OR_GREATER
             Notsafe.InitCharBlock(ref MemoryMarshal.GetArrayDataReference(chars), chars.Length);
 #else
-                Notsafe.InitCharBlock(ref chars[0], chars.Length);
+            Notsafe.InitCharBlock(ref chars[0], chars.Length);
 #endif
         }
     }

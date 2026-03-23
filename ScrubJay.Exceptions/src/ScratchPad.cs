@@ -1,6 +1,4 @@
-﻿using System.Collections.Specialized;
-
-namespace ScrubJay.Exceptions;
+﻿namespace ScrubJay.Exceptions;
 
 internal static class ScratchPad
 {

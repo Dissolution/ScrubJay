@@ -1,0 +1,24 @@
+<Project>
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+
+        <!-- Individual suppressions are located in `.editorconfig` -->
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
+    </PropertyGroup>
+
+    <!-- global usings -->
+    <ItemGroup>
+        <Using Include="System.Collections"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Numerics"/>
+        <Using Include="System.Runtime.CompilerServices"/>
+        <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Text"/>
+
+        <Using Include="JetBrains.Annotations"/>
+    </ItemGroup>
+</Project>
+
