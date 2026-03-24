@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
 using ScrubJay.Universal;
@@ -30,30 +29,32 @@ public sealed class PerRuntimeExporter : IExporter
     public IEnumerable<string> ExportToFiles(Summary summary, ILogger consoleLogger)
     {
         Console.WriteLine($"PerRuntimeExporter processing Summary '{summary.Title}' with consolelogger '{consoleLogger.GetType().Render()}'");
-        
+
         var files = new List<string>();
 
         // Group benchmark cases by their runtime moniker
         var benchmarkCasesByRuntime = summary
             .BenchmarksCases
-            .GroupBy(static bc => bc.Job.Environment.Runtime?.RuntimeMoniker);
+            .GroupBy(static bc => bc.Job.Environment.Runtime?.MsBuildMoniker, Comparers.StringLengthOrdinalComparer);
 
         foreach (var group in benchmarkCasesByRuntime)
         {
-            RuntimeMoniker? runtimeMoniker = group.Key;
+            string? runtimeMoniker = group.Key;
 
             Console.WriteLine($"PerRuntimeExporter processing Runtime '{runtimeMoniker}'");
 
             // Build a filtered summary containing only this runtime's reports
             var filteredReports = summary
                 .Reports
-                .Where(report => report.BenchmarkCase.Job.Environment.Runtime?.RuntimeMoniker == runtimeMoniker)
+                .Where(report => report.BenchmarkCase.Job.Environment.Runtime?.MsBuildMoniker == runtimeMoniker)
                 .ToImmutableArray();
 
             // new output path
-            var newResultsDirectory = Path.Combine(summary.ResultsDirectoryPath, runtimeMoniker?.ToString() ?? "unknown");
-            Directory.CreateDirectory(newResultsDirectory);
+            string monikerPath = (runtimeMoniker ?? "unknown").Replace('.', '_');
             
+            var newResultsDirectory = Path.Combine(summary.ResultsDirectoryPath, monikerPath);
+            Directory.CreateDirectory(newResultsDirectory);
+
             var filteredSummary = new Summary(
                 title: $"{summary.Title}-{runtimeMoniker}",
                 reports: filteredReports,

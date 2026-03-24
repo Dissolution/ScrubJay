@@ -32,7 +32,7 @@ public sealed class MyOrderer : IOrderer
     public IEnumerable<BenchmarkCase> GetSummaryOrder(ImmutableArray<BenchmarkCase> benchmarksCases, Summary summary)
     {
         return benchmarksCases
-            .OrderBy(static bc => bc.GetRuntime().Name, Comparers.NumericStringComparer)
+            .OrderBy(static bc => bc.GetRuntime().MsBuildMoniker, Comparers.NumericStringComparer)
             .ThenBy(static bc => bc.Parameters?.Count ?? 0)
             .ThenBy(static bc => GetFirstParamValueAsString(bc), Comparers.StringLengthOrdinalComparer)
             .ThenBy(bc => GetMeanNanoseconds(bc, summary));

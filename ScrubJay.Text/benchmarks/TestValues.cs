@@ -14,12 +14,12 @@ public static class TestValues
 
     public static string[] Strings { get; } =
     [
-        //string.Empty,
+        string.Empty,
         ",",
         "\r\n",
-        //"Exception",
+        "Exception",
         PANGRAM,
-        //CreateTestString(128),
+        CreateTestString(128),
         CreateTestString(512),
         CreateTestString(4096),
     ];

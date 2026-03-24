@@ -38,7 +38,8 @@ internal static class BenchmarkConfigs
         Job[] jobs = new Job[count];
         for (var i = 0; i < count; i++)
         {
-            jobs[i] = getBaseJob().WithRuntime(runtimes[i]);
+            var runtime = runtimes[i];
+            jobs[i] = getBaseJob().WithId(runtime.MsBuildMoniker).WithRuntime(runtime);
         }
         return jobs;
     }
@@ -48,9 +49,7 @@ internal static class BenchmarkConfigs
         .WithArtifactsPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\..\benchmark_results"))
         .WithOptions(ConfigOptions.StopOnFirstError | ConfigOptions.DontOverwriteResults)
         .AddColumnProvider(DefaultColumnProviders.Instance)
-        .AddJob(
-            Job.ShortRun.WithId("NETCORE10").WithRuntime(CoreRuntime.Core10_0),
-            Job.ShortRun.WithId("NETCORE6").WithRuntime(CoreRuntime.Core60))
+        .AddJob(GetRuntimedJobs(() => Job.ShortRun))
         .AddLogger(ConsoleLogger.Unicode)
         .AddExporter(new PerRuntimeExporter(HtmlExporter.Default, JsonExporter.Brief, MarkdownExporter.GitHub, CsvExporter.Default))
         .AddDiagnoser(MemoryDiagnoser.Default)

@@ -1,7 +1,7 @@
 namespace ScrubJay.Text.Benchmarks.BDN;
 
 [PublicAPI]
-internal sealed class StringLengthOrdinalComparer : IComparer<string?>
+internal sealed class StringLengthOrdinalComparer : IComparer<string?>, IEqualityComparer<string?>
 {
     public static StringLengthOrdinalComparer Instance { get; } = new();
 
@@ -28,5 +28,17 @@ internal sealed class StringLengthOrdinalComparer : IComparer<string?>
             return -1;
         }
         return 0;
+    }
+
+    public bool Equals(string? x, string? y)
+    {
+        return string.Equals(x, y, StringComparison.Ordinal);
+    }
+
+    public int GetHashCode(string? str)
+    {
+        if (str is null)
+            return 0;
+        return StringComparer.Ordinal.GetHashCode(str);
     }
 }
