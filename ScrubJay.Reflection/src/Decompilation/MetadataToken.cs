@@ -1,6 +1,4 @@
-﻿
-
-using ScrubJay.Rendering.Rendition5;
+﻿using ScrubJay.Rendering.Rendition5;
 
 namespace ScrubJay.Reflection.Decompilation;
 
@@ -22,11 +20,10 @@ public readonly struct MetadataToken :
     IFormattable,
     IRenderable
 {
-    private const uint TOKEN_TYPE_MASK = 0b11111111_00000000_00000000_00000000;
-    private const uint IDENTIFIER_MASK = 0b00000000_11111111_11111111_11111111;
+    private const uint RID_MASK = 0b00000000_11111111_11111111_11111111;
 
     public static implicit operator MetadataToken(int token) => new(token);
-    public static implicit operator int(MetadataToken token) => token.Value;
+    public static implicit operator int(MetadataToken token) => token.I32Value;
 
     public static bool operator ==(MetadataToken left, MetadataToken right) => left.Equals(right);
     public static bool operator !=(MetadataToken left, MetadataToken right) => !left.Equals(right);
@@ -37,16 +34,16 @@ public readonly struct MetadataToken :
     [FieldOffset(0)]
     private readonly uint _token;
 
-    public TokenType TokenType
+    public MetadataTokenType MetadataTokenType
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (TokenType)(_token & TOKEN_TYPE_MASK);
+        get => (MetadataTokenType)(_token >> (8 * 3));
     }
 
     public uint Identifier
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (_token & IDENTIFIER_MASK);
+        get => _token & RID_MASK;
     }
 
     public bool IsEmpty
@@ -55,10 +52,16 @@ public readonly struct MetadataToken :
         get => _token == 0U;
     }
 
-    public int Value
+    public int I32Value
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (int)_token;
+        get => unchecked((int)_token);
+    }
+
+    public uint U32Value
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _token;
     }
 
     public MetadataToken(int token)
@@ -70,14 +73,17 @@ public readonly struct MetadataToken :
 
     public bool Equals(int token) => token == _token;
 
+    public bool Equals(uint token) => token == _token;
+
     public override bool Equals([NotNullWhen(true)] object? obj) => obj switch
     {
         MetadataToken metadataToken => Equals(metadataToken),
-        int token => Equals(token),
-        _ => false
+        int i32Token => Equals(i32Token),
+        uint u32Token => Equals(u32Token),
+        _ => false,
     };
 
-    public override int GetHashCode() => (int)_token;
+    public override int GetHashCode() => I32Value;
 
     public bool TryFormat(Span<char> destination, out int charsWritten,
         text format = default,
@@ -90,11 +96,11 @@ public readonly struct MetadataToken :
     }
 
     public void RenderTo(TextBuilder builder) => builder
-        .Render(TokenType)
+        .Render(MetadataTokenType)
         .Append('.')
         .Format(Identifier, "X6");
 
     public string ToString(string? format, IFormatProvider? provider = null) => _token.ToString(format, provider);
-    
+
     public override string ToString() => TextBuilder.Build(RenderTo);
 }

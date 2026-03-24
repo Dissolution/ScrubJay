@@ -6,6 +6,12 @@ namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
 {
+    public TextBuilder Insert(int index, char ch)
+    {
+        AllocateAt(index, 1)[0] = ch;
+        return this;
+    }
+    
     public TextBuilder Insert(Index index, char ch)
     {
         AllocateAt(index, 1)[0] = ch;
