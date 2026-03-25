@@ -30,7 +30,7 @@ public partial class StringCopyToCharArrayBenchmarks
     [ArgumentsSource(typeof(TestValues), nameof(TestValues.StringsWithArrays))]
     public void Emit_Cpblk(string source, char[] destination)
     {
-        TextHelper.Notsafe.CopyBlock(source, destination, source.Length);
+        TextHelper.Notsafe.CopyText(source, destination, source.Length);
         _consumer.Consume(destination);
     }
 

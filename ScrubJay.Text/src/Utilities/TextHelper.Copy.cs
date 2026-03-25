@@ -8,7 +8,7 @@ public static partial class TextHelper
         int len = source.Length;
         if (len <= dest.Length)
         {
-            Notsafe.CopyBlock(source, dest, len);
+            Notsafe.CopyText(source, dest, len);
             return true;
         }
         return false;
@@ -20,7 +20,7 @@ public static partial class TextHelper
         int len = source.Length;
         if (len <= dest.Length)
         {
-            Notsafe.CopyBlock(source, dest, len);
+            Notsafe.CopyText(source, dest, len);
             return true;
         }
         return false;

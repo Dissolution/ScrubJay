@@ -35,7 +35,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(void* source, void* destination, int count)
+        public static void CopyText(void* source, void* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -62,7 +62,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(void* source, char* destination, int count)
+        public static void CopyText(void* source, char* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -89,7 +89,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(void* source, ref char destination, int count)
+        public static void CopyText(void* source, ref char destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -116,8 +116,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(void* source, Span<char> destination, int count)
-            => CopyBlock(source, ref MemoryMarshal.GetReference(destination), count);
+        public static void CopyText(void* source, Span<char> destination, int count)
+            => CopyText(source, ref MemoryMarshal.GetReference(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -136,8 +136,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(void* source, char[] destination, int count)
-            => CopyBlock(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(void* source, char[] destination, int count)
+            => CopyText(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: void*
 
 #region Source: char*
@@ -158,7 +158,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char* source, void* destination, int count)
+        public static void CopyText(char* source, void* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -185,7 +185,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char* source, char* destination, int count)
+        public static void CopyText(char* source, char* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -212,7 +212,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char* source, ref char destination, int count)
+        public static void CopyText(char* source, ref char destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -239,8 +239,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char* source, Span<char> destination, int count)
-            => CopyBlock(source, ref MemoryMarshal.GetReference(destination), count);
+        public static void CopyText(char* source, Span<char> destination, int count)
+            => CopyText(source, ref MemoryMarshal.GetReference(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -259,8 +259,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char* source, char[] destination, int count)
-            => CopyBlock(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(char* source, char[] destination, int count)
+            => CopyText(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: char*
         
 #region Source: ref readonly char
@@ -281,7 +281,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(ref readonly char source, void* destination, int count)
+        public static void CopyText(ref readonly char source, void* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -308,7 +308,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(ref readonly char source, char* destination, int count)
+        public static void CopyText(ref readonly char source, char* destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -335,7 +335,7 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(ref readonly char source, ref char destination, int count)
+        public static void CopyText(ref readonly char source, ref char destination, int count)
         {
             Emit.Ldarg(nameof(destination));
             Emit.Ldarg(nameof(source));
@@ -362,8 +362,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(ref readonly char source, Span<char> destination, int count)
-            => CopyBlock(in source, ref MemoryMarshal.GetReference(destination), count);
+        public static void CopyText(ref readonly char source, Span<char> destination, int count)
+            => CopyText(in source, ref MemoryMarshal.GetReference(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -382,8 +382,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(ref readonly char source, char[] destination, int count)
-            => CopyBlock(in source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(ref readonly char source, char[] destination, int count)
+            => CopyText(in source, ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: ref readonly char
 
 #region Source: ReadOnlySpan<char>
@@ -404,8 +404,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped ReadOnlySpan<char> source, void* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+        public static void CopyText(scoped ReadOnlySpan<char> source, void* destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -424,8 +424,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped ReadOnlySpan<char> source, char* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+        public static void CopyText(scoped ReadOnlySpan<char> source, char* destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -444,8 +444,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped ReadOnlySpan<char> source, ref char destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+        public static void CopyText(scoped ReadOnlySpan<char> source, ref char destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -464,8 +464,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped ReadOnlySpan<char> source, Span<char> destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        public static void CopyText(scoped ReadOnlySpan<char> source, Span<char> destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -484,8 +484,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped ReadOnlySpan<char> source, char[] destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(scoped ReadOnlySpan<char> source, char[] destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: ReadOnlySpan<char>
 
 #region Source: Span<char>
@@ -506,8 +506,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped Span<char> source, void* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+        public static void CopyText(scoped Span<char> source, void* destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -526,8 +526,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped Span<char> source, char* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), destination, count);
+        public static void CopyText(scoped Span<char> source, char* destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -546,8 +546,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped Span<char> source, ref char destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+        public static void CopyText(scoped Span<char> source, ref char destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -566,8 +566,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped Span<char> source, Span<char> destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        public static void CopyText(scoped Span<char> source, Span<char> destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -586,8 +586,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(scoped Span<char> source, char[] destination, int count)
-            => CopyBlock(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(scoped Span<char> source, char[] destination, int count)
+            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: Span<char>
         
 #region Source: char[]
@@ -608,8 +608,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, void* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+        public static void CopyText(char[] source, void* destination, int count)
+            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -628,8 +628,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, char* destination, int count)
-            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+        public static void CopyText(char[] source, char* destination, int count)
+            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -648,8 +648,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, ref char destination, int count)
-            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref destination, count);
+        public static void CopyText(char[] source, ref char destination, int count)
+            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -668,8 +668,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, Span<char> destination, int count)
-            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        public static void CopyText(char[] source, Span<char> destination, int count)
+            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -688,8 +688,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(char[] source, char[] destination, int count)
-            => CopyBlock(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(char[] source, char[] destination, int count)
+            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: char[]
 
 #region Source: string
@@ -710,8 +710,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, void* destination, int count)
-            => CopyBlock(in source.GetPinnableReference(), destination, count);
+        public static void CopyText(string source, void* destination, int count)
+            => CopyText(in source.GetPinnableReference(), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -730,8 +730,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, char* destination, int count)
-            => CopyBlock(in source.GetPinnableReference(), destination, count);
+        public static void CopyText(string source, char* destination, int count)
+            => CopyText(in source.GetPinnableReference(), destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -750,8 +750,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, ref char destination, int count)
-            => CopyBlock(in source.GetPinnableReference(), ref destination, count);
+        public static void CopyText(string source, ref char destination, int count)
+            => CopyText(in source.GetPinnableReference(), ref destination, count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -770,8 +770,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, Span<char> destination, int count)
-            => CopyBlock(in source.GetPinnableReference(), ref MemoryMarshal.GetReference<char>(destination), count);
+        public static void CopyText(string source, Span<char> destination, int count)
+            => CopyText(in source.GetPinnableReference(), ref MemoryMarshal.GetReference<char>(destination), count);
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -790,8 +790,8 @@ public static partial class TextHelper
         /// No validation nor bounds checks are performed in this method.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBlock(string source, char[] destination, int count)
-            => CopyBlock(in source.GetPinnableReference(), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        public static void CopyText(string source, char[] destination, int count)
+            => CopyText(in source.GetPinnableReference(), ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: string
 
 

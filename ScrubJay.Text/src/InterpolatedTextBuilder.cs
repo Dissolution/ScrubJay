@@ -1,232 +1,64 @@
-//using static InlineIL.IL;
+//#pragma warning disable S3247, RCS1220
+//// ReSharper disable MergeCastWithTypeCheck
+//// ReSharper disable MethodOverloadWithOptionalParameter
+//
+//
 //using ScrubJay.Text.Pooling;
 //using ScrubJay.Text.Utilities;
-//// ReSharper disable MergeCastWithTypeCheck
 //
 //namespace ScrubJay.Text;
 //
-//public static class TextBuilderExtensions
-//{
-//    public static ref TextBuilder Ref(this ref TextBuilder builder)
-//    {
-//        return ref builder;
-//    }
-//}
-//
 //[PublicAPI]
-//[MustDisposeResource(true)]
-//public ref struct TextBuilder
+//[InterpolatedStringHandler]
+//[MustDisposeResource(false)]
+//public ref struct InterpolatedTextBuilder
 //{
-//    private char[]? _charArray;
+//    private TextBuilder _textBuilder;
 //
-//    private int _capacity;
-//    private unsafe char* _firstChar;
-//    private int _position;
+//    public Span<char> Written => _textBuilder.Written;
 //
+//    internal Span<char> Available => _textBuilder.Available;
 //
-//    public Span<char> Written
+//    public readonly int Length => _textBuilder.Length;
+//
+//    public readonly int Capacity => _textBuilder.Capacity;
+//
+//    public InterpolatedTextBuilder(int literalLength, int formattedCount, ref TextBuilder builder)
 //    {
-//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//        get
-//        {
-//            unsafe
-//            {
-//                return new Span<char>(_firstChar, _position);
-//            }
-//        }
+//        _textBuilder = builder;
 //    }
 //
-//    public Span<char> Available
-//    {
-//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//        get
-//        {
-//            unsafe
-//            {
-//                return new Span<char>(Unsafe.Add<char>(_firstChar, _position), _capacity - _position);
-//            }
-//        }
-//    }
-//
-//    public readonly int Length
-//    {
-//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//        get => _position;
-//    }
-//
-//    public readonly int Capacity
-//    {
-//        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//        get => _capacity;
-//    }
-//
-//    public TextBuilder()
-//    {
-//        _charArray = TextPool.Rent(1024);
-//        _capacity = _charArray.Length;
-//        _position = 0;
-//        unsafe
-//        {
-//            _firstChar = (char*)Unsafe.AsPointer<char>(ref MemoryMarshal.GetArrayDataReference(_charArray));
-//        }
-//    }
-//
-//#region Grow
-//
-//    private void Grow(int newCapacity)
-//    {
-//        Debug.Assert(newCapacity > Capacity);
-//        var newArray = TextPool.Rent(newCapacity);
-//        TextHelper.Notsafe.CopyBlock(in _firstChar, newArray, _position);
-//    }
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void AppendLiteral(string str) => _textBuilder.Write(str);
 //
 //
-//    [MethodImpl(MethodImplOptions.NoInlining)]
-//    private void GrowThenCopyString(string str)
-//    {
-//        int len = str.Length;
-//        GrowBy(len);
-//        TextHelper.Notsafe.CopyBlock(str, Available, len);
-//        _position += len;
-//    }
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void AppendFormatted(ref readonly char ch) => _textBuilder.Write(in ch);
 //
-//    [MethodImpl(MethodImplOptions.NoInlining)]
-//    private void GrowThenCopySpan(scoped text text)
-//    {
-//        int len = text.Length;
-//        GrowBy(len);
-//        TextHelper.Notsafe.CopyBlock(text, Available, len);
-//        _position += len;
-//    }
-//#endregion
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void AppendFormatted(scoped text text) => _textBuilder.Write(text);
 //
-//    public ref TextBuilder Append(ref readonly char ch)
-//    {
-//        if (_position < _charSpan.Length)
-//        {
-//            _charSpan[_position] = ch;
-//            _position++;
-//        }
-//        else
-//        {
-//            GrowThenCopySpan(ch.AsSpan());
-//        }
-//        Emit.Ldarg_0();
-//        return ref ReturnRef<TextBuilder>();
-//    }
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void AppendFormatted(string? str) => _textBuilder.Write(str);
 //
-//    public ref TextBuilder Append(scoped text text)
-//    {
-//        if (TextHelper.TryCopyTo(text, Available))
-//        {
-//            _position += text.Length;
-//        }
-//        else
-//        {
-//            GrowThenCopySpan(text);
-//        }
-//        Emit.Ldarg_0();
-//        return ref ReturnRef<TextBuilder>();
-//    }
+//    public void AppendFormatted<T>(T? value) => _textBuilder.Write<T>(value);
 //
-//    public ref TextBuilder Append(string? str)
-//    {
-//        if (str is not null)
-//        {
-//            int len = str.Length;
-//            int newLen = _position + len;
-//            if (newLen <= _charSpan.Length)
-//            {
-//                TextHelper.Notsafe.CopyBlock(str, ref Unsafe.Add<char>(ref _charSpan.GetPinnableReference(), _position), len);
-//                _position = newLen;
-//            }
-//            else
-//            {
-//                GrowThenCopySpan(str.AsSpan());
-//            }
-//        }
-//        Emit.Ldarg_0();
-//        return ref ReturnRef<TextBuilder>();
-//    }
-//
-//    public void Append<T>(T value)
-//    {
-//        if (value is null)
-//        {
-//            return;
-//        }
-//
-//        string? str;
-//
-//        if (value is IFormattable)
-//        {
-//#if NET6_0_OR_GREATER
-//            if (value is ISpanFormattable)
-//            {
-//                int charsWritten;
-//                // constrained call avoiding boxing for value types
-//                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
-//                {
-//                    Grow();
-//                }
-//
-//                _position += charsWritten;
-//                return;
-//            }
+//#if NET9_0_OR_GREATER
+//    public void AppendFormatted<T>(ref readonly T value, TypeConstraints.AllowsRefStruct<T> _ = default)
+//        where T : allows ref struct
+//        => _textBuilder.Write<T>(in value, _);
 //#endif
 //
-//            // constrained call avoiding boxing for value types
-//            str = ((IFormattable)value).ToString(default, default);
-//        }
-//        else
-//        {
-//            str = value.ToString();
-//        }
+//    public void AppendFormatted<T>(
+//        T? value,
+//        string? format)
+//        => _textBuilder.Format<T>(value, format);
 //
-//        if (str is not null)
-//        {
-//            AppendLiteral(str);
-//        }
-//    }
-//
-//    public void Append<T>(T value, string? format)
-//    {
-//        if (value is null)
-//        {
-//            return;
-//        }
-//
-//        string? str;
-//
-//        if (value is IFormattable)
-//        {
-//#if NET6_0_OR_GREATER
-//            if (value is ISpanFormattable)
-//            {
-//                int charsWritten;
-//                // constrained call avoiding boxing for value types
-//                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, format, default))
-//                {
-//                    Grow();
-//                }
-//
-//                _position += charsWritten;
-//                return;
-//            }
-//#endif
-//            // constrained call avoiding boxing for value types
-//            str = ((IFormattable)value).ToString(format, default);
-//        }
-//        else
-//        {
-//            str = value.ToString();
-//        }
-//
-//        if (str is not null)
-//        {
-//            AppendLiteral(str);
-//        }
-//    }
+//    public void AppendFormatted<T>(
+//        T? value,
+//        scoped ReadOnlySpan<char> format,
+//        IFormatProvider? formatProvider = null)
+//        => _textBuilder.Format<T>(value, format);
 //
 //    /*
 //

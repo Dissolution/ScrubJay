@@ -1,6 +1,10 @@
+#pragma warning disable S3247, RCS1220
+// ReSharper disable MergeCastWithTypeCheck
+// ReSharper disable MethodOverloadWithOptionalParameter
+
+
 using ScrubJay.Text.Pooling;
 using ScrubJay.Text.Utilities;
-// ReSharper disable MergeCastWithTypeCheck
 
 namespace ScrubJay.Text;
 
@@ -68,7 +72,7 @@ public ref struct InterpolatedText
     {
         Debug.Assert(additionalChars > _charSpan.Length - _position);
         char[] newArray = TextPool.Rent((_charSpan.Length + additionalChars) * 2);
-        TextHelper.Notsafe.CopyBlock(_charSpan, newArray, _position);
+        TextHelper.Notsafe.CopyText(_charSpan, newArray, _position);
         char[]? toReturn = _charArray;
         _charSpan = _charArray = newArray;
         TextPool.Return(toReturn);
@@ -78,19 +82,19 @@ public ref struct InterpolatedText
     private void Grow()
     {
         char[] newArray = TextPool.Rent(_charSpan.Length * 2);
-        TextHelper.Notsafe.CopyBlock(_charSpan, newArray, _position);
+        TextHelper.Notsafe.CopyText(_charSpan, newArray, _position);
         char[]? toReturn = _charArray;
         _charSpan = _charArray = newArray;
         TextPool.Return(toReturn);
     }
 
-    
+
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void GrowThenCopyString(string str)
     {
         int len = str.Length;
         GrowBy(len);
-        TextHelper.Notsafe.CopyBlock(str, Available, len);
+        TextHelper.Notsafe.CopyText(str, Available, len);
         _position += len;
     }
 
@@ -99,7 +103,7 @@ public ref struct InterpolatedText
     {
         int len = text.Length;
         GrowBy(len);
-        TextHelper.Notsafe.CopyBlock(text, Available, len);
+        TextHelper.Notsafe.CopyText(text, Available, len);
         _position += len;
     }
 #endregion
@@ -156,82 +160,120 @@ public ref struct InterpolatedText
         }
     }
 
-    public void AppendFormatted<T>(T value)
+    public void AppendFormatted<T>(T? value)
     {
-        if (value is null)
+        if (value is not null)
         {
-            return;
-        }
+            string? str;
 
-        string? str;
-
-        if (value is IFormattable)
-        {
-#if NET6_0_OR_GREATER
-            if (value is ISpanFormattable)
+            if (value is IFormattable)
             {
-                int charsWritten;
-                // constrained call avoiding boxing for value types
-                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
+#if NET6_0_OR_GREATER
+                if (value is ISpanFormattable)
                 {
-                    Grow();
+                    int charsWritten;
+                    while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
+                    {
+                        Grow();
+                    }
+
+                    _position += charsWritten;
+                    return;
                 }
-
-                _position += charsWritten;
-                return;
-            }
 #endif
+                str = ((IFormattable)value).ToString(default, default);
+            }
+            else
+            {
+                str = value.ToString();
+            }
 
-            // constrained call avoiding boxing for value types
-            str = ((IFormattable)value).ToString(default, default);
-        }
-        else
-        {
-            str = value.ToString();
-        }
-
-        if (str is not null)
-        {
-            AppendLiteral(str);
+            if (str is not null)
+            {
+                AppendLiteral(str);
+            }
         }
     }
 
-    public void AppendFormatted<T>(T value, string? format)
+#if NET9_0_OR_GREATER
+    public void AppendFormatted<T>(ref readonly T value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
     {
-        if (value is null)
-        {
-            return;
-        }
-
-        string? str;
-
-        if (value is IFormattable)
-        {
-            #if NET6_0_OR_GREATER
-            if (value is ISpanFormattable)
-            {
-                int charsWritten;
-                // constrained call avoiding boxing for value types
-                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, format, default))
-                {
-                    Grow();
-                }
-
-                _position += charsWritten;
-                return;
-            }
+        AppendFormatted(Any.ToString<T>(in value));
+    }
 #endif
-            // constrained call avoiding boxing for value types
-            str = ((IFormattable)value).ToString(format, default);
-        }
-        else
-        {
-            str = value.ToString();
-        }
 
-        if (str is not null)
+    public void AppendFormatted<T>(
+        T? value,
+        string? format)
+    {
+        if (value is not null)
         {
-            AppendLiteral(str);
+            string? str;
+
+            if (value is IFormattable)
+            {
+#if NET6_0_OR_GREATER
+                if (value is ISpanFormattable)
+                {
+                    int charsWritten;
+                    while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, format, default))
+                    {
+                        Grow();
+                    }
+
+                    _position += charsWritten;
+                    return;
+                }
+#endif
+                str = ((IFormattable)value).ToString(format, default);
+            }
+            else
+            {
+                str = value.ToString();
+            }
+
+            if (str is not null)
+            {
+                AppendLiteral(str);
+            }
+        }
+    }
+
+    public void AppendFormatted<T>(
+        T? value,
+        scoped ReadOnlySpan<char> format)
+    {
+        if (value is not null)
+        {
+            string? str;
+
+            if (value is IFormattable)
+            {
+#if NET6_0_OR_GREATER
+                if (value is ISpanFormattable)
+                {
+                    int charsWritten;
+                    while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, format, default))
+                    {
+                        Grow();
+                    }
+
+                    _position += charsWritten;
+                    return;
+                }
+#endif
+                str = ((IFormattable)value).ToString(format.ToString(), default);
+            }
+            else
+            {
+                str = value.ToString();
+            }
+
+            if (str is not null)
+            {
+                AppendLiteral(str);
+            }
         }
     }
 
@@ -386,7 +428,7 @@ public ref struct InterpolatedText
 
         TextPool.Return(toReturn);
     }
-    
+
     [HandlesResourceDisposal]
     public string ToStringAndDispose()
     {

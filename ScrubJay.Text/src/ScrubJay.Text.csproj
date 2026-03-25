@@ -25,9 +25,12 @@
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Universal"/>
         
         <Using Include="ScrubJay.Text.Extensions"/>
+        <Using Include="ScrubJay.Text.Utilities"/>
+
     </ItemGroup>
 
     <ItemGroup>
