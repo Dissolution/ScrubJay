@@ -48,6 +48,8 @@ internal sealed class TaskLoggingHelperLogger<T> : ILogger<T>
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
+        var importance = GetMessageImportance(logLevel);
+        
         switch (logLevel)
         {
             case LogLevel.Critical:
@@ -77,15 +79,14 @@ internal sealed class TaskLoggingHelperLogger<T> : ILogger<T>
                 }
             }
             case LogLevel.Information:
-                break;
             case LogLevel.Debug:
-                break;
             case LogLevel.Trace:
-                break;
             case LogLevel.None:
-                break;
             default:
-                break;
+            {
+                _helper.LogMessage(importance, formatter(state, exception));
+                return;
+            }
         }
 
         throw new NotImplementedException();

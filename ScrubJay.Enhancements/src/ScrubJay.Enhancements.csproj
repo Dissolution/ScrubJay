@@ -6,6 +6,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <NoWarn>$(NoWarn);CS1591;</NoWarn>
+        <PolyPublic>true</PolyPublic>
     </PropertyGroup>
 
     <!-- Global Usings -->

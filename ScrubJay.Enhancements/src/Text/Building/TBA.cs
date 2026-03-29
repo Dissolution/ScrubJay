@@ -1,4 +1,21 @@
-//namespace ScrubJay.Enhancements.Text.Building;
+namespace ScrubJay.Enhancements.Text.Building;
+
+/// <summary>
+/// A TextBuilderAction
+/// </summary>
+public delegate ref TextBuilder TBA(ref TextBuilder builder);
+
+public delegate ref TextBuilder TBA<T>(ref TextBuilder builder, ref readonly T value);
+
+public static class TBAExtensions
+{
+    extension(TBA)
+    {
+        public static TBA None => static (ref builder) => ref builder;
+
+        //public static TBA NewLine => static (ref builder) => builder.NewLine();
+    }
+}
 //
 //
 ///// <summary>

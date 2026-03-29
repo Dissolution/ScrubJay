@@ -138,10 +138,10 @@ public ref partial struct TextBuilder :
     /// <summary>
     /// Create a new <see cref="TextBuilder"/> instance
     /// </summary>
-    [MustDisposeResource(true)]
     public TextBuilder()
     {
-        _charArray = [];
+        _charSpan = _charArray = [];
+        _position = 0;
     }
 
     /// <summary>
@@ -153,72 +153,106 @@ public ref partial struct TextBuilder :
     [MustDisposeResource(true)]
     public TextBuilder(int minCapacity)
     {
-        int capacity = Math.Max(1024, minCapacity);
-        _charArray = ArrayPool<char>.Shared.Rent(capacity);
+        _charSpan = _charArray = TextPool.Rent(minCapacity);
+        _position = 0;
     }
 
-    [HandlesResourceDisposal]
-    ~TextBuilder() => Dispose();
+    public TextBuilder(Span<char> initialBuffer, int initialPosition = 0)
+    {
+        _charArray = null;
+        _charSpan = initialBuffer;
+        if ((uint)initialPosition <= initialBuffer.Length)
+        {
+            _position = initialPosition;
+        }
+        else
+        {
+            throw Ex.ArgRange(in initialPosition, $"[0..{initialBuffer.Length}]");
+        }
+    }
 
+    public Option<char> GetAt(int index)
+    {
+        if ((uint)index < (uint)_position)
+            return Some(_charSpan.UnsafeRef(index));
+        return None;
+    }
+
+    
     public Option<char> GetAt(Index index)
-        => Validate
-            .Index(index, _position)
-            .Select(i => _charArray[i])
-            .AsOption();
-
+    {
+        int offset = index.GetOffset(_position);
+        if ((uint)offset < (uint)_position)
+            return Some(_charSpan.UnsafeRef(offset));
+        return None;
+    }
+    
+    public Option<char> SetAt(int index, char ch)
+    {
+        if ((uint)index < (uint)_position)
+        {
+            _charSpan.UnsafeRef(index) = ch;
+            return Some(ch);
+        }
+        return None;
+    }
+    
     public Option<char> SetAt(Index index, char ch)
     {
-        return Validate.Index(index, _position)
-            .Select(i => _charArray[i] = ch)
-            .AsOption();
+        int offset = index.GetOffset(_position);
+        if ((uint)offset < (uint)_position)
+        {
+            _charSpan.UnsafeRef(offset) = ch;
+            return Some(ch);
+        }
+        return None;
     }
-
-
+    
     public Span<char> Slice(int index)
     {
-        Guard.Index(index, _position);
-        return _charArray.AsSpan(index.._position);
+        if ((uint)index <= (uint)_position)
+        {
+            return _charSpan.UnsafeSlice(index, _position - index);
+        }
+        throw Ex.ArgRange(in index, $"[0..{_position}]");
     }
 
     public Span<char> Slice(Index index)
     {
-        int offset = Guard.Index(index, _position);
-        return _charArray.AsSpan(offset.._position);
+        int offset = index.GetOffset(_position);
+        if ((uint)offset <= (uint)_position)
+        {
+            return _charSpan.UnsafeSlice(offset, _position - offset);
+        }
+        throw Ex.ArgRange(in index, $"[0..{_position}]");
     }
 
     public Span<char> Slice(int index, int count)
     {
-        Guard.Range(index, count, _position);
-        return _charArray.AsSpan(index, count);
+        Throw.IfBadRange(index, count, _position);
+        return _charSpan.UnsafeSlice(index, count);
     }
 
     public Span<char> Slice(Index index, int count)
     {
-        (int offset, int len) = Guard.Range(index, count, _position);
-        return _charArray.AsSpan(offset, len);
+        (int offset, int len) = Validate.Range(index, count, _position).OkOrThrow();
+        return _charSpan.UnsafeSlice(offset, len);
     }
 
     public Span<char> Slice(Range range)
     {
-        (int offset, int len) = Guard.Range(range, _position);
-        return _charArray.AsSpan(offset, len);
+        (int offset, int len) = Validate.Range(range, _position).OkOrThrow();
+        return _charSpan.UnsafeSlice(offset, len);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<char> AsSpan() => _charArray.AsSpan(0, _position);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public text AsText() => new text(_charArray, 0, _position);
-
-    public char[] ToArray() => _charArray.SubArray(0, _position);
-
+    
     public Result<int> TryCopyTo(Span<char> destination)
     {
-        int len = _position;
-        if (Validate.CanCopyTo(len, destination).IsError(out var error))
-            return error;
-        TextHelper.Notsafe.CopyBlock(_charArray, destination, len);
-        return Ok(len);
+        if (_position <= destination.Length)
+        {
+            _charSpan.UnsafeCopyTo(destination, _position);
+            return _position;
+        }
+        return Ex.Arg(in destination, $"Length of {destination.Length} was smaller than {_position} needed");
     }
 
     public override bool Equals(object? obj)
@@ -226,35 +260,24 @@ public ref partial struct TextBuilder :
         return obj switch
         {
             null => false,
-            string str => Written.Equate(str),
-            char[] chars => Written.Equate(chars),
+            string str => Written.Equals(str, StringComparison.Ordinal),
+            char[] chars => Written.Equals(chars, StringComparison.Ordinal),
             _ => false,
         };
     }
 
     public override int GetHashCode()
     {
-        return Hasher.HashMany(Written);
+        return Hasher.Hash(Written);
     }
 
     [HandlesResourceDisposal]
     public void Dispose()
     {
-        _position = 0;
-        _whitespace?.Dispose();
-        char[] toReturn = Reference.Exchange(ref _charArray, []);
-        if (toReturn.Length > 0)
-        {
-            ArrayPool<char>.Shared.Return(toReturn, true);
-        }
-
-        GC.SuppressFinalize(this);
+        char[]? toReturn = _charArray;
+        this = default;
+        TextPool.Return(toReturn);
     }
-//
-//    public TextBuilder RenderTo(TextBuilder builder)
-//    {
-//        return builder.Append(Written);
-//    }
 
     public bool TryFormat(
         Span<char> destination,
@@ -262,27 +285,30 @@ public ref partial struct TextBuilder :
         text format = default,
         IFormatProvider? provider = default)
     {
-        int len = _position;
-        if (len <= destination.Length)
+        if (TryCopyTo(destination).IsOk(out int written))
         {
-            TextHelper.Notsafe.CopyBlock(_charArray, destination, len);
-            charsWritten = len;
+            charsWritten = written;
             return true;
         }
-        else
-        {
-            charsWritten = 0;
-            return false;
-        }
+        charsWritten = 0;
+        return false;
     }
 
     public string ToString(string? format, IFormatProvider? provider = null)
-    {
-        return Written.AsString();
-    }
+        => ToString();
+
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<char> AsSpan() => _charSpan.UnsafeSlice(0, _position);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override string ToString() => Written.AsString();
+    public text AsText() => _charSpan.UnsafeSlice(0, _position);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public char[] ToArray() => AsSpan().ToArray();
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly override string ToString() => _charSpan.UnsafeToString(_position);
 
     [HandlesResourceDisposal]
     public string ToStringAndDispose()

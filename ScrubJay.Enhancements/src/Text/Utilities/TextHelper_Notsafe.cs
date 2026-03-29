@@ -1,4 +1,5 @@
 // ReSharper disable EntityNameCapturedOnly.Global
+
 using static InlineIL.IL;
 
 namespace ScrubJay.Enhancements.Text.Utilities;
@@ -261,7 +262,7 @@ public static partial class TextHelper
         public static void CopyText(char* source, char[] destination, int count)
             => CopyText(source, ref MemoryMarshal.GetArrayDataReference(destination), count);
 #endregion /Source: char*
-        
+
 #region Source: ref readonly char
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -362,7 +363,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(ref readonly char source, Span<char> destination, int count)
-            => CopyText(in source, ref MemoryMarshal.GetReference(destination), count);
+        {
+            fixed (char* dst = destination)
+            {
+                CopyText(in source, dst, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -382,7 +388,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(ref readonly char source, char[] destination, int count)
-            => CopyText(in source, ref MemoryMarshal.GetArrayDataReference(destination), count);
+        {
+            fixed (char* dst = destination)
+            {
+                CopyText(in source, dst, count);
+            }
+        }
 #endregion /Source: ref readonly char
 
 #region Source: ReadOnlySpan<char>
@@ -404,7 +415,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped ReadOnlySpan<char> source, void* destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -424,7 +440,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped ReadOnlySpan<char> source, char* destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -444,7 +465,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped ReadOnlySpan<char> source, ref char destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, ref destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -464,7 +490,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped ReadOnlySpan<char> source, Span<char> destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -484,7 +516,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped ReadOnlySpan<char> source, char[] destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 #endregion /Source: ReadOnlySpan<char>
 
 #region Source: Span<char>
@@ -506,7 +544,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped Span<char> source, void* destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -526,7 +569,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped Span<char> source, char* destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -546,7 +594,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped Span<char> source, ref char destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, ref destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -566,7 +619,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped Span<char> source, Span<char> destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -586,9 +645,15 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(scoped Span<char> source, char[] destination, int count)
-            => CopyText(in MemoryMarshal.GetReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 #endregion /Source: Span<char>
-        
+
 #region Source: char[]
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -608,7 +673,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(char[] source, void* destination, int count)
-            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -628,7 +698,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(char[] source, char* destination, int count)
-            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -648,7 +723,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(char[] source, ref char destination, int count)
-            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, ref destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -668,7 +748,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(char[] source, Span<char> destination, int count)
-            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetReference<char>(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -688,7 +774,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(char[] source, char[] destination, int count)
-            => CopyText(in MemoryMarshal.GetArrayDataReference<char>(source), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 #endregion /Source: char[]
 
 #region Source: string
@@ -710,7 +802,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(string source, void* destination, int count)
-            => CopyText(in source.GetPinnableReference(), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -730,7 +827,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(string source, char* destination, int count)
-            => CopyText(in source.GetPinnableReference(), destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -750,7 +852,12 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(string source, ref char destination, int count)
-            => CopyText(in source.GetPinnableReference(), ref destination, count);
+        {
+            fixed (char* src = source)
+            {
+                CopyText(src, ref destination, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -770,7 +877,13 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(string source, Span<char> destination, int count)
-            => CopyText(in source.GetPinnableReference(), ref MemoryMarshal.GetReference<char>(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
@@ -790,28 +903,14 @@ public static partial class TextHelper
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyText(string source, char[] destination, int count)
-            => CopyText(in source.GetPinnableReference(), ref MemoryMarshal.GetArrayDataReference(destination), count);
+        {
+            fixed (char* src = source)
+            fixed (char* dst = destination)
+            {
+                CopyText(src, dst, count);
+            }
+        }
 #endregion /Source: string
-
-
-
-
-//        public static void SelfCopy(Span<char> chars, Range source, Range destination)
-//        {
-//            int length = chars.Length;
-//            (int sourceOffset, int sourceLen) = source.UnsafeGetOffsetAndLength(length);
-//            Debug.Assert(sourceOffset >= 0);
-//            Debug.Assert(sourceLen >= 0);
-//            Debug.Assert(sourceLen <= length);
-//            (int destinationOffset, int destinationLength) = destination.UnsafeGetOffsetAndLength(length);
-//            Debug.Assert(destinationOffset >= 0);
-//            Debug.Assert(destinationLength >= 0);
-//            Debug.Assert(destinationLength <= length);
-//            Debug.Assert(destinationLength >= sourceLen);
-//            ref char src = ref chars[sourceOffset];
-//            ref char dst = ref chars[destinationOffset];
-//            CopyBlock(in src, ref dst, sourceLen);
-//        }
 #endregion
 
 #region Init
@@ -843,7 +942,7 @@ public static partial class TextHelper
 //        }
 
 
-       
+
     }
 
 #region Init
@@ -864,10 +963,10 @@ public static partial class TextHelper
         }
     }
 #endregion
-    
-    
-    
-   
+
+
+
+
 }
 
 public static unsafe class UnsafeTextExtensions
@@ -876,7 +975,7 @@ public static unsafe class UnsafeTextExtensions
     public static ref char UnsafeRef(this Span<char> source, int index)
     {
         ref char ch = ref source.GetPinnableReference();
-        ref char st = ref Unsafe.Add<char>(ref ch, index);
+        ref char st = ref Unsafe.Add<char>(ref ch, (nint)(uint)index /* force zero-extension */);
         return ref st;
     }
 
@@ -885,7 +984,45 @@ public static unsafe class UnsafeTextExtensions
     public static Span<char> UnsafeSlice(this Span<char> source, int start, int length)
     {
         ref char ch = ref source.GetPinnableReference();
-        ref char st = ref Unsafe.Add<char>(ref ch, start);
+        ref char st = ref Unsafe.Add<char>(ref ch, (nint)(uint)start);
         return new Span<char>(Unsafe.AsPointer(ref st), length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void UnsafeCopyTo(this Span<char> source, Span<char> destination, int count)
+    {
+        TextHelper.Notsafe.CopyText(source, destination, count);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string UnsafeToString(this Span<char> source, int count)
+    {
+        fixed (char* ptr = source)
+        {
+            return new string(ptr, 0, count);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ReadOnlySpan<char> UnsafeSlice(this ReadOnlySpan<char> source, int start, int length)
+    {
+        ref char ch = ref Unsafe.AsRef<char>(in source.GetPinnableReference());
+        ref char st = ref Unsafe.Add<char>(ref ch, (nint)(uint)start);
+        return new ReadOnlySpan<char>(Unsafe.AsPointer(ref st), length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void UnsafeCopyTo(this ReadOnlySpan<char> source, Span<char> destination, int count)
+    {
+        TextHelper.Notsafe.CopyText(source, destination, count);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string UnsafeToString(this ReadOnlySpan<char> source, int count)
+    {
+        fixed (char* ptr = source)
+        {
+            return new string(ptr, 0, count);
+        }
     }
 }

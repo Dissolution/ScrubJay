@@ -9,7 +9,9 @@ using ScrubJay.Enhancements.Text.Utilities;
 namespace ScrubJay.Enhancements.Text;
 
 [PublicAPI]
+#if !NETFRAMEWORK && !NETSTANDARD
 [InterpolatedStringHandler]
+#endif
 [MustDisposeResource(true)]
 public ref struct InterpolatedText
 {

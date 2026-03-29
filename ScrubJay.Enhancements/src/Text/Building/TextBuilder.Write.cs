@@ -1,82 +1,94 @@
-﻿//namespace ScrubJay.Enhancements.Text.Building;
-//
-///* This portion of TextBuilder contains the underlying methods that write text directly to the rented array
-// * These are designed for efficiency and do not return TextBuilder fluently for better inlining
-// */
-//
-//public ref partial struct TextBuilder
-//{
-//    [MethodImpl(MethodImplOptions.NoInlining)]
-//    private void GrowAndWrite(char ch)
-//    {
-//        int pos = _position;
-//        Debug.Assert(pos == _charArray.Length);
-//        char[] array = ArrayNest<char>.Rent(pos * 2);
-//        if (pos > 0)
-//        {
-//            Debug.Assert(_charArray is not null);
-//            TextHelper.Notsafe.CopyBlock(_charArray!, array, pos);
-//        }
-//        ArrayNest.Return(_charArray, true);
-//        Debug.Assert(pos < array.Length);
-//        array[pos] = ch;
-//        _charArray = array;
-//        _position = pos + 1;
-//    }
-//
-//    [MethodImpl(MethodImplOptions.NoInlining)]
-//    private void GrowAndWrite(scoped text text)
-//    {
-//        int pos = _position;
-//        int newPos = pos + text.Length;
-//        Debug.Assert(newPos > _charArray.Length);
-//        char[] array = ArrayNest<char>.Rent(newPos * 2);
-//        if (pos > 0)
-//        {
-//            Debug.Assert(_charArray is not null);
-//            TextHelper.Notsafe.CopyBlock(_charArray!, array, pos);
-//        }
-//        ArrayNest.Return(_charArray, true);
-//        Debug.Assert(newPos <= array.Length);
-//        TextHelper.Notsafe.CopyBlock(text, ref array[pos], text.Length);
-//        _charArray = array;
-//        _position = newPos;
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void Write(char ch)
-//    {
-//        if (_position < _charArray.Length)
-//        {
-//            _charArray[_position] = ch;
-//            _position++;
-//        }
-//        else
-//        {
-//            GrowAndWrite(ch);
-//        }
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void Write(scoped text text)
-//    {
-//        if (text.TryCopyTo(Available))
-//        {
-//            _position += text.Length;
-//        }
-//        else
-//        {
-//            GrowAndWrite(text);
-//        }
-//    }
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void Write(string? str) => Write(str.AsSpan());
-//
-//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-//    public void Write([InterpolatedStringHandlerArgument("")] ref InterpolatedTextBuilder interpolatedText)
-//    {
-//        // already written
-//        return;
-//    }
-//}
+﻿using ScrubJay.Enhancements.Text.Utilities;
+
+namespace ScrubJay.Enhancements.Text.Building;
+
+/* This portion of TextBuilder contains the underlying methods that write text directly to the rented array
+ * These are designed for efficiency and do not return TextBuilder fluently for better inlining
+ */
+
+public ref partial struct TextBuilder
+{
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void GrowAndWrite(scoped text text)
+    {
+        int len = text.Length;
+        GrowBy(len);
+        TextHelper.Notsafe.CopyText(text, ref _charSpan.UnsafeRef(_position), len);
+        _position += len;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write(in char ch)
+    {
+        if (_position < _charSpan.Length)
+        {
+            _charSpan[_position] = ch;
+            _position++;
+        }
+        else
+        {
+            GrowAndWrite(ch.AsSpan());
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write(scoped text text)
+    {
+        if (text.TryCopyTo(Available))
+        {
+            _position += text.Length;
+        }
+        else
+        {
+            GrowAndWrite(text);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write(string? str) => Write(str.AsSpan());
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write(
+#if !NETFRAMEWORK && !NETSTANDARD
+        [InterpolatedStringHandlerArgument("")]
+#endif
+        ref InterpolatedTextBuilder interpolatedText)
+    {
+        // already written
+        return;
+    }
+
+    public void Write<T>(T? value)
+    {
+        if (value is IFormattable)
+        {
+#if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
+                {
+                    Grow();
+                }
+
+                _position += charsWritten;
+                return;
+            }
+#else
+            Write(((IFormattable)value).ToString(null, null));
+#endif
+        }
+        else if (value is not null)
+        {
+            Write(value.ToString());
+        }
+    }
+
+#if NET9_0_OR_GREATER
+    public void Write<T>(in T value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        Write(Any.ToString(in value));
+    }
+#endif
+}

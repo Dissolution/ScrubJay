@@ -8,7 +8,7 @@ namespace ScrubJay.Enhancements.Exceptions;
 partial class Ex
 {
     public static EnhancedArgumentOutOfRangeException ArgRange<TArgument, TRange>(
-        ref readonly TArgument? argument,
+        in TArgument? argument,
         in TRange? range,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]
@@ -25,7 +25,7 @@ partial class Ex
     }
     
     public static EnhancedArgumentOutOfRangeException ArgRange<T>(
-        ref readonly T? argument,
+        in T? argument,
         string? range,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]
@@ -41,7 +41,7 @@ partial class Ex
     }
     
     public static EnhancedArgumentOutOfRangeException ArgRange<T>(
-        ref readonly T? argument,
+        in T? argument,
         Expression<Func<T?, bool>> range,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]

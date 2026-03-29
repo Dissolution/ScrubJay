@@ -48,7 +48,6 @@
         </PackageReference>
     </ItemGroup>
 
-
     <!-- NuGet -->
     <PropertyGroup>
         <Authors>Dissolution</Authors>
@@ -56,6 +55,11 @@
         <RepositoryType>git</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <!-- 32/64 -->
+    <PropertyGroup Condition="'$(Platform)' == 'x64' Or '$(PlatformTarget)' == 'x64'">
+        <DefineConstants>$(DefineConstants);TARGET_64BIT</DefineConstants>
     </PropertyGroup>
 
     <!-- Release configurations -->
@@ -87,7 +91,7 @@
         <!-- Aliases -->
         <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
     </ItemGroup>
-    
+
     <ItemGroup Condition="'$(TargetFramework)' != 'net35'">
         <Using Include="System.Numerics"/>
         <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>

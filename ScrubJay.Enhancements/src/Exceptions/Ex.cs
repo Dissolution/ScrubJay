@@ -43,4 +43,23 @@ public static partial class Ex
     }
 #endregion
 
+#region InvalidOperationException
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static InvalidOperationException Invalid()
+    {
+        return new InvalidOperationException();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static InvalidOperationException Invalid(string? message)
+    {
+        return new InvalidOperationException(message);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static InvalidOperationException Invalid(string? message, Exception? innerException)
+    {
+        return new InvalidOperationException(message, innerException);
+    }
+#endregion
 }

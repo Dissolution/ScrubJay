@@ -21,7 +21,7 @@ public static partial class Ex
     }
 
     public static EnhancedArgumentException Arg<T>(
-        ref readonly T? argument,
+        in T? argument,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
@@ -33,7 +33,7 @@ public static partial class Ex
     }
 
     public static EnhancedArgumentException Arg<T>(
-        scoped ReadOnlySpan<T> argument,
+        scoped ref readonly ReadOnlySpan<T> argument,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
@@ -42,7 +42,7 @@ public static partial class Ex
     }
     
     public static EnhancedArgumentException Arg<T>(
-        scoped Span<T> argument,
+        scoped ref readonly Span<T> argument,
         string? info = null,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)

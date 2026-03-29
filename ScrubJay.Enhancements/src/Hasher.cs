@@ -39,19 +39,23 @@ https://raw.githubusercontent.com/Cyan4973/xxHash/5c174cfa4e45a42f94082dc0d4539b
 
 #pragma warning disable CS0809
 
+using System.ComponentModel;
 using System.Security.Cryptography;
-using ScrubJay.Maths;
 
-namespace ScrubJay.Utilities;
+namespace ScrubJay.Enhancements;
 
 /// <summary>
 /// A null-safe hashcode generator
 /// </summary>
+/// <remarks>
+/// This is deterministic only per running application instance, as per object.GetHashCode recommendations.
+/// </remarks>
 [PublicAPI]
 [StructLayout(LayoutKind.Auto)]
 public ref struct Hasher
 {
 #region Static
+
     private const uint PRIME1 = 0x9E3779B1U;
     private const uint PRIME2 = 0x85EBCA77U;
     private const uint PRIME3 = 0xC2B2AE3DU;
@@ -87,7 +91,7 @@ public ref struct Hasher
 #else
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
         RandomNumberGenerator.Fill(bytes);
-        return BitHelper.Read<uint>(bytes);
+        return BitConverter.ToUInt32(bytes);
 #endif
     }
 
@@ -109,18 +113,18 @@ public ref struct Hasher
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint StateAdd(uint hash, uint input)
-        => MathHelper.RotateLeft(hash + (input * PRIME2), 13) * PRIME1;
+        => BitOperations.RotateLeft(hash + (input * PRIME2), 13) * PRIME1;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint HashAdd(uint hash, uint queuedValue)
-        => MathHelper.RotateLeft(hash + (queuedValue * PRIME3), 17) * PRIME4;
+        => BitOperations.RotateLeft(hash + (queuedValue * PRIME3), 17) * PRIME4;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint StateToHash(uint value1, uint value2, uint value3, uint value4)
-        => MathHelper.RotateLeft(value1, 1) +
-            MathHelper.RotateLeft(value2, 7) +
-            MathHelper.RotateLeft(value3, 12) +
-            MathHelper.RotateLeft(value4, 18);
+        => BitOperations.RotateLeft(value1, 1) +
+           BitOperations.RotateLeft(value2, 7) +
+           BitOperations.RotateLeft(value3, 12) +
+           BitOperations.RotateLeft(value4, 18);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint HashFinalize(uint hash)
@@ -162,6 +166,31 @@ public ref struct Hasher
         return hasher.ToHashCode();
     }
 
+    public static int Hash(string? str)
+    {
+        if (str is null)
+            return NullHash;
+        return str.GetHashCode();
+    }
+    
+    public static int Hash(string? str, StringComparison comparison)
+    {
+        if (str is null)
+            return NullHash;
+        return str.GetHashCode(comparison);
+    }
+    
+    public static int Hash(scoped text text)
+    {
+        return string.GetHashCode(text, StringComparison.Ordinal);
+    }
+    
+    public static int Hash(scoped text text, StringComparison comparison)
+    {
+        return string.GetHashCode(text, comparison);
+    }
+    
+    
     /// <summary>
     /// Gets a hashcode for many values
     /// </summary>
@@ -480,8 +509,39 @@ public ref struct Hasher
         hasher.AddMany<T>(enumerable, comparer);
         return hasher.ToHashCode();
     }
+    
+    public static int HashBytes<T>(ref readonly T value)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        // we act on the value as raw underlying bytes
+        ref byte u8 = ref Unsafe.As<T, byte>(ref Unsafe.AsRef<T>(in value));
+        int length = Unsafe.SizeOf<T>();
 
- 
+        var hasher = new Hasher();
+        unchecked
+        {
+            // 4-byte chunks
+            while (length >= 4)
+            {
+                uint slice = Unsafe.ReadUnaligned<uint>(ref u8);
+                hasher.AddHash(slice);
+                u8 = ref Unsafe.Add(ref u8, 4);
+                length -= 4;
+            }
+
+            // remaining bytes
+            while (length > 0)
+            {
+                hasher.AddHash((uint)u8);
+                u8 = ref Unsafe.Add(ref u8, 1);
+                length--;
+            }
+
+            return hasher.ToHashCode();
+        }
+    }
     
 #endregion
 
@@ -500,9 +560,9 @@ public ref struct Hasher
 
     private uint _length;
 
-    private void AddHash(int value)
+    private void AddHash(int i32HashCode)
     {
-        uint uvalue = (uint)value;
+        uint hash = (uint)i32HashCode;
         uint previousLength = _length++;
         uint position = previousLength % 4;
 
@@ -510,15 +570,15 @@ public ref struct Hasher
         // ReSharper disable once ConvertIfStatementToSwitchStatement
         if (position == 0)
         {
-            _queue1 = uvalue;
+            _queue1 = hash;
         }
         else if (position == 1)
         {
-            _queue2 = uvalue;
+            _queue2 = hash;
         }
         else if (position == 2)
         {
-            _queue3 = uvalue;
+            _queue3 = hash;
         }
         else // position == 3
         {
@@ -530,10 +590,43 @@ public ref struct Hasher
             _state1 = StateAdd(_state1, _queue1);
             _state2 = StateAdd(_state2, _queue2);
             _state3 = StateAdd(_state3, _queue3);
-            _state4 = StateAdd(_state4, uvalue);
+            _state4 = StateAdd(_state4, hash);
         }
     }
     
+    private void AddHash(uint u32HashCode)
+    {
+        uint previousLength = _length++;
+        uint position = previousLength % 4;
+
+        // Cannot inline switch
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (position == 0)
+        {
+            _queue1 = u32HashCode;
+        }
+        else if (position == 1)
+        {
+            _queue2 = u32HashCode;
+        }
+        else if (position == 2)
+        {
+            _queue3 = u32HashCode;
+        }
+        else // position == 3
+        {
+            if (previousLength == 3)
+            {
+                StartingStates(out _state1, out _state2, out _state3, out _state4);
+            }
+
+            _state1 = StateAdd(_state1, _queue1);
+            _state2 = StateAdd(_state2, _queue2);
+            _state3 = StateAdd(_state3, _queue3);
+            _state4 = StateAdd(_state4, u32HashCode);
+        }
+    }
+
     /// <summary>
     /// Adds the hashcode for the given <paramref name="value"/> to this <see cref="Hasher"/>
     /// </summary>
@@ -568,7 +661,6 @@ public ref struct Hasher
         }
     }
 
-#region AddMany
     /// <summary>
     /// Adds the hashcodes of the items in a <see cref="Span{T}"/>
     /// </summary>
@@ -653,7 +745,6 @@ public ref struct Hasher
             Add<T>(value, comparer);
         }
     }
-#endregion
 
     /// <summary>
     /// Gets the hashcode generated by this <see cref="Hasher"/> instance
@@ -710,6 +801,6 @@ public ref struct Hasher
 
     public override readonly string ToString()
     {
-        return $"{nameof(Hasher)} #{ToHashCode():X}";
+        return $"Hash: 0x{ToHashCode():X}";
     }
 }
