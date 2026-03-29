@@ -21,7 +21,6 @@
         <PackageReference Include="System.Text.Json" />
         <ProjectReference Include="..\ScrubJay.Core\src\ScrubJay.Core.csproj"/>
         <ProjectReference Include="..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />
-        <ProjectReference Include="..\ScrubJay.Exceptions\src\ScrubJay.Exceptions.csproj" />
         <ProjectReference Include="..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>
         <ProjectReference Include="..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>
         <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>

@@ -41,7 +41,7 @@ Index index = ^2;
 
 
 
-var ex = Ex.Argument(index);
+var ex = Ex.Arg(index);
 
 var edi = ExceptionDispatchInfo.Capture(ex);
 var sex = edi.SourceException;

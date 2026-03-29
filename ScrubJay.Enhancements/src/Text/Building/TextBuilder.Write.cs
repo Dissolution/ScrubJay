@@ -1,0 +1,82 @@
+﻿//namespace ScrubJay.Enhancements.Text.Building;
+//
+///* This portion of TextBuilder contains the underlying methods that write text directly to the rented array
+// * These are designed for efficiency and do not return TextBuilder fluently for better inlining
+// */
+//
+//public ref partial struct TextBuilder
+//{
+//    [MethodImpl(MethodImplOptions.NoInlining)]
+//    private void GrowAndWrite(char ch)
+//    {
+//        int pos = _position;
+//        Debug.Assert(pos == _charArray.Length);
+//        char[] array = ArrayNest<char>.Rent(pos * 2);
+//        if (pos > 0)
+//        {
+//            Debug.Assert(_charArray is not null);
+//            TextHelper.Notsafe.CopyBlock(_charArray!, array, pos);
+//        }
+//        ArrayNest.Return(_charArray, true);
+//        Debug.Assert(pos < array.Length);
+//        array[pos] = ch;
+//        _charArray = array;
+//        _position = pos + 1;
+//    }
+//
+//    [MethodImpl(MethodImplOptions.NoInlining)]
+//    private void GrowAndWrite(scoped text text)
+//    {
+//        int pos = _position;
+//        int newPos = pos + text.Length;
+//        Debug.Assert(newPos > _charArray.Length);
+//        char[] array = ArrayNest<char>.Rent(newPos * 2);
+//        if (pos > 0)
+//        {
+//            Debug.Assert(_charArray is not null);
+//            TextHelper.Notsafe.CopyBlock(_charArray!, array, pos);
+//        }
+//        ArrayNest.Return(_charArray, true);
+//        Debug.Assert(newPos <= array.Length);
+//        TextHelper.Notsafe.CopyBlock(text, ref array[pos], text.Length);
+//        _charArray = array;
+//        _position = newPos;
+//    }
+//
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void Write(char ch)
+//    {
+//        if (_position < _charArray.Length)
+//        {
+//            _charArray[_position] = ch;
+//            _position++;
+//        }
+//        else
+//        {
+//            GrowAndWrite(ch);
+//        }
+//    }
+//
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void Write(scoped text text)
+//    {
+//        if (text.TryCopyTo(Available))
+//        {
+//            _position += text.Length;
+//        }
+//        else
+//        {
+//            GrowAndWrite(text);
+//        }
+//    }
+//
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void Write(string? str) => Write(str.AsSpan());
+//
+//    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//    public void Write([InterpolatedStringHandlerArgument("")] ref InterpolatedTextBuilder interpolatedText)
+//    {
+//        // already written
+//        return;
+//    }
+//}

@@ -8,12 +8,15 @@
     <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
     <Project Path="ScrubJay.Core/tests/ScrubJay.Core.Tests.csproj" />
   </Folder>
+  <Folder Name="/ScrubJay.Enhancements/">
+    <Project Path="ScrubJay.Enhancements/benchmarks/ScrubJay.Enhancements.Benchmarks.csproj" />
+    <Project Path="ScrubJay.Enhancements/build/ScrubJay.Enhancements.BuildTasks.csproj" />
+    <Project Path="ScrubJay.Enhancements/src/ScrubJay.Enhancements.csproj" />
+    <Project Path="ScrubJay.Enhancements/tests/ScrubJay.Enhancements.Tests.csproj" />
+  </Folder>
   <Folder Name="/ScrubJay.Enums/">
     <Project Path="ScrubJay.Enums/ScrubJay.Enums.Tests/ScrubJay.Enums.Tests.csproj" />
     <Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Exceptions/">
-    <Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Functional/">
     <Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
@@ -25,10 +28,6 @@
     <Project Path="ScrubJay.Reflection/benchmarks/ScrubJay.Reflection.Benchmarks.csproj" />
     <Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj" />
     <Project Path="ScrubJay.Reflection/tests/ScrubJay.Reflection.Tests.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Text/">
-    <Project Path="ScrubJay.Text/benchmarks/ScrubJay.Text.Benchmarks.csproj" />
-    <Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
   </Folder>
   <Folder Name="/ScrubJay.Universal/">
     <File Path="ScrubJay.Universal\README.md" />

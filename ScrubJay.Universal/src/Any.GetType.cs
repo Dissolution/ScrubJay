@@ -29,6 +29,15 @@ static partial class Any
             return typeof(T);
         }
     }
+
+    [return: NotNullIfNotNull(nameof(obj))]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Type? GetType(object? obj)
+    {
+        if (obj is not null)
+            return obj.GetType();
+        return null;
+    }
 }
 
 #if NET9_0_OR_GREATER

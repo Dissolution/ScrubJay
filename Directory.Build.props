@@ -6,7 +6,7 @@
 
         <!-- generate XML documentation files -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        
+
         <!-- Individual suppressions are located in `.editorconfig` -->
         <NoWarn>$(NoWarn);CS1591;</NoWarn>
     </PropertyGroup>
@@ -17,11 +17,11 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <AnalysisLevel>latest</AnalysisLevel>
         <AnalysisMode>All</AnalysisMode>
-        
+
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
         <WarningsAsErrors>CS9195;CS9192;</WarningsAsErrors>
-        
+
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
@@ -78,7 +78,6 @@
         <Using Include="System.Collections"/>
         <Using Include="System.Diagnostics"/>
         <Using Include="System.Diagnostics.CodeAnalysis"/>
-        <Using Include="System.Numerics"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Text"/>
@@ -86,8 +85,12 @@
         <Using Include="JetBrains.Annotations"/>
 
         <!-- Aliases -->
-        <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
         <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(TargetFramework)' != 'net35'">
+        <Using Include="System.Numerics"/>
+        <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
     </ItemGroup>
 
     <!-- global attributes -->
