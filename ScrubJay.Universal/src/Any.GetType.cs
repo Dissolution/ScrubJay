@@ -18,7 +18,7 @@ static partial class Any
     /// The true <see cref="Type"/> of <paramref name="value"/>, which may be more specific than <c>typeof(T)</c>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType<T>(ref readonly T? value)
+    public static Type GetType<T>(in T? value)
     {
         if (value is not null)
         {
@@ -32,7 +32,7 @@ static partial class Any
 
     [return: NotNullIfNotNull(nameof(obj))]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type? GetType(object? obj)
+    public static Type? GetType(in object? obj)
     {
         if (obj is not null)
             return obj.GetType();
@@ -55,7 +55,7 @@ static partial class Any
     /// <returns><c>typeof(T)</c></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable RCS1163
-    public static Type GetType<T>(ref readonly T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public static Type GetType<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
 #pragma warning restore RCS1163
         where T : allows ref struct
     {

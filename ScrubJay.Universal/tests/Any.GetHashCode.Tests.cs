@@ -1,3 +1,5 @@
+using ScrubJay.Universal.Tests.Internal;
+
 namespace ScrubJay.Universal.Tests;
 
 public class Any_GetHashCode_Tests
@@ -17,26 +19,22 @@ public class Any_GetHashCode_Tests
             hashcode);
     }
 
-#pragma warning disable CA1307, MA0021
+    public static TheoryData<string?> StringData { get; } = new TheoryData<string?>(TestTypes.Text.StringsAndNull);
+
     [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("\0")]
-    [InlineData("TRJ-147")]
+    [MemberData(nameof(StringData))]
     public void CanGetHashCodeString(string? str)
     {
-        int hashcode = Any.GetHashCode<string>(in str);
+        int hashCode = str?.GetHashCode() ?? 0;
+        int anyHashCode = Any.GetHashCode<string>(in str);
 
-        Assert.Equal(
-            str?.GetHashCode() ?? 0,
-            hashcode);
+        Assert.Equal(hashCode, anyHashCode);
     }
-#pragma warning restore CA1307, MA0021
+
+    public static TheoryData<char> CharData { get; } = new(TestTypes.Text.Characters);
 
     [Theory]
-    [InlineData('\0')]
-    [InlineData(char.MaxValue)]
-    [InlineData((char)0xD800)]
+    [MemberData(nameof(CharData))]
     public void CanGetHashCodeChar(char ch)
     {
         int hashcode = Any.GetHashCode<char>(in ch);
@@ -44,30 +42,5 @@ public class Any_GetHashCode_Tests
         Assert.Equal(
             ch.GetHashCode(),
             hashcode);
-    }
-
-    [Fact]
-    public void ReadOnlySpanGetHashCodeDoesNotThrow()
-    {
-        ReadOnlySpan<int> ros =
-        [
-            1,
-            4,
-            7
-        ];
-
-        int hashcode;
-
-        try
-        {
-            _ = ros.GetHashCode();
-        }
-        catch (Exception ex)
-        {
-            Assert.IsType<NotSupportedException>(ex);
-        }
-
-        hashcode = Any.GetHashCode(in ros);
-        Assert.True(hashcode == 0);
     }
 }

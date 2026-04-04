@@ -1,108 +1,160 @@
 <Project>
-    <PropertyGroup>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <LangVersion>latest</LangVersion>
-
-        <!-- generate XML documentation files -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
-        <!-- Individual suppressions are located in `.editorconfig` -->
-        <NoWarn>$(NoWarn);CS1591;</NoWarn>
-    </PropertyGroup>
-
-    <!-- set code analysis rules -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options -->
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisLevel>latest</AnalysisLevel>
-        <AnalysisMode>All</AnalysisMode>
-
-        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-        <WarningsAsErrors>CS9195;CS9192;</WarningsAsErrors>
-
-        <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    </PropertyGroup>
-
-    <!-- Analyzers -->
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Meziantou.Analyzer">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="SonarAnalyzer.CSharp">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Roslynator.Analyzers">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="xunit.analyzers">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <!-- Other helpful NuGet Packages -->
-    <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <!-- NuGet -->
-    <PropertyGroup>
-        <Authors>Dissolution</Authors>
-        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    </PropertyGroup>
-
-    <!-- 32/64 -->
-    <PropertyGroup Condition="'$(Platform)' == 'x64' Or '$(PlatformTarget)' == 'x64'">
-        <DefineConstants>$(DefineConstants);TARGET_64BIT</DefineConstants>
-    </PropertyGroup>
-
-    <!-- Release configurations -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- Create NuGet Package -->
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <!-- Validate -->
-        <EnablePackageValidation>false</EnablePackageValidation>
-        <!-- Set common output path for Packages -->
-        <PackageOutputPath>..\..\packages\</PackageOutputPath>
-    </PropertyGroup>
-
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
-        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
-    </ItemGroup>
-
-    <!-- global usings -->
-    <ItemGroup>
-        <Using Include="System.Collections"/>
-        <Using Include="System.Diagnostics"/>
-        <Using Include="System.Diagnostics.CodeAnalysis"/>
-        <Using Include="System.Runtime.CompilerServices"/>
-        <Using Include="System.Runtime.InteropServices"/>
-        <Using Include="System.Text"/>
-
-        <Using Include="JetBrains.Annotations"/>
-
-        <!-- Aliases -->
-        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' != 'net35'">
-        <Using Include="System.Numerics"/>
-        <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
-    </ItemGroup>
-
-    <!-- global attributes -->
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>ScrubJay.Sandboxes.Console</_Parameter1>
-        </AssemblyAttribute>
-    </ItemGroup>
-
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Features>strict</Features>
+		<!-- Individual suppressions are located in `.editorconfig` -->
+		<NoWarn>$(NoWarn);CS1591;</NoWarn>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<!-- Build Configurations -->
+	<PropertyGroup Condition="'$(BuildType)' == 'Debug' Or '$(BuildType)' == 'Analyze'">
+		<Optimize>false</Optimize>
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(BuildType)' == 'Debug'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(BuildType)' == 'Analyze'">
+		<DefineConstants>DEBUG;ANALYZE</DefineConstants>
+		<AnalysisMode>All</AnalysisMode>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+		<ReportAnalyzer>true</ReportAnalyzer>
+		<Deterministic>true</Deterministic>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<WarningLevel>4</WarningLevel>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(BuildType)' == 'Release' Or '$(BuildType)' == 'Nuget'">
+		<Optimize>true</Optimize>
+		<!-- generate XML documentation files -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(BuildType)' == 'Release' Or '$(BuildType)' == 'Nuget'">
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+	<PropertyGroup Condition="'$(BuildType)' == 'Release'">
+		<DefineConstants>RELEASE;</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(BuildType)' == 'Nuget'">
+		<DefineConstants>RELEASE;NUGET</DefineConstants>
+		<!-- Create NuGet Package -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<!-- Validate -->
+		<EnablePackageValidation>false</EnablePackageValidation>
+		<!-- Set common output path for Packages -->
+		<PackageOutputPath>..\..\packages\</PackageOutputPath>
+	</PropertyGroup>
+	<!-- global usings -->
+	<ItemGroup>
+		<Using Include="JetBrains.Annotations"/>
+		<Using Include="System.Collections"/>
+		<Using Include="System.Diagnostics"/>
+		<Using Include="System.Diagnostics.CodeAnalysis"/>
+		<Using Include="System.Numerics"/>
+		<Using Include="System.Runtime.CompilerServices"/>
+		<Using Include="System.Runtime.InteropServices"/>
+		<Using Include="System.Text"/>
+		<!-- Aliases -->
+		<Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
+		<Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
+	</ItemGroup>
+	<!-- global attributes -->
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>ScrubJay.Sandboxes.Console</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	<!-- My Nuget Info -->
+	<PropertyGroup>
+		<Authors>Dissolution</Authors>
+		<RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
+	
+	<!-- Nuget Packages -->
+	<!-- Common -->
+	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+	<!-- Analyzers -->
+	<ItemGroup Condition="'$(BuildType)' == 'Analyze'">
+		<!--        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Roslynator.Analyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Roslynator.Formatting.Analyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Roslynator.CodeAnalysis.Analyzers">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="Meziantou.Analyzer">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--&lt;!&ndash;        <PackageReference Include="StyleCop.Analyzers">&ndash;&gt;-->
+		<!--&lt;!&ndash;            <PrivateAssets>all</PrivateAssets>&ndash;&gt;-->
+		<!--&lt;!&ndash;            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>&ndash;&gt;-->
+		<!--&lt;!&ndash;        </PackageReference>&ndash;&gt;-->
+		<!--        <PackageReference Include="SonarAnalyzer.CSharp">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="SonarAnalyzer.CSharp.Styling">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <PackageReference Include="AsyncFixer">-->
+		<!--            <PrivateAssets>all</PrivateAssets>-->
+		<!--            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>-->
+		<!--        </PackageReference>-->
+		<!--        <AdditionalFiles Include="BannedSymbols.txt" Visible="false"/> &lt;!&ndash; used by BannedAPiAnalyzers &ndash;&gt;-->
+		<PackageReference Include="xunit.analyzers">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	
+	<!-- 32/64 -->
+	<PropertyGroup Condition="'$(Platform)' == 'x64' Or '$(PlatformTarget)' == 'x64'">
+		<DefineConstants>$(DefineConstants);TARGET_64BIT</DefineConstants>
+	</PropertyGroup>
 </Project>
 

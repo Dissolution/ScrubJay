@@ -8,19 +8,8 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
 
-        <!--
-        This template uses native xUnit.net command line options when using 'dotnet run' and
-        VSTest by default when using 'dotnet test'. For more information on how to enable support
-        for Microsoft Testing Platform, please visit:
-          https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
-        -->
-        
         <NoWarn>$(NoWarn);CA2201;CA1515;</NoWarn>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
-    </ItemGroup>
 
     <ItemGroup>
         <Using Include="Xunit"/>
@@ -33,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\core\ScrubJay.Functional.csproj"/>
     </ItemGroup>
 
 </Project>

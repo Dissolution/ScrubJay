@@ -202,10 +202,7 @@ public static class TypeConstraints
         where T : IComparisonOperators<T, T, int>;
 
 #endif
-
-
-
-
+    
     // combinations
 
     /// <summary>

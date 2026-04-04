@@ -27,7 +27,7 @@ partial class Any
     /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T? left, T? right) => Comparer<T>.Default.Compare(left!, right!);
+    public static int Compare<T>(in T? left, in T? right) => Comparer<T>.Default.Compare(left!, right!);
 
     /// <summary>
     /// Compares two <typeparamref name="T"/> values with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
@@ -50,10 +50,7 @@ partial class Any
     /// <c>0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is equal to <paramref name="right"/><br/>
     /// <c>&gt;0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is greater than <paramref name="right"/>
     /// </returns>
-    public static int Compare<T>(T? left, T? right, IComparer<T>? comparer)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
+    public static int Compare<T>(in T? left, in T? right, IComparer<T>? comparer)
     {
         if (comparer is null)
             return Compare<T>(left, right);
@@ -139,6 +136,17 @@ partial class Any
 #if NET9_0_OR_GREATER
 partial class Any
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Compare<T>(in T? left, in T? right,
+        IComparer<T>? comparer,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
+    {
+        if (comparer is not null)
+            return comparer.Compare(left!, right!);
+        return Compare<T>(left, right, _);
+    }
+    
+    
     /// <summary>
     /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
     /// </summary>
@@ -160,49 +168,67 @@ partial class Any
     /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(T? left, T? right,
+    public static int Compare<T>(in T? left, in T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return MethodCache<T>.LazyCompare.Value.Invoke(left, right);
+        return CompareCache<T>.Invoke(in left, in right);
     }
-}
-
-internal partial class MethodCache<T>
-{
-    public static readonly Lazy<Func<T?, T?, int>> LazyCompare =
-        new(CreateCompareFunc, LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static int CompareFallback(T? left, T? right) => 0;
-
-    private static Func<T?, T?, int> CreateCompareFunc()
+    
+    private static class CompareCache<T>
+        where T : allows ref struct
     {
-        Type instanceType = typeof(T);
-        MethodInfo? compareToMethod = instanceType.FindBestMethod("CompareTo", typeof(int), typeof(T));
+        public delegate int AnyCompare(ref readonly T? left, ref readonly T? right);
 
-        if (compareToMethod is null)
-            return CompareFallback;
-
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New($"Compare_{Type.Render<T>()}", typeof(int), typeof(T), typeof(T));
-        var generator = dynamicMethod.GetILGenerator();
-
-        // load instance
-        EmitLoadInstance(generator, instanceType);
-        // load value to compare to
-        generator.Emit(OpCodes.Ldarg_1);
-        // call the method
-        generator.EmitCallMethod(instanceType, compareToMethod);
-        // return the int on the stack
-        generator.Emit(OpCodes.Ret);
-
-        if (!dynamicMethod.TryCreateDelegate<Func<T?, T?, int>>(out var func))
+        public static readonly AnyCompare Invoke;
+        
+        static CompareCache()
         {
-            func = CompareFallback;
-        }
+            Type instanceType = typeof(T);
+            MethodInfo? compareToMethod = instanceType.FindBestMethod("CompareTo", typeof(int), typeof(T));
 
-        return func;
+            if (compareToMethod is not null)
+            {
+                var dynamicMethod = DynamicMethod.New($"Any_{instanceType}_Compare", typeof(int), [typeof(T), typeof(T)]);
+                var generator = dynamicMethod.GetILGenerator();
+
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Ldobj, instanceType);
+                generator.Emit(OpCodes.Constrained, instanceType);
+                generator.Emit(OpCodes.Callvirt, compareToMethod);
+                generator.Emit(OpCodes.Ret);
+
+                if (dynamicMethod.TryCreateDelegate<AnyCompare>(out var func))
+                {
+                    Invoke = func;
+                    return;
+                }
+            }
+            Invoke = CompareFallback;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CompareFallback(ref readonly T? left, ref readonly T? right)
+        {
+            Emit.Ldarg_0();
+            Emit.Ldarg_1();
+            Emit.Clt();
+            Emit.Brtrue("lt");
+            Emit.Ldarg_0();
+            Emit.Ldarg_1();
+            Emit.Cgt();
+            Emit.Brtrue("gt");
+            Emit.Ldc_I4_0();
+            Emit.Ret();
+            MarkLabel("lt");
+            Emit.Ldc_I4_M1();
+            Emit.Ret();
+            MarkLabel("gt");
+            Emit.Ldc_I4_1();
+            Emit.Ret();
+            throw Unreachable();
+        }
     }
 }
-
 #endif

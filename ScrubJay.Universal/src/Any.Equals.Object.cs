@@ -23,7 +23,7 @@ partial class Any
     /// <returns>
     /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
     /// </returns>
-    public static bool Equals<T>(T? value, object? other)
+    public static bool Equals<T>(in T? value, object? other)
     {
         if (value is null)
             return other is null;
@@ -50,77 +50,48 @@ partial class Any
     /// <returns>
     /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
     /// </returns>
-    public static bool Equals<T>(T? value,
+    public static bool Equals<T>(
+        in T? value,
         object? other,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (value is null)
             return other is null;
-        return MethodCache<T>.LazyEqualsObject.Value.Invoke(value, other);
+        return EqualsObjectCache<T>.Invoke(in value, other);
     }
-}
 
-partial class MethodCache<T>
-{
-    public static readonly Lazy<Func<T, object?, bool>> LazyEqualsObject = new(
-        CreateEqualsObjectFunc,
-        LazyThreadSafetyMode.ExecutionAndPublication);
-
-    private static bool EqualsObjectFallback(T value, object? obj) => false;
-    
-    private static Func<T, object?, bool> CreateEqualsObjectFunc()
+    private static class EqualsObjectCache<T>
+        where T : allows ref struct
     {
-        Type instanceType = typeof(T);
+        public delegate bool AnyEqualsObject(ref readonly T? value, object? other);
 
-        MethodInfo? equalsMethod = instanceType.FindBestMethod("Equals", typeof(bool), typeof(object));
+        public static readonly AnyEqualsObject Invoke;
 
-        if (equalsMethod is null)
-            return EqualsObjectFallback;
-
-        // emit our dynamic method
-        var dynamicMethod = DynamicMethod.New(
-            $"Equals_{Type.Render<T>()}_Object",
-            typeof(bool),
-            typeof(T),
-            typeof(object));
-
-        var generator = dynamicMethod.GetILGenerator();
-
-        // load instance
-        EmitLoadInstance(generator, instanceType);
-        // load value to compare to
-        generator.Emit(OpCodes.Ldarg_1);
-
-        // call the method
-        generator.EmitCallMethod(
-            instanceType,
-            equalsMethod);
-
-        // return the bool on the stack
-        generator.Emit(OpCodes.Ret);
-
-        if (!dynamicMethod.TryCreateDelegate<Func<T?, object?, bool>>(out var func))
+        static EqualsObjectCache()
         {
-            return EqualsObjectFallback;
-        }
+            Type instanceType = typeof(T);
+            MethodInfo? equalsMethod = instanceType.FindBestMethod("Equals", typeof(bool), [typeof(object)]);
 
-        // try to execute it to see if it will even work
-        // Span + ReadOnlySpan throw
-        try
-        {
-            _ = func(
-                default,
-                new object());
-        }
-#pragma warning disable
-        catch
-#pragma warning restore
-        {
-            return EqualsObjectFallback;
-        }
+            if (equalsMethod is not null)
+            {
+                var dynamicMethod = DynamicMethod.New<AnyEqualsObject>($"Any_{instanceType}_Equals_Object");
+                var generator = dynamicMethod.GetILGenerator();
 
-        return func;
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Constrained, instanceType);
+                generator.Emit(OpCodes.Callvirt, equalsMethod);
+                generator.Emit(OpCodes.Ret);
+
+                if (dynamicMethod.TryCreateDelegate<AnyEqualsObject>(out var func))
+                {
+                    Invoke = func;
+                    return;
+                }
+            }
+            Invoke = (ref readonly value, other) => false;
+        }
     }
 }
 

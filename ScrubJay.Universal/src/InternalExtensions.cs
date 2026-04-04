@@ -103,41 +103,5 @@ internal static class InternalExtensions
             return null;
         }
     }
-
-    extension(ILGenerator generator)
-    {
-      
-
-        public void EmitCallMethod(Type instanceType,
-            MethodInfo method)
-        {
-            // enums + byref likes we can use Constrained
-            if (instanceType.IsByRef || instanceType.IsEnum || instanceType.IsByRefLike)
-            {
-                generator.Emit(
-                    OpCodes.Constrained,
-                    instanceType);
-
-                generator.Emit(
-                    OpCodes.Callvirt,
-                    method);
-            }
-            // value types we just call
-            else
-                if (instanceType.IsValueType)
-                {
-                    generator.Emit(
-                        OpCodes.Call,
-                        method);
-                }
-                // class types we have to callvirt
-                else
-                {
-                    generator.Emit(
-                        OpCodes.Callvirt,
-                        method);
-                }
-        }
-    }
 #endif
 }

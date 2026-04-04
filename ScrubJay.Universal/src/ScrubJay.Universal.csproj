@@ -20,7 +20,7 @@
         <Using Include="InlineIL.IL" Static="true"/>
         <Using Include="InlineIL"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <PackageReference Include="Fody">
             <PrivateAssets>all</PrivateAssets>
@@ -40,8 +40,6 @@
     <!-- Expose our internals to Tests and Benchmarks -->
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
-        <InternalsVisibleTo Include="ScrubJay.Universal.Benchmarks"/>
-        <InternalsVisibleTo Include="ScrubJay.Enums"/>
-        <InternalsVisibleTo Include="ScrubJay.Exceptions"/>
+        <InternalsVisibleTo Include="ScrubJay.Functional"/>
     </ItemGroup>
 </Project>

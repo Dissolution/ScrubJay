@@ -22,25 +22,25 @@ static partial class Any
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString<T>(ref readonly T? value)
+    public static string? ToString<T>(in T? value)
     {
         return value?.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(ref readonly ReadOnlySpan<T> span)
+    public static string ToString<T>(scoped ReadOnlySpan<T> span)
     {
         return span.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString<T>(ref readonly Span<T> span)
+    public static string ToString<T>(scoped Span<T> span)
     {
         return span.ToString();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string ToString(ref readonly text text)
+    public static string ToString(scoped text text)
     {
         return text.ToString();
     }
@@ -66,12 +66,12 @@ static partial class Any
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString<T>(ref readonly T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public static string? ToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (value is null)
             return null;
-        return ToStringCache<T>.Invoke(in value);
+        return ToStringCache<T>.ToString(in value);
     }
 
     private static class ToStringCache<T>
@@ -79,7 +79,8 @@ static partial class Any
     {
         public delegate string AnyToString(ref readonly T value);
 
-        public static readonly AnyToString Invoke;
+        private static AnyToString _delegate;
+        private static bool _delegateTested;
 
         static ToStringCache()
         {
@@ -88,7 +89,7 @@ static partial class Any
 
             if (toStringMethod is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{Type.Render<T>()}_ToString");
+                var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{instanceType}_ToString");
                 var generator = dynamicMethod.GetILGenerator();
 
                 generator.Emit(OpCodes.Ldarg_0);
@@ -98,11 +99,45 @@ static partial class Any
 
                 if (dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
                 {
-                    Invoke = func;
+                    _delegate = func;
+                    _delegateTested = false;
                     return;
                 }
             }
-            Invoke = (ref readonly _) => $"{Type.Render<T>()} instance";
+            
+            _delegate = FallbackToString;
+            _delegateTested = true;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string FallbackToString(ref readonly T value) => $"instanceof({typeof(T)})";
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToString(ref readonly T value)
+        {
+            if (_delegateTested)
+            {
+                return _delegate(in value);
+            }
+
+            return untestedInvoke(in value);
+            
+            static string untestedInvoke(ref readonly T value)
+            {
+                try
+                {
+                    return _delegate(in value);
+                }
+                catch
+                {
+                    _delegate = FallbackToString;
+                    return _delegate(in value);
+                }
+                finally
+                {
+                    _delegateTested = true;
+                }
+            }
         }
     }
 }

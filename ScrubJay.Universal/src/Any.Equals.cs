@@ -9,33 +9,6 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
-    /*public static bool Equal<T>(in T? leftR, in T? rightR)
-    {
-
-    }
-
-    public static bool Equal<T>(ref readonly T? left, ref readonly T? right)
-    {
-        return EqualityComparer<T>.Default.Equals(left, right);
-    }
-
-    public static bool Equal<E>(ref readonly E? left, ref readonly E? right, TypeConstraints.HasIEquatable<E> _ = default)
-        where E : IEquatable<E>
-    {
-        if (left is not null)
-            return left.Equals(right);
-        if (right is not null)
-            return right.Equals(left);
-        return ReferenceEquals(left, right);
-    }
-
-    public static bool Equal<E>(ref readonly E? left, ref readonly E? right, TypeConstraints.HasIEqualityOperators<E> _ = default)
-        where E : IEqualityOperators<E, E, bool>
-    {
-        return left == right;
-    }*/
-
-
     /// <summary>
     /// Determines whether two <typeparamref name="T"/> values are equal.
     /// </summary>
@@ -52,8 +25,27 @@ partial class Any
     /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(T? left, T? right)
+    public static bool Equals<T>(in T? left, in T? right)
         => EqualityComparer<T>.Default.Equals(left!, right!);
+
+    public static bool Equal<E>(in E? left, in E? right, TypeConstraints.HasIEquatable<E> _ = default)
+        where E : IEquatable<E>
+    {
+        if (left is not null)
+            return left.Equals(right);
+        if (right is not null)
+            return right.Equals(left);
+        return ReferenceEquals(left, right);
+    }
+
+#if NET7_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equal<E>(in E? left, in E? right, TypeConstraints.HasIEqualityOperators<E> _ = default)
+        where E : IEqualityOperators<E, E, bool>
+    {
+        return left == right;
+    }
+#endif
 
     /// <summary>
     /// Use an <see cref="IEqualityComparer{T}"/> to determine whether two <typeparamref name="T"/> values are equal.
@@ -73,20 +65,11 @@ partial class Any
     /// <returns>
     /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
-    public static bool Equals<T>(in T? left, T? right, IEqualityComparer<T>? comparer)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
+    public static bool Equals<T>(in T? left, in T? right, IEqualityComparer<T>? comparer)
     {
-        if (comparer is null)
-        {
-#if NET9_0_OR_GREATER
-            return Equals(in left, right);
-#else
-            return Equals(left, right);
-#endif
-        }
-        return comparer.Equals(left!, right!);
+        if (comparer is not null)
+            return comparer.Equals(left!, right!);
+        return Equals(left, right);
     }
 
     /// <summary>
@@ -219,17 +202,28 @@ partial class Any
     /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(ref readonly T? left, T? right,
+    public static bool Equals<T>(in T? left, in T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return EqualsCache<T>.Invoke(in left, right);
+        return EqualsCache<T>.Invoke(in left, in right);
     }
+
+    public static bool Equals<T>(in T? left, in T? right, 
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
+    {
+        if (comparer is not null)
+            return comparer.Equals(left!, right!);
+        return Equals(left, right, _);
+    }
+
+
 
     private static class EqualsCache<T>
         where T : allows ref struct
     {
-        public delegate bool AnyEquals(ref readonly T? value, T? other);
+        public delegate bool AnyEquals(ref readonly T? value, ref readonly T? other);
 
         public static readonly AnyEquals Invoke;
 
@@ -240,11 +234,12 @@ partial class Any
 
             if (equalsMethod is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyEquals>($"Any_{Type.Render<T>()}_Equals");
+                var dynamicMethod = DynamicMethod.New<AnyEquals>($"Any_{instanceType}_Equals");
                 var generator = dynamicMethod.GetILGenerator();
 
                 generator.Emit(OpCodes.Ldarg_0);
                 generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Ldobj, instanceType);
                 generator.Emit(OpCodes.Constrained, instanceType);
                 generator.Emit(OpCodes.Callvirt, equalsMethod);
                 generator.Emit(OpCodes.Ret);
@@ -259,10 +254,9 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool EqualsFallback(ref readonly T? left, T? right)
+        private static bool EqualsFallback(ref readonly T? left, ref readonly T? right)
         {
             Emit.Ldarg_0();
-            Emit.Ldobj<T>();
             Emit.Ldarg_1();
             Emit.Ceq();
             return Return<bool>();

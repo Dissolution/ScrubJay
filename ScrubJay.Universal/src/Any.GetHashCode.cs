@@ -3,85 +3,10 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Security.Cryptography;
 
 #pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 
 namespace ScrubJay.Universal;
-
-internal static class MiniFNV1A
-{
-    private const uint FNV_PRIME = 16777619U;
-    private const uint FNV_OFFSET = 2166136261U;
-    private static readonly uint _startHash;
-
-    static MiniFNV1A()
-    {
-#if NETFRAMEWORK || NETSTANDARD2_0
-        using var rng = RandomNumberGenerator.Create();
-        byte[] seed = new byte[sizeof(uint)];
-        rng.GetBytes(seed);
-        _startHash = (FNV_OFFSET ^ BitConverter.ToUInt32(seed, 0)) * FNV_PRIME;
-#else
-        Span<byte> seed = stackalloc byte[sizeof(uint)];
-        RandomNumberGenerator.Fill(seed);
-        _startHash = (FNV_OFFSET ^ BitConverter.ToUInt32(seed)) * FNV_PRIME;
-#endif
-    }
-
-    internal static int HashBytes<T>(ref readonly T value)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        ref T mutable = ref Unsafe.AsRef<T>(in value);
-        ref byte currentByte = ref Unsafe.As<T, byte>(ref mutable);
-        var length = Unsafe.SizeOf<T>();
-
-        uint hash = _startHash;
-
-        unchecked
-        {
-            // 4-byte chunks
-            while (length >= 4)
-            {
-                uint slice = Unsafe.ReadUnaligned<uint>(ref currentByte);
-
-                hash ^= slice;
-                hash *= FNV_PRIME;
-
-                currentByte = ref Unsafe.Add(ref currentByte, 4);
-                length -= 4;
-            }
-
-            // remaining bytes
-            while (length > 0)
-            {
-                hash ^= currentByte;
-                hash *= FNV_PRIME;
-
-                currentByte = ref Unsafe.Add(ref currentByte, 1);
-                length--;
-            }
-
-            return (int)hash;
-        }
-    }
-
-    internal static int HashText(scoped ReadOnlySpan<char> text)
-    {
-        uint hash = _startHash;
-        unchecked
-        {
-            foreach (var ch in text)
-            {
-                hash ^= ch;
-                hash *= FNV_PRIME;
-            }
-            return (int)hash;
-        }
-    }
-}
 
 partial class Any
 {
@@ -94,7 +19,7 @@ partial class Any
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode<T>(ref readonly T? value)
+    public static int GetHashCode<T>(in T? value)
     {
         if (value is null)
             return 0;
@@ -108,7 +33,7 @@ partial class Any
     /// <param name="text"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode(ref readonly text text)
+    public static int GetHashCode(scoped text text)
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
         return MiniFNV1A.HashText(text);
@@ -148,23 +73,23 @@ partial class Any
     /// and for maximum compatibility with <see cref="object"/>.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetHashCode<T>(ref readonly T? value,
+    public static int GetHashCode<T>(in T? value,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (value is null)
             return 0;
-        return GetHashCodeCache<T>.Invoke(in value);
+        return GetHashCodeCache<T>.GetHashCode(in value);
     }
-    
+
     private static class GetHashCodeCache<T>
         where T : allows ref struct
     {
-        public delegate int AnyGetHashCode(ref readonly T value);
+        private delegate int AnyGetHashCode(ref readonly T value);
 
-        private static AnyGetHashCode _anyGetHashCode;
-        private static bool _isTested;
-        
+        private static AnyGetHashCode _delegate;
+        private static bool _delegateTested;
+
         static GetHashCodeCache()
         {
             Type instanceType = typeof(T);
@@ -172,7 +97,7 @@ partial class Any
 
             if (getHashCodeMethod is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{Type.Render<T>()}_GetHashCode");
+                var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{instanceType}_GetHashCode");
                 var generator = dynamicMethod.GetILGenerator();
 
                 generator.Emit(OpCodes.Ldarg_0);
@@ -182,43 +107,43 @@ partial class Any
 
                 if (dynamicMethod.TryCreateDelegate<AnyGetHashCode>(out var func))
                 {
-                    _anyGetHashCode = func;
-                    _isTested = false;
+                    _delegate = func;
+                    _delegateTested = false;
                     return;
                 }
             }
 
-            _anyGetHashCode = (ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
-            _isTested = true;
+            _delegate = FallbackGetHashCode;
+            _delegateTested = true;
         }
 
-        public static int Invoke(ref readonly T value)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int FallbackGetHashCode(ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetHashCode(ref readonly T value)
         {
-            if (_isTested)
+            if (_delegateTested)
             {
-                Debug.Assert(_anyGetHashCode is not null);
-                return _anyGetHashCode!(in value);
+                return _delegate(in value);
             }
 
             return untestedInvoke(in value);
-
-            // Span<T> and ReadOnlySpan<T> both throw when you try to use their GetHashCode
+            
             static int untestedInvoke(ref readonly T value)
             {
-                int hashCode;
                 try
                 {
-                    hashCode = _anyGetHashCode(in value);
-                    return hashCode;
+                    return _delegate(in value);
                 }
                 catch
                 {
-                    _anyGetHashCode = (ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
-                    return _anyGetHashCode(in value);
+                    _delegate = FallbackGetHashCode;
+                    return _delegate(in value);
                 }
                 finally
                 {
-                    _isTested = true;
+                    _delegateTested = true;
                 }
             }
         }

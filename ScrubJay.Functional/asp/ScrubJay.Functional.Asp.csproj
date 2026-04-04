@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\core\ScrubJay.Functional.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
