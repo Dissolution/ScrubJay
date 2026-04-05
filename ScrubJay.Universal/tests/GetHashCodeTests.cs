@@ -2,7 +2,7 @@ using ScrubJay.Universal.Tests.Internal;
 
 namespace ScrubJay.Universal.Tests;
 
-public class Any_GetHashCode_Tests
+public partial class GetHashCodeTests
 {
     [Theory]
     [InlineData(int.MinValue)]
@@ -37,10 +37,21 @@ public class Any_GetHashCode_Tests
     [MemberData(nameof(CharData))]
     public void CanGetHashCodeChar(char ch)
     {
-        int hashcode = Any.GetHashCode<char>(in ch);
+        int hashCode = ch.GetHashCode();
+        int anyHashCode = Any.GetHashCode<char>(in ch);
 
-        Assert.Equal(
-            ch.GetHashCode(),
-            hashcode);
+        Assert.Equal(hashCode, anyHashCode);
+    }
+    
+    public static TheoryData<object?> ObjectData { get; } = new(TestTypes.Objects);
+    
+    [Theory]
+    [MemberData(nameof(ObjectData))]
+    public void CanHashCodeObject(object? obj)
+    {
+        int hashCode = obj?.GetHashCode() ?? 0;
+        int anyHashCode = Any.GetHashCode<object>(in obj);
+        
+        Assert.Equal(hashCode, anyHashCode);
     }
 }

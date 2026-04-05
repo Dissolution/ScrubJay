@@ -1,3 +1,5 @@
+using ScrubJay.Universal.Tests.Internal;
+
 namespace ScrubJay.Universal.Tests;
 
 public class Any_Boxing_Tests
@@ -71,7 +73,26 @@ public class Any_Boxing_Tests
         Assert.True(ch.Equals(box));
     }
 
-    #if NET9_0_OR_GREATER
+    public static TheoryData<object?> ObjectData { get; } = new(TestTypes.Objects);
+
+    [Theory]
+    [MemberData(nameof(ObjectData))]
+    public void CanBoxObject(object? obj)
+    {
+        bool didBox = Any.TryBox(obj, out object? boxed);
+        Assert.True(didBox);
+        if (obj is not null)
+        {
+            Assert.NotNull(boxed);
+            Assert.Equal(obj, boxed);
+        }
+        else
+        {
+            Assert.Null(boxed);
+        }
+    }
+
+#if NET9_0_OR_GREATER
     [Fact]
     public void CannotBoxText()
     {

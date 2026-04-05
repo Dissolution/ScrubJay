@@ -1,7 +1,70 @@
-﻿using System.Security.Cryptography;
+﻿using System.Reflection;
 using Xunit.Internal;
 
+#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+#endif
+
 namespace ScrubJay.Universal.Tests.Internal;
+
+internal static partial class TestTypes
+{
+    public static object?[] Objects { get; } =
+    [
+        // null
+        (object?)null,
+        // valid flags enum
+        BindingFlags.Public | BindingFlags.NonPublic,
+        // invalid non-flags enum
+        (StringComparison)147,
+        // primitive
+        (byte)147,
+        -0.0d,
+        // custom primitive
+        default(NoToString.TestStruct),
+        // struct
+        IntPtr.Zero,
+        // Nullable
+        (Nullable<int>)null,
+        (Nullable<int>)147,
+        // char
+        '❤',
+        "\uD800",
+        // string
+        (string?)null,
+        string.Empty,
+        "Sphinx of black quartz, judge my vow!",
+        "🏃🏻‍➡️ 🟫 🦊 🦘 🆙 🦥 🐕",
+        "pass\0word",
+        // delegate
+        new Action(static () => { }),
+        // object itself
+        new object(),
+        // type
+        typeof(TestTypes),
+        typeof(IList<>),
+        // exception
+        new Exception(nameof(TestTypes)),
+        // old net stuff
+        DBNull.Value,
+        // anonymous object
+        new { Id = 147, Name = "TJ", IsAdmin = true, },
+        // array
+        new byte[4] { 0, 147, 13, 101 },
+        Array.Empty<object?>(),
+        // simple dictionary
+        new Dictionary<int, string>
+        {
+            { 1, "one" },
+            { 2, "two" },
+            { 3, "three" },
+        },
+        // complex class
+        AppDomain.CurrentDomain,
+        Enumerable.Range(0,13),
+        Task.FromException(new InvalidOperationException()),
+    ];
+}
 
 internal static partial class TestTypes
 {
@@ -52,30 +115,9 @@ internal static partial class TestTypes
         ];
 
 
-        public static string[] Strings { get; } =
-        [
-            string.Empty,
-            ",",
-            "\r\n",
-            "Exception",
-            PANGRAMS[3],
-            CreateTestString(128),
-            CreateTestString(512),
-            CreateTestString(4096),
-        ];
+        public static string[] Strings { get; }
+        public static string?[] StringsAndNull { get; }
 
-        public static string?[] StringsAndNull { get; } =
-        [
-            string.Empty,
-            ",",
-            "\r\n",
-            "Exception",
-            PANGRAMS[3],
-            CreateTestString(128),
-            CreateTestString(512),
-            CreateTestString(4096),
-            null,
-        ];
 
         public static string SEED { get; }
 
@@ -136,6 +178,31 @@ internal static partial class TestTypes
 
             SEED = new string(seed);
 #endif
+            Strings =
+            [
+                string.Empty,
+                ",",
+                "\r\n",
+                "Exception",
+                PANGRAMS[3],
+                CreateTestString(128),
+                CreateTestString(512),
+                CreateTestString(4096),
+            ];
+
+            StringsAndNull =
+            [
+                string.Empty,
+                ",",
+                "\r\n",
+                "Exception",
+                PANGRAMS[3],
+                CreateTestString(128),
+                CreateTestString(512),
+                CreateTestString(4096),
+                null,
+            ];
+
         }
 
         public static IEnumerable<object[]> StringsWithArrays()

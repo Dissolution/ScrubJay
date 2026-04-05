@@ -1,86 +1,9 @@
-using static ScrubJay.Universal.Tests.Internal.TestTypes.NoToString;
-#pragma warning disable CS1591
+using static ScrubJay.Universal.Tests.Internal.TestTypes.OverrideToString;
 
 namespace ScrubJay.Universal.Tests;
 
-public class Any_ToString_Tests_NoToString0
+public class ToStringTests_Custom_OverriddenToString
 {
-    [Theory]
-    [InlineData(int.MinValue)]
-    [InlineData(-1)]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(int.MaxValue)]
-    public void CanToStringInt(int i32)
-    {
-        string str = Any.ToString<int>(in i32);
-        Assert.NotNull(str);
-        Assert.Equal(i32.ToString(), str);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("\0")]
-    [InlineData("TRJ-147")]
-    public void CanToStringString(string? str)
-    {
-        string? anystr = Any.ToString<string>(in str);
-        Assert.True((anystr is null) == (str is null));
-        Assert.Equal(str, anystr);
-    }
-
-    [Theory]
-    [InlineData('\0')]
-    [InlineData(char.MaxValue)]
-    [InlineData((char)0xD800)]
-    public void CanToStringChar(char ch)
-    {
-        string str = Any.ToString<char>(in ch);
-        Assert.NotNull(str);
-        Assert.True(str.Length == 1);
-        Assert.Equal(ch, str[0]);
-    }
-
-#if NET9_0_OR_GREATER
-    [Fact]
-    public void CanToStringText()
-    {
-        ReadOnlySpan<char> text;
-        string str;
-
-        text = default;
-        str = Any.ToString<ReadOnlySpan<char>>(in text);
-        Assert.NotNull(str);
-        Assert.True(str.Length == 0);
-
-        text = "TRJ".AsSpan();
-        str = Any.ToString<ReadOnlySpan<char>>(in text);
-        Assert.NotNull(str);
-        Assert.Equal("TRJ", str);
-    }
-#endif
-
-    [Fact]
-    public void Any_ToString_TestEnum_Works()
-    {
-        TestEnum instance = TestEnum.Bravo;
-        string? anyStr = Any.ToString(in instance);
-        Assert.NotNull(anyStr);
-        string? str = instance.ToString();
-        Assert.Equal(str, anyStr);
-    }
-
-    [Fact]
-    public void Any_ToString_TestFlaggedEnum_Works()
-    {
-        TestFlaggedEnum instance = TestFlaggedEnum.Gamma | TestFlaggedEnum.Delta;
-        string? anyStr = Any.ToString(in instance);
-        Assert.NotNull(anyStr);
-        string? str = instance.ToString();
-        Assert.Equal(str, anyStr);
-    }
-
     [Fact]
     public void Any_ToString_TestStruct_Works()
     {
@@ -108,8 +31,7 @@ public class Any_ToString_Tests_NoToString0
         TestRefStruct instance = new();
         string? anyStr = Any.ToString(in instance);
         Assert.NotNull(anyStr);
-        string? str = $"instanceof({typeof(TestRefStruct)})";
-        //string? str = instance.ToString();
+        string? str = instance.ToString();
         Assert.Equal(str, anyStr);
     }
 
@@ -119,8 +41,7 @@ public class Any_ToString_Tests_NoToString0
         TestReadonlyRefStruct instance = new();
         string? anyStr = Any.ToString(in instance);
         Assert.NotNull(anyStr);
-        string? str = $"instanceof({typeof(TestReadonlyRefStruct)})";
-        //string? str = instance.ToString();
+        string? str = instance.ToString();
         Assert.Equal(str, anyStr);
     }
 #endif

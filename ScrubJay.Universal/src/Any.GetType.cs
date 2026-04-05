@@ -32,7 +32,7 @@ static partial class Any
 
     [return: NotNullIfNotNull(nameof(obj))]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type? GetType(in object? obj)
+    public static Type? GetType(object? obj)
     {
         if (obj is not null)
             return obj.GetType();

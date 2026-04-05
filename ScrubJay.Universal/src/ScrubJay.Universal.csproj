@@ -29,15 +29,16 @@
         <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory"/>
         <PackageReference Condition="$(TargetFramework) == 'netstandard2.1' "
                           Include="System.Runtime.CompilerServices.Unsafe">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
+                          Include="System.Memory"/>
     </ItemGroup>
 
-    <!-- Expose our internals to Tests and Benchmarks -->
+    <!-- Expose our internals -->
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
         <InternalsVisibleTo Include="ScrubJay.Functional"/>

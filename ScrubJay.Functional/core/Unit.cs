@@ -8,8 +8,7 @@
 /// In C#, <c>void</c> cannot be used as a generic type, thus why <see cref="Func{TResult}"/> and <see cref="Action"/> are separate<br/>
 /// (as <c>Func&lt;void&gt;</c> is invalid)<br/>
 /// You can use <see cref="Unit"/> for this and similar tasks:<br/>
-/// - <c>Func&lt;Unit&gt;</c><br/>
-/// - <c>Result&lt;Unit&gt;</c><br/>
+/// - <c>Func&lt;Unit&gt;</c> ~~ <c>Action</c><br/>
 /// </remarks>
 [PublicAPI]
 [StructLayout(LayoutKind.Auto, Size = 0)]
@@ -18,8 +17,12 @@ public readonly struct Unit :
     IEqualityOperators<Unit, Unit, bool>,
     IComparisonOperators<Unit, Unit, bool>,
 #endif
+#if NET6_0_OR_GREATER
+    ISpanFormattable,
+#endif
     IEquatable<Unit>,
-    IComparable<Unit>
+    IComparable<Unit>,
+    IFormattable
 {
     // ValueTuple would be written as '()' (if the C# compiler allowed it), and is virtually the same as Unit already
     // so we support implicit conversions between them
@@ -45,12 +48,29 @@ public readonly struct Unit :
     public static readonly Unit Default;
 
     public int CompareTo(Unit unit) => 0;
-    
+
     public bool Equals(Unit unit) => true;
-    
+
     public override bool Equals(object? obj) => obj is Unit;
-    
+
     public override int GetHashCode() => typeof(Unit).GetHashCode();
-    
+
+    public bool TryFormat(Span<char> destination, out int charsWritten,
+        text format = default,
+        IFormatProvider? provider = default)
+    {
+        if (destination.Length >= 2)
+        {
+            destination[0] = '(';
+            destination[1] = ')';
+            charsWritten = 2;
+            return true;
+        }
+        charsWritten = 0;
+        return false;
+    }
+
+    public string ToString(string? format, IFormatProvider? provider = null) => "()";
+
     public override string ToString() => "()";
 }
