@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />
       <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj" />
       <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj" />
       <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj" />

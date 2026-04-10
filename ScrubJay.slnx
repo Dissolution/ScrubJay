@@ -28,4 +28,8 @@
 			<BuildType Solution="Nuget|*" Project="Debug" />
 		</Project>
 	</Folder>
+	<Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj">
+		<BuildType Solution="Analyze|*" Project="Debug" />
+		<BuildType Solution="Nuget|*" Project="Debug" />
+	</Project>
 </Solution>
