@@ -1,0 +1,9 @@
+{
+  "$schema": "https://www.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Generators": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "ScrubJay.Sandboxes.Console.csproj"
+    }
+  }
+}

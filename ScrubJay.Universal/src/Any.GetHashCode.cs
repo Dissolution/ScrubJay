@@ -35,20 +35,25 @@ partial class Any
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode(scoped text text)
     {
-#if NETSTANDARD2_0 || NETFRAMEWORK
-        return MiniFNV1A.HashText(text);
-#elif NETSTANDARD2_1
-        HashCode hasher = new();
-        foreach (char ch in text)
-        {
-            hasher.Add<char>(ch);
-        }
-        return hasher.ToHashCode();
-#else
-        return string.GetHashCode(
-            text,
-            StringComparison.Ordinal);
-#endif
+        return Hasher.HashMany<char>(text);
+    }
+    
+    /// <summary>
+    /// Gets a hashcode for the contents of a <see cref="Span{T}"/>.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetHashCode<T>(scoped Span<T> span)
+    {
+        return Hasher.HashMany<T>(span);
+    }
+    
+    /// <summary>
+    /// Gets a hashcode for the contents of a <see cref="ReadOnlySpan{T}"/>.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetHashCode<T>(scoped ReadOnlySpan<T> span)
+    {
+        return Hasher.HashMany<T>(span);
     }
 }
 
@@ -118,7 +123,7 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int FallbackGetHashCode(ref readonly T value) => MiniFNV1A.HashBytes<T>(in value);
+        private static int FallbackGetHashCode(ref readonly T value) => Hasher.HashBytes<T>(in value);
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode(ref readonly T value)

@@ -2,17 +2,25 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;net48;</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>.GeneratedFiles</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />
-      <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj" />
-      <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj" />
-      <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
+        <!--      <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj" />-->
+<!--        <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>-->
+        <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
+<!--        <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>-->
+        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+        
+        <ProjectReference
+                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"
+                ReferenceOutputAssembly="false"
+                OutputItemType="Analyzer"/>
     </ItemGroup>
 
 </Project>

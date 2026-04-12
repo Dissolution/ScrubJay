@@ -17,19 +17,20 @@
 		<Project Path="ScrubJay.Functional/core/ScrubJay.Functional.csproj" />
 		<Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
 	</Folder>
+	<Folder Name="/ScrubJay.Enums/">
+		<File Path="ScrubJay.Enums/README.md" />
+		<Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj" />
+		<Project Path="ScrubJay.Enums/srcgen/ScrubJay.Enums.SourceGen.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
+	</Folder>
 	<Folder Name="/Docs/">
 		<File Path="TypeExtensions.cs" />
 		<File Path="TypeName.Tests.cs" />
 		<File Path="TypeRenderer.cs" />
 	</Folder>
 	<Folder Name="/Sandboxes/">
-		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj">
-			<BuildType Solution="Analyze|*" Project="Debug" />
-			<BuildType Solution="Nuget|*" Project="Debug" />
-		</Project>
+		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />
 	</Folder>
-	<Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj">
-		<BuildType Solution="Analyze|*" Project="Debug" />
-		<BuildType Solution="Nuget|*" Project="Debug" />
-	</Project>
 </Solution>
