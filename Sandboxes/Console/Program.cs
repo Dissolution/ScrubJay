@@ -6,6 +6,21 @@ using ScrubJay.Sandboxes.Console;
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
+var type = typeof(Exception);
+var instanceMembers = type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+
+var fields = instanceMembers.OfType<FieldInfo>().ToList();
+var properties = instanceMembers.OfType<PropertyInfo>().ToList();
+var events = instanceMembers.OfType<EventInfo>().ToList();
+var constructors = instanceMembers.OfType<ConstructorInfo>().ToList();
+var methods = instanceMembers.OfType<MethodInfo>().ToList();
+
+Debugger.Break();
+
+
+
+/*
 var test = TestEnum.Four;
 string name = test.GetName();
 var value = test.GetValue();
@@ -23,6 +38,7 @@ Console.WriteLine($"""
         Fcomp: {fcomp}
         HF: {hf}
     """);
+    */
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();

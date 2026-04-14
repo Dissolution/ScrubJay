@@ -114,15 +114,15 @@ public class EnumExtensionsGenerator : IncrementalGenerator
 
     public override void OnInitialize(SgfInitializationContext context)
     {
-#if DEBUG
-        //if (!GateOneDebugger())
-        //    return;
-
-        if (!Debugger.IsAttached)
-        {
-            Debugger.Launch();
-        }
-#endif
+//#if DEBUG
+//        //if (!GateOneDebugger())
+//        //    return;
+//
+//        if (!Debugger.IsAttached)
+//        {
+//            Debugger.Launch();
+//        }
+//#endif
 
         // Add our Enum
         context.RegisterPostInitializationOutput(ctx =>

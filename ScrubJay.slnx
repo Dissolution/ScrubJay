@@ -30,6 +30,12 @@
 		<File Path="TypeName.Tests.cs" />
 		<File Path="TypeRenderer.cs" />
 	</Folder>
+	<Folder Name="/Exceptions/">
+		<Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
+	</Folder>
 	<Folder Name="/Sandboxes/">
 		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />
 	</Folder>
