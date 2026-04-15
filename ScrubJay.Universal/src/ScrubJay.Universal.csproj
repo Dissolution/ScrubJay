@@ -41,6 +41,5 @@
     <!-- Expose our internals -->
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
-        <InternalsVisibleTo Include="ScrubJay.Functional"/>
     </ItemGroup>
 </Project>

@@ -32,9 +32,9 @@ partial class Any
         where E : IEquatable<E>
     {
         if (left is not null)
-            return left.Equals(right);
+            return left.Equals(right!);
         if (right is not null)
-            return right.Equals(left);
+            return right.Equals(left!);
         return ReferenceEquals(left, right);
     }
 

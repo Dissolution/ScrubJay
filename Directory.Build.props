@@ -67,11 +67,11 @@
 		<Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
 	</ItemGroup>
 	<!-- global attributes -->
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>ScrubJay.Sandboxes.Console</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+<!--	<ItemGroup>-->
+<!--		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">-->
+<!--			<_Parameter1>ScrubJay.Sandboxes.Console</_Parameter1>-->
+<!--		</AssemblyAttribute>-->
+<!--	</ItemGroup>-->
 	<!-- My Nuget Info -->
 	<PropertyGroup>
 		<Authors>Dissolution</Authors>

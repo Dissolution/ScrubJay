@@ -59,4 +59,31 @@ public record class Argument
     }
 
     public override string ToString() => $"{Type?.FullName} {Name} = {ValueString}";
+
+    internal void WriteTo(ref InterpolatedText text)
+    {
+        text.AppendLiteral('\'');
+        text.AppendFormatted(Name);
+        text.AppendLiteral('\'');
+       
+        if (Type is not null || ValueString is not null)
+        {
+            if (Type is not null)
+            {
+                text.AppendLiteral(" (");
+                text.RenderType(Type);
+                text.AppendLiteral(')');
+            }
+
+            if (ValueString is not null)
+            {
+                text.AppendLiteral(" = ");
+                text.AppendLiteral(ValueString);
+            }
+        }
+        else
+        {
+            text.AppendLiteral(" (null)");
+        }
+    }
 }

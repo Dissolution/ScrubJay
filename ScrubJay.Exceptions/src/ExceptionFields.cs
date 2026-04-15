@@ -5,12 +5,12 @@ using ScrubJay.Universal;
 
 namespace ScrubJay.Exceptions;
 
-internal static class ExFields
+internal static class ExceptionFields
 {
     private delegate ref TField? RefExceptionFieldDelegate<in TException, TField>(TException exception)
         where TException : Exception;
 
-    private static readonly ConcurrentDictionary<(Type ExceptionType, string FieldName), Delegate> _cache;
+    private static readonly ConcurrentDictionary<(Type ExceptionType, string FieldName), Delegate> _cache = [];
 
     private static RefExceptionFieldDelegate<TException, TField> CreateFieldRefDelegate<TException, TField>((Type ExceptionType, string FieldName) key)
         where TException : Exception
@@ -44,11 +44,18 @@ internal static class ExFields
 #else
     public static ref string? RefParamNameField(ArgumentException exception)
     {
-        return ref RefExceptionField<ArgumentException, string?>(exception, "_paramName");
+        return ref RefExceptionField<ArgumentException, string?>(exception,
+#if NETFRAMEWORK
+            "m_paramName"
+#else
+            "_paramName"
+#endif
+        );
     }
 #endif
-    
-    
+
+
+
 #if NET8_0_OR_GREATER
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_message")]
     public static extern ref string? RefMessageField(Exception exception);
@@ -66,6 +73,16 @@ internal static class ExFields
     public static ref Exception? RefInnerExceptionField(Exception exception)
     {
         return ref RefExceptionField<Exception, Exception?>(exception, "_innerException");
+    }
+#endif
+
+#if NET8_0_OR_GREATER
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_data")]
+    public static extern ref IDictionary? RefDataField(Exception exception);
+#else
+    public static ref IDictionary? RefDataField(Exception exception)
+    {
+        return ref RefExceptionField<Exception, IDictionary>(exception, "_data");
     }
 #endif
 }

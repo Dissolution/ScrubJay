@@ -1,23 +1,30 @@
 ﻿using System.ComponentModel;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
 using ScrubJay.Enums;
+using ScrubJay.Exceptions;
 using ScrubJay.Sandboxes.Console;
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-var type = typeof(Exception);
-var instanceMembers = type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+Type type = typeof(IList<>);
 
-
-var fields = instanceMembers.OfType<FieldInfo>().ToList();
-var properties = instanceMembers.OfType<PropertyInfo>().ToList();
-var events = instanceMembers.OfType<EventInfo>().ToList();
-var constructors = instanceMembers.OfType<ConstructorInfo>().ToList();
-var methods = instanceMembers.OfType<MethodInfo>().ToList();
-
-Debugger.Break();
-
+try
+{
+    var exception = new ArgException(args, "Didn't smell right")
+    {
+        Title = "You really messed up",
+        Status = 404,
+    };
+    
+    throw exception;
+}
+catch (Exception ex)
+{
+    string str = ex.ToString();
+    Debugger.Break();
+}
 
 
 /*

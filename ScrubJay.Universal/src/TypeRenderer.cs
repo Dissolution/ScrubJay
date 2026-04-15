@@ -29,27 +29,27 @@ public static class TypeRenderer
     static TypeRenderer()
     {
         _typeAliases = new Dictionary<Type, string>
-            {
-                [typeof(byte)] = "byte",
-                [typeof(sbyte)] = "sbyte",
-                [typeof(short)] = "short",
-                [typeof(ushort)] = "ushort",
-                [typeof(int)] = "int",
-                [typeof(uint)] = "uint",
-                [typeof(long)] = "long",
-                [typeof(ulong)] = "ulong",
-                [typeof(nint)] = "nint",
-                [typeof(nuint)] = "nuint",
-                [typeof(float)] = "float",
-                [typeof(double)] = "double",
-                [typeof(decimal)] = "decimal",
-                [typeof(bool)] = "bool",
-                [typeof(char)] = "char",
-                [typeof(string)] = "string",
-                [typeof(object)] = "object",
-                [typeof(void)] = "void",
-                [typeof(ValueTuple)] = "()",
-            }
+                {
+                    [typeof(byte)] = "byte",
+                    [typeof(sbyte)] = "sbyte",
+                    [typeof(short)] = "short",
+                    [typeof(ushort)] = "ushort",
+                    [typeof(int)] = "int",
+                    [typeof(uint)] = "uint",
+                    [typeof(long)] = "long",
+                    [typeof(ulong)] = "ulong",
+                    [typeof(nint)] = "nint",
+                    [typeof(nuint)] = "nuint",
+                    [typeof(float)] = "float",
+                    [typeof(double)] = "double",
+                    [typeof(decimal)] = "decimal",
+                    [typeof(bool)] = "bool",
+                    [typeof(char)] = "char",
+                    [typeof(string)] = "string",
+                    [typeof(object)] = "object",
+                    [typeof(void)] = "void",
+                    [typeof(ValueTuple)] = "()",
+                }
 #if NET8_0_OR_GREATER
                 .ToFrozenDictionary()
 #endif
@@ -370,13 +370,20 @@ public static class TypeRenderer
         }
 
         public static string Render<I>(in I? instance)
-#if NET9_0_OR_GREATER
-            where I : allows ref struct
-#endif
         {
             var text = new InterpolatedText(stackalloc char[64]);
-            RenderType(ref text, typeof(I));
+            RenderType(ref text, Any.GetType<I>(in instance));
             return text.ToStringAndDispose();
         }
+
+#if NET9_0_OR_GREATER
+        public static string Render<I>(in I? instance, TypeConstraints.AllowsRefStruct<I> _ = default)
+            where I : allows ref struct
+        {
+            var text = new InterpolatedText(stackalloc char[64]);
+            RenderType(ref text, Any.GetType<I>(in instance, _));
+            return text.ToStringAndDispose();
+        }
+#endif
     }
 }
