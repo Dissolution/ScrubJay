@@ -1,14 +1,15 @@
 #pragma warning disable all
 // ReSharper disable All
 
+#if NETFRAMEWORK || NETSTANDARD
+
 namespace System.Runtime.CompilerServices
 {
-
-    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-    public sealed class InterpolatedStringHandlerAttribute : Attribute;
+    [AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+    internal sealed class InterpolatedStringHandlerAttribute : Attribute;
 
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
-    public sealed class InterpolatedStringHandlerArgumentAttribute : Attribute
+    internal sealed class InterpolatedStringHandlerArgumentAttribute : Attribute
     {
         public string[] Arguments { get; }
 
@@ -22,11 +23,57 @@ namespace System.Runtime.CompilerServices
             this.Arguments = arguments;
         }
     }
+    
+    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    internal sealed class CallerArgumentExpressionAttribute : Attribute
+    {
+        public CallerArgumentExpressionAttribute(string parameterName)
+        {
+            ParameterName = parameterName;
+        }
+
+        public string ParameterName { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    internal sealed class RequiredMemberAttribute : Attribute;
+
+    /// <summary>
+    /// Indicates that compiler support for a particular feature is required for the location where this attribute is applied.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
+    internal sealed class CompilerFeatureRequiredAttribute : Attribute
+    {
+        public CompilerFeatureRequiredAttribute(string featureName)
+        {
+            FeatureName = featureName;
+        }
+ 
+        /// <summary>
+        /// The name of the compiler feature.
+        /// </summary>
+        public string FeatureName { get; }
+ 
+        /// <summary>
+        /// If true, the compiler can choose to allow access to the location where this attribute is applied if it does not understand <see cref="FeatureName"/>.
+        /// </summary>
+        public bool IsOptional { get; init; }
+ 
+        /// <summary>
+        /// The <see cref="FeatureName"/> used for the ref structs C# feature.
+        /// </summary>
+        public const string RefStructs = nameof(RefStructs);
+ 
+        /// <summary>
+        /// The <see cref="FeatureName"/> used for the required members C# feature.
+        /// </summary>
+        public const string RequiredMembers = nameof(RequiredMembers);
+    }
+    
+    internal static class IsExternalInit
+    {
+    }
 }
-
-#if NETSTANDARD2_0 || NETFRAMEWORK
-/* This file only exists to provide support for several attributes in .net standard 2.0 environments */
-
 
 // ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
@@ -70,5 +117,8 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>Gets the return value condition.</summary>
         public bool ReturnValue { get; }
     }
+
+    [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
+    internal sealed class SetsRequiredMembersAttribute : Attribute;
 }
 #endif

@@ -1,5 +1,7 @@
-#if NETSTANDARD2_0 || NETFRAMEWORK
-/* This file only exists to provide support for several attributes in older environments */
+#pragma warning disable all
+// ReSharper disable All
+
+#if NETFRAMEWORK || NETSTANDARD2_0
 
 // ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
@@ -56,6 +58,71 @@ namespace System.Diagnostics.CodeAnalysis
 
         /// <summary>Gets the return value condition.</summary>
         public bool ReturnValue { get; }
+    }
+}
+namespace ScrubJay.Universal
+{
+    internal static partial class CompatExtensions
+    {
+#if !NETSTANDARD2_1
+        extension(Math)
+        {
+            public static int Clamp(int value, int min, int max)
+            {
+                if (value < min)
+                    return min;
+                if (value > max)
+                    return max;
+                return value;
+            }
+        }
+
+#endif
+    }
+}
+#endif
+
+#if NETFRAMEWORK || NETSTANDARD
+namespace ScrubJay.Universal
+{
+    internal static partial class CompatExtensions
+    {
+        extension(string str)
+        {
+            public void CopyTo(Span<char> destination)
+            {
+                str.AsSpan().CopyTo(destination);
+            }
+
+            public bool TryCopyTo(Span<char> destination)
+            {
+                return str.AsSpan().TryCopyTo(destination);
+            }
+        }
+
+    }
+}
+
+
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+    internal sealed class InterpolatedStringHandlerAttribute : Attribute;
+
+    [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    internal sealed class InterpolatedStringHandlerArgumentAttribute : Attribute
+    {
+        public string[] Arguments { get; }
+
+        public InterpolatedStringHandlerArgumentAttribute(string argument)
+        {
+            this.Arguments = [argument];
+        }
+
+        public InterpolatedStringHandlerArgumentAttribute(params string[] arguments)
+        {
+            this.Arguments = arguments;
+        }
     }
 }
 #endif
