@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.ComponentModel;
 
 namespace ScrubJay.Universal;
 
@@ -30,7 +31,7 @@ public ref struct InterpolatedText
     {
         return ref text;
     }
-    
+
 
     private char[]? _charArray;
     private Span<char> _charSpan;
@@ -53,6 +54,11 @@ public ref struct InterpolatedText
         _charArray = null;
         _charSpan = initialBuffer;
         _position = 0;
+    }
+    
+    public InterpolatedText(int literalLength, int formattedCount, InterpolatedText interpolatedText)
+    {
+        this = interpolatedText;
     }
 
     public InterpolatedText(int minCapacity)
@@ -112,18 +118,7 @@ public ref struct InterpolatedText
     }
 #endregion
 
-    public void AppendLiteral(char ch)
-    {
-        if (_position < _charSpan.Length)
-        {
-            _charSpan[_position++] = ch;
-        }
-        else
-        {
-            GrowThenAppendChar(ch);
-        }
-    }
-
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendLiteral(string str)
     {
         if (str.TryCopyTo(_charSpan.Slice(_position)))
@@ -136,6 +131,7 @@ public ref struct InterpolatedText
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted(char ch)
     {
         if (_position < _charSpan.Length)
@@ -147,7 +143,8 @@ public ref struct InterpolatedText
             GrowThenAppendChar(ch);
         }
     }
-    
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted(string? str)
     {
         if (str is not null)
@@ -163,6 +160,7 @@ public ref struct InterpolatedText
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted(scoped ReadOnlySpan<char> value)
     {
         // Fast path for when the value fits in the current buffer
@@ -176,6 +174,7 @@ public ref struct InterpolatedText
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted<T>(T? value)
     {
         if (value is null)
@@ -215,6 +214,7 @@ public ref struct InterpolatedText
 
 #if NET9_0_OR_GREATER
     // ReSharper disable once MethodOverloadWithOptionalParameter
+       [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted<T>(T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
@@ -226,6 +226,7 @@ public ref struct InterpolatedText
     }
 #endif
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted<T>(T? value, string? format)
     {
         if (value is null)
@@ -262,6 +263,123 @@ public ref struct InterpolatedText
             AppendLiteral(str);
         }
     }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void AppendFormatted<T>(T? value, string? format, IFormatProvider? formatProvider)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        string? str;
+        if (value is IFormattable)
+        {
+#if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                while (!((ISpanFormattable)value).TryFormat(_charSpan.Slice(_position), out charsWritten, format, formatProvider))
+                {
+                    GrowBy(16);
+                }
+
+                _position += charsWritten;
+                return;
+            }
+#endif
+
+            str = ((IFormattable)value).ToString(format, formatProvider);
+        }
+        else
+        {
+            str = value.ToString();
+        }
+
+        if (str is not null)
+        {
+            AppendLiteral(str);
+        }
+    }
+
+
+
+#region Append
+    public void Append(char ch)
+    {
+        AppendFormatted(ch);
+    }
+
+    public void Append(scoped ReadOnlySpan<char> text)
+    {
+        AppendFormatted(text);
+    }
+
+    public void Append(string? str)
+    {
+        AppendFormatted(str);
+    }
+
+    public void Append<T>(T? value)
+    {
+        AppendFormatted<T>(value);
+    }
+
+    public void Append<T>(T? value, string? format, IFormatProvider? formatProvider = null)
+    {
+        AppendFormatted<T>(value, format, formatProvider);
+    }
+    
+    public void Append(
+        [HandlesResourceDisposal]
+        scoped ref InterpolatedText interpolatedText)
+    {
+        AppendFormatted(interpolatedText.Written);
+        interpolatedText.Dispose();
+    }
+    
+    public void AppendLine()
+    {
+        AppendLiteral(Environment.NewLine);
+    }
+
+    public void AppendRepeat(int count, char ch)
+    {
+        if (count <= 0) return;
+        
+        int newPos = _position + count;
+        if (newPos > _charSpan.Length)
+        {
+            GrowBy(count);
+        }
+        _charSpan.Slice(_position, count).Fill(ch);
+        _position = newPos;
+    }
+    
+    public void AppendRepeat(int count, scoped text text)
+    {
+        int textLen = text.Length;
+        if (count <= 0 || textLen == 0)
+            return;
+
+        int adding = count * textLen;
+
+        int pos = _position;
+        int newPos = pos + adding;
+        if (newPos > _charSpan.Length)
+        {
+            GrowBy(adding);
+        }
+        for (var i = 0; i < count; i++)
+        {
+            text.CopyTo(_charSpan.Slice(pos));
+            pos += textLen;
+        }
+        Debug.Assert(pos == newPos);
+        _position = pos;
+    }
+#endregion
+
 
     [HandlesResourceDisposal]
     public void Dispose()

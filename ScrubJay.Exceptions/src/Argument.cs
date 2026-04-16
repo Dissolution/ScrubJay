@@ -62,28 +62,28 @@ public record class Argument
 
     internal void WriteTo(ref InterpolatedText text)
     {
-        text.AppendLiteral('\'');
-        text.AppendFormatted(Name);
-        text.AppendLiteral('\'');
+        text.Append('\'');
+        text.Append(Name);
+        text.Append('\'');
        
         if (Type is not null || ValueString is not null)
         {
             if (Type is not null)
             {
-                text.AppendLiteral(" (");
+                text.Append(" (");
                 text.RenderType(Type);
-                text.AppendLiteral(')');
+                text.Append(')');
             }
 
             if (ValueString is not null)
             {
-                text.AppendLiteral(" = ");
-                text.AppendLiteral(ValueString);
+                text.Append(" = ");
+                text.Append(ValueString);
             }
         }
         else
         {
-            text.AppendLiteral(" (null)");
+            text.Append(" (null)");
         }
     }
 }

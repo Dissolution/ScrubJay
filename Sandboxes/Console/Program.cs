@@ -2,9 +2,11 @@
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-using ScrubJay.Enums;
 using ScrubJay.Exceptions;
 using ScrubJay.Sandboxes.Console;
+using ScrubJay.Universal;
+using ScrubJay.Text.Utilities;
+using ScrubJay.Text.Extensions;
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -22,7 +24,7 @@ try
 }
 catch (Exception ex)
 {
-    string str = ex.ToString();
+    var str = ex.ToString();
     Debugger.Break();
 }
 
@@ -69,7 +71,7 @@ namespace ScrubJay.Sandboxes.Console
     }
 
     [Flags]
-    [Extend]
+    //[Extend]
     public enum TestEnum : int
     {
         [Description("DESC")]

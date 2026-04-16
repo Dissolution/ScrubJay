@@ -50,30 +50,31 @@ public class ArgException : ArgumentException, ISJException
 
     public override string ToString()
     {
-        var text = new InterpolatedText(stackalloc char[512]);
+        var text = new InterpolatedText(512);
         
-        text.AppendLiteral("ArgumentException:");
+        text.Append("ArgumentException:");
        
-        text.AppendLiteral(Environment.NewLine); 
-        text.AppendLiteral("  Argument: ");
+        text.AppendLine();
+        text.Append("  Argument: ");
         if (Argument is not null)
         {
             Argument.WriteTo(ref text);
         }
         else
         {
-            text.AppendLiteral("null");
+            text.Append("null");
         }
 
         var message = Message;
         if (!string.IsNullOrEmpty(message))
         {
-            text.AppendLiteral(Environment.NewLine);
-            text.AppendLiteral("  Message: ");
-            text.AppendLiteral(message!);
+            text.AppendLine();
+            text.Append($"  Message: {message}");
         }
 
-        this.WriteOptionalPropertiesTo(ref text);
+        this.WriteDebugInformationTo(ref text, 1);
+        
+        this.WriteOptionalPropertiesTo(ref text, 1);
 
         return text.ToStringAndDispose();
     }
