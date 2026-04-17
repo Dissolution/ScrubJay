@@ -53,8 +53,5 @@
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Text.Tests"/>
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Building\" />
-    </ItemGroup>
 
 </Project>
