@@ -20,9 +20,16 @@
     <ItemGroup>
         <Using Include="InlineIL.IL" Static="true"/>
         <Using Include="InlineIL"/>
+        <Using Include="System.Buffers"/>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+
         <PackageReference Include="Fody">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,13 +37,16 @@
         <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1' "
-                          Include="System.Runtime.CompilerServices.Unsafe">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <!--        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.1' "-->
+        <!--                          Include="System.Runtime.CompilerServices.Unsafe">-->
+        <!--            <PrivateAssets>all</PrivateAssets>-->
+        <!--        </PackageReference>-->
 
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'net48'">
+        <PackageReference Include="System.Memory"/>
+        <PackageReference Include="Microsoft.Bcl.Memory"/>
     </ItemGroup>
 
     <!-- Expose our internals -->

@@ -1,4 +1,4 @@
-//namespace ScrubJay.Enhancements.Text.Building;
+﻿//namespace ScrubJay.Enhancements.Text.Building;
 //
 //public ref partial struct TextBuilder
 //{
