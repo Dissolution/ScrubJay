@@ -4,50 +4,24 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using ScrubJay.Exceptions;
 using ScrubJay.Sandboxes.Console;
+using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 using ScrubJay.Text.Utilities;
 using ScrubJay.Text.Extensions;
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-Type type = typeof(IList<>);
 
-try
-{
-    var exception = new ArgException(args, "Didn't smell right")
-    {
-        Title = "You really messed up",
-        Status = 404,
-    };
+using var text = TextBuilder.Create(4);
+text.Append("eat").Append("at").Append("joes").NewLine()
+    .Append($"Or the jabberwock will: {args}")
+    .NewLine();
+
+string str = text.ToString();
+Console.WriteLine(str);
+Debugger.Break();
     
-    throw exception;
-}
-catch (Exception ex)
-{
-    var str = ex.ToString();
-    Debugger.Break();
-}
 
-
-/*
-var test = TestEnum.Four;
-string name = test.GetName();
-var value = test.GetValue();
-
-var feq = test.Equals(TestEnum.Four);
-var fcomp = test.CompareTo(TestEnum.Sixteen);
-
-var hf = TestEnum.HasFlagsAttribute;
-
-Console.WriteLine($"""
-    TestEnum.Four
-        Name: {name}
-        Value: {value}
-        Feq: {feq}
-        Fcomp: {fcomp}
-        HF: {hf}
-    """);
-    */
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
