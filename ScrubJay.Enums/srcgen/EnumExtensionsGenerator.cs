@@ -1,17 +1,12 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 using ScrubJay.Enums.SourceGen.Factories;
 using ScrubJay.Enums.SourceGen.Models;
 using ScrubJay.Enums.SourceGen.Utilities;
 using SGF;
-using SGF.Diagnostics;
-using SGF.Diagnostics.Sinks;
 
 namespace ScrubJay.Enums.SourceGen;
 

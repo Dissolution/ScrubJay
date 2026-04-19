@@ -21,9 +21,18 @@
         <Using Include="InlineIL.IL" Static="true"/>
         <Using Include="InlineIL"/>
         <Using Include="System.Buffers"/>
+        
+        <Using Include="ScrubJay.Polyfills"/>
+        
         <Using Include="ScrubJay.Universal"/>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Functional"/>
+
+        <Using Include="ScrubJay.Text.Building"/>
+        <Using Include="ScrubJay.Text.Extensions"/>
+        <Using Include="ScrubJay.Text.Pooling"/>
+        <Using Include="ScrubJay.Text.Rendering"/>
+        <Using Include="ScrubJay.Text.Utilities"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -52,6 +61,11 @@
     <!-- Expose our internals -->
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Text.Tests"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\README.md">
+        <Link>README.md</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

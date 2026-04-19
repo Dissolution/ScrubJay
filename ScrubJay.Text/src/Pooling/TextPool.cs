@@ -1,6 +1,3 @@
-using System.Buffers;
-using ScrubJay.Text.Utilities;
-
 namespace ScrubJay.Text.Pooling;
 
 /// <summary>

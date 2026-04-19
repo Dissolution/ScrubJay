@@ -16,6 +16,74 @@ tab_width = 2
 indent_size = 4
 max_line_length = 200
 
+# Naming -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules
+
+# <kind>.<entityName>.<propertyName> = <propertyValue>
+
+
+## <kind> values -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#kind-values
+#   dotnet_naming_rule
+#   dotnet_naming_symbols
+#   dotnet_naming_style
+
+## <entityName> -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#entityname
+
+## <propertyName> -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#propertyname-and-propertyvalue
+
+
+### Symbol Group Properties -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#symbol-group-properties
+
+# applicable_kinds [REQUIRED]
+#   *, namespace, class, struct, interface, enum, property, method, field, event, delegate, parameter, type_parameter, local, local_function
+
+# applicable_accessibilities [REQUIRED]
+#   *, public, internal or friend, private, protected, protected_internal or protected_friend, private_protected, local
+
+# required_modifiers
+#   abstract, must_inherit, async, const, readonly, static, shared
+
+
+### Naming Style Properties -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#naming-style-properties
+
+# capitalization [REQUIRED]
+#   pascal_case, camel_case, first_word_upper, all_upper, all_lower
+
+# required_prefix
+#   (must begin with these characters)
+
+# required_suffix
+#   (must end with these characters)
+
+# word_separator
+#   (Words within the symbol need to be separated with this character)
+
+
+### Naming Rule Properties -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules#naming-rule-properties
+
+# symbols
+#   The name of a symbol group defined elsewhere; the naming rule will be applied to the symbols in this group
+
+# style
+#   The name of the naming style which should be associated with this rule; the style is defined elsewhere
+
+# severity
+#   Sets the severity with which to enforce the naming rule
+
+#### Severity Level -- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options#severity-level
+# error         - Violations appear as build errors and cause builds to fail.
+# warning       - Violations appear as build warnings but do not cause builds to fail (unless you have an option set to treat warnings as errors).
+# suggestion    - Violations appear as build messages and as suggestions in the Visual Studio IDE. (In Visual Studio, suggestions appear as three gray dots under the first two characters.)
+# silent        - Violations aren't visible to the user. (However, for code-style rules, Visual Studio code-generation features still generate code in this style. These rules also participate in cleanup and appear in the Quick Actions and Refactorings menu in Visual Studio.)
+# none          - Rule is suppressed completely. (However, for code-style rules, Visual Studio code-generation features still generate code in this style.)
+# default       - The default severity of the rule is used. The default severities for each .NET release are listed in the dotnet/sdk repo. ()In that table, "Disabled" corresponds to none, "Hidden" corresponds to silent, and "Info" corresponds to suggestion.)
+
+
+
+
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 # .NET Formatting Options
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/dotnet-formatting-options
 

@@ -1,6 +1,5 @@
 using System.Reflection;
 using ScrubJay.Universal;
-using ScrubJay.Universal.Extensions;
 
 namespace ScrubJay.Exceptions;
 

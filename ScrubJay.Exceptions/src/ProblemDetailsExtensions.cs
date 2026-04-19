@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net;
 using ScrubJay.Universal;
 using ScrubJay.Universal.Extensions;
 

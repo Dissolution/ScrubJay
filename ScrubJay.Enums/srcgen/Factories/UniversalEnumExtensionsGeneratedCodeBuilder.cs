@@ -1,7 +1,6 @@
 using ScrubJay.Enums.SourceGen.Coding;
 using ScrubJay.Enums.SourceGen.Models;
 using ScrubJay.Enums.SourceGen.Utilities;
-using SGF.Diagnostics;
 
 namespace ScrubJay.Enums.SourceGen.Factories;
 

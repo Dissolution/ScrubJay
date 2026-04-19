@@ -22,10 +22,16 @@
         <!--        <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>-->
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
 
-<!--        <ProjectReference-->
-<!--                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"-->
-<!--                ReferenceOutputAssembly="false"-->
-<!--                OutputItemType="Analyzer"/>-->
+        <!--        <ProjectReference-->
+        <!--                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"-->
+        <!--                ReferenceOutputAssembly="false"-->
+        <!--                OutputItemType="Analyzer"/>-->
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Reflection.Emit">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

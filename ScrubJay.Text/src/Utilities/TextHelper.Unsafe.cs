@@ -957,6 +957,158 @@ public static partial class TextHelper
         }
 #endregion
 
+#region SelfCopy
+        public static void SelfCopy(char[] array, int sourceIndex, int destIndex, int count)
+        {
+#if DEBUG
+            Debug.Assert(array is not null);
+            int arrayLength = array!.Length;
+
+            Debug.Assert(arrayLength > 0);
+            Debug.Assert(count > 0);
+
+            Debug.Assert(sourceIndex >= 0 && sourceIndex <= arrayLength);
+            int sourceEnd = sourceIndex + count;
+            Debug.Assert(sourceEnd >= 0 && sourceEnd <= arrayLength);
+
+            Debug.Assert(destIndex >= 0 && destIndex <= arrayLength);
+            int destEnd = destIndex + count;
+            Debug.Assert(destEnd >= 0 && destEnd <= arrayLength);
+#endif
+
+            ref char src = ref array[sourceIndex];
+            ref char dst = ref array[destIndex];
+            CopyTo(ref src, ref dst, count);
+        }
+
+        public static void SelfCopy(char[] chars, Range source, int destStart)
+        {
+            Debug.Assert(chars is not null);
+            int len = chars.Length;
+            Debug.Assert(len > 0);
+
+            int sourceStart = source.Start.GetOffset(len);
+            Debug.Assert(sourceStart >= 0 && sourceStart <= len);
+
+            int sourceEnd = source.End.GetOffset(len);
+            Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
+
+            int sourceLength = sourceEnd - sourceStart;
+            Debug.Assert(sourceLength >= 0 && sourceLength <= len);
+
+            Debug.Assert(destStart >= 0 && destStart <= len);
+
+            int destEnd = destStart + sourceLength;
+            Debug.Assert(destEnd >= 0 && destEnd <= len);
+
+            int endLength = destEnd - destStart;
+            Debug.Assert(endLength >= 0 && endLength <= len);
+
+            Debug.Assert(endLength >= sourceLength);
+
+            ref char src = ref chars[sourceStart];
+            ref char dst = ref chars[destStart];
+            CopyTo(ref src, ref dst, sourceLength);
+        }
+
+        public static void SelfCopy(char[] chars, Range source, Index dest)
+        {
+            Debug.Assert(chars is not null);
+            int len = chars.Length;
+            Debug.Assert(len > 0);
+
+            int sourceStart = source.Start.GetOffset(len);
+            Debug.Assert(sourceStart >= 0 && sourceStart <= len);
+
+            int sourceEnd = source.End.GetOffset(len);
+            Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
+
+            int sourceLength = sourceEnd - sourceStart;
+            Debug.Assert(sourceLength >= 0 && sourceLength <= len);
+
+            int destStart = dest.GetOffset(len);
+            Debug.Assert(destStart >= 0 && destStart <= len);
+
+            int destEnd = destStart + sourceLength;
+            Debug.Assert(destEnd >= 0 && destEnd <= len);
+
+            int endLength = destEnd - destStart;
+            Debug.Assert(endLength >= 0 && endLength <= len);
+
+            Debug.Assert(endLength >= sourceLength);
+
+            ref char src = ref chars[sourceStart];
+            ref char dst = ref chars[destStart];
+            CopyTo(ref src, ref dst, sourceLength);
+        }
+
+        public static void SelfCopy(char[] chars, Range source, Range dest)
+        {
+            Debug.Assert(chars is not null);
+            int len = chars.Length;
+            Debug.Assert(len > 0);
+
+            int sourceStart = source.Start.GetOffset(len);
+            Debug.Assert(sourceStart >= 0 && sourceStart <= len);
+
+            int sourceEnd = source.End.GetOffset(len);
+            Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
+
+            int sourceLength = sourceEnd - sourceStart;
+            Debug.Assert(sourceLength >= 0 && sourceLength <= len);
+
+            int destStart = dest.Start.GetOffset(len);
+            Debug.Assert(destStart >= 0 && destStart <= len);
+
+            int destEnd = dest.End.GetOffset(len);
+            Debug.Assert(destEnd >= 0 && destEnd <= len);
+
+            int endLength = destEnd - destStart;
+            Debug.Assert(endLength >= 0 && endLength <= len);
+
+            Debug.Assert(endLength >= sourceLength);
+
+            ref char src = ref chars[sourceStart];
+            ref char dst = ref chars[destStart];
+            CopyTo(ref src, ref dst, sourceLength);
+        }
+#endregion
+
+
+#region Shift
+        internal static void ShiftItemsRight(
+            char[] array, int arrayUsed,
+            int index, int length)
+        {
+#if DEBUG
+            Debug.Assert(array is not null);
+            int arrayLength = array!.Length;
+            Debug.Assert(arrayLength > 0);
+            Debug.Assert(arrayUsed >= 0 && arrayUsed <= arrayLength);
+            Debug.Assert(index >= 0 && index < arrayUsed);
+            Debug.Assert(length > 0 && length <= arrayLength);
+            Debug.Assert(arrayUsed + length <= arrayLength);
+#endif
+
+            CopyTo(ref array[index], ref array[index + length], arrayUsed - index);
+        }
+
+        internal static void ShiftItemsLeft(
+            char[] array, int arrayUsed,
+            int index, int length)
+        {
+#if DEBUG
+            Debug.Assert(array is not null);
+            int arrayLength = array!.Length;
+            Debug.Assert(arrayLength > 0);
+            Debug.Assert(arrayUsed >= 0 && arrayUsed <= arrayLength);
+            Debug.Assert(index >= 0 && index < arrayUsed);
+            Debug.Assert(length > 0 && length <= arrayUsed);
+#endif
+
+            CopyTo(ref array[index + length], ref array[index], arrayUsed - (index + length));
+        }
+#endregion
     }
-    
+
 }
