@@ -1,41 +1,45 @@
 <Solution>
 	<Configurations>
-		<BuildType Name="Debug"/>
-		<BuildType Name="Analyze"/>
-		<BuildType Name="Release"/>
-		<BuildType Name="Nuget"/>
+		<BuildType Name="Debug" />
+		<BuildType Name="Analyze" />
+		<BuildType Name="Release" />
+		<BuildType Name="Nuget" />
 	</Configurations>
 	<Folder Name="/Sandboxes/">
-		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj"/>
+		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />
+		<Project Path="Sandboxes/Standalone/Standalone.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
 	</Folder>
 	<Folder Name="/Docs/">
-		<File Path="TypeExtensions.cs"/>
-		<File Path="TypeName.Tests.cs"/>
-		<File Path="TypeRenderer.cs"/>
+		<File Path="TypeExtensions.cs" />
+		<File Path="TypeName.Tests.cs" />
+		<File Path="TypeRenderer.cs" />
 	</Folder>
 	<Folder Name="/Universal/">
-		<File Path="ScrubJay.Universal/README.md"/>
-		<Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj"/>
-		<Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj"/>
+		<File Path="ScrubJay.Universal/README.md" />
+		<Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
+		<Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
 	</Folder>
 	<Folder Name="/Functional/">
-		<File Path="ScrubJay.Functional/README.md"/>
-		<Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj"/>
-		<Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj"/>
-		<Project Path="ScrubJay.Functional/core/ScrubJay.Functional.csproj"/>
-		<Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj"/>
+		<File Path="ScrubJay.Functional/README.md" />
+		<Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
+		<Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj" />
+		<Project Path="ScrubJay.Functional/core/ScrubJay.Functional.csproj" />
+		<Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
 	</Folder>
 	<Folder Name="/Text/">
-		<File Path="ScrubJay.Text/README.md"/>
-		<Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj"/>
+		<File Path="ScrubJay.Text/README.md" />
+		<Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
 	</Folder>
 	<Folder Name="/Exceptions/">
-		<File Path="ScrubJay.Exceptions/README.md"/>
-		<Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj"/>
+		<File Path="ScrubJay.Exceptions/README.md" />
+		<Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj" />
 	</Folder>
 	<Folder Name="/Enums/">
-		<File Path="ScrubJay.Enums/README.md"/>
-		<Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj"/>
-		<Project Path="ScrubJay.Enums/srcgen/ScrubJay.Enums.SourceGen.csproj"/>
+		<File Path="ScrubJay.Enums/README.md" />
+		<Project Path="ScrubJay.Enums/src/ScrubJay.Enums.csproj" />
+		<Project Path="ScrubJay.Enums/srcgen/ScrubJay.Enums.SourceGen.csproj" />
 	</Folder>
 </Solution>
