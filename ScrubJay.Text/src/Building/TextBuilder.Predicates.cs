@@ -1,4 +1,5 @@
 using ScrubJay.Universal.Extensions;
+// ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Text.Building;
 
@@ -37,6 +38,19 @@ public partial class TextBuilder
 #endregion
 
 #region If(value, valuePredicate)
+    public TextBuilder If<T>(T? value, Func<T?, bool>? predicate)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (predicate is not null && predicate.Invoke(value))
+        {
+            Write<T>(value);
+        }
+        return this;
+    }
+
+
     public TextBuilder If<T>(T? value,
         Func<T?, bool>? predicate,
         Action<TextBuilder, T?>? onTrue = null,
@@ -61,6 +75,15 @@ public partial class TextBuilder
 #endregion
 
 #region IfSelect
+    public TextBuilder IfSelect<T, N>(T value, Func<T, Option<N>> selectWhere)
+    {
+        if (selectWhere(value).IsSome(out var selected))
+        {
+            Write<N>(selected);
+        }
+        return this;
+    }
+
     public TextBuilder IfSelect<T, N>(
         T value,
         Func<T, Option<N>> selectWhere,
@@ -74,6 +97,17 @@ public partial class TextBuilder
         else
         {
             onUnselected?.Invoke(this, value);
+        }
+        return this;
+    }
+
+    public TextBuilder IfSelect<T, N>(
+        T value,
+        Func<T, Result<N>> selectWhere)
+    {
+        if (selectWhere(value).IsOk(out var selected))
+        {
+            Write<N>(selected);
         }
         return this;
     }
@@ -97,6 +131,18 @@ public partial class TextBuilder
 #endregion
 
 #region IfNotNull
+    public TextBuilder IfNotNull<T>(T? value)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (value is not null)
+        {
+            Write<T>(value);
+        }
+        return this;
+    }
+
     public TextBuilder IfNotNull<T>(
         T? value,
         Action<TextBuilder, T>? onNotNull = null,
@@ -112,6 +158,16 @@ public partial class TextBuilder
         else
         {
             onNull?.Invoke(this);
+        }
+        return this;
+    }
+
+    public TextBuilder IfNotNull<N>(Nullable<N> nullable)
+        where N : struct
+    {
+        if (nullable.TryGetValue(out var n))
+        {
+            Write<N>(n);
         }
         return this;
     }
@@ -134,6 +190,15 @@ public partial class TextBuilder
 #endregion
 
 #region If Not Empty
+    public TextBuilder IfNotEmpty(string? str)
+    {
+        if (!string.IsNullOrEmpty(str))
+        {
+            Write(str);
+        }
+        return this;
+    }
+
     public TextBuilder IfNotEmpty(
         string? str,
         Action<TextBuilder, string>? onNotEmpty = null,
@@ -149,6 +214,16 @@ public partial class TextBuilder
         }
         return this;
     }
+
+    public TextBuilder IfNotEmpty(scoped text text)
+    {
+        if (!text.IsEmpty)
+        {
+            Write(text);
+        }
+        return this;
+    }
+
 
     public TextBuilder IfNotEmpty(
         scoped text text,
@@ -246,6 +321,15 @@ public partial class TextBuilder
 
 
 #region IfSome
+    public TextBuilder IfSome<T>(Option<T> option)
+    {
+        if (option.IsSome(out var some))
+        {
+            Write<T>(some);
+        }
+        return this;
+    }
+
     public TextBuilder IfSome<T>(
         Option<T> option,
         Action<TextBuilder, T>? onSome = null,
@@ -258,6 +342,18 @@ public partial class TextBuilder
         else
         {
             onNone?.Invoke(this);
+        }
+        return this;
+    }
+
+    public TextBuilder IfSome<T>(RefOption<T> option)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (option.IsSome(out var some))
+        {
+            Write<T>(some);
         }
         return this;
     }
@@ -315,6 +411,15 @@ public partial class TextBuilder
         return this;
     }
 
+    public TextBuilder IfOk<T>(Result<T> result)
+    {
+        if (result.IsOk(out var ok))
+        {
+            Write<T>(ok);
+        }
+        return this;
+    }
+
     public TextBuilder IfOk<T>(
         Result<T> result,
         Action<TextBuilder, T>? onOk = null,
@@ -331,6 +436,16 @@ public partial class TextBuilder
         return this;
     }
 
+
+    public TextBuilder IfOk<T, E>(Result<T, E> result)
+    {
+        if (result.IsOk(out var ok))
+        {
+            Write<T>(ok);
+        }
+        return this;
+    }
+
     public TextBuilder IfOk<T, E>(
         Result<T, E> result,
         Action<TextBuilder, T>? onOk = null,
@@ -343,6 +458,18 @@ public partial class TextBuilder
         else
         {
             onError?.Invoke(this, error);
+        }
+        return this;
+    }
+
+    public TextBuilder IfOk<T>(RefResult<T> result)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (result.IsOk(out var ok))
+        {
+            Write<T>(ok);
         }
         return this;
     }

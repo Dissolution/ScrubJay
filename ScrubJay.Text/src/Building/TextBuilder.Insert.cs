@@ -1,3 +1,4 @@
+// ReSharper disable MethodOverloadWithOptionalParameter
 namespace ScrubJay.Text.Building;
 
 partial class TextBuilder
@@ -56,10 +57,40 @@ partial class TextBuilder
         return false;
     }
 
-    public bool TryInsert<T>(int index, T value, Action<TextBuilder, T>? buildValue)
+    public bool TryInsert<T>(int index, T? value, Action<TextBuilder, T?>? buildValue)
     {
-        if (buildValue is null)
-            return true;
+        if (buildValue is not null)
+        {
+            if ((uint)index <= (uint)_position)
+            {
+                // we have to build the value to know what to insert
+                int start = _position;
+                buildValue(this, value);
+                int length = _position - start;
+                if (length == 0)
+                    return true;
+
+                TextHelper.Unsafe.ShiftItemsRight(_chars, _position, index, length);
+                TextHelper.Unsafe.CopyTo(ref _chars[start + length], ref _chars[index], length);
+                _position -= length;
+                return true;
+            }
+            return false;
+        }
+        return TryInsert<T>(index, value, TBA.Append);
+    }
+
+    public bool TryInsert<T>(int index, T? value)
+        => TryInsert<T>(index, value, TBA.Append);
+    
+
+#if NET9_0_OR_GREATER
+    public bool TryInsert<T>(int index, T? value, Action<TextBuilder,T?>? buildValue,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
+    where T : allows ref struct
+    {
+        buildValue ??= TBA.Append<T>(_);
+        
         if ((uint)index <= (uint)_position)
         {
             // we have to build the value to know what to insert
@@ -71,30 +102,6 @@ partial class TextBuilder
 
             TextHelper.Unsafe.ShiftItemsRight(_chars, _position, index, length);
             TextHelper.Unsafe.CopyTo(ref _chars[start + length], ref _chars[index], length);
-            _position -= length;
-            return true;
-        }
-        return false;
-    }
-
-#if NET9_0_OR_GREATER
-    public bool TryInsert<T>(int index, T value, Action<TextBuilder,T>? buildValue,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-    where T : allows ref struct
-    {
-        if (buildValue is null)
-            return true;
-        if ((uint)index <= (uint)_position)
-        {
-            // we have to build the value to know what to insert
-            int start = _position;
-            buildValue(this, value);
-            int length = _position - start;
-            if (length == 0)
-                return true;
-
-            TextHelper.Unsafe.ShiftItemsRight(_chars, _position, index, length);
-            TextHelper.Unsafe.CopyTo(ref _chars[start+length], ref _chars[index], length);
             _position -= length;
             return true;
         }

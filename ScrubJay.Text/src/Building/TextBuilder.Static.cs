@@ -25,33 +25,18 @@ public partial class TextBuilder
         where S : allows ref struct
 #endif
     {
+        using var tb = new TextBuilder();
         if (statefulBuild is not null)
         {
-            using var tb = new TextBuilder();
             statefulBuild(tb, state);
-            return tb.ToString();
         }
-        return string.Empty;
+        else
+        {
+            tb.Write<S>(state);
+        }
+        return tb.ToString();
     }
     
-
-//    public static string Build<R>(Func<TextBuilder, R>? buildFunc)
-//#if NET9_0_OR_GREATER
-//        where R : allows ref struct
-//#endif
-//    {
-//        return New.Invoke(buildFunc).ToStringAndDispose();
-//    }
-
-
-
-//    public static string Build<S, R>(S state, Func<TextBuilder, S, R>? buildStateOut)
-//    {
-//        if (buildStateOut is null)
-//            return string.Empty;
-//        return New.Invoke(state, buildStateOut).ToStringAndDispose();
-//    }
-
     public static string Build(
         [HandlesResourceDisposal]
         ref InterpolatedTextBuilder interpolatedTextBuilder)

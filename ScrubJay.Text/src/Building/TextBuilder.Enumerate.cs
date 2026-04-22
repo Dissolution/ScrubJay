@@ -9,7 +9,7 @@ public partial class TextBuilder
      * - Func<Option<T>> iterator
      */
 
-#region Enumerate Write
+#region Enumerate Append
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> span)
     {
         foreach (T item in span)
@@ -47,6 +47,7 @@ public partial class TextBuilder
     }
 
 #if NET9_0_OR_GREATER
+    // ReSharper disable once MethodOverloadWithOptionalParameter
     public TextBuilder Enumerate<T>(IEnumerable<T>? values, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
@@ -76,6 +77,7 @@ public partial class TextBuilder
     }
 
 #if NET9_0_OR_GREATER
+    // ReSharper disable once MethodOverloadWithOptionalParameter
     public TextBuilder Enumerate<T>(Func<RefOption<T>>? iterator, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
@@ -95,84 +97,107 @@ public partial class TextBuilder
 #region Enumerate Build
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> span, Action<TextBuilder, T>? itemBuild)
     {
-        if (itemBuild is null) 
-            return Enumerate<T>(span);
-
-        foreach (var value in span)
+        if (itemBuild is not null)
         {
-            itemBuild(this, value);
+            foreach (var value in span)
+            {
+                itemBuild(this, value);
+            }
+            return this;
         }
-        return this;
+        return Enumerate<T>(span);
     }
 
     public TextBuilder Enumerate<T>(T[]? array, Action<TextBuilder, T>? itemBuild)
     {
-        if (array.IsNullOrEmpty()) return this;
-        if (itemBuild is null) return Enumerate<T>(array);
-        
-        foreach (var value in array)
+        if (itemBuild is not null)
         {
-            itemBuild(this, value);
+            if (array.IsNullOrEmpty())
+                return this;
+
+            foreach (var value in array)
+            {
+                itemBuild(this, value);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(array);
     }
 
     public TextBuilder Enumerate<T>(IEnumerable<T>? values, Action<TextBuilder, T>? itemBuild)
     {
-        if (values is null) return this;
-        if (itemBuild is null) return Enumerate<T>(values);
-       
-        foreach (var value in values)
+        if (itemBuild is not null)
         {
-            itemBuild(this, value);
+            if (values is null) return this;
+
+            foreach (var value in values)
+            {
+                itemBuild(this, value);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(values);
     }
 
 #if NET9_0_OR_GREATER
+    // ReSharper disable once MethodOverloadWithOptionalParameter
     public TextBuilder Enumerate<T>(IEnumerable<T>? values, Action<TextBuilder, T>? itemBuild, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (values is null) return this;
-        if (itemBuild is null) return Enumerate<T>(values, _);
-        
-        foreach (var value in values)
+        if (itemBuild is not null)
         {
-            itemBuild(this, value);
+            if (values is null) return this;
+
+            foreach (var value in values)
+            {
+                itemBuild(this, value);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(values, _);
     }
 #endif
 
     public TextBuilder Enumerate<T>(Func<Option<T>>? iterator, Action<TextBuilder, T>? itemBuild)
     {
-        if (iterator is null) return this;
-        if (itemBuild is null) return Enumerate<T>(iterator);
-        
-        while (iterator().IsSome(out var nextItem))
+        if (itemBuild is not null)
         {
-            itemBuild(this, nextItem);
+            if (iterator is null) return this;
+
+            while (iterator().IsSome(out var nextItem))
+            {
+                itemBuild(this, nextItem);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(iterator);
     }
 
 #if NET9_0_OR_GREATER
     public TextBuilder Enumerate<T>(Func<RefOption<T>>? iterator, Action<TextBuilder, T>? itemBuild, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (iterator is null) return this;
-        if (itemBuild is null) return Enumerate<T>(iterator, _);
-        
-        while (iterator().IsSome(out var nextItem))
+        if (itemBuild is not null)
         {
-            itemBuild(this, nextItem);
+            if (iterator is null) return this;
+
+            while (iterator().IsSome(out var nextItem))
+            {
+                itemBuild(this, nextItem);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(iterator, _);
     }
 #endif
 #endregion
@@ -180,103 +205,125 @@ public partial class TextBuilder
 #region Enumerate w/Index
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> values, Action<TextBuilder, T, int>? itemIndexBuild)
     {
-        if (itemIndexBuild is null) return Enumerate<T>(values);
-        
-        for (int i = 0; i < values.Length; i++)
+        if (itemIndexBuild is not null)
         {
-            itemIndexBuild(this, values[i], i);
+            for (int i = 0; i < values.Length; i++)
+            {
+                itemIndexBuild(this, values[i], i);
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(values);
     }
 
     public TextBuilder Enumerate<T>(T[]? values, Action<TextBuilder, T, int>? itemIndexBuild)
     {
-        if (values is null) return this;
-        if (itemIndexBuild is null) return Enumerate<T>(values);
-        
-        for (int i = 0; i < values.Length; i++)
+        if (itemIndexBuild is not null)
         {
-            itemIndexBuild(this, values[i], i);
+            if (values is null) return this;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                itemIndexBuild(this, values[i], i);
+            }
+            return this;
         }
-        return this;
+
+        return Enumerate<T>(values);
     }
 
     public TextBuilder Enumerate<T>(IEnumerable<T>? values, Action<TextBuilder, T, int>? itemIndexBuild)
     {
-        if (values is null) return this;
-        if (itemIndexBuild is null) return Enumerate<T>(values);
-        
-        if (values is IList<T> list)
+        if (itemIndexBuild is not null)
         {
-            for (var i = 0; i < list.Count; i++)
+            if (values is IList<T> list)
             {
-                itemIndexBuild(this, list[i], i);
+                for (var i = 0; i < list.Count; i++)
+                {
+                    itemIndexBuild(this, list[i], i);
+                }
             }
-        }
-        else
-        {
-            int i = 0;
-            foreach (var value in values)
+            else
             {
-                itemIndexBuild(this, value, i);
-                i++;
+                if (values is null) return this;
+
+                int i = 0;
+                foreach (var value in values)
+                {
+                    itemIndexBuild(this, value, i);
+                    i++;
+                }
             }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(values);
     }
 
 #if NET9_0_OR_GREATER
     public TextBuilder Enumerate<T>(IEnumerable<T>? values, Action<TextBuilder, T, int>? itemIndexBuild, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (values is null) return this;
-        if (itemIndexBuild is null) return Enumerate<T>(values);
-        
-        int i = 0;
-        foreach (var value in values)
+        if (itemIndexBuild is not null)
         {
-            itemIndexBuild(this, value, i);
-            i++;
+            if (values is null) return this;
+
+            int i = 0;
+            foreach (var value in values)
+            {
+                itemIndexBuild(this, value, i);
+                i++;
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(values);
     }
 #endif
 
     public TextBuilder Enumerate<T>(Func<Option<T>>? iterator, Action<TextBuilder, T, int>? itemIndexBuild)
     {
-        if (iterator is null) return this;
-        if (itemIndexBuild is null) return Enumerate<T>(iterator);
-        
-        int i = 0;
-        while (iterator().IsSome(out var nextItem))
+        if (itemIndexBuild is not null)
         {
-            itemIndexBuild(this, nextItem, i);
-            i++;
+            if (iterator is null) return this;
+
+            int i = 0;
+            while (iterator().IsSome(out var nextItem))
+            {
+                itemIndexBuild(this, nextItem, i);
+                i++;
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(iterator);
     }
 
 #if NET9_0_OR_GREATER
     public TextBuilder Enumerate<T>(Func<RefOption<T>>? iterator, Action<TextBuilder, T, int>? itemIndexBuild, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (iterator is null) return this;
-        if (itemIndexBuild is null) return Enumerate<T>(iterator, _);
-        
-        int i = 0;
-        while (iterator().IsSome(out var nextItem))
+        if (itemIndexBuild is not null)
         {
-            itemIndexBuild(this, nextItem, i);
-            i++;
+            if (iterator is null) return this;
+
+            int i = 0;
+            while (iterator().IsSome(out var nextItem))
+            {
+                itemIndexBuild(this, nextItem, i);
+                i++;
+            }
+
+            return this;
         }
 
-        return this;
+        return Enumerate<T>(iterator, _);
     }
 #endif
 #endregion
-    
 }

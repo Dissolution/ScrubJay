@@ -1,4 +1,5 @@
 ﻿// ReSharper disable MethodOverloadWithOptionalParameter
+
 namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
@@ -43,7 +44,7 @@ public partial class TextBuilder
 
 
     public TextBuilder Repeat(int count, string? str) => Repeat(count, str.AsSpan());
-    
+
     public TextBuilder Repeat<T>(int count, T? value)
     {
         if (count > 0 && value is not null)
@@ -91,7 +92,7 @@ public partial class TextBuilder
     }
 #endif
 #endregion
-    
+
 #region Repeat Action
     public TextBuilder Repeat(int count, Action<TextBuilder>? build)
     {
@@ -106,20 +107,20 @@ public partial class TextBuilder
         return this;
     }
 
-    public TextBuilder Repeat<S>(int count, S state, Action<TextBuilder, S>? statefulBuild)
+    public TextBuilder Repeat<T>(int count, T value, Action<TextBuilder, T>? buildItem)
 #if NET9_0_OR_GREATER
-        where S : allows ref struct
+        where T : allows ref struct
 #endif
     {
-        if (statefulBuild is not null)
+        if (buildItem is not null)
         {
             for (int i = 0; i < count; i++)
             {
-                statefulBuild(this, state);
+                buildItem(this, value);
             }
+            return this;
         }
-
-        return this;
+        return Repeat<T>(count, value);
     }
 #endregion
 

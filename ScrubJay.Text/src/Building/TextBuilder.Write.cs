@@ -15,7 +15,7 @@ public partial class TextBuilder
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(char ch)
+    internal void Write(char ch)
     {
         if (_position < _chars.Length)
         {
@@ -36,7 +36,7 @@ public partial class TextBuilder
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(scoped text text)
+    internal void Write(scoped text text)
     {
         if (_position + text.Length < _chars.Length)
         {
@@ -50,7 +50,7 @@ public partial class TextBuilder
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(string? str)
+    internal void Write(string? str)
     {
         if (str is not null)
         {
@@ -65,14 +65,38 @@ public partial class TextBuilder
             }
         }
     }
+    
+    internal void Write<T>(T? value)
+    {
+        if (value is IFormattable)
+        {
+#if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, null))
+                {
+                    GrowBy(16);
+                }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write<T>(T? value) => Write(value?.ToString());
+                _position += charsWritten;
+            }
+            else
+#endif
+            {
+                Write(((IFormattable)value).ToString(null, null));
+            }
+        }
+        else if (value is not null)
+        {
+            Write(value.ToString());
+        }
+    }
 
 #if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     // ReSharper disable once MethodOverloadWithOptionalParameter
-    public void Write<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    internal void Write<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
         => Write(Any.ToString<T>(in value));
 #endif

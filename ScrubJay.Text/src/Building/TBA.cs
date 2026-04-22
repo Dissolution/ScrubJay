@@ -1,3 +1,5 @@
+// ReSharper disable MethodOverloadWithOptionalParameter
+
 namespace ScrubJay.Text.Building;
 
 public delegate void BuildWithReadOnlySpan<T>(TextBuilder builder, ReadOnlySpan<T> span);
@@ -5,8 +7,8 @@ public delegate void BuildWithReadOnlySpan<T>(TextBuilder builder, ReadOnlySpan<
 public static class TBA
 {
 #region Action<TextBuilder>
-    public static void None(TextBuilder builder) { }
-    public static Action<TextBuilder> None() => static tb => { };
+    public static void None(TextBuilder _) { }
+    public static Action<TextBuilder> None() => static _ => { };
 
     public static void NewLine(TextBuilder builder) => builder.NewLine();
     public static Action<TextBuilder> NewLine() => static tb => tb.NewLine();
@@ -27,9 +29,31 @@ public static class TBA
     public static Action<TextBuilder, T?> Append<T>() => static (tb, value) => tb.Append<T>(value);
     public static void Append<T>(TextBuilder builder, T? value) => builder.Append<T>(value);
 
+#if NET9_0_OR_GREATER
+    public static Action<TextBuilder, T?> Append<T>(TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => static (tb, value) => tb.Append<T>(value, default);
+
+    public static void Append<T>(TextBuilder builder, T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Append<T>(value, _);
+#endif
+
+
     public static Action<TextBuilder> Render<T>(T? value) => tb => tb.Render<T>(value);
     public static Action<TextBuilder, T?> Render<T>() => static (tb, value) => tb.Render<T>(value);
     public static void Render<T>(TextBuilder builder, T? value) => builder.Render<T>(value);
+
+#if NET9_0_OR_GREATER
+    public static Action<TextBuilder, T?> Render<T>(TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => static (tb, value) => tb.Render<T>(value, default);
+
+    public static void Render<T>(TextBuilder builder, T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Render<T>(value, _);
+#endif
+
 
 #region Format
     public static Action<TextBuilder> Format<T>(T? value)
@@ -51,6 +75,20 @@ public static class TBA
     public static Action<TextBuilder, T?> Format<T>(string? format, IFormatProvider? provider)
         => (tb, value) => tb.Format<T>(value, format, provider);
 
+#if NET9_0_OR_GREATER
+    public static Action<TextBuilder, T?> Format<T>(TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => static (tb, value) => tb.Format<T>(value);
+
+    public static Action<TextBuilder, T?> Format<T>(string? format, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => (tb, value) => tb.Format<T>(value, format, null, _);
+
+    public static Action<TextBuilder, T?> Format<T>(string? format, IFormatProvider? provider, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => (tb, value) => tb.Format<T>(value, format, provider, _);
+#endif
+
 
     public static void Format<T>(TextBuilder builder, T? value)
         => builder.Format<T>(value);
@@ -60,6 +98,20 @@ public static class TBA
 
     public static void Format<T>(TextBuilder builder, T? value, string? format, IFormatProvider? provider)
         => builder.Format<T>(value, format, provider);
+
+#if NET9_0_OR_GREATER
+    public static void Format<T>(TextBuilder builder, T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Format<T>(value, null, null, _);
+
+    public static void Format<T>(TextBuilder builder, T? value, string? format, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Format<T>(value, format, null, _);
+
+    public static void Format<T>(TextBuilder builder, T? value, string? format, IFormatProvider? provider, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Format<T>(value, format, provider, _);
+#endif
 #endregion
 #endregion
 
