@@ -36,10 +36,10 @@ public partial class TextBuilder
     
     public TextBuilder Format<T>(T? value, string? format)
     {
-//        if (format is [RENDER.FORMAT])
-//        {
-//            return Render<T>(value);
-//        }
+        if (format is [Rendering.Render.FORMAT])
+        {
+            return Render<T>(value);
+        }
         
         if (value is IFormattable)
         {
@@ -101,10 +101,10 @@ public partial class TextBuilder
 
     public TextBuilder Format<T>(T? value, scoped text format)
     {
-//        if (format is [RENDER.FORMAT])
-//        {
-//            return Render<T>(value);
-//        }
+        if (format is [Rendering.Render.FORMAT])
+        {
+            return Render<T>(value);
+        }
         
         if (value is IFormattable)
         {
@@ -192,10 +192,10 @@ public partial class TextBuilder
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-//        if (format is [RENDER.FORMAT])
-//        {
-//            return Render<T>(value);
-//        }
+        if (format is [Rendering.Render.FORMAT])
+        {
+            return Render<T>(value, _);
+        }
 
         if (typeof(T).IsByRef)
         {

@@ -77,11 +77,11 @@ partial class TextBuilder
             }
             return false;
         }
-        return TryInsert<T>(index, value, TBA.Append);
+        return TryInsert<T>(index, value, TB.Append);
     }
 
     public bool TryInsert<T>(int index, T? value)
-        => TryInsert<T>(index, value, TBA.Append);
+        => TryInsert<T>(index, value, TB.Append);
     
 
 #if NET9_0_OR_GREATER
@@ -89,7 +89,7 @@ partial class TextBuilder
         TypeConstraints.AllowsRefStruct<T> _ = default)
     where T : allows ref struct
     {
-        buildValue ??= TBA.Append<T>(_);
+        buildValue ??= TB.Append<T>(_);
         
         if ((uint)index <= (uint)_position)
         {

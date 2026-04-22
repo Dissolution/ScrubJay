@@ -3,7 +3,7 @@
 partial class TextBuilder
 {
     /// <summary>
-    /// Measures the number of characters written during a <see cref="TBA"/>.
+    /// Measures the number of characters written during a <see cref="TB"/>.
     /// </summary>
     /// <param name="build"></param>
     /// <param name="charsWritten"></param>

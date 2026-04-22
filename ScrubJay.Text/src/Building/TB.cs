@@ -4,7 +4,7 @@ namespace ScrubJay.Text.Building;
 
 public delegate void BuildWithReadOnlySpan<T>(TextBuilder builder, ReadOnlySpan<T> span);
 
-public static class TBA
+public static class TB
 {
 #region Action<TextBuilder>
     public static void None(TextBuilder _) { }
@@ -117,7 +117,7 @@ public static class TBA
 
 }
 
-public static class TBA<T>
+public static class TB<T>
 {
 #region Action<TextBuilder, T?>
     public static Action<TextBuilder> Append(T? value) => tb => tb.Append<T>(value);

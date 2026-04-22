@@ -2,7 +2,7 @@
 using System.Collections.Frozen;
 #endif
 
-namespace ScrubJay.Universal;
+namespace ScrubJay.Text.Rendering;
 
 /// <summary>
 /// A utility for rendering <see cref="Type"/>s.
@@ -56,7 +56,7 @@ public static class TypeRenderer
             ;
     }
 
-    private static void AppendArrayType(ref InterpolatedText text, Type arrayType)
+    private static void RenderArrayType(this TextBuilder text, Type arrayType)
     {
         Debug.Assert(arrayType.IsArray);
 
@@ -66,10 +66,10 @@ public static class TypeRenderer
         // if we aren't a nested array, we can just print our ranks and return
         if (!elementType!.IsArray)
         {
-            text.RenderType(elementType);
-            text.Append('[');
-            text.Append(new string(',', arrayType.GetArrayRank() - 1));
-            text.Append(']');
+            text.Render(elementType)
+                .Append('[')
+                .Repeat(arrayType.GetArrayRank() - 1, ',')
+                .Append(']');
             return;
         }
 
@@ -83,16 +83,17 @@ public static class TypeRenderer
             elementType = elementType.GetElementType();
         }
 
-        text.RenderType(elementType);
+        text.Render(elementType);
         foreach (int rank in ranks)
         {
-            text.Append('[');
-            text.Append(new string(',', rank - 1));
-            text.Append(']');
+            text.Append('[')
+                .Repeat(rank - 1, ',')
+                .Append(']');
         }
     }
 
-    private static void AppendNameAndGenericTypes(ref InterpolatedText text,
+    private static void AppendNameAndGenericTypes(
+        this TextBuilder text,
         Type type,
         params ReadOnlySpan<Type> genericTypes)
     {
@@ -110,23 +111,17 @@ public static class TypeRenderer
 
         if (genericTypes.Length > 0)
         {
-            text.Append('<');
-            text.RenderType(genericTypes[0]);
-            for (i = 1; i < genericTypes.Length; i++)
-            {
-                text.Append(sep);
-                text.RenderType(genericTypes[i]);
-            }
-
-            text.Append('>');
+            text.Append('<')
+                .Delimit(sep, genericTypes, TB.Render)
+                .Append('>');
         }
     }
 
-    private static void RenderNesting(ref InterpolatedText text, ref int offset, Type type, Type parent, Type[] genericTypes)
+    private static void RenderTypeNesting(TextBuilder text, ref int offset, Type type, Type parent, Type[] genericTypes)
     {
         if (parent.IsGenericType)
         {
-            RenderNesting(ref text, ref offset, parent, parent.ParentType!, genericTypes);
+            RenderTypeNesting(text, ref offset, parent, parent.ParentType!, genericTypes);
         }
         else
         {
@@ -149,7 +144,7 @@ public static class TypeRenderer
             }
 
             offset += count;
-            AppendNameAndGenericTypes(ref text, type, slice);
+            text.AppendNameAndGenericTypes(type, slice);
         }
         else
         {
@@ -157,64 +152,46 @@ public static class TypeRenderer
         }
     }
 
-    private static void AppendComplexNestedName(
-        ref InterpolatedText text,
+    private static void RenderComplexNestedName(
+        TextBuilder text,
         Type type,
         Type parent,
         Type[] genericTypes)
     {
         int offset = 0;
 
-        RenderNesting(ref text, ref offset, type, parent, genericTypes);
+        RenderTypeNesting(text, ref offset, type, parent, genericTypes);
     }
 
-    private static void AppendTuple(
-        ref InterpolatedText text,
+    private static void RenderTuple(
+        this TextBuilder text,
         Type type,
         Type[]? genericTypes = null,
         bool appendParens = true)
     {
-        if (appendParens)
-        {
-            text.Append('(');
-        }
-
-        genericTypes ??= type.GetGenericArguments();
-
-        if (genericTypes.Length > 0)
-        {
-            Type gt = genericTypes[0];
-            checkedAppend(ref text, gt);
-            for (int i = 1; i < genericTypes.Length; i++)
-            {
-                text.Append(", ");
-                checkedAppend(ref text, genericTypes[i]);
-            }
-        }
-
-        if (appendParens)
-        {
-            text.Append(')');
-        }
-
+        Debug.Assert(type.IsTuple);
+        
+        text
+            .If(appendParens, TB.Append('('))
+            .Delimit(", ", genericTypes ?? type.GetGenericArguments(), checkedAppend)
+            .If(appendParens, TB.Append(')'));
         return;
 
-        static void checkedAppend(ref InterpolatedText it, Type t)
+        static void checkedAppend(TextBuilder it, Type t)
         {
             if (!t.IsTuple)
             {
-                it.RenderType(t);
+                it.Render(t);
             }
             else
             {
-                AppendTuple(ref it, t, null, false);
+                it.RenderTuple(t, null, false);
             }
         }
     }
 
-
-
-    public static void RenderType(this ref InterpolatedText text, Type? type)
+    [RenderToMethod<Type>]
+    public static void RenderTypeTo(Type? type, TextBuilder text)
     {
         if (type is null)
         {
@@ -230,21 +207,21 @@ public static class TypeRenderer
 
         if (type.IsPointer)
         {
-            text.RenderType(type.GetElementType());
+            text.Render(type.GetElementType());
             text.Append('*');
             return;
         }
 
         if (type.IsByRef)
         {
-            text.RenderType(type.GetElementType());
+            text.Render(type.GetElementType());
             text.Append('&');
             return;
         }
 
         if (type.IsArray)
         {
-            AppendArrayType(ref text, type);
+            text.RenderArrayType(type);
             return;
         }
 
@@ -255,11 +232,11 @@ public static class TypeRenderer
             var parent = type.ParentType;
             if (parent!.IsGenericType)
             {
-                AppendComplexNestedName(ref text, type, parent, genericTypes);
+                RenderComplexNestedName(text, type, parent, genericTypes);
                 return;
             }
 
-            text.RenderType(parent);
+            text.Render(parent);
             text.Append('.');
         }
 
@@ -271,19 +248,19 @@ public static class TypeRenderer
                 (genericTypeDefinition.Name.StartsWith("Tuple`", StringComparison.Ordinal) ||
                     genericTypeDefinition.Name.StartsWith("ValueTuple", StringComparison.Ordinal)))
             {
-                AppendTuple(ref text, type, genericTypes);
+                text.RenderTuple(type, genericTypes);
                 return;
             }
 
             if (genericTypeDefinition == typeof(Nullable<>))
             {
                 Debug.Assert(genericTypes.Length == 1);
-                text.RenderType(genericTypes[0]);
+                text.Render(genericTypes[0]);
                 text.Append('?');
                 return;
             }
 
-            AppendNameAndGenericTypes(ref text, type, genericTypes);
+            AppendNameAndGenericTypes(text, type, genericTypes);
             return;
         }
 
@@ -295,95 +272,5 @@ public static class TypeRenderer
         }
 
         text.Append(type.Name);
-    }
-
-    extension(Type? type)
-    {
-        public Type? ParentType
-        {
-            [return: NotNullIfNotNull(nameof(type))]
-            get
-            {
-                if (type is not null)
-                {
-                    if (type.DeclaringType is not null)
-                        return type.DeclaringType;
-                    if (type.ReflectedType is not null)
-                        return type.ReflectedType;
-                    return type.Module.GetType();
-                }
-                return null;
-            }
-        }
-
-        public bool IsTuple
-        {
-            get
-            {
-                if (type is not null)
-                {
-                    if (type.Namespace == "System" && (type.Name.StartsWith("Tuple") || type.Name.StartsWith("ValueTuple")))
-                        return true;
-                }
-                return false;
-            }
-        }
-    }
-
-    extension(Type)
-    {
-        /// <summary>
-        /// Gets a rendering for a <see cref="Type"/>.
-        /// </summary>
-        /// <param name="type">
-        /// The <see cref="Type"/> to get a <see cref="TypeRenderer">rendering</see> of.
-        /// </param>
-        /// <returns>
-        /// A <see cref="string"/> render of the <see cref="Type"/>.
-        /// </returns>
-        /// <seealso cref="TypeRenderer"/>
-        public static string Render(Type? type)
-        {
-            var text = new InterpolatedText(stackalloc char[64]);
-            text.RenderType(type);
-            return text.ToStringAndDispose();
-        }
-
-        /// <summary>
-        /// Gets a rendering for the generic type <typeparamref name="T"/>. 
-        /// </summary>
-        /// <typeparam name="T">
-        /// The <see cref="Type"/> to get a <see cref="TypeRenderer">rendering</see> of.
-        /// </typeparam>
-        /// <returns>
-        /// A <see cref="string"/> render of the <see cref="Type"/>.
-        /// </returns>
-        /// <seealso cref="TypeRenderer"/>
-        public static string Render<T>()
-#if NET9_0_OR_GREATER
-            where T : allows ref struct
-#endif
-        {
-            var text = new InterpolatedText(stackalloc char[64]);
-            text.RenderType(typeof(T));
-            return text.ToStringAndDispose();
-        }
-
-        public static string Render<I>(in I? instance)
-        {
-            var text = new InterpolatedText(stackalloc char[64]);
-            text.RenderType(Any.GetType<I>(in instance));
-            return text.ToStringAndDispose();
-        }
-
-#if NET9_0_OR_GREATER
-        public static string Render<I>(in I? instance, TypeConstraints.AllowsRefStruct<I> _ = default)
-            where I : allows ref struct
-        {
-            var text = new InterpolatedText(stackalloc char[64]);
-            text.RenderType(Any.GetType<I>(in instance, _));
-            return text.ToStringAndDispose();
-        }
-#endif
     }
 }

@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-internal static class InternalExtensions
+internal static class ReflectionExtensions
 {
 #if NET9_0_OR_GREATER
     extension(DynamicMethod)
@@ -18,7 +18,7 @@ internal static class InternalExtensions
                 callingConvention: CallingConventions.Standard,
                 returnType: returnType,
                 parameterTypes: parameterTypes,
-                m: typeof(InternalExtensions).Module,
+                m: typeof(ReflectionExtensions).Module,
                 skipVisibility: true);
 
             return dynamicMethod;
@@ -40,7 +40,7 @@ internal static class InternalExtensions
                 callingConvention: CallingConventions.Standard,
                 returnType: invokeMethod.ReturnType,
                 parameterTypes: Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType),
-                m: typeof(InternalExtensions).Module,
+                m: typeof(ReflectionExtensions).Module,
                 skipVisibility: true);
 
             return dynamicMethod;

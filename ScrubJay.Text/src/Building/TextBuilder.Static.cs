@@ -2,10 +2,8 @@
 
 public partial class TextBuilder
 {
-    [MustDisposeResource]
     public static TextBuilder Rent() => new TextBuilder();
     
-    [MustDisposeResource]
     public static TextBuilder Rent(int minCapacity) => new TextBuilder(minCapacity);
     
     
