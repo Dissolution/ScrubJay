@@ -11,7 +11,7 @@ Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
 
-
+using var tb = TextBuilder.Rent();
 
 Debugger.Break();
 

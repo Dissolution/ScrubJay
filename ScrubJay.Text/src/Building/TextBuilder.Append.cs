@@ -8,24 +8,43 @@ public partial class TextBuilder
         Write(ch);
         return this;
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    
     public TextBuilder Append(scoped text text)
     {
-        Write(text);
+        if (!IndentAware)
+        {
+            Write(text);
+        }
+        else
+        {
+            WriteWithSubstituteNewLines(text);
+        }
         return this;
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    
     public TextBuilder Append(string? str)
     {
-        Write(str);
+        if (!IndentAware)
+        {
+            Write(str);
+        }
+        else
+        {
+            WriteWithSubstituteNewLines(str);
+        }
         return this;
     }
 
     public TextBuilder Append(char[]? charArray)
     {
-        Write(charArray);
+        if (!IndentAware)
+        {
+            Write((text)charArray);
+        }
+        else
+        {
+            WriteWithSubstituteNewLines(charArray);
+        }
         return this;
     }
 

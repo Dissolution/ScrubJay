@@ -17,6 +17,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj" />
       <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
     </ItemGroup>
     

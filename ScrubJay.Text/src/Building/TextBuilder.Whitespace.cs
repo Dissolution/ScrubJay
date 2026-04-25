@@ -4,120 +4,177 @@ partial class TextBuilder
 {
     private Whitespace? _whitespace;
 
+    public string CurrentNewLine
+    {
+        get
+        {
+            if (_whitespace is null)
+            {
+                return WhitespaceManager.DefaultNewLine;
+            }
+            else
+            {
+                return _whitespace.FullNewLineString;
+            }
+        }
+        set
+        {
+            _whitespace ??= new();
+            _whitespace.CurrentNewLine = value;
+        }
+    }
+
+    public string CurrentDefaultIndent
+    {
+        get
+        {
+            if (_whitespace is null)
+            {
+                return WhitespaceManager.DefaultIndent;
+            }
+            else
+            {
+                return _whitespace.CurrentDefaultIndent;
+            }
+        }
+        set
+        {
+            _whitespace ??= new();
+            _whitespace.CurrentDefaultIndent = value;
+        }
+    }
+
+    internal bool IndentAware => _whitespace is not null && _whitespace.IndentCount > 0;
+    
 #region NewLine
+    public TextBuilder NewLine() => Append(CurrentNewLine);
 
-    public TextBuilder NewLine()
-    {
-        if (_whitespace is null)
-        {
-            return Append(Environment.NewLine);
-        }
-        else
-        {
-            _whitespace.WriteFullNewLineTo(this);
-            return this;
-        }
-    }
-
-    public TextBuilder NewLines(int count)
-    {
-        if (_whitespace is null)
-        {
-            return Repeat(count, Environment.NewLine);
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            _whitespace.WriteFullNewLineTo(this);
-        }
-
-        return this;
-    }
-
+    public TextBuilder NewLines(int count) => Repeat(count, CurrentNewLine);
 #endregion
 
 #region Indents
-
-    public TextBuilder Indent()
+    public TextBuilder Indent(string? indent = null)
     {
-        _whitespace ??= new WhitespaceManager();
-        _whitespace.AddIndent();
-        return this;
-    }
-
-    public TextBuilder Indent(string? indent)
-    {
-        _whitespace ??= new WhitespaceManager();
+        _whitespace ??= new();
         _whitespace.AddIndent(indent);
         return this;
     }
 
-    public TextBuilder Dedent()
+    public TextBuilder Outdent(bool throwIfNotPossible = false)
     {
         if (_whitespace is null)
-            throw Ex.Invalid("There is no Indent to remove");
+        {
+            if (throwIfNotPossible)
+                throw new InvalidOperationException("Cannot Outdent: No Indents have been added");
 
-        _whitespace.RemoveIndent();
+        }
+        else
+        {
+            var removed = _whitespace.TryRemoveIndent();
+            if (!removed && throwIfNotPossible)
+                throw new InvalidOperationException("Cannot Outdent: No Indents remain");
+        }
         return this;
     }
 
     public TextBuilder Indented(Action<TextBuilder>? build)
     {
-        _whitespace ??= new WhitespaceManager();
-        _whitespace.AddIndent();
-        Invoke(build);
-        _whitespace.RemoveIndent();
+        if (build is not null)
+        {
+            _whitespace ??= new();
+            _whitespace.AddIndent();
+            build(this);
+            _whitespace.TryRemoveIndent();
+        }
         return this;
     }
 
+    public IDisposable TemporaryIndent(string? indent = null)
+    {
+        var disposable = new DisposableTBA(this, static tb => tb.Outdent());
+        Indent(indent);
+        return disposable;
+    }
 #endregion
 
 #region Blocks
-
     public TextBuilder BracesBlock(Action<TextBuilder>? indentedBlock)
     {
-        _whitespace ??= new WhitespaceManager();
-
-        if (!_whitespace.IsStartLine(this))
+        if (indentedBlock is null)
         {
-            _whitespace.WriteFullNewLineTo(this);
+            return AppendLine(" { }");
         }
 
-        Write('{');
-        _whitespace.AddIndent();
-        _whitespace.WriteFullNewLineTo(this);
+        _whitespace ??= new();
 
-        Invoke(indentedBlock);
+        return this
+            .If(!IsStartLine(), TB.NewLine)
+            .Append('{')
+            .Indent()
+            .NewLine()
+            .Invoke(indentedBlock)
+            .Outdent()
+            .Switch(sw => sw
+                .Case(IsStartLine(), _ =>
+                {
+                    // we need to back off 1 indent before writing the }
+                    _whitespace.TryPeekLastIndent(out var lastIndent);
+                    _position -= lastIndent!.Length;
+                })
+                .Case(IsStartOutdentedLine(), TB.None)
+                .Default(TB.NewLine))
+            .Append('}')
+            .NewLine();
+    }
+#endregion
 
-        _whitespace.RemoveIndent();
+    internal bool IsStartLine()
+    {
+        if (_position == 0)
+            return true;
 
-        if (_whitespace.IsStartLine(this))
+        text ending;
+
+        if (_whitespace is null)
         {
-            TryRemoveLast(_whitespace.Indent.Length).ThrowIfError();
+            ending = WhitespaceManager.DefaultNewLine;
         }
         else
         {
-            _whitespace.WriteFullNewLineTo(this);
+            ending = _whitespace.FullNewLine;
         }
 
-        Write('}');
-        _whitespace.WriteFullNewLineTo(this);
-
-        return this;
+        return Written.EndsWith(ending, StringComparison.Ordinal);
     }
 
-#endregion
-    
-    
-    
-    
+    internal bool IsStartOutdentedLine()
+    {
+        if (_position == 0)
+            return true;
+
+        text ending;
+
+        if (_whitespace is null)
+        {
+            ending = WhitespaceManager.DefaultNewLine;
+        }
+        else
+        {
+            ending = _whitespace.OutdentNewLine;
+        }
+
+        return Written.EndsWith(ending, StringComparison.Ordinal);
+    }
+
+
     internal void WriteWithSubstituteNewLines(scoped text text)
     {
-        _whitespace ??= new Whitespace();
-
-        var currentNewLine = _whitespace.NewLine;
-        var fullNewLine = _whitespace.FullNewLine;
+        Debug.Assert(IndentAware);
+        Debug.Assert(_whitespace is not null);
         
+        var currentNewLine = _whitespace.CurrentNewLine;
+        var fullNewLine = _whitespace.FullNewLine;
+
         if (text.Length < currentNewLine.Length)
         {
             Write(text);
@@ -128,10 +185,80 @@ partial class TextBuilder
         }
         else
         {
-            Delimit(
-                fullNewLine,
-                text.Split(currentNewLine),
-                static (tb, segment) => tb.Write(segment.Span));
+            var lines = text.SplitOn(currentNewLine);
+            Delimit(fullNewLine, ref lines, TB.Write);
+        }
+    }
+
+    internal text GetCurrentPositionIndent()
+    {
+        var written = this.Written;
+
+        // find the last newline that was written
+        int lastNewLineIndex = written.LastIndexOfAny(CurrentNewLine);
+        if (lastNewLineIndex == -1)
+        {
+            // start at 0 then
+            lastNewLineIndex = 0;
+        }
+
+        // skip ahead by the Current NewLine length
+        int start = lastNewLineIndex + CurrentNewLine.Length;
+
+        // we're looking for whitespace
+        for (int i = start; i < written.Length; i++)
+        {
+            if (!char.IsWhiteSpace(written[i]))
+            {
+                // whatever we found
+                return written.Slice(start, i-start);
+            }
+        }
+      
+        // everything was whitespace
+        return written.Slice(start);
+    }
+
+    internal void IndentAwareInvoke(Action<TextBuilder>? build)
+    {
+        if (build is not null)
+        {
+            if (IndentAware)
+            {
+                // ReSharper disable once NotDisposedResource
+                Whitespace? oldWhitespace = Interlocked.Exchange(ref _whitespace, new Whitespace());
+                text currentIndent = GetCurrentPositionIndent();
+                _whitespace!.AddIndent(currentIndent);
+                build(this);
+                Whitespace newWhitespace = Interlocked.Exchange(ref _whitespace, oldWhitespace)!;
+                newWhitespace.Dispose();
+            }
+            else
+            {
+                build(this);
+            }
+        }
+    }
+    
+
+    internal void IndentAwareInvoke<T>(Action<TextBuilder, T>? buildItem, T value)
+    {
+        if (buildItem is not null)
+        {
+            if (IndentAware)
+            {
+                // ReSharper disable once NotDisposedResource
+                Whitespace? oldWhitespace = Interlocked.Exchange(ref _whitespace, new Whitespace());
+                text currentIndent = GetCurrentPositionIndent();
+                _whitespace!.AddIndent(currentIndent);
+                buildItem(this, value);
+                Whitespace newWhitespace = Interlocked.Exchange(ref _whitespace, oldWhitespace)!;
+                newWhitespace.Dispose();
+            }
+            else
+            {
+                buildItem(this, value);
+            }
         }
     }
 }

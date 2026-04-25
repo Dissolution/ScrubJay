@@ -34,4 +34,23 @@ public static class TextPool
             ArrayPool<char>.Shared.Return(characters, clean);
         }
     }
+
+    public static void GrowBy([AllowNull, NotNull] ref char[]? array, int count)
+    {
+        if (count > 0)
+        {
+            if (array is not null)
+            {
+                int len = array.Length;
+                var newArray = Rent(len + count);
+                TextHelper.Unsafe.CopyTo(array, newArray, len);
+                var toReturn = Interlocked.Exchange<char[]>(ref array, newArray);
+                Return(toReturn);
+            }
+            else
+            {
+                array = Rent(count);
+            }
+        }
+    }
 }

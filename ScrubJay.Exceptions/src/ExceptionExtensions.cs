@@ -1,4 +1,5 @@
 using System.Reflection;
+using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Exceptions;
@@ -78,7 +79,7 @@ public static class ExceptionExtensions
         /// </summary>
         public Uri HResultInfo => new($"https://www.hresult.info/Search?q=0x{exception.HResult:X8}");
 
-        public void WriteDebugInformationTo(ref InterpolatedText text, int offset = 0)
+        public void WriteDebugInformationTo(TextBuilder text, int offset = 0)
         {
             string? source = exception.Source;
             MethodBase? targetSite = exception.TargetSite;
@@ -87,7 +88,7 @@ public static class ExceptionExtensions
             if (source is not null || targetSite is not null)
             {
                 text.Append(Environment.NewLine);
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append("Target: ");
                 if (source is not null)
                 {
@@ -97,31 +98,31 @@ public static class ExceptionExtensions
                 }
                 if (targetSite is not null)
                 {
-                    WriteMethodTo(targetSite, ref text);
+                    WriteMethodTo(targetSite, text);
                 }
             }
 
             if (stackTrace is not null)
             {
                 text.Append(Environment.NewLine);
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append($"StackTrace: {stackTrace}");
             }
         }
 
-        public void WriteOptionalPropertiesTo(ref InterpolatedText text, int offset = 0)
+        public void WriteOptionalPropertiesTo(TextBuilder text, int offset = 0)
         {
             // HResult
             var hResult = (HResult)exception.HResult;
             text.Append(Environment.NewLine);
-            text.AppendRepeat(offset, "  ");
+            text.Repeat(offset, "  ");
             text.Append($"HResult: {hResult:X} ({(hResult.IsSuccess ? "Success" : "Failure")})");
 
             // HelpLink
             if (!string.IsNullOrEmpty(exception.HelpLink))
             {
                 text.Append(Environment.NewLine);
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append($"HelpLink: {exception.HelpLink}");
             }
 
@@ -129,13 +130,13 @@ public static class ExceptionExtensions
             if (exception.Data.Count > 0)
             {
                 text.Append(Environment.NewLine);
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append("Data:");
                 offset++;
                 foreach (DictionaryEntry entry in exception.Data)
                 {
                     text.Append(Environment.NewLine);
-                    text.AppendRepeat(offset, "  ");
+                    text.Repeat(offset, "  ");
                     text.Append(entry.Key);
                     text.Append(": ");
                     text.Append(entry.Value);
@@ -147,18 +148,18 @@ public static class ExceptionExtensions
             if (exception.InnerException is not null)
             {
                 text.Append(Environment.NewLine);
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append("Inner:");
                 offset++;
-                exception.InnerException.WriteTo(ref text, offset);
+                exception.InnerException.WriteTo(text, offset);
                 offset--;
             }
         }
 
 
-        public void WriteTo(ref InterpolatedText text, int offset = 0)
+        public void WriteTo(TextBuilder text, int offset = 0)
         {
-            text.RenderType(typeof(E));
+            text.Render(typeof(E));
             text.Append(':');
             offset++;
 
@@ -166,12 +167,12 @@ public static class ExceptionExtensions
             if (!string.IsNullOrEmpty(message))
             {
                 text.AppendLine();
-                text.AppendRepeat(offset, "  ");
+                text.Repeat(offset, "  ");
                 text.Append($"Message: {message}");
             }
             
-            exception.WriteDebugInformationTo(ref text, offset);
-            exception.WriteOptionalPropertiesTo(ref text, offset);
+            exception.WriteDebugInformationTo(text, offset);
+            exception.WriteOptionalPropertiesTo(text, offset);
             offset--;
         }
     }

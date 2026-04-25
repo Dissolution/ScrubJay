@@ -92,6 +92,15 @@ public partial class TextBuilder
         return this;
     }
 #endif
+
+    public TextBuilder Enumerate(ref SplitTextEnumerator textSplitEnumerator)
+    {
+        while (textSplitEnumerator.MoveNext())
+        {
+            Write(textSplitEnumerator.CurrentText);
+        }
+        return this;
+    }
 #endregion
 
 #region Enumerate Build
@@ -200,6 +209,24 @@ public partial class TextBuilder
         return Enumerate<T>(iterator, _);
     }
 #endif
+
+    public TextBuilder Enumerate(ref SplitTextEnumerator textSplitEnumerator,
+#if NET9_0_OR_GREATER
+        Action<TextBuilder, text>? buildSegment)
+#else
+        BuildWithReadOnlySpan<char>? buildSegment)
+#endif
+    {
+        if (buildSegment is not null)
+        {
+            while (textSplitEnumerator.MoveNext())
+            {
+                buildSegment(this, textSplitEnumerator.CurrentText);
+            }
+            return this;
+        }
+        return Enumerate(ref textSplitEnumerator);
+    }
 #endregion
 
 #region Enumerate w/Index

@@ -1,5 +1,6 @@
 #pragma warning disable CS8764
 
+using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Exceptions;
@@ -50,28 +51,15 @@ public class ArgException : ArgumentException, ISJException
 
     public override string ToString()
     {
-        var text = new InterpolatedText(512);
-        
-        text.Append("ArgumentException:");
-       
-        text.AppendLine();
-        text.Append("  Argument: ");
-        if (Argument is not null)
-        {
-            Argument.WriteTo(ref text);
-        }
-        else
-        {
-            text.Append("null");
-        }
+        using var builder = TextBuilder.Rent();
 
-        var message = Message;
-        if (!string.IsNullOrEmpty(message))
-        {
-            text.AppendLine();
-            text.Append($"  Message: {message}");
-        }
-
+        builder.Append("ArgumentException:")
+            .Indent("  ")
+            .NewLine()
+            .Append("Argument: ")
+            .IfNotNull(Argument, static (tb, arg) => arg.WriteTo(tb), TB.Write("null"))
+            .IfNotEmpty(Message, static (tb, msg) => tb.NewLine().Append("Message: ").Append(msg));
+     
         this.WriteDebugInformationTo(ref text, 1);
         
         this.WriteOptionalPropertiesTo(ref text, 1);

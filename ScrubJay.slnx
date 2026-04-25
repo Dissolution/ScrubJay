@@ -32,6 +32,10 @@
 	<Folder Name="/Text/">
 		<File Path="ScrubJay.Text/README.md" />
 		<Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
+		<Project Path="ScrubJay.Text/tests/ScrubJay.Text.Tests.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
 	</Folder>
 	<Folder Name="/Exceptions/">
 		<File Path="ScrubJay.Exceptions/README.md" />

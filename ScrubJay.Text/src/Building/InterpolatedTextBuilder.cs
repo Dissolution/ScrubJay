@@ -70,6 +70,17 @@ public ref struct InterpolatedTextBuilder : IDisposable
     public void AppendFormatted<T>(T? value, scoped text format)
         => _builder.Format<T>(value, format);
     
+    public void AppendFormatted(Action<TextBuilder>? build)
+    {
+        _builder.IndentAwareInvoke(build);
+    }
+    
+    public void AppendFormatted<T>((Action<TextBuilder,T> BuildItem, T Value) tuple)
+    {
+        _builder.IndentAwareInvoke<T>(tuple.BuildItem, tuple.Value);
+    }
+    
+    
     public override string ToString() => _builder.ToString();
 
     [HandlesResourceDisposal]

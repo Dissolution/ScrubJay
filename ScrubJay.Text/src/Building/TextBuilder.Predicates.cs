@@ -318,8 +318,7 @@ public partial class TextBuilder
         return this;
     }
 #endregion
-
-
+    
 #region IfSome
     public TextBuilder IfSome<T>(Option<T> option)
     {

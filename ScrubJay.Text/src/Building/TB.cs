@@ -15,16 +15,55 @@ public static class TB
 #endregion
 
 #region Action<TextBuilder, char>
+    public static Action<TextBuilder> Write(char ch) => tb => tb.Write(ch);
+    public static void Write(TextBuilder builder, char ch) => builder.Write(ch);
+    
     public static Action<TextBuilder> Append(char ch) => tb => tb.Append(ch);
     public static void Append(TextBuilder builder, char ch) => builder.Append(ch);
 #endregion
 
+#region Action<TextBuilder, text>
+    public static Action<TextBuilder> Write(scoped text text)
+    {
+        string str = text.ToString();
+        return tb => tb.Write(str);
+    }
+
+    public static void Write(TextBuilder builder, scoped text text) => builder.Write(text);
+    
+    public static Action<TextBuilder> Append(scoped text text)
+    {
+        string str = text.ToString();
+        return tb => tb.Append(str);
+    }
+
+    public static void Append(TextBuilder builder, scoped text text) => builder.Append(text);
+#endregion
+    
 #region Action<TextBuilder, string?>
+    public static Action<TextBuilder> Write(string? str) => tb => tb.Write(str);
+    public static void Write(TextBuilder builder, string? str) => builder.Write(str);
+    
     public static Action<TextBuilder> Append(string? str) => tb => tb.Append(str);
     public static void Append(TextBuilder builder, string? str) => builder.Append(str);
 #endregion
 
 #region Action<TextBuilder, T?>
+    public static Action<TextBuilder> Write<T>(T? value) => tb => tb.Write<T>(value);
+    public static Action<TextBuilder, T?> Write<T>() => static (tb, value) => tb.Write<T>(value);
+    public static void Write<T>(TextBuilder builder, T? value) => builder.Write<T>(value);
+
+#if NET9_0_OR_GREATER
+    public static Action<TextBuilder, T?> Write<T>(TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => static (tb, value) => tb.Write<T>(value, default);
+
+    public static void Write<T>(TextBuilder builder, T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+        => builder.Write<T>(value, _);
+#endif
+    
+    
     public static Action<TextBuilder> Append<T>(T? value) => tb => tb.Append<T>(value);
     public static Action<TextBuilder, T?> Append<T>() => static (tb, value) => tb.Append<T>(value);
     public static void Append<T>(TextBuilder builder, T? value) => builder.Append<T>(value);
@@ -114,7 +153,7 @@ public static class TB
 #endif
 #endregion
 #endregion
-
+    
 }
 
 public static class TB<T>
@@ -159,4 +198,24 @@ public static class TB<T>
         => builder.Format<T>(value, format, provider);
 #endregion
 #endregion
+}
+
+
+internal sealed class DisposableTBA : IDisposable
+{
+    private readonly TextBuilder _textBuilder;
+    private readonly Action<TextBuilder>? _onDispose;
+
+    public DisposableTBA(
+        TextBuilder textBuilder,
+        Action<TextBuilder>? onDispose)
+    {
+        _textBuilder = textBuilder;
+        _onDispose = onDispose;
+    }
+
+    public void Dispose()
+    {
+        _onDispose?.Invoke(_textBuilder);
+    }
 }

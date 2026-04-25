@@ -242,6 +242,24 @@ namespace System.Runtime.CompilerServices
     }
 }
 
+namespace System.Numerics
+{
+    internal static class BitOperations
+    {
+        public static uint RoundUpToPowerOf2(uint value)
+        {
+            // Based on https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+            --value;
+            value |= value >> 1;
+            value |= value >> 2;
+            value |= value >> 4;
+            value |= value >> 8;
+            value |= value >> 16;
+            return value + 1U;
+        }
+    }
+}
+
 #endif // net48 or netstandard*
 
 #if NETSTANDARD2_0

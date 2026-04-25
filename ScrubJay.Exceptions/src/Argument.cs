@@ -1,3 +1,4 @@
+using ScrubJay.Text.Building;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Exceptions;
@@ -60,30 +61,25 @@ public record class Argument
 
     public override string ToString() => $"{Type?.FullName} {Name} = {ValueString}";
 
-    internal void WriteTo(ref InterpolatedText text)
+    internal void WriteTo(TextBuilder builder)
     {
-        text.Append('\'');
-        text.Append(Name);
-        text.Append('\'');
-       
+        builder.Append($"'{Name}'");
+
         if (Type is not null || ValueString is not null)
         {
             if (Type is not null)
             {
-                text.Append(" (");
-                text.RenderType(Type);
-                text.Append(')');
+                builder.Append($" ({Type:@})");
             }
 
             if (ValueString is not null)
             {
-                text.Append(" = ");
-                text.Append(ValueString);
+                builder.Append(" = ").Append(ValueString);
             }
         }
         else
         {
-            text.Append(" (null)");
+            builder.Append(" (null)");
         }
     }
 }

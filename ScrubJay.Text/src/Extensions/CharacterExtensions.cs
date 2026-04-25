@@ -3,7 +3,7 @@ namespace ScrubJay.Text.Extensions;
 [PublicAPI]
 public static class CharacterExtensions
 {
-    extension(in char ch)
+    extension(ref readonly char ch)
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public text AsSpan()

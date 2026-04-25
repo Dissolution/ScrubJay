@@ -244,6 +244,58 @@ public partial class TextBuilder
         return Enumerate<T>(iterator);
     }
 #endregion
+
+#region SplitTextEnumerator
+    public TextBuilder Delimit(char delimiter, ref SplitTextEnumerator textSplitEnumerator)
+    {
+        if (textSplitEnumerator.MoveNext())
+        {
+            Write(textSplitEnumerator.CurrentText);
+            while (textSplitEnumerator.MoveNext())
+            {
+                Write(delimiter);
+                Write(textSplitEnumerator.CurrentText);
+            }
+        }
+        return this;
+    }
+
+    public TextBuilder Delimit(scoped text delimiter, ref SplitTextEnumerator textSplitEnumerator)
+    {
+        if (!delimiter.IsEmpty)
+        {
+            if (textSplitEnumerator.MoveNext())
+            {
+                Write(textSplitEnumerator.CurrentText);
+                while (textSplitEnumerator.MoveNext())
+                {
+                    Write(delimiter);
+                    Write(textSplitEnumerator.CurrentText);
+                }
+            }
+            return this;
+        }
+        return Enumerate(ref textSplitEnumerator);
+    }
+
+    public TextBuilder Delimit(Action<TextBuilder>? delimit, ref SplitTextEnumerator textSplitEnumerator)
+    {
+        if (delimit is not null)
+        {
+            if (textSplitEnumerator.MoveNext())
+            {
+                Write(textSplitEnumerator.CurrentText);
+                while (textSplitEnumerator.MoveNext())
+                {
+                    delimit(this);
+                    Write(textSplitEnumerator.CurrentText);
+                }
+            }
+            return this;
+        }
+        return Enumerate(ref textSplitEnumerator);
+    }
+#endregion
 #endregion
 
 #region Build Action
@@ -515,6 +567,85 @@ public partial class TextBuilder
             return Enumerate<T>(iterator, buildItem);
         }
         return Delimit<T>(delimit, iterator);
+    }
+#endregion
+
+#region SplitTextEnumerator
+    public TextBuilder Delimit(char delimiter, ref SplitTextEnumerator textSplitEnumerator,
+#if NET9_0_OR_GREATER
+        Action<TextBuilder, text>? buildSegment)
+#else
+        BuildWithReadOnlySpan<char>? buildSegment)
+#endif
+    {
+        if (buildSegment is not null)
+        {
+            if (textSplitEnumerator.MoveNext())
+            {
+                buildSegment(this, textSplitEnumerator.CurrentText);
+                while (textSplitEnumerator.MoveNext())
+                {
+                    Write(delimiter);
+                    buildSegment(this, textSplitEnumerator.CurrentText);
+                }
+            }
+            return this;
+        }
+        return Delimit(delimiter, ref textSplitEnumerator);
+    }
+
+    public TextBuilder Delimit(scoped text delimiter, ref SplitTextEnumerator textSplitEnumerator,
+#if NET9_0_OR_GREATER
+        Action<TextBuilder, text>? buildSegment)
+#else
+        BuildWithReadOnlySpan<char>? buildSegment)
+#endif
+    {
+        if (buildSegment is not null)
+        {
+            if (!delimiter.IsEmpty)
+            {
+                if (textSplitEnumerator.MoveNext())
+                {
+                    buildSegment(this, textSplitEnumerator.CurrentText);
+                    while (textSplitEnumerator.MoveNext())
+                    {
+                        Write(delimiter);
+                        buildSegment(this, textSplitEnumerator.CurrentText);
+                    }
+                }
+                return this;
+            }
+            return Enumerate(ref textSplitEnumerator, buildSegment);
+        }
+        return Delimit(delimiter, ref textSplitEnumerator);
+    }
+
+    public TextBuilder Delimit(Action<TextBuilder>? delimit, ref SplitTextEnumerator textSplitEnumerator,
+#if NET9_0_OR_GREATER
+        Action<TextBuilder, text>? buildSegment)
+#else
+        BuildWithReadOnlySpan<char>? buildSegment)
+#endif
+    {
+        if (buildSegment is not null)
+        {
+            if (delimit is not null)
+            {
+                if (textSplitEnumerator.MoveNext())
+                {
+                    buildSegment(this, textSplitEnumerator.CurrentText);
+                    while (textSplitEnumerator.MoveNext())
+                    {
+                        delimit(this);
+                        buildSegment(this, textSplitEnumerator.CurrentText);
+                    }
+                }
+                return this;
+            }
+            return Enumerate(ref textSplitEnumerator, buildSegment);
+        }
+        return Delimit(delimit, ref textSplitEnumerator);
     }
 #endregion
 #endregion
