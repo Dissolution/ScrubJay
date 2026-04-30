@@ -1,0 +1,46 @@
+namespace ScrubJay.Text.Debugging;
+
+internal sealed record class LogMessage
+{
+    public required DateTime Timestamp { get; init; }
+
+    public required LogLevel Level { get; init; }
+
+    public required string? Message { get; init; }
+
+    public Exception? Exception { get; init; } = null;
+
+    public CallerInfo? CallerInfo { get; init; } = null;
+
+    public LogMessage()
+    {
+    }
+
+    [SetsRequiredMembers]
+    public LogMessage(
+        LogLevel level,
+        string? message,
+        Exception? exception = null,
+        CallerInfo? callerInfo = null)
+    {
+        Timestamp = DateTime.Now;
+        Level = level;
+        Message = message;
+        Exception = exception;
+        CallerInfo = callerInfo;
+    }
+
+    [SetsRequiredMembers]
+    public LogMessage(DateTime timestamp,
+        LogLevel level,
+        string? message,
+        Exception? exception = null,
+        CallerInfo? callerInfo = null)
+    {
+        Timestamp = timestamp;
+        Level = level;
+        Message = message;
+        Exception = exception;
+        CallerInfo = callerInfo;
+    }
+}

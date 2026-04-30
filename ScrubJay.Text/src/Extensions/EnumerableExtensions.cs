@@ -12,4 +12,15 @@ public static class EnumerableExtensions
             }
         }
     }
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?>? enumerable)
+    {
+        if (enumerable is null)
+            yield break;
+        foreach (T? value in enumerable)
+        {
+            if (value is not null)
+                yield return value;
+        }
+    }
 }

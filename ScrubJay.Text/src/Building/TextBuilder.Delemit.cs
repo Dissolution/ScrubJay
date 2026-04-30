@@ -485,11 +485,11 @@ public partial class TextBuilder
                     using var e = enumerable.GetEnumerator();
                     if (!e.MoveNext())
                         return this;
-                    Write<T>(e.Current);
+                    buildItem(this, e.Current);
                     while (e.MoveNext())
                     {
                         delimit(this);
-                        Write<T>(e.Current);
+                        buildItem(this, e.Current);
                     }
                 }
                 return this;
@@ -555,11 +555,11 @@ public partial class TextBuilder
                 {
                     if (!iterator().IsSome(out var next))
                         return this;
-                    Write<T>(next);
+                    buildItem(this, next);
                     while (iterator().IsSome(out next))
                     {
                         delimit(this);
-                        Write<T>(next);
+                        buildItem(this, next);
                     }
                 }
                 return this;

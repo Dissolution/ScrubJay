@@ -60,10 +60,12 @@ public class ArgException : ArgumentException, ISJException
             .IfNotNull(Argument, static (tb, arg) => arg.WriteTo(tb), TB.Write("null"))
             .IfNotEmpty(Message, static (tb, msg) => tb.NewLine().Append("Message: ").Append(msg));
      
-        this.WriteDebugInformationTo(ref text, 1);
-        
-        this.WriteOptionalPropertiesTo(ref text, 1);
+//        this.WriteDebugInformationTo(ref text, 1);
+//        
+//        this.WriteOptionalPropertiesTo(ref text, 1);
+//
+//        return text.ToStringAndDispose();
 
-        return text.ToStringAndDispose();
+        return builder.ToString();
     }
 }

@@ -36,7 +36,7 @@ public partial class TextBuilder
     
     public TextBuilder Format<T>(T? value, string? format)
     {
-        if (format is [Rendering.Render.FORMAT])
+        if (format is [Renderer.FORMAT])
         {
             return Render<T>(value);
         }
@@ -101,7 +101,7 @@ public partial class TextBuilder
 
     public TextBuilder Format<T>(T? value, scoped text format)
     {
-        if (format is [Rendering.Render.FORMAT])
+        if (format is [Renderer.FORMAT])
         {
             return Render<T>(value);
         }
@@ -192,7 +192,7 @@ public partial class TextBuilder
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (format is [Rendering.Render.FORMAT])
+        if (format is [Renderer.FORMAT])
         {
             return Render<T>(value, _);
         }

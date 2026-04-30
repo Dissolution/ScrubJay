@@ -3,26 +3,7 @@
 //[PublicAPI]
 //public static  class CommonRenderers
 //{
-//    [RenderToMethod<object>]
-//    public static void RenderObjectTo(object obj, TextBuilder builder)
-//    {
-//        Debugger.Break();
-//    }
-//
-//    [RenderToMethod]
-//    public static void RenderRenderableTo<R>(R renderable, TextBuilder builder)
-//        where R : IRenderable
-//    {
-//        renderable.RenderTo(builder);
-//    }
-//
-//    [RenderToMethod]
-//    public static void Render2DArrayTo<T>(T[] array, TextBuilder builder)
-//    {
-//        builder.Append('[')
-//            .Delimit(", ", array, TB<T>.Render)
-//            .Append(']');
-//    }
+
 //
 //    [RenderToMethod<Array>]
 //    public static void RenderArrayTo(Array array, TextBuilder builder)
@@ -78,16 +59,6 @@
 //        }
 //    }
 //
-//    [RenderToMethod]
-//    public static void RenderTupleTo<T>(T? tuple, TextBuilder builder)
-//        where T : ITuple
-//    {
-//        if (tuple is not null)
-//        {
-//            builder.Append('(')
-//                .Delimit(", ", tuple.GetIterator(), TB.Render)
-//                .Append(')');
-//        }
-//    }
+
 //
 //}

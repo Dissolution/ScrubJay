@@ -13,6 +13,11 @@ Console.OutputEncoding = Encoding.UTF8;
 
 using var tb = TextBuilder.Rent();
 
+var thing = (147, "TRJ");
+tb.Render(thing);
+
+var checkpoint = tb.ToString();
+Console.WriteLine(checkpoint);
 Debugger.Break();
 
 

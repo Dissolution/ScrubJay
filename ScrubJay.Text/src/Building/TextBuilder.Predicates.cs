@@ -51,10 +51,10 @@ public partial class TextBuilder
     }
 
 
-    public TextBuilder If<T>(T? value,
-        Func<T?, bool>? predicate,
-        Action<TextBuilder, T?>? onTrue = null,
-        Action<TextBuilder, T?>? onFalse = null)
+    public TextBuilder If<T>(T value,
+        Func<T, bool>? predicate,
+        Action<TextBuilder, T>? onTrue = null,
+        Action<TextBuilder, T>? onFalse = null)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
