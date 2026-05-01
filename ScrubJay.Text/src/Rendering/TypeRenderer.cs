@@ -265,12 +265,12 @@ public static class TypeRenderer
             return;
         }
 
-        if (type.IsGenericParameter)
-        {
-            // these are part of definition, not declaration, so we don't show them
-            // otherwise it would be T, T1, etc
-            return;
-        }
+//        if (type.IsGenericParameter)
+//        {
+//            // these are part of definition, not declaration, so we don't show them
+//            // otherwise it would be T, T1, etc
+//            return;
+//        }
 
         builder.Append(type.Name);
     }

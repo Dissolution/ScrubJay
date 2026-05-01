@@ -7,7 +7,7 @@
 public static class UniversalExtensions
 {
     /// <summary>
-    /// Is this <see cref="object"/> a boxed <typeparamref name="T"/> <paramref name="value"/>?
+    /// Is this <see cref="object"/> a <typeparamref name="T"/> <paramref name="value"/>?
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="value"></param>

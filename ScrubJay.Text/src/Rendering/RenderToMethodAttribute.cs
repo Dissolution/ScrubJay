@@ -1,5 +1,3 @@
-using ScrubJay.Universal.Extensions;
-
 namespace ScrubJay.Text.Rendering;
 
 [PublicAPI]

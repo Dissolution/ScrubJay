@@ -62,6 +62,13 @@ internal static class RenderingManager
                 return true;
             })
             .ToArray();
+
+        var msg = TextBuilder.Rent()
+            .Append($"Registered {_scannedMethods.Length} RenderToMethods:")
+            .NewLine()
+            .Delimit(tb => tb.AppendLine(", "), _scannedMethods, TB.Render)
+            .ToStringAndDispose();
+        Trouble.Info(msg);
     }
 
 
@@ -133,28 +140,50 @@ internal static class RenderingManager
             return None;
         }
 
-        if (destinationType.IsClass)
-        {
-            if (destinationType.IsSubclassOf(inputType))
-            {
-                // subclass is good
-                return 75;
-            }
-        }
+        if (destinationType.IsValueType)
+            return None;
 
-        if (destinationType.IsInterface)
-        {
-            if (inputType.ImplementsInterface(destinationType))
-            {
-                // interface is fine
-                return 50;
-            }
-        }
+        // check if assignable
+        // see Type.Helpers.IsAssignableFrom
 
-        if (destinationType == typeof(object))
+        var destSystemType = destinationType.UnderlyingSystemType;
+        if (destSystemType.Name == "RuntimeType")
         {
-            // barely acceptable
-            return 1;
+            return InputConversionSpecificity(inputType, destSystemType);
+        }
+        
+        // destination type must somehow be 'under' input type
+        int classDepth = 0;
+        
+        Type? inType = inputType;
+        while (inType is not null)
+        {
+            if (destinationType.IsClass)
+            {
+                if (destinationType == inType)
+                {
+                    if (destinationType != typeof(object))
+                        return 90 - classDepth;
+                    return 1; // worst match
+                }
+            }
+            else if (destinationType.IsInterface)
+            {
+                var inTypeInterfaces = inType.GetInterfaces();
+                for (int i = 0; i < inTypeInterfaces.Length; i++)
+                {
+                    if (inTypeInterfaces[i] == destinationType)
+                        return (90 - classDepth) - (5 * i);
+                }
+            }
+            else
+            {
+                Debugger.Break();
+                return None;
+            }
+
+            inType = inType.BaseType;
+            classDepth++;
         }
 
         return None;
@@ -226,9 +255,9 @@ internal static class RenderingManager
                 // fail
                 return None;
             }
-            
+
             concreteMethod = Result.Try(() => renderToMethod.MakeGenericMethod(valueType)).OkOrDefault();
-            
+
         }
 
         if (InputConversionSpecificity(valueType, methodValueType).IsSome(out var spec))
@@ -280,7 +309,7 @@ internal static class RenderingManager
         }
         catch (Exception ex)
         {
-            Debug.Log(LogLevel.Info, ex);
+            Trouble.Warn(ex);
             // ignore all issues
             return null;
         }

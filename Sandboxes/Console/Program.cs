@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
-using ScrubJay.Sandboxes.Console;
-using ScrubJay.Text;
 using ScrubJay.Text.Building;
 
 
@@ -13,7 +11,7 @@ Console.OutputEncoding = Encoding.UTF8;
 
 using var tb = TextBuilder.Rent();
 
-var thing = (147, "TRJ");
+var thing = new int[] { 1, 4, 7 };
 tb.Render(thing);
 
 var checkpoint = tb.ToString();

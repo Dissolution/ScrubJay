@@ -74,6 +74,87 @@ public partial class TextBuilder
     }
 #endregion
 
+#region If Option / Result
+    public TextBuilder If<T>(Option<T> option,
+        Action<TextBuilder, T>? onSome = null,
+        Action<TextBuilder>? onNone = null)
+    {
+        if (option.IsSome(out var some))
+        {
+            onSome?.Invoke(this, some);
+        }
+        else
+        {
+            onNone?.Invoke(this);
+        }
+        return this;
+    }
+
+    public TextBuilder If<T>(ref RefOption<T> option,
+        Action<TextBuilder, T>? onSome = null,
+        Action<TextBuilder>? onNone = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (option.IsSome(out var some))
+        {
+            onSome?.Invoke(this, some);
+        }
+        else
+        {
+            onNone?.Invoke(this);
+        }
+        return this;
+    }
+
+    public TextBuilder If(Result result,
+        Action<TextBuilder>? onOk = null,
+        Action<TextBuilder, Exception>? onError = null)
+    {
+        if (result.IsError(out var ex))
+        {
+            onError?.Invoke(this, ex);
+        }
+        else
+        {
+            onOk?.Invoke(this);
+        }
+        return this;
+    }
+
+    public TextBuilder If<T>(Result<T> result,
+        Action<TextBuilder, T>? onOk = null,
+        Action<TextBuilder, Exception>? onError = null)
+    {
+        if (result.IsOk(out var ok, out var error))
+        {
+            onOk?.Invoke(this, ok);
+        }
+        else
+        {
+            onError?.Invoke(this, error);
+        }
+        return this;
+    }
+
+    public TextBuilder If<T, E>(Result<T, E> result,
+        Action<TextBuilder, T>? onOk = null,
+        Action<TextBuilder, E>? onError = null)
+    {
+        if (result.IsOk(out var ok, out var error))
+        {
+            onOk?.Invoke(this, ok);
+        }
+        else
+        {
+            onError?.Invoke(this, error);
+        }
+        return this;
+    }
+#endregion
+
+
 #region IfSelect
     public TextBuilder IfSelect<T, N>(T value, Func<T, Option<N>> selectWhere)
     {
@@ -318,7 +399,7 @@ public partial class TextBuilder
         return this;
     }
 #endregion
-    
+
 #region IfSome
     public TextBuilder IfSome<T>(Option<T> option)
     {

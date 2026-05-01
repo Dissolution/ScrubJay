@@ -21,23 +21,6 @@ public static class TypeExtensions
     
     extension(Type? type)
     {
-        public Type? ParentType
-        {
-            [return: NotNullIfNotNull(nameof(type))]
-            get
-            {
-                if (type is not null)
-                {
-                    if (type.DeclaringType is not null)
-                        return type.DeclaringType;
-                    if (type.ReflectedType is not null)
-                        return type.ReflectedType;
-                    return type.Module.GetType();
-                }
-                return null;
-            }
-        }
-
         public bool IsTuple
         {
             get
@@ -74,6 +57,16 @@ public static class TypeExtensions
             }
 
             return false;
+        }
+
+        public IEnumerable<Type> BaseTypes()
+        {
+            Type? baseType = type?.BaseType;
+            while (baseType is not null)
+            {
+                yield return baseType;
+                baseType = baseType.BaseType;
+            }
         }
     }
 }

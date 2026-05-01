@@ -1,4 +1,3 @@
-using ScrubJay.Universal.Extensions;
 using SystemUnsafe = System.Runtime.CompilerServices.Unsafe;
 
 namespace ScrubJay.Text.Utilities;

@@ -1,7 +1,6 @@
 #pragma warning disable CS8764
 
 using ScrubJay.Text.Building;
-using ScrubJay.Universal;
 
 namespace ScrubJay.Exceptions;
 

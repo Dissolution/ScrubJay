@@ -42,12 +42,13 @@ public static class ReflectionRenderers
         {
             case EventInfo eventInfo:
                 break;
-            case ConstructorInfo constructorInfo:
-                break;
             case FieldInfo fieldInfo:
                 break;
-            case MethodInfo methodInfo:
-                break;
+            case MethodBase method:
+            {
+                RenderMethodTo(method, builder);
+                return;
+            }
             case PropertyInfo propertyInfo:
                 break;
             case Type type:
@@ -58,7 +59,7 @@ public static class ReflectionRenderers
             default:
                 break;
         }
-        
+
         // nothing
         Debugger.Break();
         return;
@@ -67,45 +68,75 @@ public static class ReflectionRenderers
     [RenderToMethod]
     public static void RenderParameterTo(ParameterInfo parameter, TextBuilder builder)
     {
-        builder.Append(parameter.Name ?? "_")
-            .Append(": ")
-            .Render(parameter.ParameterType)
-            .If(parameter, static p => p.HasDefaultValue, (tb, p) => tb.Append(" = ").Render(p.DefaultValue));
+        builder.Render(parameter.ParameterType)
+            .Append(' ')
+            .IfNotEmpty(parameter.Name, TB.Write, TB.Write($"p{parameter.Position}"))
+            .If(parameter.HasDefaultValue, tb => tb.Append(" = ").Render(parameter.DefaultValue));
     }
 
-//    
-//    
-//    [RenderToMethod]
-//    public static void RenderMethodTo(MethodBase method, TextBuilder builder)
-//    {
-//        builder.Render(method.ParentType).Append('.')
-//            .If(method, static m => m.IsGeneric,
-//                static (tb, m) =>
-//                {
-//                    int i = m.Name.IndexOf('`');
-//                    if (i >= 0)
-//                    {
-//                        tb.Append(m.Name.AsSpan(0, i));
-//                    }
-//                    else
-//                    {
-//                        tb.Append(m.Name);
-//                    }
-//
-//                    tb.Append('<')
-//                        .Delimit(", ", m.GetGenericArguments(), TBA<Type>.Render)
-//                        .Append('>');
-//                })
-//
-//            .Append('(')
-//            .Delimit(", ", method.GetParameters(), "@")
-//            .Append(')')
-//            .If(method, static m => m.Is<MethodInfo>(), static (tb, m) => tb.Render(m.ReturnType));
-//    }
-//
-//    [RenderToMethod<ParameterInfo>]
-//    public static void RenderParameterTo(ParameterInfo parameter, TextBuilder builder)
-//    {
+    [RenderToMethod]
+    public static void RenderMethodTo(MethodBase method, TextBuilder builder)
+    {
+        // declarer
+        builder.Render(method.ParentType).Append('.');
 
-//    }
+        // name
+        string name = method.Name;
+        if (method.IsGenericMethod)
+        {
+            int i = name.IndexOf('`');
+            if (i >= 0)
+            {
+                builder.Append(name.AsSpan(0, i));
+            }
+            else
+            {
+                builder.Append(name);
+            }
+        }
+        else
+        {
+            builder.Append(name);
+        }
+
+        // generic types
+        var genericTypes = method.GetGenericArguments();
+        if (genericTypes.Length > 0)
+        {
+            builder.Append('<')
+                .Delimit(", ", genericTypes, TB.Render)
+                .Append('>');
+        }
+
+        // parameters
+        builder.Append('(')
+            .Delimit(", ", method.GetParameters(), TB.Render)
+            .Append(')');
+
+        // return type
+        builder.Append(" => ");
+        if (method is MethodInfo mi)
+        {
+            builder.Render(mi.ReturnType);
+        }
+        else
+        {
+            Debug.Assert(method is ConstructorInfo);
+            builder.Render(method.ParentType);
+        }
+
+        // generic type constraints
+        foreach (var genericType in genericTypes)
+        {
+            if (!genericType.IsGenericParameter)
+                continue;
+            var constraints = genericType.GetGenericParameterConstraints();
+            if (constraints.Length == 0)
+                continue;
+            builder.Append(" where ")
+                .Render(genericType)
+                .Append(" : ")
+                .Delimit(", ", constraints, TB.Render);
+        }
+    }
 }
