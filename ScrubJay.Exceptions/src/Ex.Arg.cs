@@ -28,4 +28,13 @@ public partial class Ex
         return new ArgException(arg, message);
     }
 #endif
+
+    public static ArgException Arg(object? argument,
+        string? message = null,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+    {
+        var arg = Argument.Capture(argument, argumentName);
+        return new ArgException(arg, message);
+    }
 }

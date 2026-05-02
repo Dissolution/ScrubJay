@@ -23,4 +23,18 @@
         <Version>0.0.1-alpha</Version>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text.Building"/>
+        <Using Include="ScrubJay.Text.Rendering"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Utilities\" />
+    </ItemGroup>
+    
 </Project>

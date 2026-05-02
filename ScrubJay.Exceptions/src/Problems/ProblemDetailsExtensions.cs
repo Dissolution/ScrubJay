@@ -2,7 +2,7 @@ using System.Globalization;
 using ScrubJay.Text.Extensions;
 using ScrubJay.Universal.Extensions;
 
-namespace ScrubJay.Exceptions;
+namespace ScrubJay.Exceptions.Problems;
 
 /// <summary>
 /// 
@@ -11,13 +11,13 @@ namespace ScrubJay.Exceptions;
 public static class ProblemDetailsExtensions
 {
     public const string TYPE_PROPERTY = "type";
-    public const string STATUS_PROPERTY = "status";
     public const string TITLE_PROPERTY = "title";
+    public const string STATUS_PROPERTY = "status";
     public const string DETAIL_PROPERTY = "detail";
     public const string INSTANCE_PROPERTY = "instance";
     
     extension<E>(E exception)
-        where E : Exception, ISJException
+        where E : Exception
     {
         /// <summary>
         /// A URI-like reference that identifies the Problem type.
@@ -32,53 +32,13 @@ public static class ProblemDetailsExtensions
             {
                 if (exception.Data.TryGetValue(TYPE_PROPERTY, out object? type))
                     return type?.ToString();
-                return null; // about:blank
+                // Use the Exception's Type
+                var exType = Any.GetType<E>(in exception);
+                return $"urn:{exType.Namespace}:{Type.Render(exType)}";
             }
-            set
-            {
-                if (value is not null)
-                {
-                    exception.Data[TYPE_PROPERTY] = value;
-                }
-                else
-                {
-                    exception.Data.Remove(TYPE_PROPERTY);
-                }
-            }
+            set => exception.Data.SetOrRemove(TYPE_PROPERTY, value);
         }
-
-        /// <summary>
-        /// An <see cref="int"/> HTTP Status Code for this occurrence of a Problem.
-        /// </summary>
-        /// <seealso href="https://www.rfc-editor.org/rfc/rfc9457.html#name-status"/>
-        public int? Status
-        {
-            get
-            {
-                if (exception.Data.TryGetValue(STATUS_PROPERTY, out object? status))
-                {
-                    if (status is int statusCode)
-                        return statusCode;
-                    string? str = status?.ToString();
-                    if (int.TryParse(str, NumberStyles.Integer, null, out statusCode))
-                        return statusCode;
-                    // could not interpret
-                }
-                return null; // about:blank
-            }
-            set
-            {
-                if (value.TryGetValue(out var httpStatusCode))
-                {
-                    exception.Data[STATUS_PROPERTY] = httpStatusCode;
-                }
-                else
-                {
-                    exception.Data.Remove(STATUS_PROPERTY);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// A short, human-readable summary of the Problem.
         /// </summary>
@@ -91,15 +51,48 @@ public static class ProblemDetailsExtensions
                     return title?.ToString();
                 return null;
             }
+            set => exception.Data.SetOrRemove(TITLE_PROPERTY, value);
+        }
+        
+        /// <summary>
+        /// An <see cref="int"/> HTTP Status Code for this occurrence of a Problem.
+        /// </summary>
+        /// <seealso href="https://www.rfc-editor.org/rfc/rfc9457.html#name-status"/>
+        public int? Status
+        {
+            get
+            {
+                if (exception.Data.TryGetValue(STATUS_PROPERTY, out object? status))
+                {
+                    int code;
+                    if (status is int)
+                    {
+                        code = (int)status;
+                    }
+                    else
+                    {
+                        string? str = status?.ToString();
+                        if (!int.TryParse(str, NumberStyles.Integer, null, out code))
+                        {
+                            return null;
+                        }
+                    }
+
+                    // We will only return a valid status code
+                    if (code >= 100 && code <= 599)
+                        return code;
+                }
+                return null;
+            }
             set
             {
-                if (value is not null)
+                if (value.TryGetValue(out var code) && code >= 100 && code <= 599)
                 {
-                    exception.Data[TITLE_PROPERTY] = value;
+                    exception.Data[STATUS_PROPERTY] = code;
                 }
                 else
                 {
-                    exception.Data.Remove(TITLE_PROPERTY);
+                    exception.Data.Remove(STATUS_PROPERTY);
                 }
             }
         }
@@ -123,25 +116,12 @@ public static class ProblemDetailsExtensions
                 }
                 return exception.Message;
             }
-            set
-            {
-                if (value is not null)
-                {
-                    exception.Data[DETAIL_PROPERTY] = value;
-                }
-                else
-                {
-                    exception.Data.Remove(DETAIL_PROPERTY);
-                }
-            }
+            set => exception.Data.SetOrRemove(DETAIL_PROPERTY, value);
         }
 
         /// <summary>
         /// A URI-like reference that identifies the specific occurrence of the Problem.
         /// </summary>
-        /// <remarks>
-        /// If "instance' is not present in <see cref="Exception.Data"/>, the <see cref="Exception"/>'s <see cref="Type"/> will be returned.
-        /// </remarks>
         /// <seealso href="https://www.rfc-editor.org/rfc/rfc9457.html#name-instance"/>
         public string? Instance
         {
@@ -149,23 +129,11 @@ public static class ProblemDetailsExtensions
             {
                 if (exception.Data.TryGetValue(INSTANCE_PROPERTY, out var instanceObj))
                 {
-                    string? instance = instanceObj?.ToString();
-                    if (!string.IsNullOrEmpty(instance))
-                        return instance;
+                    return instanceObj?.ToString();
                 }
-                return Type.Render<E>(in exception);
+                return null;
             }
-            set
-            {
-                if (value is not null)
-                {
-                    exception.Data[INSTANCE_PROPERTY] = value;
-                }
-                else
-                {
-                    exception.Data.Remove(INSTANCE_PROPERTY);
-                }
-            }
+            set => exception.Data.SetOrRemove(INSTANCE_PROPERTY, value);
         }
     }
 }

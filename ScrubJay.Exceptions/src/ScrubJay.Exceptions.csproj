@@ -39,6 +39,7 @@
         <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Prelude" Static="true"/>
         <Using Include="ScrubJay.Text.Building"/>
         <Using Include="ScrubJay.Text.Rendering"/>
     </ItemGroup>

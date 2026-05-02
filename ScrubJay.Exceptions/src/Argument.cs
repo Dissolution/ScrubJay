@@ -26,7 +26,19 @@ public record class Argument : IRenderable
         return new Argument(Any.GetType(argument), argumentName, Any.ToString(argument));
     }
 
-    public static readonly Argument Null = new(null, null, null);
+    public static Argument Null<T>(in T? _, [CallerArgumentExpression(nameof(_))] string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        return new Argument(typeof(T), argumentName, null);
+    }
+
+    public static Argument Null(object? _, [CallerArgumentExpression(nameof(_))] string? argumentName = null)
+    {
+        return new Argument(null, argumentName, null);
+    }
+    
 
 
     /// <summary>

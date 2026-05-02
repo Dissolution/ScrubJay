@@ -57,5 +57,17 @@ public static class DictionaryExtensions
             }
             return false;
         }
+
+        public void SetOrRemove(object key, object? value)
+        {
+            if (value is null)
+            {
+                dictionary.Remove(key);
+            }
+            else
+            {
+                dictionary[key] = value;
+            }
+        }
     }
 }
