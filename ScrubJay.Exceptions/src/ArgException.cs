@@ -5,11 +5,12 @@ using ScrubJay.Text.Building;
 namespace ScrubJay.Exceptions;
 
 [PublicAPI]
-public class ArgException<T> : ArgException, ISJException
+public class ArgException<T> : ArgException, ISJException, IRenderable
 #if NET9_0_OR_GREATER
     where T : allows ref struct
 #endif
 {
+    [SetsRequiredMembers]
     public ArgException(in T? argument, string? message = null, Exception? innerException = null, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
         : base(Argument.Capture<T>(in argument, argumentName), message, innerException)
     {
@@ -21,9 +22,9 @@ public class ArgException<T> : ArgException, ISJException
 /// An enhanced <see cref="ArgumentException"/>.
 /// </summary>
 [PublicAPI]
-public class ArgException : ArgumentException, ISJException
+public class ArgException : ArgumentException, ISJException, IRenderable
 {
-    public Argument Argument { get; }
+    public required Argument Argument { get; init; }
 
     public override string? Message
     {
@@ -34,6 +35,7 @@ public class ArgException : ArgumentException, ISJException
         }
     }
 
+    [SetsRequiredMembers]
     public ArgException(Argument argument, string? message = null, Exception? innerException = null)
         : base(message, innerException)
     {
@@ -41,6 +43,7 @@ public class ArgException : ArgumentException, ISJException
         ExceptionFields.RefParamNameField(this) = Argument.Name;
     }
 
+    [SetsRequiredMembers]
     public ArgException(object? argument, string? message = null, Exception? innerException = null, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
         : base(message, innerException)
     {
@@ -48,23 +51,13 @@ public class ArgException : ArgumentException, ISJException
         ExceptionFields.RefParamNameField(this) = Argument.Name;
     }
 
-    public override string ToString()
+    public void RenderTo(TextBuilder builder)
     {
-        using var builder = TextBuilder.Rent();
-
-        builder.Append("ArgumentException:")
-            .Indent("  ")
-            .NewLine()
-            .Append("Argument: ")
-            .IfNotNull(Argument, static (tb, arg) => arg.WriteTo(tb), TB.Write("null"))
-            .IfNotEmpty(Message, static (tb, msg) => tb.NewLine().Append("Message: ").Append(msg));
-     
-//        this.WriteDebugInformationTo(ref text, 1);
-//        
-//        this.WriteOptionalPropertiesTo(ref text, 1);
-//
-//        return text.ToStringAndDispose();
-
-        return builder.ToString();
+        ExceptionRenderer.RenderExceptionTo(this, builder, static (tb, ex) =>
+        {
+            tb.AppendLineIfNotNull(ex.Argument, $"Argument: {ex.Argument:@}");
+        });
     }
+
+    public override string ToString() => TextBuilder.Build(RenderTo);
 }

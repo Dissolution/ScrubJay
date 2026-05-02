@@ -71,8 +71,6 @@ public static class ArrayRenderers
     [RenderToMethod]
     public static void Render2DArrayTo<T>(T[,] array, TextBuilder builder)
     {
-        // = new int[1024, 768]; = 1024 wide = 1024 columns
-
         int colCount = array.GetLength(0);
         int rowCount = array.GetLength(1);
 

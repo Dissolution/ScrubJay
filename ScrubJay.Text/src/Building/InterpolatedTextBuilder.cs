@@ -37,19 +37,19 @@ public ref struct InterpolatedTextBuilder : IDisposable
         _builder = builder ?? throw new ArgumentNullException(nameof(builder));
     }
 
-    public void AppendLiteral(string str) => _builder.Write(str);
+    public void AppendLiteral(string str) => _builder.Append(str);
 
-    public void AppendFormatted(char ch) => _builder.Write(ch);
+    public void AppendFormatted(char ch) => _builder.Append(ch);
 
     public void AppendFormatted(char ch, int alignment)
         => throw new NotImplementedException();
 
-    public void AppendFormatted(string? str) => _builder.Write(str);
+    public void AppendFormatted(string? str) => _builder.Append(str);
 
     public void AppendFormatted(string? str, int alignment)
         => throw new NotImplementedException();
 
-    public void AppendFormatted(scoped text text) => _builder.Write(text);
+    public void AppendFormatted(scoped text text) => _builder.Append(text);
 
     public void AppendFormatted(scoped text text, int alignment)
         => throw new NotImplementedException();

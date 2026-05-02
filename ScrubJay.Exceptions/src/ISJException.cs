@@ -4,7 +4,7 @@ namespace ScrubJay.Exceptions;
 /// Marker interface for ScrubJay <see cref="Exception"/> types.
 /// </summary>
 [PublicAPI]
-public interface ISJException
+public interface ISJException : IRenderable
 {
     
 }

@@ -7,64 +7,52 @@ public static class DictionaryExtensions
 {
     extension(IDictionary dictionary)
     {
-        public bool ContainsKey<K>(K key)
-            where K : notnull
+        public bool ContainsKey(object key)
         {
-            return dictionary.Contains((object)key);
+            return dictionary.Contains(key);
         }
 
-        public bool TryGetValue<K, V>(K key, out V? value)
-            where K : notnull
+        public bool TryGetValue(object key, out object? value)
         {
-            object objKey = (object)key;
-            if (dictionary.Contains(objKey))
+            if (dictionary.Contains(key))
             {
-                object? objValue = dictionary[objKey];
-                return objValue.Is<V>(out value);
+                value = dictionary[key];
+                return true;
             }
             value = default;
             return false;
         }
 
-        public V? GetOrAdd<K, V>(K key, V? valueToAdd)
-            where K : notnull
+        public object? GetOrAdd(object key, object? valueToAdd)
         {
-            object objKey = (object)key;
-            if (dictionary.Contains(objKey))
+            if (dictionary.Contains(key))
             {
-                object? objValue = dictionary[objKey];
-                if (objValue is V existingValue)
-                    return existingValue;
+                return dictionary[key];
             }
-            dictionary[objKey] = valueToAdd;
+            dictionary[key] = valueToAdd;
             return valueToAdd;
         }
 
-        public bool TryAdd<K, V>(K key, V? value)
-            where K : notnull
+        public bool TryAdd(object key, object? value)
         {
-            object objKey = (object)key;
-            if (dictionary.Contains(objKey))
+            if (!dictionary.Contains(key))
             {
-                return false;
+                dictionary[key] = value;
+                return true;
             }
-            dictionary[objKey] = value;
-            return true;
+            return false;
         }
 
-        public void Set<K, V>(K key, V? value)
-            where K : notnull
+        public void Set(object key, object? value)
         {
             dictionary[key] = value;
         }
 
-        public bool TryRemove<K>(K key)
-            where K : notnull
+        public bool TryRemove(object key)
         {
-            object objKey = (object)key;
-            if (dictionary.Contains(objKey))
+            if (dictionary.Contains(key))
             {
-                dictionary.Remove(objKey);
+                dictionary.Remove(key);
                 return true;
             }
             return false;

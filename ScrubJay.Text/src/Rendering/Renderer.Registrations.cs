@@ -1,17 +1,18 @@
 using System.Collections.Concurrent;
 using System.Reflection;
+using ScrubJay.Text.Collections;
 using ScrubJay.Text.Debugging;
 
 namespace ScrubJay.Text.Rendering;
 
-internal static class RenderingManager
+public static partial class Renderer
 {
-    private static readonly MethodInfo[] _scannedMethods;
-    private static readonly ConcurrentDictionary<Type, Action<object, TextBuilder>> _boxedActions = new();
+    private static readonly MethodInfo[] _registeredRenderToMethods;
+    private static readonly ConcurrentTypeMap<Action<object, TextBuilder>> _boxedActions = new();
 
-    static RenderingManager()
+    static Renderer()
     {
-        _scannedMethods = AppDomain.CurrentDomain
+        _registeredRenderToMethods = AppDomain.CurrentDomain
             .GetAssemblies()
             .Where(static assembly =>
             {
@@ -62,67 +63,9 @@ internal static class RenderingManager
                 return true;
             })
             .ToArray();
-
-        var msg = TextBuilder.Rent()
-            .Append($"Registered {_scannedMethods.Length} RenderToMethods:")
-            .NewLine()
-            .Delimit(tb => tb.AppendLine(", "), _scannedMethods, TB.Render)
-            .ToStringAndDispose();
-        Trouble.Info(msg);
     }
-
-
-    internal static void RenderableRenderTo<R>(R renderable, TextBuilder builder)
-        where R : IRenderable
-#if NET9_0_OR_GREATER
-        , allows ref struct
-#endif
-    {
-        renderable.RenderTo(builder);
-    }
-
-    internal static MethodInfo GetRenderableRenderToMethod(Type renderableType)
-    {
-        return typeof(RenderingManager)
-            .GetMethod(nameof(RenderableRenderTo), BindingFlags.NonPublic | BindingFlags.Static)!
-            .MakeGenericMethod(renderableType);
-    }
-
-    internal static void DefaultRenderTo<T>(T value, TextBuilder builder)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        builder.Append<T>(value);
-    }
-
-
-    private static int Specificity(MethodInfo method, Type type)
-    {
-        if (!method.IsGenericMethodDefinition)
-            return 1000;
-
-        var gp = method.GetGenericArguments()[0];
-        var attrs = gp.GenericParameterAttributes;
-        var score = 200;
-
-        if (attrs.HasFlag(GenericParameterAttributes.Covariant)
-            || attrs.HasFlag(GenericParameterAttributes.Contravariant)) score -= 50;
-        if (attrs.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint)) score += 10;
-        if (attrs.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint)) score += 10;
-        if (attrs.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint)) score += 10;
-#if NET9_0_OR_GREATER
-        if (attrs.HasFlag(GenericParameterAttributes.AllowByRefLike)) score += 10;
-#endif
-        foreach (var constraint in gp.GetGenericParameterConstraints())
-        {
-            score += constraint == type ? 110 : constraint.IsAssignableFrom(type) ? 30 : 10;
-        }
-
-        return score;
-    }
-
-    internal static Option<int> InputConversionSpecificity(Type inputType, Type destinationType)
+    
+    private static Option<int> InputConversionSpecificity(Type inputType, Type destinationType)
     {
         // exact > subclass > interface > object
         if (inputType == destinationType)
@@ -134,7 +77,6 @@ internal static class RenderingManager
             var constraints = destinationType.GetGenericParameterConstraints();
             if (constraints.All(c => inputType.IsAssignableTo(c)))
             {
-                Debugger.Break();
                 return 99;
             }
             return None;
@@ -151,10 +93,10 @@ internal static class RenderingManager
         {
             return InputConversionSpecificity(inputType, destSystemType);
         }
-        
+
         // destination type must somehow be 'under' input type
         int classDepth = 0;
-        
+
         Type? inType = inputType;
         while (inType is not null)
         {
@@ -188,9 +130,8 @@ internal static class RenderingManager
 
         return None;
     }
-
-
-    internal static Option<(MethodInfo ConcreteMethod, int Specificity)> MatchSpecificity(MethodInfo renderToMethod, Type valueType)
+    
+    private static Option<(MethodInfo ConcreteMethod, int Specificity)> MatchSpecificity(MethodInfo renderToMethod, Type valueType)
     {
         // default is not matching at worst specificity
         MethodInfo? concreteMethod = null;
@@ -206,10 +147,23 @@ internal static class RenderingManager
         if (renderToMethod.IsGenericMethodDefinition)
         {
             var genericTypes = renderToMethod.GetGenericArguments();
-            Debug.Assert(genericTypes.Length == 1);
+            Debug.Assert(genericTypes.Length >= 1);
 
             var t = genericTypes[0];
             var tAttributes = t.GenericParameterAttributes;
+
+#if NET9_0_OR_GREATER
+            if (valueType.IsByRefLike)
+            {
+                if (!tAttributes.HasFlag(GenericParameterAttributes.AllowByRefLike))
+                {
+                    return None;
+                }
+            }
+
+            tAttributes &= ~GenericParameterAttributes.AllowByRefLike;
+#endif
+
             if (tAttributes > GenericParameterAttributes.None)
                 Debugger.Break();
 
@@ -238,9 +192,9 @@ internal static class RenderingManager
 
                 if (methodArrayValueElementType.IsGenericParameter)
                 {
-                    // this is okay
+                    // this is great!
                     concreteMethod = Result.Try(() => renderToMethod.MakeGenericMethod(arrayValueElementType)).OkOrDefault();
-                    specificity = 60;
+                    specificity = 97;
                     goto end;
                 }
 
@@ -273,29 +227,40 @@ internal static class RenderingManager
         return Some((ConcreteMethod: concreteMethod, Specificity: specificity));
     }
 
-    internal static Action<T, TextBuilder>? GetSingletonAction<T>()
+    private static Action<T, TextBuilder>? GetRenderToForCache<T>()
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        var type = typeof(T);
         MethodInfo? renderToMethod = null;
 
-        // Check for IRenderable support
-        if (type.GetInterfaces().Any(static f => f == typeof(IRenderable)))
+        var type = typeof(T);
+        if (type != typeof(object))
         {
-            renderToMethod = GetRenderableRenderToMethod(type);
+            // scan for a method that can handle this type
+            var matchingMethods = _registeredRenderToMethods
+                .SelectWhere(method => MatchSpecificity(method, type))
+                .OrderByDescending(pair => pair.Specificity)
+                //.Select(pair => pair.ConcreteMethod)
+                .ToList();
+
+            if (matchingMethods.Count == 0)
+            {
+                Trouble.Hold();
+                return null;
+            }
+
+            if (matchingMethods.Count > 1)
+            {
+                Trouble.Hold();
+            }
+
+            renderToMethod = matchingMethods.First().ConcreteMethod;
         }
         else
         {
-            // scan for a method that can handle this type
-            var matchingMethods = _scannedMethods
-                .SelectWhere(method => MatchSpecificity(method, type))
-                .OrderByDescending(pair => pair.Specificity)
-                .Select(pair => pair.ConcreteMethod)
-                .ToList();
-
-            renderToMethod = matchingMethods.FirstOrDefault();
+            renderToMethod = typeof(Renderer)
+                .GetMethod(nameof(RenderObjectTo), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!;
         }
 
         if (renderToMethod is null)
@@ -303,40 +268,54 @@ internal static class RenderingManager
 
         try
         {
-            var delType = typeof(Action<,>).MakeGenericType(type, typeof(TextBuilder));
+            var delType = typeof(Action<T, TextBuilder>);
             var del = Delegate.CreateDelegate(delType, renderToMethod);
             return (Action<T, TextBuilder>)del;
         }
         catch (Exception ex)
         {
             Trouble.Warn(ex);
+            Debugger.Break();
             // ignore all issues
             return null;
         }
     }
 
-    internal static Action<object, TextBuilder> GetBoxedAction(Type type)
+    private static Action<object, TextBuilder> GetObjectRenderTo(Type type)
     {
         return _boxedActions.GetOrAdd(type, static t =>
         {
             if (typeof(IRenderable).IsAssignableFrom(t))
                 return static (obj, builder) => ((IRenderable)obj).RenderTo(builder);
 
-            var resolveBoxed = typeof(RenderingManager)
-                .GetMethod(nameof(BoxSingletonAction), BindingFlags.NonPublic | BindingFlags.Static)!
+            var resolveBoxed = typeof(Renderer)
+                .GetMethod(nameof(BoxedCacheAction), BindingFlags.NonPublic | BindingFlags.Static)!
                 .MakeGenericMethod(t);
 
             return (Action<object, TextBuilder>)resolveBoxed.Invoke(null, null)!;
         });
     }
 
-    private static Action<object, TextBuilder> BoxSingletonAction<T>()
+    private static Action<object, TextBuilder> BoxedCacheAction<T>()
     {
-        var concreteAction = RendererSingleton<T>.Action;
+        var concreteAction = Cache<T>.Action;
         if (concreteAction is not null)
         {
             return (obj, builder) => concreteAction((T)obj, builder);
         }
         return DefaultRenderTo<object>;
+    }
+    
+    
+    
+    public static void Print()
+    {
+        var msg = TextBuilder.Rent()
+            .Append($"Registered {_registeredRenderToMethods.Length} RenderToMethods:")
+            .NewLine()
+            .Delimit(TB.NewLine, _registeredRenderToMethods, TB.Render)
+            .ToStringAndDispose();
+        Trouble.Info(msg);
+        Trouble.Hold();
     }
 }

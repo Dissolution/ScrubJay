@@ -39,8 +39,4 @@
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Reflection\" />
-    </ItemGroup>
-
 </Project>

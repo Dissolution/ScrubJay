@@ -4,21 +4,18 @@ using ScrubJay.Universal.Extensions;
 
 namespace ScrubJay.Exceptions;
 
-internal static class ProblemDetails
-{
-    public const string TYPE_PROPERTY = "type";
-    public const string STATUS_PROPERTY = "status";
-    public const string TITLE_PROPERTY = "title";
-    public const string DETAIL_PROPERTY = "detail";
-    public const string INSTANCE_PROPERTY = "instance";
-}
-
 /// <summary>
 /// 
 /// </summary>
 [PublicAPI]
 public static class ProblemDetailsExtensions
 {
+    public const string TYPE_PROPERTY = "type";
+    public const string STATUS_PROPERTY = "status";
+    public const string TITLE_PROPERTY = "title";
+    public const string DETAIL_PROPERTY = "detail";
+    public const string INSTANCE_PROPERTY = "instance";
+    
     extension<E>(E exception)
         where E : Exception, ISJException
     {
@@ -33,19 +30,19 @@ public static class ProblemDetailsExtensions
         {
             get
             {
-                if (exception.Data.TryGetValue<string, object?>(ProblemDetails.TYPE_PROPERTY, out object? type))
+                if (exception.Data.TryGetValue(TYPE_PROPERTY, out object? type))
                     return type?.ToString();
                 return null; // about:blank
             }
             set
             {
-                if (value is null)
+                if (value is not null)
                 {
-                    exception.Data.TryRemove<string>(ProblemDetails.TYPE_PROPERTY);
+                    exception.Data[TYPE_PROPERTY] = value;
                 }
                 else
                 {
-                    exception.Data.Set<string, string>(ProblemDetails.TYPE_PROPERTY, value);
+                    exception.Data.Remove(TYPE_PROPERTY);
                 }
             }
         }
@@ -58,7 +55,7 @@ public static class ProblemDetailsExtensions
         {
             get
             {
-                if (exception.Data.TryGetValue<string, object?>(ProblemDetails.STATUS_PROPERTY, out object? status))
+                if (exception.Data.TryGetValue(STATUS_PROPERTY, out object? status))
                 {
                     if (status is int statusCode)
                         return statusCode;
@@ -73,15 +70,15 @@ public static class ProblemDetailsExtensions
             {
                 if (value.TryGetValue(out var httpStatusCode))
                 {
-                    exception.Data.Set<string, int>(ProblemDetails.STATUS_PROPERTY, httpStatusCode);
+                    exception.Data[STATUS_PROPERTY] = httpStatusCode;
                 }
                 else
                 {
-                    exception.Data.TryRemove<string>(ProblemDetails.STATUS_PROPERTY);
+                    exception.Data.Remove(STATUS_PROPERTY);
                 }
             }
         }
-        
+
         /// <summary>
         /// A short, human-readable summary of the Problem.
         /// </summary>
@@ -90,23 +87,23 @@ public static class ProblemDetailsExtensions
         {
             get
             {
-                if (exception.Data.TryGetValue<string, string?>(ProblemDetails.TITLE_PROPERTY, out string? title))
-                    return title;
+                if (exception.Data.TryGetValue(TITLE_PROPERTY, out var title))
+                    return title?.ToString();
                 return null;
             }
             set
             {
-                if (value is null)
+                if (value is not null)
                 {
-                    exception.Data.TryRemove<string>(ProblemDetails.TITLE_PROPERTY);
+                    exception.Data[TITLE_PROPERTY] = value;
                 }
                 else
                 {
-                    exception.Data.Set<string, string>(ProblemDetails.TITLE_PROPERTY, value);
+                    exception.Data.Remove(TITLE_PROPERTY);
                 }
             }
         }
-        
+
         /// <summary>
         /// A human-readable explanation specific to this occurrence of the Problem.
         /// </summary>
@@ -118,23 +115,27 @@ public static class ProblemDetailsExtensions
         {
             get
             {
-                if (exception.Data.TryGetValue<string, string?>(ProblemDetails.DETAIL_PROPERTY, out string? detail) && !string.IsNullOrEmpty(detail))
-                    return detail;
+                if (exception.Data.TryGetValue(DETAIL_PROPERTY, out var detailObj))
+                {
+                    string? detail = detailObj?.ToString();
+                    if (!string.IsNullOrEmpty(detail))
+                        return detail;
+                }
                 return exception.Message;
             }
             set
             {
-                if (value is null)
+                if (value is not null)
                 {
-                    exception.Data.TryRemove<string>(ProblemDetails.DETAIL_PROPERTY);
+                    exception.Data[DETAIL_PROPERTY] = value;
                 }
                 else
                 {
-                    exception.Data.Set<string, string>(ProblemDetails.DETAIL_PROPERTY, value);
+                    exception.Data.Remove(DETAIL_PROPERTY);
                 }
             }
         }
-        
+
         /// <summary>
         /// A URI-like reference that identifies the specific occurrence of the Problem.
         /// </summary>
@@ -146,19 +147,23 @@ public static class ProblemDetailsExtensions
         {
             get
             {
-                if (exception.Data.TryGetValue<string, string?>(ProblemDetails.INSTANCE_PROPERTY, out string? instance) && !string.IsNullOrEmpty(instance))
-                    return instance;
+                if (exception.Data.TryGetValue(INSTANCE_PROPERTY, out var instanceObj))
+                {
+                    string? instance = instanceObj?.ToString();
+                    if (!string.IsNullOrEmpty(instance))
+                        return instance;
+                }
                 return Type.Render<E>(in exception);
             }
             set
             {
-                if (value is null)
+                if (value is not null)
                 {
-                    exception.Data.TryRemove<string>(ProblemDetails.INSTANCE_PROPERTY);
+                    exception.Data[INSTANCE_PROPERTY] = value;
                 }
                 else
                 {
-                    exception.Data.Set<string, string>(ProblemDetails.INSTANCE_PROPERTY, value);
+                    exception.Data.Remove(INSTANCE_PROPERTY);
                 }
             }
         }

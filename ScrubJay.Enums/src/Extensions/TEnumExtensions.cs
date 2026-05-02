@@ -14,21 +14,3 @@ public static class TEnumExtensions
         public static bool HasFlagsAttribute() => HasAttribute<E, FlagsAttribute>();
     }
 }
-
-
-//public partial class EnumTypeInfo
-//{
-//    
-//}
-//
-//public partial class EnumTypeInfo<E> : EnumTypeInfo
-//    where E : struct, Enum
-//{
-//    
-//}
-//
-//public partial class EnumTypeInfo<E> : EnumTypeInfo
-//    where E : struct, Enum
-//{
-//    
-//}

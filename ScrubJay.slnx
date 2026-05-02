@@ -22,6 +22,12 @@
 		<Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
 		<Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
 	</Folder>
+	<Folder Name="/Expressions/">
+		<Project Path="ScrubJay.Expressions/ScrubJay.Expressions.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
+	</Folder>
 	<Folder Name="/Functional/">
 		<File Path="ScrubJay.Functional/README.md" />
 		<Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
@@ -39,6 +45,10 @@
 	</Folder>
 	<Folder Name="/Exceptions/">
 		<File Path="ScrubJay.Exceptions/README.md" />
+		<Project Path="ScrubJay.Exceptions/asp/ScrubJay.Exceptions.Asp.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
 		<Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj" />
 	</Folder>
 	<Folder Name="/Enums/">

@@ -114,7 +114,7 @@ public static class ReflectionRenderers
             .Append(')');
 
         // return type
-        builder.Append(" => ");
+        builder.Append(" -> ");
         if (method is MethodInfo mi)
         {
             builder.Render(mi.ReturnType);

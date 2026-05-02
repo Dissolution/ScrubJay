@@ -2,6 +2,10 @@
 
 namespace ScrubJay.Exceptions;
 
+/// <summary>
+/// The completion status of a function.
+/// </summary>
+/// <seealso href="https://en.wikipedia.org/wiki/HRESULT"/>
 [PublicAPI]
 [StructLayout(LayoutKind.Explicit, Size = 4)]
 public readonly struct HResult :
@@ -21,6 +25,7 @@ public readonly struct HResult :
     public static bool operator ==(HResult left, HResult right) => left.Equals(right);
     public static bool operator !=(HResult left, HResult right) => !left.Equals(right);
 
+#region Constants
     /// <summary>
     /// Operation successful
     /// </summary>
@@ -145,7 +150,7 @@ public readonly struct HResult :
     /// Invalid index
     /// </summary>
     public static readonly HResult DISP_E_BADINDEX = 0x8002000B;
-
+#endregion
 
     [FieldOffset(0)]
     private readonly uint _hresult;

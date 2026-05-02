@@ -15,6 +15,10 @@ internal static class Trouble
 
     private static readonly ConsoleColor _defaultForeColor;
 
+    [Conditional("DEBUG")]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public static void Hold() { }
+    
     static Trouble()
     {
         lock (_consoleLock)
@@ -84,6 +88,7 @@ internal static class Trouble
         };
     }
 
+    [Conditional("DEBUG")]
     private static void WriteToDebug(LogMessage log)
     {
         lock (_debugLock)
@@ -112,11 +117,14 @@ internal static class Trouble
             }
         }
     }
-
+    
     private static void WriteToDebugger(LogMessage log)
     {
         lock (_debuggerLock)
         {
+            if (!Debugger.IsLogging())
+                return;
+            
             var builder = new StringBuilder()
                 .AppendLine($"[{log.Timestamp:HH:mm:ss}] - {log.Level}");
 
