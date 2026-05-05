@@ -30,7 +30,6 @@
 	</Folder>
 	<Folder Name="/Functional/">
 		<File Path="ScrubJay.Functional/README.md" />
-		<Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
 		<Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj" />
 		<Project Path="ScrubJay.Functional/core/ScrubJay.Functional.csproj" />
 		<Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />

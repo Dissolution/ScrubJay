@@ -31,7 +31,7 @@ public static class TextPool
             {
                 TextHelper.Clear(characters);
             }
-            ArrayPool<char>.Shared.Return(characters, clean);
+            ArrayPool<char>.Shared.Return(characters, false);
         }
     }
 

@@ -6,34 +6,8 @@ using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
 
-
-
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
-
-using var tb = TextBuilder.Rent();
-
-var thing = new int[] { 1, 4, 7 };
-tb.Render(thing);
-tb.NewLines(2);
-
-var thing2 = new RenderableThing(147) { Name = "TRJ" };
-tb.Render(thing2);
-tb.NewLines(2);
-
-text thing3 = "ABC";
-
-var exceptional = Ex.Arg(thing3);
-
-
-
-var checkpoint = tb.ToString();
-Console.WriteLine(checkpoint);
-Debugger.Break();
-
-
-
-
 
 
 Console.WriteLine("Press enter to close this Sandbox.");
@@ -91,21 +65,27 @@ namespace ScrubJay.Sandboxes.Console
         }
     }
 
- 
-
-
 
     internal partial class Util
     {
         public static string EnumThing<E>(E e)
             where E : struct, Enum
         {
-            BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
-
-
-
-            return bf.ToString();
+            
+            
+            
+            throw Ex.NotImplemented();
         }
+        
+//        public static string EnumThing<E>(E left, E right)
+//            where E : struct, Enum
+//        {
+//            //var eq = left == right;
+//            
+//            
+//            
+//            throw Ex.NotImplemented();
+//        }
 
     }
 

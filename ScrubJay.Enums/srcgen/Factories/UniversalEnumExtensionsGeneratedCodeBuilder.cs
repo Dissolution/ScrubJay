@@ -21,6 +21,7 @@ public sealed class UniversalEnumExtensionsGeneratedCodeBuilder : GeneratedCodeB
         var enumTypeFullName = e2e.TypeFullName;
         
         
+        
         var fileName = $"{enumTypeName}Extensions.g.cs";
         using var builder = new CodeBuilder();
         builder.Append($$"""

@@ -59,107 +59,27 @@ public static class EnumHelper<TEnum>
         Emit.Ceq();
         return Return<bool>();
     }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static int GetXorHashCode(TEnum @enum)
-    {
-        // we have to account for another possible 32 bits of input data
-        // always convert to an u64 first to stabilize behavior
-
-        // load the lower 32 bits onto the stack
-        Emit.Ldarg(nameof(@enum));
-        Emit.Conv_U8();
-        Emit.Conv_I4();
-
-        // load the upper 32 bits onto the stack
-        Emit.Ldarg(nameof(@enum));
-        Emit.Conv_U8();
-        Emit.Ldc_I4(32);
-        Emit.Shr();
-        Emit.Conv_I4();
-
-        // xor and return
-        Emit.Xor();
-        return Return<int>();
-    }
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetHashCode(TEnum @enum)
     {
-        if (CanFitInI32)
-        {
-            Emit.Ldarg(nameof(@enum));
-            Emit.Conv_I4();
-            return Return<int>();
-        }
-        else
-        {
-            return GetXorHashCode(@enum);
-        }
+        ulong value = Unsafe.As<TEnum, ulong>(ref @enum);
+        return (int)value ^ (int)(value >> 32);
     }
 
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static int CompareUnsigned(TEnum left, TEnum right)
-    {
-        // if left < right return -1
-        Emit.Ldarg(nameof(left));
-        Emit.Ldarg(nameof(right));
-        Emit.Clt_Un();
-        Emit.Brtrue("lessThan");
-
-        // if left > right return 1
-        Emit.Ldarg(nameof(left));
-        Emit.Ldarg(nameof(right));
-        Emit.Cgt_Un();
-        Emit.Brtrue("greaterThan");
-
-        // else return 0
-        Emit.Ldc_I4_0();
-        Emit.Ret();
-
-        MarkLabel("lessThan");
-        Emit.Ldc_I4_M1();
-        Emit.Ret();
-
-        MarkLabel("greaterThan");
-        Emit.Ldc_I4_1();
-        Emit.Ret();
-        throw Unreachable();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare(TEnum left, TEnum right)
     {
         if (IsSigned)
         {
-            // if left < right return -1
-            Emit.Ldarg(nameof(left));
-            Emit.Ldarg(nameof(right));
-            Emit.Clt();
-            Emit.Brtrue("lessThan");
-
-            // if left > right return 1
-            Emit.Ldarg(nameof(left));
-            Emit.Ldarg(nameof(right));
-            Emit.Cgt();
-            Emit.Brtrue("greaterThan");
-
-            // else return 0
-            Emit.Ldc_I4_0();
-            Emit.Ret();
-
-            MarkLabel("lessThan");
-            Emit.Ldc_I4_M1();
-            Emit.Ret();
-
-            MarkLabel("greaterThan");
-            Emit.Ldc_I4_1();
-            Emit.Ret();
-            throw Unreachable();
+            long l = Unsafe.As<TEnum, long>(ref left);
+            long r = Unsafe.As<TEnum, long>(ref right);
+            return (l > r ? 1 : 0) - (l < r ? 1 : 0);
         }
         else
         {
-            return CompareUnsigned(left, right);
+            ulong l = Unsafe.As<TEnum, ulong>(ref left);
+            ulong r = Unsafe.As<TEnum, ulong>(ref right);
+            return (l > r ? 1 : 0) - (l < r ? 1 : 0);
         }
     }
 }
