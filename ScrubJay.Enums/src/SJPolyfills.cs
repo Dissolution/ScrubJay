@@ -306,18 +306,7 @@ namespace System.Runtime.CompilerServices
 #endif
 
 #if NETSTANDARD2_1
-namespace System.Runtime.CompilerServices
-{
-    public static class Unsafe
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int SizeOf<T>()
-        {
-            Emit.Sizeof<T>();
-            return Return<int>();
-        }
-    }
-}
+
 #endif
 
 #if !NET7_0_OR_GREATER
