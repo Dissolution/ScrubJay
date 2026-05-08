@@ -1,13 +1,16 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
-using ScrubJay.Exceptions;
+using ScrubJay.Errors;
 using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Universal;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
+
+var c = Any.Compare("abc", "1");
 
 
 Console.WriteLine("Press enter to close this Sandbox.");

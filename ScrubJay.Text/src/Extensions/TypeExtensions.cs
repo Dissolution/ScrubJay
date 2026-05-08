@@ -3,22 +3,6 @@ namespace ScrubJay.Text.Extensions;
 [PublicAPI]
 public static class TypeExtensions
 {
-    extension(Type)
-    {
-        public static string Render(Type type) => Renderer.RenderValue<Type>(type);
-
-        public static string Render<T>() => Renderer.RenderValue<Type>(typeof(T));
-
-        public static string Render<I>(in I? instance) => Renderer.RenderValue<Type>(Any.GetType(in instance));
-
-#if NET9_0_OR_GREATER
-        // ReSharper disable once MethodOverloadWithOptionalParameter
-        public static string Render<I>(in I? instance, TypeConstraints.AllowsRefStruct<I> _ = default)
-            where I : allows ref struct
-            => Renderer.RenderValue<Type>(Any.GetType(in instance, _));
-#endif
-    }
-    
     extension(Type? type)
     {
         public bool IsTuple
@@ -33,7 +17,6 @@ public static class TypeExtensions
                 return false;
             }
         }
-        
         
         public bool ImplementsInterface(Type? interfaceType)
         {

@@ -41,6 +41,6 @@ public sealed class UniversalComparer<T> : IEqualityComparer<T>, IComparer<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Compare(T? x, T? y)
     {
-        return Any.Compare<T>(in x, in y);
+        return Any.Compare(in x, in y);
     }
 }

@@ -55,20 +55,26 @@ public ref struct InterpolatedTextBuilder : IDisposable
         => throw new NotImplementedException();
 
     public void AppendFormatted<T>(T? value) => _builder.Append<T>(value);
-
+    
+    public void AppendFormatted<T>(T? value, string? format)
+        => _builder.Format<T>(value, format);
+    
+    public void AppendFormatted<T>(T? value, scoped text format)
+        => _builder.Format<T>(value, format);
+    
 #if NET9_0_OR_GREATER
     public void AppendFormatted<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         _builder.Append<T>(in value, _);
     }
-#endif
-
-    public void AppendFormatted<T>(T? value, string? format)
-        => _builder.Format<T>(value, format);
     
-    public void AppendFormatted<T>(T? value, scoped text format)
-        => _builder.Format<T>(value, format);
+    public void AppendFormatted<T>(in T? value, string? format, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        _builder.Format<T>(in value, format, null, _);
+    }
+#endif
     
     public void AppendFormatted(Action<TextBuilder>? build)
     {

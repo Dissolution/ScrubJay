@@ -16,16 +16,16 @@
 
         <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj"/>
         <!--        <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>-->
-        <ProjectReference Include="..\..\ScrubJay.Exceptions\src\ScrubJay.Exceptions.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Errors\src\ScrubJay.Errors.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj"/>
         <!--        <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>-->
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
 
-<!--        <ProjectReference-->
-<!--                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"-->
-<!--                ReferenceOutputAssembly="false"-->
-<!--                OutputItemType="Analyzer"/>-->
+        <!--        <ProjectReference-->
+        <!--                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"-->
+        <!--                ReferenceOutputAssembly="false"-->
+        <!--                OutputItemType="Analyzer"/>-->
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -41,7 +41,7 @@ public static partial class Renderer
         RenderNullTo<T>(builder);
     }
 
-    public static string RenderValue<T>(T? value)
+    public static string RenderValue<T>(in T? value)
     {
         using var builder = TextBuilder.Rent();
         RenderValueTo<T>(value, builder);
@@ -105,6 +105,41 @@ public static partial class Renderer
             return string.Empty;
         using var builder = TextBuilder.Rent();
         RenderObjectTo(obj, builder);
+        return builder.ToString();
+    }
+
+    public static string RenderType<T>()
+    {
+        using var builder = TextBuilder.Rent();
+        TypeRenderer.RenderTypeTo(typeof(T), builder);
+        return builder.ToString();
+    }
+    
+    public static string RenderType(Type? type)
+    {
+        using var builder = TextBuilder.Rent();
+        TypeRenderer.RenderTypeTo(type, builder);
+        return builder.ToString();
+    }
+    
+    public static string RenderType<T>(T? _)
+    {
+        using var builder = TextBuilder.Rent();
+        TypeRenderer.RenderTypeTo(typeof(T), builder);
+        return builder.ToString();
+    }
+    
+    public static string RenderSpan<T>(scoped Span<T> span)
+    {
+        using var builder = TextBuilder.Rent();
+        Renderers.RenderSpanTo(span, builder);
+        return builder.ToString();
+    }
+    
+    public static string RenderSpan<T>(scoped ReadOnlySpan<T> span)
+    {
+        using var builder = TextBuilder.Rent();
+        Renderers.RenderReadOnlySpanTo(span, builder);
         return builder.ToString();
     }
 }

@@ -1,90 +1,58 @@
-#pragma warning disable CS8620
-// ReSharper disable MethodOverloadWithOptionalParameter
-
 using System.Reflection;
 using System.Reflection.Emit;
+#pragma warning disable CS8620
+// ReSharper disable MethodOverloadWithOptionalParameter
 // ReSharper disable InvokeAsExtensionMember
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
-    /// <summary>
-    /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left">
-    /// The first <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <param name="right">
-    /// The second <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of values to compare.
-    /// </typeparam>
-    /// <returns>
-    /// <c>&lt;0</c> if <paramref name="left"/> is less than <paramref name="right"/><br/>
-    /// <c>0</c> if <paramref name="left"/> is equal to <paramref name="right"/><br/>
-    /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(in T? left, in T? right) => Comparer<T>.Default.Compare(left!, right!);
-
-    /// <summary>
-    /// Compares two <typeparamref name="T"/> values with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left">
-    /// The first <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <param name="right">
-    /// The second <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <param name="comparer">
-    /// The <see cref="IComparer{T}"/> that determines the relation between <paramref name="left"/> and <paramref name="right"/>.<br/>
-    /// If <c>null</c>, <see cref="Compare{T}(T,T)"/> will be used.
-    /// </param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of values to compare.
-    /// </typeparam>
-    /// <returns>
-    /// <c>&lt;0</c> if <paramref name="comparer"/> indicates that <paramref name="left"/> is less than <paramref name="right"/><br/>
-    /// <c>0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is equal to <paramref name="right"/><br/>
-    /// <c>&gt;0</c> if <paramref name="comparer"/> indicates that<paramref name="left"/> is greater than <paramref name="right"/>
-    /// </returns>
-    public static int Compare<T>(in T? left, in T? right, IComparer<T>? comparer)
+    public static int Compare<C>(in C? left, in C? right)
+        where C : IComparable<C>
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
     {
-        if (comparer is null)
-            return Compare<T>(left, right);
+        if (left is not null)
+            return left.CompareTo(right!);
+
+        if (right is not null)
+            return -1;
+
+        return 0;
+    }
+
+    public static int Compare<T>(in T? left, in T? right, IComparer<T> comparer)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
         return comparer.Compare(left!, right!);
     }
 
-    /// <summary>
-    /// Compares two <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;T&gt;s</see> and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(scoped ReadOnlySpan<T> left, scoped ReadOnlySpan<T> right)
-#if !NET10_0_OR_GREATER
-        where T : IComparable<T>
-#endif
+    public static int Compare<C>(in C? left, in C? right, TypeConstraints.HasIComparable _ = default)
+        where C : IComparable
+    {
+        if (left is not null)
+            return left.CompareTo(right!);
+
+        if (right is not null)
+            return -1;
+
+        return 0;
+    }
+
+    public static int Compare<C>(scoped ReadOnlySpan<C> left, scoped ReadOnlySpan<C> right)
+        where C : IComparable<C>
     {
         return MemoryExtensions.SequenceCompareTo(left, right);
     }
 
-    /// <summary>
-    /// Compares two <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;T&gt;s</see> with an <see cref="IComparer{T}"/> and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <param name="comparer"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public static int Compare<T>(
         scoped ReadOnlySpan<T> left,
         scoped ReadOnlySpan<T> right,
-        IComparer<T>? comparer)
+        IComparer<T> comparer)
     {
 #if NET10_0_OR_GREATER
         return MemoryExtensions.SequenceCompareTo(left, right, comparer);
@@ -105,33 +73,18 @@ partial class Any
 #endif
     }
 
-    /// <summary>
-    /// Compares two <see cref="text"/> values and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <returns>
-    /// <c>&lt;0</c> if <paramref name="left"/> is less than <paramref name="right"/><br/>
-    /// <c>0</c> if <paramref name="left"/> is equal to <paramref name="right"/><br/>
-    /// <c>&gt;0</c> if <paramref name="left"/> is greater than <paramref name="right"/>
-    /// </returns>
+    
     public static int Compare(scoped text left, scoped text right)
     {
         return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
     }
-
-    /// <summary>
-    /// Compares two <see cref="text"/> values with a <see cref="StringComparison"/> and returns an <see cref="int"/> indicating their relation.
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    /// <param name="comparison"></param>
-    /// <returns></returns>
+    
     public static int Compare(scoped text left, scoped text right, StringComparison comparison)
     {
         return MemoryExtensions.CompareTo(left, right, comparison);
     }
 }
+
 
 #if NET9_0_OR_GREATER
 partial class Any
@@ -145,8 +98,8 @@ partial class Any
             return comparer.Compare(left!, right!);
         return Compare<T>(left, right, _);
     }
-    
-    
+
+
     /// <summary>
     /// Compares two <typeparamref name="T"/> values and returns an <see cref="int"/> indicating their relation.
     /// </summary>
@@ -174,14 +127,14 @@ partial class Any
     {
         return CompareCache<T>.Invoke(in left, in right);
     }
-    
+
     private static class CompareCache<T>
         where T : allows ref struct
     {
         public delegate int AnyCompare(ref readonly T? left, ref readonly T? right);
 
         public static readonly AnyCompare Invoke;
-        
+
         static CompareCache()
         {
             Type instanceType = typeof(T);
@@ -207,7 +160,7 @@ partial class Any
             }
             Invoke = CompareFallback;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareFallback(ref readonly T? left, ref readonly T? right)
         {

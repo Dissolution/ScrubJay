@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\ScrubJay.Errors.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Errors.Asp</PackageId>
+        <Title>ScrubJay - Errors for ASP</Title>
+        <Description>
+            ASP helpers for ScrubJay.Errors
+        </Description>
+        <Version>0.0.1-alpha</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text.Building"/>
+        <Using Include="ScrubJay.Text.Rendering"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Utilities\" />
+    </ItemGroup>
+    
+</Project>

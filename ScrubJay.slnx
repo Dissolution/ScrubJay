@@ -7,10 +7,7 @@
 	</Configurations>
 	<Folder Name="/Sandboxes/">
 		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />
-		<Project Path="Sandboxes/Standalone/Standalone.csproj">
-			<BuildType Solution="Analyze|*" Project="Debug" />
-			<BuildType Solution="Nuget|*" Project="Debug" />
-		</Project>
+		<Project Path="Sandboxes/Standalone/Standalone.csproj"/>
 	</Folder>
 	<Folder Name="/Docs/">
 		<File Path="TypeExtensions.cs" />
@@ -37,18 +34,12 @@
 	<Folder Name="/Text/">
 		<File Path="ScrubJay.Text/README.md" />
 		<Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
-		<Project Path="ScrubJay.Text/tests/ScrubJay.Text.Tests.csproj">
-			<BuildType Solution="Analyze|*" Project="Debug" />
-			<BuildType Solution="Nuget|*" Project="Debug" />
-		</Project>
+		<Project Path="ScrubJay.Text/tests/ScrubJay.Text.Tests.csproj"/>
 	</Folder>
-	<Folder Name="/Exceptions/">
-		<File Path="ScrubJay.Exceptions/README.md" />
-		<Project Path="ScrubJay.Exceptions/asp/ScrubJay.Exceptions.Asp.csproj">
-			<BuildType Solution="Analyze|*" Project="Debug" />
-			<BuildType Solution="Nuget|*" Project="Debug" />
-		</Project>
-		<Project Path="ScrubJay.Exceptions/src/ScrubJay.Exceptions.csproj" />
+	<Folder Name="/Errors/">
+		<File Path="ScrubJay.Errors/README.md" />
+		<Project Path="ScrubJay.Errors/src/ScrubJay.Errors.csproj" />
+		<Project Path="ScrubJay.Errors/asp/ScrubJay.Errors.Asp.csproj"/>
 	</Folder>
 	<Folder Name="/Enums/">
 		<File Path="ScrubJay.Enums/README.md" />

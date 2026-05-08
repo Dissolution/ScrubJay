@@ -105,11 +105,11 @@ public static class TypeConstraints
     ;
 
     /// <summary>
-    /// This constraint limits <typeparamref name="T"/> to <see cref="Delegate"/> types.
+    /// This constraint limits <typeparamref name="D"/> to <see cref="Delegate"/> types.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct IsDelegate<T>
-        where T : Delegate;
+    public readonly struct IsDelegate<D>
+        where D : Delegate;
 
     /// <summary>
     /// This constraint requires <typeparamref name="E"/> to be a <see langword="struct"/> and <see cref="Enum"/>.
@@ -122,25 +122,31 @@ public static class TypeConstraints
     // Common Derived Types
 
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IDisposable"/>.
+    /// Constrains <typeparamref name="TSelf"/> to <see cref="IDisposable"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIDisposable<T>
-        where T : IDisposable;
+    public readonly struct HasIDisposable<TSelf>
+        where TSelf : IDisposable;
 
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IEquatable{T}"/>.
+    /// Constrains <typeparamref name="TSelf"/> to <see cref="IEquatable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIEquatable<T>
-        where T : IEquatable<T>;
-
+    public readonly struct HasIEquatable<TSelf>
+        where TSelf : IEquatable<TSelf>;
+    
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IComparable{T}"/>.
+    /// Constrains to <see cref="IComparable"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIComparable<T>
-        where T : IComparable<T>;
+    public readonly struct HasIComparable;
+    
+    /// <summary>
+    /// Constrains <typeparamref name="TSelf"/> to <see cref="IComparable{T}"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIComparable<TSelf>
+        where TSelf : IComparable<TSelf>;
 
 
     // Net7.0+ types

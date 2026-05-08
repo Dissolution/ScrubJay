@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <RootNamespace>ScrubJay.Errors</RootNamespace>
+    </PropertyGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Errors</PackageId>
+        <Title>ScrubJay - Errors</Title>
+        <Description>
+            Extensions `Exception` in many ways and introduces `Ex` utility class for creating more readable Exceptions.
+        </Description>
+        <Version>0.0.1-alpha</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'"
+                          Include="System.Reflection.Emit.Lightweight">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\README.md">
+            <Link>README.md</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text"/>
+        <Using Include="ScrubJay.Text.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Text.Building"/>
+        <Using Include="ScrubJay.Text.Rendering"/>
+        <Using Include="ScrubJay.Errors.Exceptions"/>
+        <Using Include="ScrubJay.Errors.Extensions"/>
+        <Using Include="ScrubJay.Errors.Problems"/>
+        <Using Include="ScrubJay.Errors.Utilities"/>
+        <Using Include="ScrubJay.Errors.Validation"/>
+    </ItemGroup>
+
+</Project>
