@@ -79,8 +79,8 @@ static partial class Any
     {
         public delegate string AnyToString(ref readonly T value);
 
-        private static AnyToString _delegate;
-        private static bool _delegateTested;
+        private volatile static AnyToString _delegate;
+        private volatile static bool _delegateTested;
 
         static ToStringCache()
         {

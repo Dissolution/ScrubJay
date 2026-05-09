@@ -28,7 +28,7 @@ partial class Any
     public static bool Equals<T>(in T? left, in T? right)
         => EqualityComparer<T>.Default.Equals(left!, right!);
 
-    public static bool Equal<E>(in E? left, in E? right, TypeConstraints.HasIEquatable<E> _ = default)
+    public static bool Equals<E>(in E? left, in E? right, TypeConstraints.HasIEquatable<E> _ = default)
         where E : IEquatable<E>
     {
         if (left is not null)
@@ -40,7 +40,7 @@ partial class Any
 
 #if NET7_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equal<E>(in E? left, in E? right, TypeConstraints.HasIEqualityOperators<E> _ = default)
+    public static bool Equals<E>(in E? left, in E? right, TypeConstraints.HasIEqualityOperators<E> _ = default)
         where E : IEqualityOperators<E, E, bool>
     {
         return left == right;

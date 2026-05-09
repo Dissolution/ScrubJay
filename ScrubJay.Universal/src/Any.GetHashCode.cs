@@ -92,8 +92,8 @@ partial class Any
     {
         private delegate int AnyGetHashCode(ref readonly T value);
 
-        private static AnyGetHashCode _delegate;
-        private static bool _delegateTested;
+        private volatile static AnyGetHashCode _delegate;
+        private volatile static bool _delegateTested;
 
         static GetHashCodeCache()
         {
