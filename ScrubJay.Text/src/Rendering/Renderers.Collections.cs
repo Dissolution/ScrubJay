@@ -1,3 +1,5 @@
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+
 namespace ScrubJay.Text.Rendering;
 
 partial class Renderers
@@ -7,7 +9,7 @@ partial class Renderers
         where D : IDictionary<K, V>
     {
         builder.Append('(')
-            .Render(Any.GetType(in dictionary))
+            .Render(UNPROCESSED_Any.GetType(in dictionary))
             .Append(')');
 
         if (dictionary is null)

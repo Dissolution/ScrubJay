@@ -1,3 +1,5 @@
+using ScrubJay.Universal.UNPROCESSED;
+
 namespace ScrubJay.Universal;
 
 /// <summary>
@@ -19,28 +21,28 @@ public sealed class UniversalComparer<T> : IEqualityComparer<T>, IComparer<T>
 
     private UniversalComparer() { }
 
-    /// <inheritdoc cref="Any.Equals{T}(in T, in T)"/>
+    /// <inheritdoc cref="UNPROCESSED.Any.Equals{T}(in T, in T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
     {
 #if NET9_0_OR_GREATER
-        return Any.Equals<T>(in x, in y);
+        return UNPROCESSED.Any.Equals<T>(in x, in y);
 #else
         return Any.Equals<T>(in x, in y);
 #endif
     }
 
-    /// <inheritdoc cref="Any.GetHashCode{T}(in T)"/>
+    /// <inheritdoc cref="UNPROCESSED.Any.GetHashCode{T}(in T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetHashCode(T obj)
     {
-        return Any.GetHashCode<T>(in obj);
+        return UNPROCESSED.Any.GetHashCode<T>(in obj);
     }
 
-    /// <inheritdoc cref="Any.Compare{T}(in T, in T)"/>
+    /// <inheritdoc cref="UNPROCESSED.Any.Compare{T}(in T, in T)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Compare(T? x, T? y)
     {
-        return Any.Compare(in x, in y);
+        return UNPROCESSED.Any.Compare(in x, in y);
     }
 }

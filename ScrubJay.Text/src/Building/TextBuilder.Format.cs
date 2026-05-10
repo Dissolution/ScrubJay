@@ -1,6 +1,8 @@
 
 // ReSharper disable MergeCastWithTypeCheck
 
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+
 namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
@@ -199,7 +201,7 @@ public partial class TextBuilder
 
         if (typeof(T).IsByRef)
         {
-            return Append(Any.ToString<T>(in value, format, formatProvider, _));
+            return Append(UNPROCESSED_Any.ToString<T>(in value, format, formatProvider, _));
         }
 
         // we cannot defer to Format<T> as we have the `allows ref struct` constraint on our `T`

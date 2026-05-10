@@ -1,5 +1,7 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
 
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+
 namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
@@ -34,13 +36,13 @@ public partial class TextBuilder
 
     public TextBuilder RenderTypeOf<I>(in I? instance)
     {
-        return Render(Any.GetType<I>(in instance));
+        return Render(UNPROCESSED_Any.GetType<I>(in instance));
     }
 
 #if NET9_0_OR_GREATER
     public TextBuilder RenderTypeOf<I>(in I? instance, TypeConstraints.AllowsRefStruct<I> _ = default)
     {
-        return Render(Any.GetType<I>(in instance, _));
+        return Render(UNPROCESSED_Any.GetType<I>(in instance, _));
     }
 #endif
 }

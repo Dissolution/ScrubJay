@@ -1,10 +1,11 @@
 using System.Reflection;
 using System.Reflection.Emit;
+using ScrubJay.Universal.Reflection;
 #pragma warning disable CS8620
 // ReSharper disable MethodOverloadWithOptionalParameter
 // ReSharper disable InvokeAsExtensionMember
 
-namespace ScrubJay.Universal;
+namespace ScrubJay.Universal.UNPROCESSED;
 
 partial class Any
 {
@@ -73,22 +74,17 @@ partial class Any
 #endif
     }
 
-    
+
     public static int Compare(scoped text left, scoped text right)
     {
         return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
     }
-    
+
     public static int Compare(scoped text left, scoped text right, StringComparison comparison)
     {
         return MemoryExtensions.CompareTo(left, right, comparison);
     }
-}
 
-
-#if NET9_0_OR_GREATER
-partial class Any
-{
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(in T? left, in T? right,
         IComparer<T>? comparer,
@@ -123,13 +119,17 @@ partial class Any
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(in T? left, in T? right,
         TypeConstraints.AllowsRefStruct<T> _ = default)
+#if NET9_0_OR_GREATER
         where T : allows ref struct
+#endif
     {
         return CompareCache<T>.Invoke(in left, in right);
     }
 
     private static class CompareCache<T>
+#if NET9_0_OR_GREATER
         where T : allows ref struct
+#endif
     {
         public delegate int AnyCompare(ref readonly T? left, ref readonly T? right);
 
@@ -138,7 +138,7 @@ partial class Any
         static CompareCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? compareToMethod = instanceType.FindBestMethod("CompareTo", typeof(int), typeof(T));
+            MethodInfo? compareToMethod = instanceType.FindMatchingInstanceMethod("CompareTo", typeof(int), typeof(T));
 
             if (compareToMethod is not null)
             {
@@ -184,4 +184,3 @@ partial class Any
         }
     }
 }
-#endif

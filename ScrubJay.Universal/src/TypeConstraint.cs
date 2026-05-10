@@ -3,20 +3,27 @@
 namespace ScrubJay.Universal;
 
 /// <summary>
-/// Type Constraints are provided to allow generic methods with different <c>where</c> constraints to co-exist without compiler error.<br />
-/// <br/>
-/// This code will not compile:<code>
+/// Type Constraints are marker <see langword="struct"/>s that can themselves carry generic type constraints,<br/>
+/// which enables overload disambiguation that cannot be expressed through constraints alone.
+/// </summary>
+/// <remarks>
+/// <para>
+/// The issue is that C# does not use generic type constraints when differentiating methods,
+/// making certain method combinations impossible to declare:<code>
 /// public T DoThing&lt;T&gt;(T value) where T : struct;
 /// public T DoThing&lt;T&gt;(T value) where T : class;
 /// </code>
-/// Error: <i>member with the same signature is already declared</i> <br />
-/// -------------<br/>
-/// You can use <see cref="TypeConstraints"/> to fix the error:<br />
-/// <code>
-/// public static T DoThing&lt;T&gt;(T value, TypeConstraints.IsStruct&lt;T&gt; _ = default) where T : struct
-/// public static T DoThing&lt;T&gt;(T value, TypeConstraints.IsClass&lt;T&gt; _ = default) where T : class
+/// Will cause error <see href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/overload-resolution#duplicate-overloads-defined">CS0111</see>,
+/// <i>Type already defines a member called 'name' with the same parameter types</i>
+/// </para>
+/// <para>
+/// Adding a <see cref="TypeConstraints"/> parameter that defaults to <see langword="default"/> will solve this problem:<code>
+/// public static T DoThing&lt;T&gt;(T value, TypeConstraints.IsStruct&lt;T&gt; _ = default) where T : struct;
+/// public static T DoThing&lt;T&gt;(T value, TypeConstraints.IsClass&lt;T&gt; _ = default) where T : class;
 /// </code>
-/// </summary>
+/// The caller never passes the TypeConstraint explicitly; it exists for the compiler.
+/// </para>
+/// </remarks>
 /// <seealso href="https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"/>
 [PublicAPI]
 public static class TypeConstraints
@@ -34,20 +41,32 @@ public static class TypeConstraints
         where T : struct;
 
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to be a reference type, either nullable or non-nullable.<br/>
+    /// Constrains <typeparamref name="T"/> to be a non-nullable unmanaged type.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="IsUnmanaged{T}"/> constraint implies the <see cref="IsStruct{T}"/> constraint and can't be combined with either the <see cref="IsStruct{T}"/> constraint nor the <see cref="HasNew{T}"/> constraint.
+    /// </remarks>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsUnmanaged<T>
+        where T : unmanaged;
+
+    /// <summary>
+    /// This anti-constraint declares that <typeparamref name="T"/> can be a <see langword="ref struct"/> type.<br/>
+    /// The generic type or method must obey ref safety rules for any instance of <typeparamref name="T"/> because it might be a <see langword="ref struct"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct AllowsRefStruct<T>
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        ;
+    
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to be a reference type.<br/>
     /// This constraint applies also to any <see langword="class"/>, <see langword="interface"/>, <see cref="Delegate"/>, or <see cref="Array"/> type, including <see langword="record">records</see>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct IsNonNullClass<T>
-        where T : class;
-
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to be a reference type.<br/>
-    /// This constraint applies also to any <see langword="class"/>, <see langword="interface"/>, <see cref="Delegate"/>, or <see cref="Array"/> type.<br/>
-    /// In a nullable context, <typeparamref name="T"/> must be a non-nullable reference type.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct IsNullableClass<T>
+    public readonly struct IsClass<T>
         where T : class;
 
     /// <summary>
@@ -57,16 +76,6 @@ public static class TypeConstraints
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsNotNull<T>
         where T : notnull;
-
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to be a non-nullable unmanaged type.
-    /// </summary>
-    /// <remarks>
-    /// The <see cref="IsUnmanaged{T}"/> constraint implies the <see cref="IsStruct{T}"/> constraint and can't be combined with either the <see cref="IsStruct{T}"/> constraint nor the <see cref="HasNew{T}"/> constraint.
-    /// </remarks>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct IsUnmanaged<T>
-        where T : unmanaged;
 
     /// <summary>
     /// Constrains <typeparamref name="T"/> to have a public parameterless constructor.
@@ -87,22 +96,11 @@ public static class TypeConstraints
 
     /// <summary>
     /// This constraint resolves the ambiguity when you need to specify an unconstrained type parameter when you override a method or provide an explicit interface implementation.
-    /// The default constraint implies the base method without either the <see cref="IsNullableClass{T}"/>, <see cref="IsNonNullClass{T}"/>, or <see cref="IsStruct{T}"/> constraint.
+    /// The default constraint implies the base method without either the <see cref="IsClass{T}"/>, <see cref="IsClass{T}"/>, or <see cref="IsStruct{T}"/> constraint.
     /// </summary>
     /// <seealso href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/unconstrained-type-parameter-annotations#default-constraint"/>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsUnconstrained<T>;
-
-    /// <summary>
-    /// This anti-constraint declares that <typeparamref name="T"/> can be a <see langword="ref struct"/> type.<br/>
-    /// The generic type or method must obey ref safety rules for any instance of <typeparamref name="T"/> because it might be a <see langword="ref struct"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct AllowsRefStruct<T>
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    ;
 
     /// <summary>
     /// This constraint limits <typeparamref name="D"/> to <see cref="Delegate"/> types.
@@ -122,83 +120,141 @@ public static class TypeConstraints
     // Common Derived Types
 
     /// <summary>
-    /// Constrains <typeparamref name="TSelf"/> to <see cref="IDisposable"/>.
+    /// Constrains <typeparamref name="T"/> to <see cref="IEquatable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIDisposable<TSelf>
-        where TSelf : IDisposable;
+    public readonly struct HasIEquatable<T>
+        where T : IEquatable<T>;
 
-    /// <summary>
-    /// Constrains <typeparamref name="TSelf"/> to <see cref="IEquatable{T}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIEquatable<TSelf>
-        where TSelf : IEquatable<TSelf>;
-    
     /// <summary>
     /// Constrains to <see cref="IComparable"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIComparable;
-    
+
     /// <summary>
-    /// Constrains <typeparamref name="TSelf"/> to <see cref="IComparable{T}"/>.
+    /// Constrains <typeparamref name="T"/> to <see cref="IComparable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIComparable<TSelf>
-        where TSelf : IComparable<TSelf>;
+    public readonly struct HasIComparable<T>
+        where T : IComparable<T>;
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see cref="IConvertible"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIConvertible<T>
+        where T : IConvertible;
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see cref="IFormattable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIFormattable<T>
+        where T : IFormattable;
+
+#if NET6_0_OR_GREATER
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see cref="ISpanFormattable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasISpanFormattable<T>
+        where T : ISpanFormattable;
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="ISpanFormattable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasISpanFormattable<T>;
+#endif
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see cref="IDisposable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIDisposable<T>
+        where T : IDisposable;
+
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see cref="IAsyncDisposable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIAsyncDisposable<T>
+        where T : IAsyncDisposable;
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="IAsyncDisposable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIAsyncDisposable<T>;
+#endif
 
 
     // Net7.0+ types
     // supported on lower versions to allow attributes to just exist
 
-#if !NET7_0_OR_GREATER
+#if NET7_0_OR_GREATER
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="ISpanParsable{T}"/>.
+    /// Constrains <typeparamref name="T"/> to <see cref="IParsable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasISpanParsable<T>;
-
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="INumberBase{T}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasINumberBase<T>;
-
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="IEqualityOperators{T,T,bool}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIEqualityOperators<T>;
-
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="IComparisonOperators{T,T,int}"/>
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIComparisonOperators<T>;
-
+    public readonly struct HasIParsable<T>
+        where T : IParsable<T>;
 #else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="IParsable{T}"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIParsable<T>;
+#endif
+
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see cref="ISpanParsable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasISpanParsable<T>
         where T : ISpanParsable<T>;
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="ISpanParsable{T}"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasISpanParsable<T>;
+#endif
 
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see cref="INumberBase{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasINumberBase<T>
         where T : INumberBase<T>;
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="INumberBase{T}"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasINumberBase<T>;
+#endif
 
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see cref="IEqualityOperators{T,T,bool}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIEqualityOperators<T>
         where T : IEqualityOperators<T, T, bool>;
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="IEqualityOperators{T,T,bool}"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIEqualityOperators<T>;
+#endif
 
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Constrains <typeparamref name="T"/> to
     /// <see cref="IComparisonOperators{T,T,int}"/>.
@@ -206,10 +262,36 @@ public static class TypeConstraints
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIComparisonOperators<T>
         where T : IComparisonOperators<T, T, int>;
-
+#else
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="IComparisonOperators{T,T,int}"/>
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct HasIComparisonOperators<T>;
 #endif
-    
+
     // combinations
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to be a reference type with a public parameterless constructor.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsClassNew<T>
+        where T : class, new();
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to be a <see langword="struct"/> and <see cref="IDisposable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsStructDisposable<T>
+        where T : struct, IDisposable;
+
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to be a reference type and <see cref="IDisposable"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsClassDisposable<T>
+        where T : class, IDisposable;
 
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see cref="IDisposable"/> and <c>new()</c>.
@@ -217,8 +299,7 @@ public static class TypeConstraints
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsDisposableNew<T>
         where T : IDisposable, new();
-
-
+    
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="unmanaged"/> and <c>allows ref struct</c>.
     /// </summary>

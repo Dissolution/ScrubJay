@@ -1,4 +1,5 @@
 ﻿using ScrubJay.Functional.IMPL;
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
 
 namespace ScrubJay.Functional;
 
@@ -319,14 +320,14 @@ public readonly ref struct RefOption<T>
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return _isSome && Any.Equals<T>(_value, obj);
+        return _isSome && UNPROCESSED_Any.Equals<T>(_value, obj);
     }
 
     public override int GetHashCode()
     {
         if (_isSome)
         {
-            return Any.GetHashCode<T>(in _value);
+            return UNPROCESSED_Any.GetHashCode<T>(in _value);
         }
 
         return 0;
@@ -337,7 +338,7 @@ public readonly ref struct RefOption<T>
         if (_isSome)
         {
 #if NET9_0_OR_GREATER
-            return $"Some({Any.ToString(in _value)})";
+            return $"Some({UNPROCESSED_Any.ToString(in _value)})";
 #else
             return $"Some({_value})";
 #endif

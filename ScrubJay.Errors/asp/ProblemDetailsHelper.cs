@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScrubJay.Errors.Problems;
 using ScrubJay.Text.Collections;
 using ScrubJay.Universal.Extensions;
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
 
 namespace ScrubJay.Errors.Asp;
 
@@ -176,7 +177,7 @@ public static class ProblemDetailsHelper
         if (error is Exception exception)
             return ToProblemDetails(exception);
 
-        var errorType = Any.GetType(in error);
+        var errorType = UNPROCESSED_Any.GetType(in error);
         
         problemDetails = new ProblemDetails()
         {

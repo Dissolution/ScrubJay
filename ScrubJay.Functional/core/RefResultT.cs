@@ -2,6 +2,7 @@
 // Do not declare static methods on generic types
 // Do not catch Exception
 
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
 #pragma warning disable CA1715, CA1000, CA1031
 
 
@@ -372,7 +373,7 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return Any.Equals<T>(_value, obj);
+            return UNPROCESSED_Any.Equals<T>(_value, obj);
         }
         else
         {
@@ -384,7 +385,7 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return Any.GetHashCode<T>(in _value);
+            return UNPROCESSED_Any.GetHashCode<T>(in _value);
         }
 
         return _error!.GetHashCode();
@@ -395,7 +396,7 @@ public readonly ref struct RefResult<T>
         if (_isOk)
         {
 #if NET9_0_OR_GREATER
-            return $"Ok({Any.ToString(in _value)})";
+            return $"Ok({UNPROCESSED_Any.ToString(in _value)})";
 #else
             return $"Ok({_value})";
 #endif

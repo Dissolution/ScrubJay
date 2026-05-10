@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Text.Building;
+﻿using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+
+namespace ScrubJay.Text.Building;
 
 /* This portion of TextBuilder contains the underlying methods that write text directly to the rented array
  * These are designed for efficiency and do not return TextBuilder fluently for better inlining
@@ -98,6 +100,6 @@ public partial class TextBuilder
     // ReSharper disable once MethodOverloadWithOptionalParameter
     internal void Write<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
-        => Write(Any.ToString<T>(in value));
+        => Write(UNPROCESSED_Any.ToString<T>(in value));
 #endif
 }

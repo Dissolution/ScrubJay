@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using ScrubJay.Polyfills;
 using ScrubJay.Text.Collections;
 using ScrubJay.Text.Extensions;
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
 
 namespace ScrubJay.Errors.Problems;
 
@@ -36,7 +37,7 @@ public static class ExceptionUrn
     public static string ToTypeUrn<E>(E? exception)
         where E : Exception
     {
-        var exceptionType = Any.GetType<E>(in exception);
+        var exceptionType = UNPROCESSED_Any.GetType<E>(in exception);
         return ToTypeUrn(exceptionType);
     }
 

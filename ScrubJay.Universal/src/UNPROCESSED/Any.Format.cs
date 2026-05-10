@@ -3,8 +3,9 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+using ScrubJay.Universal.Reflection;
 
-namespace ScrubJay.Universal;
+namespace ScrubJay.Universal.UNPROCESSED;
 
 partial class Any
 {
@@ -50,7 +51,7 @@ static partial class Any
         static FormatCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? formatMethod = instanceType.FindBestMethod("ToString", typeof(string), [typeof(string), typeof(IFormatProvider)]);
+            MethodInfo? formatMethod = instanceType.FindMatchingInstanceMethod("ToString", typeof(string), [typeof(string), typeof(IFormatProvider)]);
 
             if (formatMethod is not null)
             {

@@ -1,65 +1,62 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
-
-#pragma warning disable CS1573 // Parameter has no matching param tag in the XML comment (but other parameters do)
 namespace ScrubJay.Universal;
 
-static partial class Any
+partial class Any
 {
     /// <summary>
-    /// Gets the <see cref="Type"/> of a <typeparamref name="T"/> <paramref name="value"/>.
+    /// Gets the <see cref="Type"/> of the <paramref name="instance"/>.
     /// </summary>
-    /// <param name="value">
-    /// The <typeparamref name="T"/> value to get the true <see cref="Type"/> of.
+    /// <param name="instance">
+    /// The instance to return the <see cref="Type"/> of.
     /// </param>
     /// <typeparam name="T">
-    /// The generic <see cref="Type"/> of this method invocation, which may be less specific than the true <see cref="Type"/>.
+    /// The generic <see cref="Type"/> this method was called with,
+    /// which may be a subtype of the <paramref name="instance"/>'s actual type.
     /// </typeparam>
     /// <returns>
-    /// The true <see cref="Type"/> of <paramref name="value"/>, which may be more specific than <c>typeof(T)</c>.
+    /// The <paramref name="instance"/>'s <see cref="Type"/>.
     /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType<T>(in T? value)
+    public static Type GetType<T>(in T? instance)
     {
-        if (value is not null)
-        {
-            return value.GetType();
-        }
-        else
-        {
+        if (instance is null)
             return typeof(T);
-        }
+        return instance.GetType();
     }
-
-    [return: NotNullIfNotNull(nameof(obj))]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type? GetType(object? obj)
-    {
-        if (obj is not null)
-            return obj.GetType();
-        return null;
-    }
-}
 
 #if NET9_0_OR_GREATER
-static partial class Any
-{
     /// <summary>
-    /// Gets the <see cref="Type"/> of a <typeparamref name="T"/> <paramref name="value"/>.
+    /// Gets the <see cref="Type"/> of the <paramref name="instance"/>.
     /// </summary>
-    /// <param name="value">
-    /// The <typeparamref name="T"/> value to get the true <see cref="Type"/> of.
+    /// <param name="instance">
+    /// The instance to return the <see cref="Type"/> of.
+    /// </param>
+    /// <param name="_">
+    /// A <see cref="TypeConstraints"/> applied so that this method is only called with <see langword="ref struct"/> <paramref name="instance"/>s.
     /// </param>
     /// <typeparam name="T">
-    /// The generic <see cref="Type"/> of this method invocation.
+    /// The generic <see cref="Type"/> this method was called with,
+    /// which may be a subtype of the <paramref name="instance"/>'s actual type.
     /// </typeparam>
-    /// <returns><c>typeof(T)</c></returns>
+    /// <returns>
+    /// The <paramref name="instance"/>'s <see cref="Type"/>.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#pragma warning disable RCS1163
-    public static Type GetType<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
-#pragma warning restore RCS1163
+    public static Type GetType<T>(in T? instance, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         return typeof(T);
     }
-}
 #endif
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Type GetType<T>(scoped Span<T> span)
+    {
+        return typeof(Span<T>);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Type GetType<T>(scoped ReadOnlySpan<T> span)
+    {
+        return typeof(ReadOnlySpan<T>);
+    }
+}

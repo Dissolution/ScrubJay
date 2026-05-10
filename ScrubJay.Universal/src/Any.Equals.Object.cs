@@ -1,98 +1,107 @@
-#pragma warning disable CS8620
-// ReSharper disable MethodOverloadWithOptionalParameter
-
+#if NET9_0_OR_GREATER
 using System.Reflection;
 using System.Reflection.Emit;
+using ScrubJay.Universal.Reflection;
+#endif
+// ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
 
 partial class Any
 {
-    /// <summary>
-    /// Determines whether a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
-    /// </summary>
-    /// <param name="value">
-    /// The <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <param name="other">
-    /// The <see cref="object"/> to compare.
-    /// </param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of <paramref name="value"/> to compare to the <see cref="object"/>.
-    /// </typeparam>
-    /// <returns>
-    /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
-    /// </returns>
-    public static bool Equals<T>(in T? value, object? other)
+    public static bool Equals<T>(in T? instance, object? other)
     {
-        if (value is null)
+        if (instance is null)
             return other is null;
-        return value.Equals(other);
+        return instance.Equals(other);
     }
-}
 
 #if NET9_0_OR_GREATER
-partial class Any
-{
-    /// <summary>
-    /// Determines whether a <typeparamref name="T"/> <paramref name="value"/> is equal to an <see cref="object"/>.
-    /// </summary>
-    /// <param name="value">
-    /// The <typeparamref name="T"/> value to compare.
-    /// </param>
-    /// <param name="other">
-    /// The <see cref="object"/> to compare.
-    /// </param>
-    /// <param name="_"></param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of <paramref name="value"/> to compare to the <see cref="object"/>.
-    /// </typeparam>
-    /// <returns>
-    /// <see langword="true"/> if the <paramref name="value"/> and <see cref="object"/> are equal; otherwise <see langword="false"/>.
-    /// </returns>
-    public static bool Equals<T>(
-        in T? value,
-        object? other,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
+
+    public static bool Equals<T>(in T? instance, object? other, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (value is null)
+        if (instance is null)
             return other is null;
-        return EqualsObjectCache<T>.Invoke(in value, other);
+        return EqualsObjectCache<T>.Invoke(in instance, other);
     }
 
     private static class EqualsObjectCache<T>
         where T : allows ref struct
     {
-        public delegate bool AnyEqualsObject(ref readonly T? value, object? other);
+        private delegate bool AnyEqualsObject(ref readonly T value, object? other);
 
-        public static readonly AnyEqualsObject Invoke;
+        private static volatile AnyEqualsObject _delegate;
+        private static volatile bool _delegateTested;
 
         static EqualsObjectCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? equalsMethod = instanceType.FindBestMethod("Equals", typeof(bool), [typeof(object)]);
+            MethodInfo? method = instanceType
+                .FindMatchingInstanceMethods(nameof(object.Equals), typeof(bool), [typeof(object)])
+                .FirstOrDefault();
 
-            if (equalsMethod is not null)
+            if (method is not null)
             {
                 var dynamicMethod = DynamicMethod.New<AnyEqualsObject>($"Any_{instanceType}_Equals_Object");
-                var generator = dynamicMethod.GetILGenerator();
+                var gen = dynamicMethod.GetILGenerator();
 
-                generator.Emit(OpCodes.Ldarg_0);
-                generator.Emit(OpCodes.Ldarg_1);
-                generator.Emit(OpCodes.Constrained, instanceType);
-                generator.Emit(OpCodes.Callvirt, equalsMethod);
-                generator.Emit(OpCodes.Ret);
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldarg_1);
+                gen.Emit(OpCodes.Constrained, instanceType);
+                gen.Emit(OpCodes.Callvirt, method);
+                gen.Emit(OpCodes.Ret);
 
                 if (dynamicMethod.TryCreateDelegate<AnyEqualsObject>(out var func))
                 {
-                    Invoke = func;
+                    _delegate = func;
+                    _delegateTested = false;
                     return;
                 }
             }
-            Invoke = (ref readonly value, other) => false;
+
+            _delegate = Fallback;
+            _delegateTested = true;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool Fallback(ref readonly T value, object? other) => false;
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool TryInvoke(ref readonly T value, object? other)
+        {
+            try
+            {
+                return _delegate(in value, other);
+            }
+            catch
+            {
+                _delegate = Fallback;
+                return _delegate(in value, other);
+            }
+            finally
+            {
+                _delegateTested = true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Invoke(ref readonly T value, object? other)
+        {
+            if (_delegateTested)
+                return _delegate(in value, other);
+            return TryInvoke(in value, other);
         }
     }
-}
-
 #endif
+
+    public static bool Equals<T>(scoped Span<T> span, object? other)
+    {
+        return false;
+    }
+
+    public static bool Equals<T>(scoped ReadOnlySpan<T> span, object? other)
+    {
+        return false;
+    }
+}

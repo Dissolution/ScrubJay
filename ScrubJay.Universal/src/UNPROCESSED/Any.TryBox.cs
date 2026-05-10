@@ -1,5 +1,5 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
-namespace ScrubJay.Universal;
+namespace ScrubJay.Universal.UNPROCESSED;
 
 static partial class Any
 {

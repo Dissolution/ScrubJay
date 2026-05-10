@@ -1,4 +1,5 @@
-﻿#pragma warning disable CA1716
+﻿using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+#pragma warning disable CA1716
 
 namespace ScrubJay.Functional.IMPL;
 
@@ -30,7 +31,7 @@ public readonly ref struct Error<E>
     public override string ToString()
     {
 #if NET9_0_OR_GREATER
-        return $"Error({Any.ToString(in Value)})";
+        return $"Error({UNPROCESSED_Any.ToString(in Value)})";
 #else
         return $"Error({Value})";
 #endif

@@ -1,5 +1,7 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
 
+using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+
 namespace ScrubJay.Errors.Validation;
 
 partial class Demand
@@ -40,7 +42,7 @@ partial class Demand
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (!Any.Equals<T>(in argument, in expected))
+        if (!UNPROCESSED_Any.Equals<T>(in argument, in expected))
             ThrowArgNotEqual(argument, expected, info, argumentName);
     }
 #endif
@@ -82,7 +84,7 @@ partial class Demand
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (Any.Equals<T>(in argument, in expected))
+        if (UNPROCESSED_Any.Equals<T>(in argument, in expected))
             ThrowArgEqual(argument, expected, info, argumentName);
     }
 #endif
