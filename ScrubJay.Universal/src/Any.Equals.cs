@@ -9,69 +9,117 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    /// <summary>
+    /// Determines whether two <see cref="IEquatable{TEquatable}"/> values are equal.
+    /// </summary>
+    /// <param name="left">
+    /// The first <typeparamref name="TEquatable"/> value to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <typeparamref name="TEquatable"/> value to equate.
+    /// </param>
+    /// <typeparam name="TEquatable">
+    /// The <see cref="Type"/> of values to equate.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<E>(in E? instance, in E? other)
-        where E : IEquatable<E>
+    public static bool Equals<TEquatable>(in TEquatable? left, in TEquatable? right)
+        where TEquatable : IEquatable<TEquatable>
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
     {
-        if (instance is not null)
-            return instance.Equals(other);
-        if (other is not null)
-            return other.Equals(instance);
+        if (left is not null)
+            return left.Equals(right!);
+        if (right is not null)
+            return right.Equals(left!);
         return true;
     }
-    
+
+    /// <summary>
+    /// Uses an <see cref="IEqualityComparer{T}"/> to determines whether two <typeparamref name="T"/> values are equal.
+    /// </summary>
+    /// <param name="left">
+    /// The first <typeparamref name="T"/> value to equate.
+    /// </param>
+    /// <param name="right">
+    /// The second <typeparamref name="T"/> value to equate.
+    /// </param>
+    /// <param name="comparer">
+    /// The <see cref="IEqualityComparer{T}"/> used to determine equality.
+    /// </param>
+    /// <typeparam name="T">
+    /// The <see cref="Type"/> of values to equate.
+    /// </typeparam>
+    /// <returns>
+    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(in T? instance, in T? other, IEqualityComparer<T> comparer)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
+    public static bool Equals<T>(in T? left, in T? right, IEqualityComparer<T>? comparer)
     {
-        return comparer.Equals(instance!, other!);
-    }
-    
-    
-    
-
-#if NET9_0_OR_GREATER
-
-    public static bool Equals<T>(in T? instance, object? other, TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (instance is null)
-            return other is null;
-        return EqualsObjectCache<T>.Invoke(in instance, other);
+        if (comparer is null)
+            return EqualityComparer<T>.Default.Equals(left!, right!);
+        return comparer.Equals(left!, right!);
     }
 
-    private static class EqualsObjectCache<T>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(in T? left, in T? right, TypeConstraints.IsUnconstrained<T> _ = default)
+    {
+        return EqualityComparer<T>.Default.Equals(left!, right!);
+    }
+
+
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(in T? left, in T? right, 
+        IEqualityComparer<T>? comparer, 
+        TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        private delegate bool AnyEqualsObject(ref readonly T value, object? other);
+        if (comparer is null)
+            return Equals<T>(in left, in right, _);
+        return comparer.Equals(left!, right!);
+    }
 
-        private static volatile AnyEqualsObject _delegate;
+
+    public static bool Equals<T>(in T? left, in T? right, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        if (left is not null)
+            return EqualsCache<T>.Invoke(in left, in right);
+        return right is null;
+    }
+
+    private static class EqualsCache<T>
+        where T : allows ref struct
+    {
+        private delegate bool AnyEquals(ref readonly T left, ref readonly T? right);
+
+        private static volatile AnyEquals _delegate;
         private static volatile bool _delegateTested;
 
-        static EqualsObjectCache()
+        static EqualsCache()
         {
             Type instanceType = typeof(T);
             MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods(nameof(object.Equals), typeof(bool), [typeof(object)])
+                .FindMatchingInstanceMethods(nameof(IEquatable<>.Equals), typeof(bool), [instanceType])
                 .FirstOrDefault();
 
             if (method is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyEqualsObject>($"Any_{instanceType}_Equals_Object");
+                var dynamicMethod = DynamicMethod.New<AnyEquals>($"Any_{instanceType}_Equals");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Ldarg_1);
+                gen.Emit(OpCodes.Ldobj, instanceType);
                 gen.Emit(OpCodes.Constrained, instanceType);
                 gen.Emit(OpCodes.Callvirt, method);
                 gen.Emit(OpCodes.Ret);
 
-                if (dynamicMethod.TryCreateDelegate<AnyEqualsObject>(out var func))
+                if (dynamicMethod.TryCreateDelegate<AnyEquals>(out var func))
                 {
                     _delegate = func;
                     _delegateTested = false;
@@ -84,19 +132,25 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool Fallback(ref readonly T value, object? other) => false;
+        private static bool Fallback(ref readonly T left, ref readonly T? right)
+        {
+            Emit.Ldarg_0();
+            Emit.Ldarg_1();
+            Emit.Ceq();
+            return Return<bool>();
+        }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool TryInvoke(ref readonly T value, object? other)
+        private static bool TryInvoke(ref readonly T left, ref readonly T? right)
         {
             try
             {
-                return _delegate(in value, other);
+                return _delegate(in left, in right);
             }
             catch
             {
                 _delegate = Fallback;
-                return _delegate(in value, other);
+                return _delegate(in left, in right);
             }
             finally
             {
@@ -105,22 +159,54 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Invoke(ref readonly T value, object? other)
+        public static bool Invoke(ref readonly T left, ref readonly T? right)
         {
             if (_delegateTested)
-                return _delegate(in value, other);
-            return TryInvoke(in value, other);
+                return _delegate(in left, in right);
+            return TryInvoke(in left, in right);
         }
     }
 #endif
 
-    public static bool Equals<T>(scoped Span<T> span, object? other)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(scoped ReadOnlySpan<T> left, scoped ReadOnlySpan<T> right)
+        where T : IEquatable<T>
     {
-        return false;
+        // ReSharper disable once InvokeAsExtensionMember
+        return MemoryExtensions.SequenceEqual(left, right);
     }
 
-    public static bool Equals<T>(scoped ReadOnlySpan<T> span, object? other)
+#if NET6_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+    public static bool Equals<T>(
+        scoped ReadOnlySpan<T> left,
+        scoped ReadOnlySpan<T> right,
+        TypeConstraints.IsUnconstrained<T> _ = default)
     {
-        return false;
+#if NET6_0_OR_GREATER
+        // ReSharper disable once InvokeAsExtensionMember
+        return MemoryExtensions.SequenceEqual(left, right);
+#else
+        if (left.Length != right.Length)
+            return false;
+
+        for (int i = 0; i < left.Length; i++)
+        {
+            if (!EqualityComparer<T>.Default.Equals(left[i], right[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+#endif
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals(scoped text left, scoped text right)
+    {
+        // ReSharper disable once InvokeAsExtensionMember
+        return MemoryExtensions.Equals(left, right, StringComparison.Ordinal);
     }
 }

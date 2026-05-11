@@ -1,4 +1,4 @@
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+using Any = ScrubJay.Universal.Any;
 
 namespace ScrubJay.Text.Rendering;
 
@@ -9,7 +9,7 @@ partial class Renderers
         where D : IDictionary<K, V>
     {
         builder.Append('(')
-            .Render(UNPROCESSED_Any.GetType(in dictionary))
+            .Render(Any.GetType(in dictionary))
             .Append(')');
 
         if (dictionary is null)

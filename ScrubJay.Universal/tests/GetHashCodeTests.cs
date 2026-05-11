@@ -12,7 +12,7 @@ public partial class GetHashCodeTests
     [InlineData(int.MaxValue)]
     public void CanGetHashCodeInt(int i32)
     {
-        int hashcode = UNPROCESSED.Any.GetHashCode<int>(in i32);
+        int hashcode = Any.GetHashCode<int>(in i32);
 
         Assert.Equal(
             i32.GetHashCode(),
@@ -26,7 +26,7 @@ public partial class GetHashCodeTests
     public void CanGetHashCodeString(string? str)
     {
         int hashCode = str?.GetHashCode() ?? 0;
-        int anyHashCode = UNPROCESSED.Any.GetHashCode<string>(in str);
+        int anyHashCode = Any.GetHashCode<string>(in str);
 
         Assert.Equal(hashCode, anyHashCode);
     }
@@ -38,7 +38,7 @@ public partial class GetHashCodeTests
     public void CanGetHashCodeChar(char ch)
     {
         int hashCode = ch.GetHashCode();
-        int anyHashCode = UNPROCESSED.Any.GetHashCode<char>(in ch);
+        int anyHashCode = Any.GetHashCode<char>(in ch);
 
         Assert.Equal(hashCode, anyHashCode);
     }
@@ -50,7 +50,7 @@ public partial class GetHashCodeTests
     public void CanHashCodeObject(object? obj)
     {
         int hashCode = obj?.GetHashCode() ?? 0;
-        int anyHashCode = UNPROCESSED.Any.GetHashCode<object>(in obj);
+        int anyHashCode = Any.GetHashCode<object>(in obj);
         
         Assert.Equal(hashCode, anyHashCode);
     }

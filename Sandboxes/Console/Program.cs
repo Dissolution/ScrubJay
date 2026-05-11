@@ -6,12 +6,12 @@ using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
 using ScrubJay.Universal;
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+using Any = ScrubJay.Universal.Any;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-var c = UNPROCESSED_Any.Compare("abc", "1");
+var c = Any.Compare("abc", "1");
 
 
 Console.WriteLine("Press enter to close this Sandbox.");

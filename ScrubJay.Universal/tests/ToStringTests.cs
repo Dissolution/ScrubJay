@@ -11,7 +11,7 @@ public partial class ToStringTests
     public void ObjectToStringWorks(object? obj)
     {
         string? toString = obj?.ToString();
-        string? anyToString = UNPROCESSED.Any.ToString(obj);
+        string? anyToString = Any.ToString(obj);
         
         Assert.Equal(toString, anyToString);
     }

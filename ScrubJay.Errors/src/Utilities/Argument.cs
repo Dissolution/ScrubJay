@@ -1,4 +1,4 @@
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+using Any = ScrubJay.Universal.Any;
 
 namespace ScrubJay.Errors.Utilities;
 
@@ -13,7 +13,7 @@ public sealed record class Argument : IRenderable
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
     {
-        return new Argument(UNPROCESSED_Any.GetType<T>(in argument), argumentName, UNPROCESSED_Any.Render<T>(in argument));
+        return new Argument(Any.GetType<T>(in argument), argumentName, Any.Render<T>(in argument));
     }
 
 #if NET9_0_OR_GREATER
@@ -25,7 +25,7 @@ public sealed record class Argument : IRenderable
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        return new Argument(UNPROCESSED_Any.GetType<T>(in argument, _), argumentName, UNPROCESSED_Any.Render<T>(in argument, _));
+        return new Argument(Any.GetType<T>(in argument, _), argumentName, Any.Render<T>(in argument, _));
     }
 #endif
 
@@ -34,7 +34,7 @@ public sealed record class Argument : IRenderable
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
     {
-        return new Argument(typeof(ReadOnlySpan<T>), argumentName, UNPROCESSED_Any.Render<T>(argument));
+        return new Argument(typeof(ReadOnlySpan<T>), argumentName, Any.Render<T>(argument));
     }
 
     public static Argument Null<T>(string? argumentName)

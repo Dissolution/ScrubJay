@@ -51,7 +51,7 @@ static partial class Any
         static FormatCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? formatMethod = instanceType.FindMatchingInstanceMethod("ToString", typeof(string), [typeof(string), typeof(IFormatProvider)]);
+            MethodInfo? formatMethod = instanceType.FindMatchingInstanceMethods("ToString", typeof(string), [typeof(string), typeof(IFormatProvider)]).FirstOrDefault();
 
             if (formatMethod is not null)
             {

@@ -1,5 +1,3 @@
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
-
 namespace ScrubJay.Functional.IMPL;
 
 /// <summary>
@@ -38,7 +36,7 @@ public readonly ref struct Ok<T>
     public override string ToString()
     {
 #if NET9_0_OR_GREATER
-        return $"Ok({UNPROCESSED_Any.ToString(in Value)})";
+        return $"Ok({Any.ToString(in Value)})";
 #else
         return $"Ok({Value})";
 #endif

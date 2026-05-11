@@ -1,4 +1,4 @@
-﻿using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+﻿using Any = ScrubJay.Universal.Any;
 
 namespace ScrubJay.Text.Building;
 
@@ -100,6 +100,6 @@ public partial class TextBuilder
     // ReSharper disable once MethodOverloadWithOptionalParameter
     internal void Write<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
-        => Write(UNPROCESSED_Any.ToString<T>(in value));
+        => Write(Any.ToString<T>(in value));
 #endif
 }

@@ -1,6 +1,6 @@
 using System.Globalization;
 using ScrubJay.Universal.Extensions;
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+using Any = ScrubJay.Universal.Any;
 
 namespace ScrubJay.Errors.Problems;
 
@@ -33,7 +33,7 @@ public static class ProblemDetailsExtensions
                 if (exception.Data.TryGetValue(TYPE_PROPERTY, out object? type))
                     return type?.ToString();
                 // Use the Exception's Type
-                var exType = UNPROCESSED_Any.GetType<E>(in exception);
+                var exType = Any.GetType<E>(in exception);
                 return $"urn:{exType.Namespace}:{Type.Render(exType)}";
             }
             set => exception.Data.SetOrRemove(TYPE_PROPERTY, value);

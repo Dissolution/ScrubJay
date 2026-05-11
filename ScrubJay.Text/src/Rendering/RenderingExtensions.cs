@@ -1,4 +1,4 @@
-using UNPROCESSED_Any = ScrubJay.Universal.UNPROCESSED.Any;
+using Any = ScrubJay.Universal.Any;
 
 namespace ScrubJay.Text.Rendering;
 
@@ -11,20 +11,20 @@ public static partial class RenderingExtensions
 
         public static string Render<T>() => Renderer.RenderValue<Type>(typeof(T));
 
-        public static string Render<I>(in I? instance) => Renderer.RenderValue<Type>(UNPROCESSED_Any.GetType(in instance));
+        public static string Render<I>(in I? instance) => Renderer.RenderValue<Type>(Any.GetType(in instance));
 
 #if NET9_0_OR_GREATER
         // ReSharper disable once MethodOverloadWithOptionalParameter
         public static string Render<I>(in I? instance, TypeConstraints.AllowsRefStruct<I> _ = default)
             where I : allows ref struct
-            => Renderer.RenderValue<Type>(UNPROCESSED_Any.GetType(in instance, _));
+            => Renderer.RenderValue<Type>(Any.GetType(in instance, _));
 #endif
     }
 }
 
 public static class AnyRenderingExtensions
 {
-    extension(Universal.UNPROCESSED.Any)
+    extension(Universal.Any)
     {
         public static string Render<T>(in T? instance)
         {
