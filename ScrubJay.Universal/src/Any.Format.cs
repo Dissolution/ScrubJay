@@ -7,77 +7,98 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
-    [return: NotNullIfNotNull(nameof(instance))]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string? Format<F>(
-        in F? instance,
-        string? format = null,
-        IFormatProvider? formatProvider = null)
-        where F : IFormattable
+    public static bool TryFormat<T>(
+        in T? instance,
+        Span<char> destination,
+        out int charsWritten,
+        text format = default,
+        IFormatProvider? provider = null)
+        where T : ISpanFormattable
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif
     {
         if (instance is null)
-            return null;
-        return instance.ToString(format, formatProvider);
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        return instance.TryFormat(destination, out charsWritten, format, provider);
     }
 
-    [return: NotNullIfNotNull(nameof(instance))]
-    public static string? Format<T>(
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryFormat<T>(
         in T? instance,
-        string? format = null,
-        IFormatProvider? formatProvider = null,
+        Span<char> destination,
+        out int charsWritten,
+        scoped text format = default,
+        IFormatProvider? provider = null,
         TypeConstraints.IsUnconstrained<T> _ = default)
     {
         if (instance is null)
-            return null;
-        return CompareCache
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        return TryFormatCache<T>.Invoke(in instance, destination, out charsWritten, format, provider);
     }
 
 #if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string Format<T>(
+    public static bool TryFormat<T>(
         in T? instance,
-        string? format = null,
-        IFormatProvider? formatProvider = null,
+        Span<char> destination,
+        out int charsWritten,
+        scoped text format = default,
+        IFormatProvider? provider = null,
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-   
+        if (instance is null)
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        return TryFormatCache<T>.Invoke(in instance, destination, out charsWritten, format, provider);
     }
 #endif
 
-    private static class FormatCache<T>
+    private static class TryFormatCache<T>
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        private delegate string AnyFormat(ref readonly T instance, string? format, IFormatProvider? provider);
+        private delegate bool AnyTryFormat(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider);
 
-        private static volatile AnyFormat _delegate;
+        private static volatile AnyTryFormat _delegate;
         private static volatile bool _delegateTested;
 
-        static FormatCache()
+        static TryFormatCache()
         {
             Type instanceType = typeof(T);
             MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods(nameof(IFormattable.ToString), typeof(string), [typeof(string), typeof(IFormatProvider)])
+                .FindMatchingInstanceMethods(nameof(ISpanFormattable.TryFormat), typeof(bool), [typeof(Span<char>), typeof(int).MakeByRefType(), typeof(text), typeof(IFormatProvider)])
                 .FirstOrDefault();
 
             if (method is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyFormat>($"Any_{instanceType}_Format");
+                var dynamicMethod = DynamicMethod.New<AnyTryFormat>($"Any_{instanceType}_Format");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Ldarg_1);
                 gen.Emit(OpCodes.Ldarg_2);
+                gen.Emit(OpCodes.Ldarg_3);
+                gen.Emit(OpCodes.Ldarg, 4);
                 gen.Emit(OpCodes.Constrained, instanceType);
                 gen.Emit(OpCodes.Callvirt, method);
                 gen.Emit(OpCodes.Ret);
 
-                if (dynamicMethod.TryCreateDelegate<AnyFormat>(out var func))
+                if (dynamicMethod.TryCreateDelegate<AnyTryFormat>(out var func))
                 {
                     _delegate = func;
                     _delegateTested = false;
@@ -90,22 +111,30 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string Fallback(ref readonly T instance, string? format, IFormatProvider? provider)
+        private static bool Fallback(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
-            return Any.ToString<T>(in instance)!;
+            string str = Any.ToString<T>(in instance)!;
+            charsWritten = str.Length;
+            if (str.TryCopyTo(destination))
+            {
+                return true;
+            }
+
+            charsWritten = 0;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static int TryInvoke(ref readonly T left, ref readonly T? right)
+        private static bool TryInvoke(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
             try
             {
-                return _delegate(in left, in right);
+                return _delegate(in instance, destination, out charsWritten, format, provider);
             }
             catch
             {
                 _delegate = Fallback;
-                return _delegate(in left, in right);
+                return _delegate(in instance, destination, out charsWritten, format, provider);
             }
             finally
             {
@@ -114,77 +143,11 @@ partial class Any
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Invoke(ref readonly T left, ref readonly T? right)
+        public static bool Invoke(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
             if (_delegateTested)
-                return _delegate(in left, in right);
-            return TryInvoke(in left, in right);
+                return _delegate(in instance, destination, out charsWritten, format, provider);
+            return TryInvoke(in instance, destination, out charsWritten, format, provider);
         }
-    }
-
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string Format<C>(scoped ReadOnlySpan<C> left, scoped ReadOnlySpan<C> right)
-        where C : IComparable<C>
-    {
-        // ReSharper disable once InvokeAsExtensionMember
-        return MemoryExtensions.SequenceCompareTo(left, right);
-    }
-
-    public static string Format<T>(
-        scoped ReadOnlySpan<T> left,
-        scoped ReadOnlySpan<T> right,
-        TypeConstraints.IsUnconstrained<T> _ = default)
-    {
-        int minLength = Math.Min(left.Length, right.Length);
-
-        for (int i = 0; i < minLength; i++)
-        {
-            int c = Compare(left[i], right[i], _);
-            if (c != 0)
-            {
-                return c;
-            }
-        }
-
-        return left.Length.CompareTo(right.Length);
-    }
-
-
-    public static string Format<T>(
-        scoped ReadOnlySpan<T> left,
-        scoped ReadOnlySpan<T> right,
-        IComparer<T>? comparer)
-    {
-        if (comparer is null)
-            return Compare<T>(left, right, default(TypeConstraints.IsUnconstrained<T>));
-
-        int minLength = Math.Min(left.Length, right.Length);
-
-        for (int i = 0; i < minLength; i++)
-        {
-            int c = comparer.Compare(left[i], right[i]);
-            if (c != 0)
-            {
-                return c;
-            }
-        }
-
-        return left.Length.CompareTo(right.Length);
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string Format(scoped text left, scoped text right)
-    {
-        // ReSharper disable once InvokeAsExtensionMember
-        return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
-    }
-
-    public static string Format(scoped text left, scoped text right, StringComparison comparison)
-    {
-        // ReSharper disable once InvokeAsExtensionMember
-        return MemoryExtensions.CompareTo(left, right, comparison);
     }
 }

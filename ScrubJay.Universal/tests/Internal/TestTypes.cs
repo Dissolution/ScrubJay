@@ -1,3 +1,5 @@
+#pragma warning disable CA1852
+
 namespace ScrubJay.Universal.Tests.Internal;
 
 internal static partial class TestTypes

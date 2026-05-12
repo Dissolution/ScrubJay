@@ -101,8 +101,7 @@ partial class Any
         static CompareCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods(nameof(IComparable<>.CompareTo), typeof(int), [instanceType])
+            MethodInfo? method = instanceType.FindMatchingInstanceMethods(nameof(IComparable<>.CompareTo), typeof(int), [instanceType])
                 .FirstOrDefault();
 
             if (method is not null)

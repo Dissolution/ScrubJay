@@ -107,7 +107,7 @@ public class ToStringTests_Custom_NoToString
         TestRefStruct instance = new();
         string? anyStr = Any.ToString(in instance);
         Assert.NotNull(anyStr);
-        string? str = $"instanceof({typeof(TestRefStruct)})";
+        string? str = typeof(TestRefStruct).ToString();
         //string? str = instance.ToString();
         Assert.Equal(str, anyStr);
     }
@@ -118,7 +118,7 @@ public class ToStringTests_Custom_NoToString
         TestReadonlyRefStruct instance = new();
         string? anyStr = Any.ToString(in instance);
         Assert.NotNull(anyStr);
-        string? str = $"instanceof({typeof(TestReadonlyRefStruct)})";
+        string? str = typeof(TestReadonlyRefStruct).ToString();
         //string? str = instance.ToString();
         Assert.Equal(str, anyStr);
     }

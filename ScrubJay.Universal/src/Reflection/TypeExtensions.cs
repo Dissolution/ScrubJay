@@ -18,5 +18,7 @@ public static class TypeExtensions
             }
         }
 #endif
+
+        public bool IsStatic => type is { IsAbstract: true, IsSealed: true };
     }
 }

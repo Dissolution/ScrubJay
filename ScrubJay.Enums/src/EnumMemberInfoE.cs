@@ -13,15 +13,15 @@ using System.Collections.Frozen;
 namespace ScrubJay.Enums;
 
 
-public sealed partial class EnumMemberInfo<TEnum> : EnumMemberInfo
+public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
     where TEnum : struct, Enum
 {
 #if NET8_0_OR_GREATER
-    protected readonly FrozenDictionary<string, string> _aliases;
+    private readonly FrozenDictionary<string, string> _aliases;
 #elif NET6_0_OR_GREATER
-    protected readonly ImmutableDictionary<string, string> _aliases;
+    private readonly ImmutableDictionary<string, string> _aliases;
 #else
-    protected readonly ReadOnlyDictionary<string, string> _aliases;
+    private readonly ReadOnlyDictionary<string, string> _aliases;
 #endif
 
     public readonly string MemberName;

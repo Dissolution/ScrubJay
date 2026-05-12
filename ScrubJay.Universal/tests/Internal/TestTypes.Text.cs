@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿#pragma warning disable CA5394
+
+using System.Reflection;
 using Xunit.Internal;
 
 #if NET8_0_OR_GREATER
