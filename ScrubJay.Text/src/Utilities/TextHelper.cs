@@ -10,7 +10,7 @@ public static partial class TextHelper
         if (obj is char)
         {
 #if NET7_0_OR_GREATER
-            text = new(ref SystemUnsafe.Unbox<char>(obj));
+            text = new(in SystemUnsafe.Unbox<char>(obj));
 #else
             ref char ch = ref SystemUnsafe.Unbox<char>(obj);
             text = ch.AsSpan();

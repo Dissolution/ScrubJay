@@ -11,7 +11,7 @@ public static class TypeExtensions
             {
                 if (type is not null)
                 {
-                    if (type.Namespace == "System" && (type.Name.StartsWith("Tuple") || type.Name.StartsWith("ValueTuple")))
+                    if (type.Namespace == "System" && (text.StartsWith(type.Name, "Tuple") || text.StartsWith(type.Name, "ValueTuple")))
                         return true;
                 }
                 return false;

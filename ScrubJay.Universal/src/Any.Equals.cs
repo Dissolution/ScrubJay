@@ -9,21 +9,6 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
-    /// <summary>
-    /// Determines whether two <see cref="IEquatable{TEquatable}"/> values are equal.
-    /// </summary>
-    /// <param name="left">
-    /// The first <typeparamref name="TEquatable"/> value to equate.
-    /// </param>
-    /// <param name="right">
-    /// The second <typeparamref name="TEquatable"/> value to equate.
-    /// </param>
-    /// <typeparam name="TEquatable">
-    /// The <see cref="Type"/> of values to equate.
-    /// </typeparam>
-    /// <returns>
-    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
-    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equals<TEquatable>(in TEquatable? left, in TEquatable? right)
         where TEquatable : IEquatable<TEquatable>
@@ -38,26 +23,38 @@ partial class Any
         return true;
     }
 
-    /// <summary>
-    /// Uses an <see cref="IEqualityComparer{T}"/> to determines whether two <typeparamref name="T"/> values are equal.
-    /// </summary>
-    /// <param name="left">
-    /// The first <typeparamref name="T"/> value to equate.
-    /// </param>
-    /// <param name="right">
-    /// The second <typeparamref name="T"/> value to equate.
-    /// </param>
-    /// <param name="comparer">
-    /// The <see cref="IEqualityComparer{T}"/> used to determine equality.
-    /// </param>
-    /// <typeparam name="T">
-    /// The <see cref="Type"/> of values to equate.
-    /// </typeparam>
-    /// <returns>
-    /// <see langword="true"/> if the values are equal; otherwise <see langword="false"/>.
-    /// </returns>
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(in T? left, in T? right, IEqualityComparer<T>? comparer)
+    public static bool Equals<T>(in T? left, in T? right,
+        TypeConstraints.IsClass<T> _ = default)
+        where T : class
+    {
+        return EqualityComparer<T>.Default.Equals(left!, right!);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(in T left, in T right,
+        TypeConstraints.IsStruct<T> _ = default)
+        where T : struct
+    {
+        return EqualityComparer<T>.Default.Equals(left, right);
+    }
+
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(in T left, in T right,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : struct, allows ref struct
+    {
+        return EqualsCache<T>.Invoke(in left, in right);
+    }
+#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals<T>(in T? left, in T? right,
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.IsClass<T> _ = default)
+        where T : class
     {
         if (comparer is null)
             return EqualityComparer<T>.Default.Equals(left!, right!);
@@ -65,33 +62,31 @@ partial class Any
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(in T? left, in T? right, TypeConstraints.IsUnconstrained<T> _ = default)
+    public static bool Equals<T>(in T left, in T right,
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.IsStruct<T> _ = default)
+        where T : struct
     {
-        return EqualityComparer<T>.Default.Equals(left!, right!);
+        if (comparer is null)
+            return EqualityComparer<T>.Default.Equals(left, right);
+        return comparer.Equals(left, right);
     }
-
 
 #if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equals<T>(in T? left, in T? right, 
-        IEqualityComparer<T>? comparer, 
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
+    public static bool Equals<T>(in T left, in T right,
+        IEqualityComparer<T>? comparer,
+        TypeConstraints.IsStructAllowsRefStruct<T> _ = default)
+        where T : struct, allows ref struct
     {
         if (comparer is null)
-            return Equals<T>(in left, in right, _);
-        return comparer.Equals(left!, right!);
-    }
-
-
-    public static bool Equals<T>(in T? left, in T? right, TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (left is not null)
             return EqualsCache<T>.Invoke(in left, in right);
-        return right is null;
+        return comparer.Equals(left, right);
     }
+#endif
 
+
+#if NET9_0_OR_GREATER
     private static class EqualsCache<T>
         where T : allows ref struct
     {
@@ -208,5 +203,12 @@ partial class Any
     {
         // ReSharper disable once InvokeAsExtensionMember
         return MemoryExtensions.Equals(left, right, StringComparison.Ordinal);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Equals(scoped text left, scoped text right, StringComparison comparison)
+    {
+        // ReSharper disable once InvokeAsExtensionMember
+        return MemoryExtensions.Equals(left, right, comparison);
     }
 }

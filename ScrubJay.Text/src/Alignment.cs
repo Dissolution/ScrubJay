@@ -1,3 +1,5 @@
+#pragma warning disable CA1008, CA1069
+
 namespace ScrubJay.Text;
 
 /// <summary>

@@ -1,14 +1,9 @@
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using ScrubJay.Enums.SourceGen.Factories;
 using ScrubJay.Enums.SourceGen.Models;
 using ScrubJay.Enums.SourceGen.Utilities;
 using SGF;
-using SGF.Diagnostics;
-using SGF.Diagnostics.Sinks;
 
 namespace ScrubJay.Enums.SourceGen;
 
@@ -87,7 +82,7 @@ public class EEG2 : IncrementalGenerator
                 string enumTypeNameSpace = enumSymbol.ContainingNamespace.ToDisplayString();
                 string enumTypeName = enumSymbol.Name;
                 Type enumUnderlyingType = enumSymbol.GetEnumUnderlyingType()!;
-                bool enumIsUnsigned = Type.GetTypeCode(enumUnderlyingType) is TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64;
+                //bool enumIsUnsigned = Type.GetTypeCode(enumUnderlyingType) is TypeCode.Byte or TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64;
                 SGArray<AttributeDefinition> attributes = enumSymbol.GetAttributes().ToAttributeDefinitions();
 
                 // All of the Enum Member's Information

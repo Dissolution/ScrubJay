@@ -16,7 +16,7 @@ internal static class Reflect
             return memberExpression.Member;
         }
         throw new NotImplementedException();
-        return null;
+        //return null;
     }
 
     private static FieldInfo? GetBackingField(PropertyInfo? propertyInfo)

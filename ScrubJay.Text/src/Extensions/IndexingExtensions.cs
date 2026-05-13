@@ -76,7 +76,7 @@ public static class IndexingExtensions
             int subtextLength = subtext.Length;
             if (subtextLength == 0)
                 return Some(0);
-            
+
             // resolve the search range
             if (!searchRange.TryGetOffsetAndLength(text.Length, out int offset, out int length))
             {
@@ -116,10 +116,10 @@ public static class IndexingExtensions
                     }
                     return None;
                 }
-#endif
 
                 fin:
-                
+#endif
+
                 if (i >= 0)
                 {
                     return Some(i + offset);

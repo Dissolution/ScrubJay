@@ -1,5 +1,3 @@
-using static InlineIL.IL;
-
 namespace ScrubJay.Enums.Extensions;
 
 public static class TFlaggedEnumInstanceExtensions
@@ -49,10 +47,10 @@ public static class TFlaggedEnumInstanceExtensions
             throw new NotImplementedException();
         }
 
-        public EnumEnumerable<E> AsEnumerable()
-        {
-            return new(@enum);
-        }
+//        public EnumEnumerable<E> AsEnumerable()
+//        {
+//            return new(@enum);
+//        }
 
         public EnumEnumerator<E> GetEnumerator()
         {

@@ -28,7 +28,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
 
-        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" 
+        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'"
                           Include="System.Reflection.Emit.Lightweight">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
@@ -45,6 +45,16 @@
     <!-- Expose our internals -->
     <ItemGroup>
         <InternalsVisibleTo Include="ScrubJay.Universal.Tests"/>
+        <InternalsVisibleTo Include="ScrubJay.Text"/>
+        <InternalsVisibleTo Include="ScrubJay.Text.Tests"/>
+        <InternalsVisibleTo Include="ScrubJay.Sandboxes.Console"/>
+        <InternalsVisibleTo Include="ScrubJay.Functional"/>
+        <InternalsVisibleTo Include="ScrubJay.Functional.Json"/>
+        <InternalsVisibleTo Include="ScrubJay.Functional.Tests"/>
+        <InternalsVisibleTo Include="ScrubJay.Errors"/>
+        <InternalsVisibleTo Include="ScrubJay.Errors.Asp"/>
+        <InternalsVisibleTo Include="ScrubJay.Enums"/>
+        <InternalsVisibleTo Include="ScrubJay.Enums.SourceGen"/>
     </ItemGroup>
     <ItemGroup>
         <Content Include="..\README.md">

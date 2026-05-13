@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel;
-using System.Reflection;
 using System.Runtime.Serialization;
 using ScrubJay.Errors;
 using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
-using ScrubJay.Universal;
 using Any = ScrubJay.Universal.Any;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-var c = Any.Compare("abc", "1");
+//var alpha = new RenderableThing(147, "TRJ");
+//var beta = new RenderableThing(13, "TRJ");
 
+var alpha = new RenderableThing();
+var beta = new RenderableThing();
+var c = Any.Compare(in alpha, in beta);
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
@@ -22,15 +24,34 @@ return;
 
 namespace ScrubJay.Sandboxes.Console
 {
+    public ref struct TestRefStruct
+    {
+        public override string ToString() => "TestRefStruct";
+    }
+    
+    
     public class RenderableThing : IRenderable
     {
         public required int Id { get; init; }
         public string? Name { get; set; } = null;
 
         [SetsRequiredMembers]
+        public RenderableThing()
+        {
+            Id = Guid.NewGuid().GetHashCode();
+        }
+
+        [SetsRequiredMembers]
         public RenderableThing(int id)
         {
             Id = id;
+        }
+        
+        [SetsRequiredMembers]
+        public RenderableThing(int id, string? name)
+        {
+            Id = id;
+            Name = name;
         }
 
         public void RenderTo(TextBuilder builder)
@@ -38,7 +59,7 @@ namespace ScrubJay.Sandboxes.Console
             builder.Append($"Id: {Id}  Name: {Name:@}");
         }
     }
-    
+
     public readonly record struct FormatInfo
     {
         public static implicit operator FormatInfo(string? format) => new(format);
@@ -75,12 +96,12 @@ namespace ScrubJay.Sandboxes.Console
         public static string EnumThing<E>(E e)
             where E : struct, Enum
         {
-            
-            
-            
+
+
+
             throw Ex.NotImplemented();
         }
-        
+
 //        public static string EnumThing<E>(E left, E right)
 //            where E : struct, Enum
 //        {

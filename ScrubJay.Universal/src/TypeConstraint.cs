@@ -28,6 +28,9 @@ namespace ScrubJay.Universal;
 [PublicAPI]
 public static class TypeConstraints
 {
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct None<T>;
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to be a non-nullable value type,
     /// which includes <see langword="record"/> <see langword="struct"/> types.
@@ -59,8 +62,8 @@ public static class TypeConstraints
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        ;
-    
+    ;
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to be a reference type.<br/>
     /// This constraint applies also to any <see langword="class"/>, <see langword="interface"/>, <see cref="Delegate"/>, or <see cref="Array"/> type, including <see langword="record">records</see>.
@@ -299,13 +302,24 @@ public static class TypeConstraints
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsDisposableNew<T>
         where T : IDisposable, new();
-    
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="unmanaged"/> and <c>allows ref struct</c>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsUnmanagedAllowsRefStruct<T>
         where T : unmanaged
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+    ;
+    
+    /// <summary>
+    /// Constrains <typeparamref name="T"/> to <see langword="struct"/> and <c>allows ref struct</c>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsStructAllowsRefStruct<T>
+        where T : struct
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif

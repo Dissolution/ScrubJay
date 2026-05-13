@@ -60,10 +60,12 @@ public partial class TextBuilder
     }
 
     public TextBuilder Append(
+        [HandlesResourceDisposal]
         [InterpolatedStringHandlerArgument("")]
         ref InterpolatedTextBuilder interpolatedTextBuilder)
     {
         // writing has already happened
+        interpolatedTextBuilder.Dispose();
         return this;
     }
 

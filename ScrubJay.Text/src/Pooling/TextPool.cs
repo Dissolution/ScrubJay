@@ -52,5 +52,9 @@ public static class TextPool
                 array = Rent(count);
             }
         }
+        else
+        {
+            array = [];
+        }
     }
 }

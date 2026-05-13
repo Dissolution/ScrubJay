@@ -7,7 +7,7 @@ partial class Validate
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
     {
-        if (!EqualityComparer<T>.Default.Equals(argument, expected))
+        if (!EqualityComparer<T>.Default.Equals(argument!, expected!))
             return Ex.ArgNotEqual<T>(argument, expected, info, argumentName);
         return argument;
     }
@@ -17,7 +17,7 @@ partial class Validate
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
     {
-        if (EqualityComparer<T>.Default.Equals(argument, expected))
+        if (EqualityComparer<T>.Default.Equals(argument!, expected!))
             return Ex.ArgEqual<T>(argument, expected, info, argumentName);
         return argument;
     }

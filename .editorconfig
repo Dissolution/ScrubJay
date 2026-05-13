@@ -114,8 +114,12 @@ dotnet_diagnostic.CA1000.severity = none
 dotnet_diagnostic.CA1031.severity = none
 ### Do not nest type                                                     # new extension block issue
 dotnet_diagnostic.CA1034.severity = none
+### Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = none
 ### In externally visible method validate parameter is not null
 dotnet_diagnostic.CA1062.severity = none
+### Dispose stuff
+dotnet_diagnostic.CA1063.severity = none
 dotnet_diagnostic.CA1065.severity = none
 dotnet_diagnostic.CA1305.severity = none
 dotnet_diagnostic.CA1307.severity = none
@@ -128,15 +132,23 @@ dotnet_diagnostic.CA1708.severity = none
 dotnet_diagnostic.CA1710.severity = none
 ### Prefix generic type parameter name with 'T'
 dotnet_diagnostic.CA1715.severity = none
+### Don't use reserved words for parameters
+dotnet_diagnostic.CA1716.severity = suggestion
+## Don't use type names for identifiers
+dotnet_diagnostic.CA1720.severity = suggestion
 dotnet_diagnostic.CA1725.severity = none
 ### Initializing values to their defaults
 dotnet_diagnostic.CA1805.severity = none
 ### Initialize static fields inline
 dotnet_diagnostic.CA1810.severity = none
+### Prefer jagged over multidimensional arrays
+dotnet_diagnostic.CA1814.severity = none
 ### Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = none
 ### Provide a method/property named To/Is/etc as an alternative for operator
 dotnet_diagnostic.CA2225.severity = none
+### Prefer generic overload
+dotnet_diagnostic.CA2263.severity = suggestion
 
 ## RCS (Roslynator)
 

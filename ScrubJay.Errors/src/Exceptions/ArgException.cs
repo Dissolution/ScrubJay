@@ -8,12 +8,13 @@ public sealed class ArgException : ArgumentException, IRenderable
 {
     public required Argument Argument { get; init; }
 
-    public override string? Message
+    public override string Message
     {
         get
         {
             // ignore the base override, return exactly what is in the message field.
-            return ExceptionFields.RefMessageField(this);
+            string? message = ExceptionFields.RefMessageField(this);
+            return message ?? string.Empty;
         }
     }
 

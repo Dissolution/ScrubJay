@@ -119,8 +119,6 @@ public sealed class TextComparison :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetHashCode(char ch)
     {
-        return StringComparer.InvariantCulture.GetHashCode("abc");
-        
         return string.GetHashCode(ch.AsSpan(), _stringComparison);
     }
 

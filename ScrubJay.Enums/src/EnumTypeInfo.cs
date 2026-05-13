@@ -13,7 +13,7 @@ public abstract partial class EnumTypeInfo : IEqualityComparer<Enum>, IComparer<
     protected EnumTypeInfo(Type enumType)
     {
         Debug.Assert(enumType is not null);
-        Debug.Assert(enumType.IsEnum);
+        Debug.Assert(enumType!.IsEnum);
         this.EnumType = enumType;
         this.EnumUnderlyingType = enumType.GetEnumUnderlyingType();
         this.IsSigned = Type.GetTypeCode(EnumUnderlyingType) is TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64;

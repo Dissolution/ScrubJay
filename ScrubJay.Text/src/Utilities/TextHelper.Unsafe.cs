@@ -984,7 +984,7 @@ public static partial class TextHelper
         public static void SelfCopy(char[] chars, Range source, int destStart)
         {
             Debug.Assert(chars is not null);
-            int len = chars.Length;
+            int len = chars!.Length;
             Debug.Assert(len > 0);
 
             int sourceStart = source.Start.GetOffset(len);
@@ -1014,7 +1014,7 @@ public static partial class TextHelper
         public static void SelfCopy(char[] chars, Range source, Index dest)
         {
             Debug.Assert(chars is not null);
-            int len = chars.Length;
+            int len = chars!.Length;
             Debug.Assert(len > 0);
 
             int sourceStart = source.Start.GetOffset(len);
@@ -1045,7 +1045,7 @@ public static partial class TextHelper
         public static void SelfCopy(char[] chars, Range source, Range dest)
         {
             Debug.Assert(chars is not null);
-            int len = chars.Length;
+            int len = chars!.Length;
             Debug.Assert(len > 0);
 
             int sourceStart = source.Start.GetOffset(len);

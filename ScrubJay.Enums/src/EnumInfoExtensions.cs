@@ -11,7 +11,7 @@ public static class EnumInfoExtensions
     private static EnumTypeInfo CacheGet(Type enumType)
     {
         Debug.Assert(enumType is not null);
-        Debug.Assert(enumType.IsEnum);
+        Debug.Assert(enumType!.IsEnum);
         return _cache.GetOrAdd(enumType, static t =>
             (EnumTypeInfo)typeof(EnumTypeInfo<>)
                 .MakeGenericType(t)

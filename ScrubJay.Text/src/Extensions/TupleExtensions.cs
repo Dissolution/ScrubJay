@@ -31,7 +31,9 @@ public static class TupleExtensions
         where T : ITuple
     {
         [return: NotNullIfNotNull(nameof(tuple))]
+#pragma warning disable CA1024
         public Func<Option<object?>> GetIterator()
+#pragma warning restore CA1024
         {
             if (tuple is not null)
             {

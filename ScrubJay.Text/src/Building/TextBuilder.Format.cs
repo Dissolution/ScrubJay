@@ -1,8 +1,6 @@
 
 // ReSharper disable MergeCastWithTypeCheck
 
-using Any = ScrubJay.Universal.Any;
-
 namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder

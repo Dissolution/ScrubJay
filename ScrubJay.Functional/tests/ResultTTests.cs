@@ -1402,7 +1402,7 @@ public class ResultTests
 #endregion
 
 #region Helper Class
-    private class Person
+    private sealed class Person
     {
         public string Name { get; set; } = string.Empty;
 

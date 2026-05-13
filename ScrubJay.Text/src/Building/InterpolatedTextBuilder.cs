@@ -59,6 +59,9 @@ public ref struct InterpolatedTextBuilder : IDisposable
     public void AppendFormatted<T>(T? value, string? format)
         => _builder.Format<T>(value, format);
     
+    public void AppendFormatted<T>(T? value, string? format, IFormatProvider? provider)
+        => _builder.Format<T>(value, format, provider);
+    
     public void AppendFormatted<T>(T? value, scoped text format)
         => _builder.Format<T>(value, format);
     

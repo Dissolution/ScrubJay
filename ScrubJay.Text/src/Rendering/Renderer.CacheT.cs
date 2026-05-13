@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace ScrubJay.Text.Rendering;
 
 public static partial class Renderer

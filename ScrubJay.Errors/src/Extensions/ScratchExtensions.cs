@@ -32,7 +32,7 @@ public static class ScratchExtensions
         {
             try
             {
-                return Activator.CreateInstance(instanceType, args)!;
+                return Activator.CreateInstance(instanceType!, args)!;
             }
             catch (Exception ex)
             {

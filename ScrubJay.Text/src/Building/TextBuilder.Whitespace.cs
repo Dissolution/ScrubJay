@@ -45,7 +45,7 @@ partial class TextBuilder
     }
 
     internal bool IndentAware => _whitespace is not null && _whitespace.IndentCount > 0;
-    
+
 #region NewLine
     public TextBuilder NewLine() => Append(CurrentNewLine);
 
@@ -171,8 +171,8 @@ partial class TextBuilder
     {
         Debug.Assert(IndentAware);
         Debug.Assert(_whitespace is not null);
-        
-        var currentNewLine = _whitespace.CurrentNewLine;
+
+        var currentNewLine = _whitespace!.CurrentNewLine;
         var fullNewLine = _whitespace.FullNewLine;
 
         if (text.Length < currentNewLine.Length)
@@ -211,10 +211,10 @@ partial class TextBuilder
             if (!char.IsWhiteSpace(written[i]))
             {
                 // whatever we found
-                return written.Slice(start, i-start);
+                return written.Slice(start, i - start);
             }
         }
-      
+
         // everything was whitespace
         return written.Slice(start);
     }
@@ -239,7 +239,7 @@ partial class TextBuilder
             }
         }
     }
-    
+
 
     internal void IndentAwareInvoke<T>(Action<TextBuilder, T>? buildItem, T value)
     {

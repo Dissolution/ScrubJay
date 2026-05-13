@@ -1,5 +1,4 @@
 using System.Reflection;
-using ScrubJay.Polyfills;
 using ScrubJay.Universal.Extensions;
 
 namespace ScrubJay.Universal.Reflection;

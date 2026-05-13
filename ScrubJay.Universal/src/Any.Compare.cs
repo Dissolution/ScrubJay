@@ -24,7 +24,10 @@ partial class Any
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<C>(in C? instance, object? other, TypeConstraints.HasIComparable _ = default)
+    public static int Compare<C>(
+        in C? instance,
+        object? other,
+        TypeConstraints.HasIComparable _ = default)
         where C : IComparable
 #if NET9_0_OR_GREATER
         , allows ref struct
@@ -39,17 +42,10 @@ partial class Any
         return 0;
     }
 
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(in T? left, in T? right, IComparer<T>? comparer)
-    {
-        if (comparer is null)
-            return Compare<T>(in left, in right, default(TypeConstraints.IsUnconstrained<T>));
-        return comparer.Compare(left!, right!);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(in T? left, in T? right, TypeConstraints.IsUnconstrained<T> _ = default)
+    public static int Compare<T>(in T? left, in T? right,
+        TypeConstraints.IsClass<T> _ = default)
+        where T : class
     {
         if (left is not null)
             return CompareCache<T>.Invoke(in left, in right);
@@ -60,33 +56,61 @@ partial class Any
         return 0;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Compare<T>(in T left, in T right,
+        TypeConstraints.IsStruct<T> _ = default)
+        where T : struct
+    {
+        return CompareCache<T>.Invoke(in left, in right);
+    }
+
 #if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Compare<T>(in T left, in T right,
+        TypeConstraints.IsStructAllowsRefStruct<T> _ = default)
+        where T : struct, allows ref struct
+    {
+        return CompareCache<T>.Invoke(in left, in right);
+    }
+#endif
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(in T? left, in T? right,
         IComparer<T>? comparer,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
+        TypeConstraints.IsClass<T> _ = default)
+        where T : class
     {
+
         if (comparer is null)
             return Compare<T>(in left, in right, _);
         return comparer.Compare(left!, right!);
     }
-#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Compare<T>(in T left, in T right,
+        IComparer<T>? comparer,
+        TypeConstraints.IsStruct<T> _ = default)
+        where T : struct
+    {
+        if (comparer is null)
+            return CompareCache<T>.Invoke(in left, in right);
+        return comparer.Compare(left, right);
+    }
 
 #if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Compare<T>(in T? left, in T? right, TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
+    public static int Compare<T>(in T left, in T right,
+        IComparer<T>? comparer,
+        TypeConstraints.IsStructAllowsRefStruct<T> _ = default)
+        where T : struct, allows ref struct
     {
-        if (left is not null)
+        if (comparer is null)
             return CompareCache<T>.Invoke(in left, in right);
-
-        if (right is not null)
-            return -1;
-
-        return 0;
+        return comparer.Compare(left, right);
     }
 #endif
+
+
 
     private static class CompareCache<T>
 #if NET9_0_OR_GREATER
@@ -186,14 +210,16 @@ partial class Any
         // ReSharper disable once InvokeAsExtensionMember
         return MemoryExtensions.SequenceCompareTo(left, right);
     }
-    
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(
         scoped ReadOnlySpan<T> left,
         scoped ReadOnlySpan<T> right,
-        TypeConstraints.IsUnconstrained<T> _ = default)
+        TypeConstraints.IsClass<T> _ = default)
+        where T : class
     {
         int minLength = Math.Min(left.Length, right.Length);
-        
+
         for (int i = 0; i < minLength; i++)
         {
             int c = Compare(left[i], right[i], _);
@@ -206,20 +232,18 @@ partial class Any
         return left.Length.CompareTo(right.Length);
     }
 
-    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(
         scoped ReadOnlySpan<T> left,
         scoped ReadOnlySpan<T> right,
-        IComparer<T>? comparer)
+        TypeConstraints.IsStruct<T> _ = default)
+        where T : struct
     {
-        if (comparer is null)
-            return Compare<T>(left, right, default(TypeConstraints.IsUnconstrained<T>));
-        
         int minLength = Math.Min(left.Length, right.Length);
-        
+
         for (int i = 0; i < minLength; i++)
         {
-            int c = comparer.Compare(left[i], right[i]);
+            int c = Compare(left[i], right[i], _);
             if (c != 0)
             {
                 return c;
@@ -228,8 +252,7 @@ partial class Any
 
         return left.Length.CompareTo(right.Length);
     }
-
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare(scoped text left, scoped text right)
     {
@@ -237,6 +260,7 @@ partial class Any
         return MemoryExtensions.CompareTo(left, right, StringComparison.Ordinal);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare(scoped text left, scoped text right, StringComparison comparison)
     {
         // ReSharper disable once InvokeAsExtensionMember

@@ -291,7 +291,7 @@ public partial class TextBuilder
         }
         else
         {
-            onNotEmpty?.Invoke(this, str);
+            onNotEmpty?.Invoke(this, str!);
         }
         return this;
     }
