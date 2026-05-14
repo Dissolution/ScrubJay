@@ -1,8 +1,6 @@
-#if NET9_0_OR_GREATER
 using System.Reflection;
 using System.Reflection.Emit;
 using ScrubJay.Universal.Reflection;
-#endif
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
@@ -53,14 +51,16 @@ partial class Any
             return null;
         return ToStringCache<T>.Invoke(in instance);
     }
-    
-    private static class ToStringCache<T>
-        where T : allows ref struct
-    {
-        private delegate string AnyToString(ref readonly T value);
+#endif
 
-        private static volatile AnyToString _delegate;
-        private static volatile bool _delegateTested;
+    private static class ToStringCache<T>
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        internal delegate string AnyToString(ref readonly T value);
+
+        internal static volatile AnyToString Invoke;
 
         static ToStringCache()
         {
@@ -81,55 +81,15 @@ partial class Any
 
                 if (dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
                 {
-                    _delegate = func;
-                    _delegateTested = false;
+                    Invoke = func;
                     return;
                 }
             }
 
-            _delegate = Fallback;
-            _delegateTested = true;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string Fallback(ref readonly T value)
-            => typeof(T).ToString(); // same as object.ToString()
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string TryInvoke(ref readonly T value)
-        {
-            try
-            {
-                return _delegate(in value);
-            }
-            catch
-            {
-                _delegate = Fallback;
-                return _delegate(in value);
-            }
-            finally
-            {
-                _delegateTested = true;
-            }
+            Invoke = Fallback;
         }
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string Invoke(ref readonly T value)
-        {
-            if (_delegateTested)
-                return _delegate(in value);
-            return TryInvoke(in value);
-        }
-    }
-#endif
-
-    public static string ToString<T>(scoped Span<T> span)
-    {
-        return span.ToString();
-    }
-    
-    public static string ToString<T>(scoped ReadOnlySpan<T> span)
-    {
-        return span.ToString();
+        private static string Fallback(ref readonly T value)
+            => typeof(T).ToString(); // same as object.ToString()
     }
 }

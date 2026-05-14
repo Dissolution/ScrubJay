@@ -20,8 +20,4 @@ public sealed class InvalidEnumException : InvalidEnumArgumentException
     public InvalidEnumException(string argumentName, int invalidValue, Type enumClass) : base(argumentName, invalidValue, enumClass)
     {
     }
-
-    public InvalidEnumException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }

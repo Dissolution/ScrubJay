@@ -12,9 +12,9 @@ Console.OutputEncoding = Encoding.UTF8;
 //var alpha = new RenderableThing(147, "TRJ");
 //var beta = new RenderableThing(13, "TRJ");
 
-var alpha = new RenderableThing();
-var beta = new RenderableThing();
-var c = Any.Compare(in alpha, in beta);
+var alpha = new TestRefStruct();
+var beta = new TestRefStruct();
+var result = Any.Equals(in alpha, in beta);
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
