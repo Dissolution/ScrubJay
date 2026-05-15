@@ -1,4 +1,6 @@
+#if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http;
+#endif
 using Microsoft.AspNetCore.Mvc;
 using ScrubJay.Errors.Extensions;
 using ScrubJay.Errors.Problems;

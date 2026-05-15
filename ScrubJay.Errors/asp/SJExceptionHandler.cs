@@ -1,9 +1,10 @@
+#if NET8_0_OR_GREATER
+
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
 namespace ScrubJay.Errors.Asp;
 
-#if NET8_0_OR_GREATER
 [PublicAPI]
 public sealed class SJExceptionHandler : IExceptionHandler
 {
