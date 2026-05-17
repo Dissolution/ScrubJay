@@ -1,6 +1,4 @@
-﻿using Any = ScrubJay.Universal.Any;
-
-namespace ScrubJay.Text.Building;
+﻿namespace ScrubJay.Text.Building;
 
 /* This portion of TextBuilder contains the underlying methods that write text directly to the rented array
  * These are designed for efficiency and do not return TextBuilder fluently for better inlining

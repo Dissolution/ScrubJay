@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Reflection.Extensions;
+﻿using ScrubJay.Errors;
+
+namespace ScrubJay.Reflection.Extensions;
 
 /// <summary>
 /// Extensions on <see cref="MethodBase"/>.
@@ -89,6 +91,13 @@ public static class MethodBaseExtensions
                 ConstructorInfo ctor => ctor.DeclaringType!,
                 _ => throw Ex.ThisMethodIsNotSupported(method),
             };
+        
+        public Type[] GetGenericTypes()
+        {
+            if (method is null)
+                return Type.EmptyTypes;
+            return method.GetGenericArguments();
+        }
     }
 
 

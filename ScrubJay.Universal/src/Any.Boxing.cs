@@ -9,10 +9,11 @@ partial class Any
         return true;
     }
 
-#if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
+#if NET9_0_OR_GREATER
         where T : allows ref struct //, but _never_ will be
+#endif
     {
         Emit.Ldarg(nameof(value));
         Emit.Box<T>();
@@ -21,7 +22,9 @@ partial class Any
 
     // ReSharper disable once MethodOverloadWithOptionalParameter
     public static bool TryBox<T>(T? value, out object? boxed, TypeConstraints.AllowsRefStruct<T> _ = default)
+#if NET9_0_OR_GREATER
         where T : allows ref struct
+#endif
     {
         // ref structs cannot be boxed
         if (typeof(T).IsByRefLike)
@@ -77,7 +80,20 @@ partial class Any
         Emit.Ret();
         throw Unreachable();
     }
+
+    [return: NotNullIfNotNull(nameof(value))]
+    public static object? BoxOrBytes<T>(in T? value)
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
 #endif
+    {
+        if (value is null)
+            return null;
+        if (!TryBox<T>(value, out object? boxed))
+            boxed = (object)GetReferenceBytes<T>(in value).ToArray();
+        return boxed;
+    }
+
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryUnbox<T>(object? box, [MaybeNullWhen(false)] out T value)

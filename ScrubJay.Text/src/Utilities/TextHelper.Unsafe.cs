@@ -37,12 +37,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(void* source, void* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -64,12 +64,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(void* source, char* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -91,12 +91,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(void* source, ref char destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ public static partial class TextHelper
         /// The source <see langword="void*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -170,12 +170,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(char* source, void* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -197,12 +197,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(char* source, char* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -224,12 +224,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(char* source, ref char destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -303,12 +303,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(ref readonly char source, void* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -330,12 +330,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(ref readonly char source, char* destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -357,12 +357,12 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo(ref readonly char source, ref char destination, int count)
         {
-            Emit.Ldarg(nameof(destination));
-            Emit.Ldarg(nameof(source));
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg(nameof(destination));
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         /// <summary>
@@ -937,23 +937,23 @@ public static partial class TextHelper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InitCharBlock(char* source, int count)
         {
-            Emit.Ldarg(nameof(source));
-            Emit.Ldc_I4_0();
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Initblk();
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldc_I4_0();
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Initblk();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InitCharBlock(ref char source, int count)
         {
-            Emit.Ldarg(nameof(source));
-            Emit.Ldc_I4_0();
-            Emit.Ldarg(nameof(count));
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Initblk();
+            IL.Emit.Ldarg(nameof(source));
+            IL.Emit.Ldc_I4_0();
+            IL.Emit.Ldarg(nameof(count));
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Initblk();
         }
 #endregion
 

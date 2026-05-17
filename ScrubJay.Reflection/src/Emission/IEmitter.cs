@@ -1,4 +1,4 @@
-using System.Reflection.Metadata.Ecma335;
+using ScrubJay.Errors;
 using ScrubJay.Reflection.Decompilation;
 
 namespace ScrubJay.Reflection.Emission;

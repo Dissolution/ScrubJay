@@ -4,7 +4,7 @@ namespace ScrubJay.Text.Building;
 
 /// <summary>
 /// TextBuilder is a fluent string builder (much like <see cref="System.Text.StringBuilder"/>) that rents and returns and underlying
-/// <see cref="char"/><see cref="Array">[]</see> from <see cref="ArrayPool{T}.Shared"/> by implementing <see cref="IDisposable"/>.
+/// <see cref="char"/><see cref="System.Array">[]</see> from <see cref="ArrayPool{T}.Shared"/> by implementing <see cref="System.IDisposable"/>.
 /// </summary>
 /// <remarks>
 /// <see cref="TextBuilder"/> has been designed to avoid throwing Exceptions.<br/>
@@ -153,7 +153,7 @@ public partial class TextBuilder : IDisposable
     public override bool Equals(object? obj)
     {
         if (obj is TextBuilder textBuilder)
-            return Equals(textBuilder.Written);
+            return Equals((text)textBuilder.Written);
         if (obj is string str)
             return Equals((text)str);
         if (obj is char[] chars)

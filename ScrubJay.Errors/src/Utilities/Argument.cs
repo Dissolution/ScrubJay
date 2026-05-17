@@ -12,23 +12,13 @@ public sealed record class Argument : IRenderable
         in T? argument,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
         return new Argument(Any.GetType<T>(in argument), argumentName, Any.Render<T>(in argument));
     }
-
-#if NET9_0_OR_GREATER
-    // ReSharper disable once MethodOverloadWithOptionalParameter
-    public static Argument Capture<T>(
-        in T? argument,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        return new Argument(Any.GetType<T>(in argument, _), argumentName, Any.Render<T>(in argument, _));
-    }
-#endif
-
+    
     public static Argument Capture<T>(
         scoped ReadOnlySpan<T> argument,
         [CallerArgumentExpression(nameof(argument))]
@@ -105,7 +95,7 @@ public sealed record class Argument : IRenderable
         name = Name;
         valueString = ValueString;
     }
-    
+
     public override string ToString() => TextBuilder.Build(RenderTo);
 
     public void RenderTo(TextBuilder builder)

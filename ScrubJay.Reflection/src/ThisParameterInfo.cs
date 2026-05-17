@@ -1,4 +1,4 @@
-using ScrubJay.Reflection.Validation;
+using ScrubJay.Errors.Validation;
 
 namespace ScrubJay.Reflection;
 

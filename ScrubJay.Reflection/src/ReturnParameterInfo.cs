@@ -1,3 +1,5 @@
+using ScrubJay.Reflection.Extensions;
+
 namespace ScrubJay.Reflection;
 
 /// <summary>

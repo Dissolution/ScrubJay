@@ -5,7 +5,7 @@ using ScrubJay.Universal.Extensions;
 namespace ScrubJay.Text.Collections;
 
 /// <summary>
-/// A <see cref="HashSet{Type}"/> that supports generic-typed operations.
+/// A <see cref="HashSet{T}"/> that supports generic-typed operations.
 /// </summary>
 [PublicAPI]
 public class TypeSet : HashSet<Type>

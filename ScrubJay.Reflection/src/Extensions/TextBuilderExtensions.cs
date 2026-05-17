@@ -1,4 +1,5 @@
-using ScrubJay.Universal;
+using ScrubJay.Text.Building;
+using ScrubJay.Text.Rendering;
 
 namespace ScrubJay.Reflection.Extensions;
 

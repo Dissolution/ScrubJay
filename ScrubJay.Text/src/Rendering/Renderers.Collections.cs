@@ -1,5 +1,3 @@
-using Any = ScrubJay.Universal.Any;
-
 namespace ScrubJay.Text.Rendering;
 
 partial class Renderers

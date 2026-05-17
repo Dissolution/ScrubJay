@@ -2,7 +2,11 @@
 
 
 
-using ScrubJay.Rendering.Rendition5;
+using ScrubJay.Errors;
+using ScrubJay.Errors.Validation;
+using ScrubJay.Text;
+using ScrubJay.Text.Building;
+using ScrubJay.Text.Rendering;
 #pragma warning disable CS0618 // Type or member is obsolete
 
 namespace ScrubJay.Reflection.Decompilation;
@@ -64,7 +68,7 @@ public sealed record class Instruction(ILOffset Offset, OpCode OpCode, Option<ob
                 }
                 default:
                 {
-                    throw Ex.UndefinedEnum(OpCode.OperandType);
+                    throw Ex.InvalidEnum(OpCode.OperandType);
                 }
             }
 
@@ -75,6 +79,6 @@ public sealed record class Instruction(ILOffset Offset, OpCode OpCode, Option<ob
     public void RenderTo(TextBuilder builder) => builder
         .Render(Offset)
         .Append(": ")
-        .Align(OpCode.Name, 14, alignment: Alignment.Right)
+        .Align(OpCode.Name, 14, options: Alignment.Right)
         .If(Operand, static (tb, op) => tb.Append("  ").Render(op));
 }

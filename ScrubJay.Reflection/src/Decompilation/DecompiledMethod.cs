@@ -1,8 +1,11 @@
 ﻿#pragma warning disable CS0618
 
+using ScrubJay.Errors;
+using ScrubJay.Errors.Validation;
+using ScrubJay.Reflection.Extensions;
 using ScrubJay.Reflection.Utilities;
-using ScrubJay.Rendering.Rendition5;
-using ScrubJay.Universal;
+using ScrubJay.Text.Building;
+using ScrubJay.Text.Rendering;
 
 namespace ScrubJay.Reflection.Decompilation;
 
@@ -42,7 +45,7 @@ public sealed class DecompiledMethod
             Parameters = [new ThisParameterInfo(Method), ..method.GetParameters()];
         }
 
-        ParameterTypes = Parameters.SelectToArray(static p => p.ParameterType);
+        ParameterTypes = Array.ConvertAll(Parameters, static p => p.ParameterType);
 
         if (method is MethodInfo methodInfo)
         {
@@ -68,7 +71,7 @@ public sealed class DecompiledMethod
             Locals = null;
             ILBytes = null;
         }
-        
+
         // read instructions if we can
         ReadInstructions();
     }
@@ -80,7 +83,7 @@ public sealed class DecompiledMethod
 
         byte[] ilBytes = ILBytes;
         var reader = new SpanReader<byte>(ilBytes);
-        
+
         while (!reader.IsCompleted)
         {
             ILOffset offset = reader.Position;
@@ -136,7 +139,7 @@ public sealed class DecompiledMethod
                 double f64 = reader.ReadF64();
                 return Some<object?>(f64);
             }
-            
+
             // ---
             case OperandType.ShortInlineBrTarget:
             {
@@ -160,9 +163,9 @@ public sealed class DecompiledMethod
 
                 return Some<object?>(branches);
             }
-            
+
             // ---
-            
+
             case OperandType.InlineField:
             {
                 MetadataToken metadataToken = reader.ReadUnmanaged<MetadataToken>();
@@ -199,7 +202,7 @@ public sealed class DecompiledMethod
                 string str = ModuleMemberResolver.TryResolveString(metadataToken).OkOrThrow();
                 return Some<object?>(str);
             }
-           
+
             // ---
             case OperandType.ShortInlineVar:
             {
@@ -212,7 +215,8 @@ public sealed class DecompiledMethod
                 short index = reader.ReadI16();
                 object var = ReadVariable(opCode, index);
                 return Some<object?>(var);
-            } case OperandType.InlineNone:
+            }
+            case OperandType.InlineNone:
             case OperandType.InlinePhi:
             {
                 return None;

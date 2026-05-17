@@ -3,7 +3,7 @@
 namespace ScrubJay.Text.Collections;
 
 /// <summary>
-/// A <see cref="Dictionary{K,TValue}"/> where <c>K</c> is <see cref="Type"/> that supports using a generic type
+/// A <see cref="Dictionary{TKey,TValue}"/> where <c>K</c> is <see cref="Type"/> that supports using a generic type
 /// instead of a key
 /// </summary>
 /// <typeparam name="V">

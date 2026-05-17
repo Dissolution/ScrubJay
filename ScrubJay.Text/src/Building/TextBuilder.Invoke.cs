@@ -5,7 +5,7 @@ partial class TextBuilder
 #region Invoke(action)
 
     /// <summary>
-    /// Invokes an <see cref="Action{TextBuilder}"/> with this <see cref="TextBuilder"/> instance.
+    /// Invokes an <see cref="Action"/> with this <see cref="TextBuilder"/> instance.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TextBuilder Invoke(Action<TextBuilder>? build)

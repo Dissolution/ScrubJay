@@ -4,37 +4,6 @@ namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
 {
-    [PublicAPI]
-    public readonly record struct AlignmentOptions
-    {
-        public static readonly AlignmentOptions Default = new();
-
-        public readonly char PaddingChar;
-        public readonly Alignment Alignment;
-        public readonly bool TruncateToWidth;
-        public readonly char? TruncateChar;
-
-        public AlignmentOptions(
-            char paddingChar = ' ',
-            Alignment alignment = Alignment.Right,
-            bool truncateToWidth = true,
-            char? truncateChar = '…')
-        {
-            PaddingChar = paddingChar;
-            Alignment = alignment;
-            TruncateToWidth = truncateToWidth;
-            TruncateChar = truncateChar;
-        }
-
-        public void Deconstruct(out char paddingChar, out Alignment alignment, out bool truncateToWidth, out char? truncateChar)
-        {
-            paddingChar = PaddingChar;
-            alignment = Alignment;
-            truncateToWidth = TruncateToWidth;
-            truncateChar = TruncateChar;
-        }
-    }
-
     public TextBuilder Align(char ch, int width) => Align(ch, width, AlignmentOptions.Default);
 
     public TextBuilder Align(char ch, int width, AlignmentOptions options)

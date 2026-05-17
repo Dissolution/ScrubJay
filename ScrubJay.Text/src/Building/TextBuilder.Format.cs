@@ -169,11 +169,11 @@ public partial class TextBuilder
     private TextBuilder CallFormat<T>(T? value, string? format, IFormatProvider? formatProvider)
         where T : allows ref struct
     {
-        Emit.Ldarg_0(); // this
-        Emit.Ldarg(nameof(value));
-        Emit.Ldarg(nameof(format));
-        Emit.Ldarg(nameof(formatProvider));
-        Emit.Call(new MethodRef(
+        IL.Emit.Ldarg_0(); // this
+        IL.Emit.Ldarg(nameof(value));
+        IL.Emit.Ldarg(nameof(format));
+        IL.Emit.Ldarg(nameof(formatProvider));
+        IL.Emit.Call(new MethodRef(
                 typeof(TextBuilder),
                 nameof(Format),
                 1,

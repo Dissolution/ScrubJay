@@ -45,7 +45,7 @@ public class HasherTests
     public void HashBytesObjectWorks(object? obj)
     {
         // We just want to be sure this works
-        var hash = Hasher.HashBytes(in obj);
+        var hash = Hasher.HashReferenceBytes(in obj);
         Assert.NotEqual(0, hash);
     }
 
@@ -54,7 +54,7 @@ public class HasherTests
     public void HashBytesRefStructWorks()
     {
         Span<int> span = [2, 3, 13];
-        var hash = Hasher.HashBytes(in span);
+        var hash = Hasher.HashReferenceBytes(in span);
         Assert.NotEqual(0, hash);
     }
 #endif
