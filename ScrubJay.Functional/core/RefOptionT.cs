@@ -1,4 +1,5 @@
 ﻿using ScrubJay.Functional.IMPL;
+
 namespace ScrubJay.Functional;
 
 [PublicAPI]
@@ -43,7 +44,7 @@ public readonly ref struct RefOption<T>
     /// The <typeparamref name="T"/> value to examine.
     /// </param>
     /// <param name="predicate">
-    /// The <see cref="Func{T,bool}"/> predicate used to determine if the <paramref name="value"/>
+    /// The <see cref="Func{TResult}"/> predicate used to determine if the <paramref name="value"/>
     /// should be returned as <see cref="Some{T}"/> or <see cref="None"/>.
     /// </param>
     /// <returns>

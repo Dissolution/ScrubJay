@@ -26,7 +26,7 @@ public static class MemberInfoExtensions
                     case null:
                         return false;
                     case Type type:
-                        return ScrubJay.Universal.TypeExtensions.get_IsStatic(type);
+                        return type.IsStatic;
                     case FieldInfo @field:
                         return @field.IsStatic;
                     case MethodBase method:

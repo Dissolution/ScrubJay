@@ -3,7 +3,7 @@ namespace ScrubJay.Errors.Validation;
 public partial class Demand
 {
     public static T ThrowIfNull<T>(
-        [AllowNull, NotNull] this T? value,
+        [AllowNull, JetBrains.Annotations.NotNull] this T? value,
         [CallerArgumentExpression(nameof(value))]
         string? argumentName = null)
         where T : class
@@ -14,7 +14,7 @@ public partial class Demand
     }
 
     public static T ThrowIfNull<T>(
-        [AllowNull, NotNull] this Nullable<T> value,
+        [AllowNull, JetBrains.Annotations.NotNull] this Nullable<T> value,
         [CallerArgumentExpression(nameof(value))]
         string? argumentName = null)
         where T : struct

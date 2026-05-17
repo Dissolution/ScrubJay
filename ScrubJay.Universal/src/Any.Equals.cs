@@ -22,7 +22,7 @@ partial class Any
         where T : allows ref struct
 #endif
     {
-        internal delegate bool AnyEquals(ref readonly T left, ref readonly T? right);
+        internal delegate bool AnyEquals(in T instance, in T? other);
 
         internal static readonly AnyEquals Invoke;
 
@@ -55,7 +55,7 @@ partial class Any
             Invoke = Fallback;
         }
 
-        private static bool Fallback(ref readonly T left, ref readonly T? right)
+        private static bool Fallback(in T instance, in T? other)
         {
             Emit.Ldarg_0();
             Emit.Ldarg_1();

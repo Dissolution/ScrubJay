@@ -87,7 +87,7 @@ partial class Any
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static int Fallback(ref readonly T value)
-            => Hasher.HashBytes(in value);
+            => Hasher.HashReferenceBytes(in value);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static int TryInvoke(ref readonly T value)

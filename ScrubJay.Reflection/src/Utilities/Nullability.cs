@@ -1,4 +1,7 @@
-﻿namespace ScrubJay.Reflection.Utilities;
+﻿using ScrubJay.Errors;
+using ScrubJay.Reflection.Extensions;
+
+namespace ScrubJay.Reflection.Utilities;
 
 #if !NET6_0_OR_GREATER
 public sealed class NullabilityInfo

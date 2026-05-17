@@ -20,26 +20,18 @@ public static class TypeExtensions
 
         public bool ImplementsInterface(Type? interfaceType)
         {
-            if (interfaceType is null || !interfaceType.IsInterface)
-                return false;
-
-            Type? baseType = type;
-            while (baseType is not null)
-            {
-                Type[] interfaces = baseType.GetInterfaces();
-                Debug.Assert(interfaces is not null);
-                Debug.Assert(interfaces.All(i => i is not null));
-
-                foreach (var it in interfaces!)
-                {
-                    if (it == interfaceType || it.ImplementsInterface(interfaceType))
-                        return true;
-                }
-
-                baseType = baseType.BaseType;
-            }
-
-            return false;
+            return type is not null &&
+                interfaceType is not null &&
+                interfaceType.IsInterface &&
+                type.GetInterfaces().Contains(interfaceType);
+        }
+        
+        public bool ImplementsInterface<I>()
+            where I : class
+        {
+            return type is not null &&
+                typeof(I).IsInterface &&
+                type.GetInterfaces().Contains(typeof(I));
         }
 
         public IEnumerable<Type> BaseTypes()

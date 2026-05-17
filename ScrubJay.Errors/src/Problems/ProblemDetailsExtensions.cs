@@ -1,6 +1,7 @@
 using System.Globalization;
 using ScrubJay.Universal.Extensions;
 using Any = ScrubJay.Universal.Any;
+using Exception = System.Exception;
 
 namespace ScrubJay.Errors.Problems;
 
@@ -23,7 +24,7 @@ public static class ProblemDetailsExtensions
         /// A URI-like reference that identifies the Problem type.
         /// </summary>
         /// <remarks>
-        /// The Type URI is allowed to be a non-resolvable URI, so it is not typed as an <see cref="Uri"/>.<br/>
+        /// The Type URI is allowed to be a non-resolvable URI, so it is not typed as an <see cref="System.Uri"/>.<br/>
         /// If "type" is not present in the <paramref name="exception"/>'s <see cref="Exception.Data"/>,
         /// a urn for the <see cref="Exception"/>'s <see cref="Type"/> will be returned.
         /// </remarks>

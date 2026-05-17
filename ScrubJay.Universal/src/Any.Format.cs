@@ -28,7 +28,7 @@ partial class Any
     {
         internal delegate string AnyFormat(ref readonly T instance, string? format, IFormatProvider? provider);
 
-        internal static volatile AnyFormat Invoke;
+        internal static readonly AnyFormat Invoke;
 
         static FormatCache()
         {

@@ -1,6 +1,6 @@
-﻿#pragma warning disable CA1010
-
-using ScrubJay.Collections.NonGeneric;
+﻿using ScrubJay.Text.Building;
+using ScrubJay.Text.Utilities;
+#pragma warning disable CA1010
 
 namespace ScrubJay.Reflection.Exceptions;
 

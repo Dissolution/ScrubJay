@@ -1,4 +1,5 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
+
 namespace ScrubJay.Text.Building;
 
 partial class TextBuilder

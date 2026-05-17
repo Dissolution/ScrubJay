@@ -35,7 +35,7 @@ public static class TextPool
         }
     }
 
-    public static void GrowBy([AllowNull, NotNull] ref char[]? array, int count)
+    public static void GrowBy([AllowNull, JetBrains.Annotations.NotNull] ref char[]? array, int count)
     {
         if (count > 0)
         {

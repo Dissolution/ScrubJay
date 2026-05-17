@@ -9,43 +9,43 @@ public static unsafe class UnsafeExtensions
         public static void CopyBlock<T>(T* destination, T* source, uint itemCount)
             where T : unmanaged
         {
-            Emit.Ldarg_0();
-            Emit.Ldarg_1();
-            Emit.Ldarg_2();
-            Emit.Sizeof<T>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg_0();
+            IL.Emit.Ldarg_1();
+            IL.Emit.Ldarg_2();
+            IL.Emit.Sizeof<T>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(byte* destination, byte* source, uint byteCount)
         {
-            Emit.Ldarg_0();
-            Emit.Ldarg_1();
-            Emit.Ldarg_2();
-            Emit.Cpblk();
+            IL.Emit.Ldarg_0();
+            IL.Emit.Ldarg_1();
+            IL.Emit.Ldarg_2();
+            IL.Emit.Cpblk();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(char* destination, char* source, uint characterCount)
         {
-            Emit.Ldarg_0();
-            Emit.Ldarg_1();
-            Emit.Ldarg_2();
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg_0();
+            IL.Emit.Ldarg_1();
+            IL.Emit.Ldarg_2();
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock(ref char destination, ref readonly char source, uint characterCount)
         {
-            Emit.Ldarg_0();
-            Emit.Ldarg_1();
-            Emit.Ldarg_2();
-            Emit.Sizeof<char>();
-            Emit.Mul();
-            Emit.Cpblk();
+            IL.Emit.Ldarg_0();
+            IL.Emit.Ldarg_1();
+            IL.Emit.Ldarg_2();
+            IL.Emit.Sizeof<char>();
+            IL.Emit.Mul();
+            IL.Emit.Cpblk();
         }
     }
 }

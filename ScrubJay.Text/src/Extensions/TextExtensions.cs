@@ -3,7 +3,7 @@ using ScrubJay.Text.Comparison;
 namespace ScrubJay.Text.Extensions;
 
 /// <summary>
-/// Extensions on <see cref="ReadOnlySpan{char}"/>.
+/// Extensions on <see cref="ReadOnlySpan{T}"/>.
 /// </summary>
 [PublicAPI]
 public static class TextExtensions

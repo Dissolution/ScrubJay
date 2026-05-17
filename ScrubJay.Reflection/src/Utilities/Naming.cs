@@ -2,7 +2,7 @@
 using System.Collections.Frozen;
 #endif
 using System.Globalization;
-using Microsoft.CodeAnalysis.CSharp;
+using ScrubJay.Text.Building;
 
 namespace ScrubJay.Reflection.Utilities;
 

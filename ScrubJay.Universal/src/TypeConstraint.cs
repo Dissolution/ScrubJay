@@ -229,7 +229,7 @@ public static class TypeConstraints
 
 #if NET7_0_OR_GREATER
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="INumberBase{T}"/>.
+    /// Constrains <typeparamref name="T"/> to <see cref="INumberBase{TSelf}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasINumberBase<T>

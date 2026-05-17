@@ -1,4 +1,5 @@
-﻿using ScrubJay.Rendering.Rendition5;
+﻿using ScrubJay.Text.Building;
+using ScrubJay.Text.Rendering;
 #pragma warning disable CA1711
 
 

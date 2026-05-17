@@ -553,36 +553,20 @@ public ref struct Hasher
 #endregion /HashMany
 
 #region HashBytes
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ReadOnlySpan<byte> GetUnderlyingBytes<T>(scoped ref readonly T value)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        Emit.Ldarg(nameof(value));
-        Emit.Conv_U();
-        Emit.Sizeof<T>();
-        Emit.Newobj(MethodRef.Constructor(typeof(ReadOnlySpan<byte>), [typeof(void*), typeof(int)]));
-        Emit.Ret();
-        throw Unreachable();
-    }
-
     /// <summary>
-    /// Gets a hashcode generated from all the underlying bytes of any <see langword="ref"/> <see langword="readonly"/> <typeparamref name="T"/> <paramref name="value"/>.
+    /// Gets a hashcode generated from all the bytes underpinning a
+    /// <see langword="ref"/> <see langword="readonly"/> <typeparamref name="T"/> <paramref name="value"/>.
     /// </summary>
     /// <param name="value"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    /// <remarks>
-    /// This is hashing the bytes that underpin the reference, <b>not</b> the bytes <i>in</i> the value.
-    /// </remarks>
-    public static int HashBytes<T>(scoped ref readonly T value)
+    public static int HashReferenceBytes<T>(scoped ref readonly T value)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
         var hasher = new Hasher();
-        hasher.AddBytes(GetUnderlyingBytes<T>(in value));
+        hasher.AddBytes(Any.GetReferenceBytes<T>(in value));
         return hasher.ToHashCode();
     }
 #endregion /HashBytes

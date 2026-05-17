@@ -11,14 +11,14 @@ public sealed class Whitespace : IDisposable
 
     private readonly MiniStack _indentOffsets;
 
-    [NotNull, AllowNull]
+    [JetBrains.Annotations.NotNull, AllowNull]
     public string CurrentNewLine
     {
         get => field;
         set => SetNewLine(ref field, value);
     } = WhitespaceManager.DefaultNewLine;
 
-    [NotNull, AllowNull]
+    [JetBrains.Annotations.NotNull, AllowNull]
     public string CurrentDefaultIndent
     {
         get => field;

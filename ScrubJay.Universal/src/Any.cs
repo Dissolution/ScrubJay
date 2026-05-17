@@ -128,4 +128,17 @@ public static partial class Any
         params Type?[]? parameterTypes)
         => FindMatchingMethods(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, name, returnType, parameterTypes);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static ReadOnlySpan<byte> GetReferenceBytes<T>(scoped ref readonly T value)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        Emit.Ldarg(nameof(value));
+        Emit.Conv_U();
+        Emit.Sizeof<T>();
+        Emit.Newobj(MethodRef.Constructor(typeof(ReadOnlySpan<byte>), [typeof(void*), typeof(int)]));
+        Emit.Ret();
+        throw Unreachable();
+    }
 }

@@ -2,6 +2,7 @@ namespace ScrubJay.Text.Rendering;
 
 public static partial class Renderer
 {
+
     internal static class Cache<T>
 #if NET9_0_OR_GREATER
     where T : allows ref struct
@@ -16,6 +17,11 @@ public static partial class Renderer
                 Action = GetRenderToForCache<T>();
                 return;
             }
+        }
+        
+        public static void DefaultRenderTo(in T instance, TextBuilder builder)
+        {
+            builder.Append(Any.ToString(in instance));
         }
     }
 }
