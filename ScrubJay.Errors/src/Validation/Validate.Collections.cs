@@ -14,7 +14,7 @@ partial class Validate
             return Ex.ArgEmpty(array, info, argumentName);
         return array;
     }
-    
+
     public static Result<C> NotEmpty<C, T>(
         C? collection,
         string? info = null,

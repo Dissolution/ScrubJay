@@ -137,7 +137,7 @@ public partial class TextBuilder
         _position = end + 1;
         return this;
     }
-    
+
 
     public TextBuilder Clear()
     {

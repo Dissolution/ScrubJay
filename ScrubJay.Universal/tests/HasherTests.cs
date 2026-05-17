@@ -7,13 +7,13 @@ public class HasherTests
     [Fact]
     public void NullHashesToNullHash()
     {
-        var nullhash = Hasher.NullHash;
+        var nullHash = Hasher.NullHash;
         var a = Hasher.Hash<object?>(null);
-        Assert.Equal(nullhash, a);
+        Assert.Equal(nullHash, a);
         var b = Hasher.Hash<int?>(null);
-        Assert.Equal(nullhash, b);
+        Assert.Equal(nullHash, b);
         var c = Hasher.Hash<string>(null);
-        Assert.Equal(nullhash, c);
+        Assert.Equal(nullHash, c);
     }
 
     [Fact]

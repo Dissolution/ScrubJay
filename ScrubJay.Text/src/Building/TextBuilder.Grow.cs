@@ -24,7 +24,7 @@ public partial class TextBuilder
             GrowBy(count);
         }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void GrowBy(int count)
     {

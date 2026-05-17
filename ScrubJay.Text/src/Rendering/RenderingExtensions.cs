@@ -39,12 +39,12 @@ public static class AnyRenderingExtensions
             return Renderer.RenderValue<T>(instance, _);
         }
 #endif
-        
+
         public static string Render<T>(scoped Span<T> span)
         {
             return Renderer.RenderSpan<T>(span);
         }
-        
+
         public static string Render<T>(scoped ReadOnlySpan<T> span)
         {
             return Renderer.RenderSpan<T>(span);

@@ -3,7 +3,7 @@ using ScrubJay.Text.Comparison;
 namespace ScrubJay.Text.Utilities;
 
 [PublicAPI]
-public ref struct SplitTextEnumerator : 
+public ref struct SplitTextEnumerator :
     IEnumerator<Range>,
 #if NET9_0_OR_GREATER
     IEnumerator<text>,

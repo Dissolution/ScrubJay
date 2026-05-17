@@ -9,7 +9,7 @@ partial class TextBuilder
         Write(wrapChar);
         return this;
     }
-    
+
     public TextBuilder Wrap(string? wrapString, Action<TextBuilder>? build)
     {
         Write(wrapString);
@@ -25,7 +25,7 @@ partial class TextBuilder
         Write<W>(wrapValue);
         return this;
     }
-    
+
     public TextBuilder Wrap(char pre, char post, Action<TextBuilder>? build)
     {
         Write(pre);
@@ -33,7 +33,7 @@ partial class TextBuilder
         Write(post);
         return this;
     }
-    
+
     public TextBuilder Wrap(string? pre, string? post, Action<TextBuilder>? build)
     {
         Write(pre);
@@ -49,7 +49,7 @@ partial class TextBuilder
         Write<TPost>(post);
         return this;
     }
-    
+
     public TextBuilder Wrap((char Pre, char Post) wrap, Action<TextBuilder>? build)
     {
         Write(wrap.Pre);
@@ -57,7 +57,7 @@ partial class TextBuilder
         Write(wrap.Post);
         return this;
     }
-    
+
     public TextBuilder Wrap((string? Pre, string? Post) wrap, Action<TextBuilder>? build)
     {
         Write(wrap.Pre);

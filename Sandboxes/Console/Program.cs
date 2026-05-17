@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿#pragma warning disable
+
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using ScrubJay.Errors;
 using ScrubJay.Sandboxes.Console;
@@ -28,8 +30,8 @@ namespace ScrubJay.Sandboxes.Console
     {
         public override string ToString() => "TestRefStruct";
     }
-    
-    
+
+
     public class RenderableThing : IRenderable
     {
         public required int Id { get; init; }
@@ -46,7 +48,7 @@ namespace ScrubJay.Sandboxes.Console
         {
             Id = id;
         }
-        
+
         [SetsRequiredMembers]
         public RenderableThing(int id, string? name)
         {

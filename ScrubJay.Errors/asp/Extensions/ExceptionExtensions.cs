@@ -8,6 +8,6 @@ public static class ExceptionExtensions
     extension<E>(E exception)
         where E : Exception
     {
-        public ProblemDetails ToProblemDetails() => ProblemDetailsHelper.ToProblemDetails(exception);
+        public ProblemDetails ToProblemDetails() => ProblemDetailsConverter.ToProblemDetails(exception);
     }
 }

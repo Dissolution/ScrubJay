@@ -21,7 +21,7 @@ public readonly struct Unit :
 #endif
 #if NET6_0_OR_GREATER
     ISpanFormattable,
-#endif
+#endif 
     IEquatable<Unit>,
     IComparable<Unit>,
     IFormattable

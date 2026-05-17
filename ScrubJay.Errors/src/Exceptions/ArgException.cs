@@ -6,24 +6,20 @@ namespace ScrubJay.Errors.Exceptions;
 [PublicAPI]
 public sealed class ArgException : ArgumentException, IRenderable
 {
-    public required Argument Argument { get; init; }
+    public Argument Argument { get; }
 
-    public override string Message
-    {
-        get
-        {
-            // ignore the base override, return exactly what is in the message field.
-            string? message = ExceptionFields.RefMessageField(this);
-            return message ?? string.Empty;
-        }
-    }
+    /// <summary>
+    /// Gets the unaltered error message for this Exception.
+    /// </summary>
+    public override string Message => ExceptionFields.RefMessageField(this) ?? "";
 
-    [SetsRequiredMembers]
     public ArgException(Argument argument, string? message = null, Exception? innerException = null)
-        : base(message, innerException)
+        : base()
     {
         this.Argument = argument;
         ExceptionFields.RefParamNameField(this) = Argument.Name;
+        ExceptionFields.RefMessageField(this) = message;
+        ExceptionFields.RefInnerExceptionField(this) = innerException;
     }
 
     public void RenderTo(TextBuilder builder)

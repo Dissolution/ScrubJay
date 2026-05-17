@@ -36,10 +36,10 @@ public static class StatusCodesExtensions
             return StatusCodeClass.Unknown;
         }
 
-        public static bool IsSuccessful(int statusCode) 
+        public static bool IsSuccessful(int statusCode)
             => StatusCodes.GetStatusCodeClass(statusCode) == StatusCodeClass.Successful;
-        
-        public static bool IsSuccessful(int? statusCode) 
+
+        public static bool IsSuccessful(int? statusCode)
             => StatusCodes.GetStatusCodeClass(statusCode) == StatusCodeClass.Successful;
     }
 }

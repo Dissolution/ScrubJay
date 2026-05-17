@@ -260,7 +260,7 @@ public partial class TextBuilder
         {
             return Append(text).Repeat(padding, padChar);
         }
-        
+
         Debug.Assert(alignment.HasFlag(Alignment.Center));
 
         // if padding is even, pre + post are the same
@@ -300,7 +300,7 @@ public partial class TextBuilder
     {
         if (width == 0)
             return this;
-        
+
         var (padChar, alignment, trim, truncateChar) = options;
 
         if (width < 0)

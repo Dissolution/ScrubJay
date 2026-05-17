@@ -1,7 +1,4 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
-
-using Any = ScrubJay.Universal.Any;
-
 namespace ScrubJay.Errors.Validation;
 
 partial class Demand

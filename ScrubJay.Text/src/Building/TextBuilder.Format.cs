@@ -33,14 +33,14 @@ public partial class TextBuilder
 
         return this;
     }
-    
+
     public TextBuilder Format<T>(T? value, string? format)
     {
         if (format is [Renderer.FORMAT])
         {
             return Render<T>(value);
         }
-        
+
         if (value is IFormattable)
         {
 #if NET6_0_OR_GREATER
@@ -71,7 +71,7 @@ public partial class TextBuilder
     public TextBuilder Format<T>(T? value, string? format, IFormatProvider? formatProvider)
     {
         // do not check for render, this is the overload to ignore
-        
+
         if (value is IFormattable)
         {
 #if NET6_0_OR_GREATER
@@ -105,7 +105,7 @@ public partial class TextBuilder
         {
             return Render<T>(value);
         }
-        
+
         if (value is IFormattable)
         {
 #if NET6_0_OR_GREATER
@@ -136,7 +136,7 @@ public partial class TextBuilder
     public TextBuilder Format<T>(T? value, scoped text format, IFormatProvider? formatProvider)
     {
         // do not check for render, this is the overload to ignore
-        
+
         if (value is IFormattable)
         {
 #if NET6_0_OR_GREATER
@@ -164,7 +164,6 @@ public partial class TextBuilder
         return this;
     }
 
-    
 #if NET9_0_OR_GREATER
 
     private TextBuilder CallFormat<T>(T? value, string? format, IFormatProvider? formatProvider)
@@ -176,8 +175,8 @@ public partial class TextBuilder
         Emit.Ldarg(nameof(formatProvider));
         Emit.Call(new MethodRef(
                 typeof(TextBuilder),
-                nameof(Format), 
-                1, 
+                nameof(Format),
+                1,
                 [typeof(T), typeof(string), typeof(IFormatProvider)])
             .MakeGenericMethod(typeof(T)));
         return Return<TextBuilder>();
@@ -187,7 +186,7 @@ public partial class TextBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     // ReSharper disable once MethodOverloadWithOptionalParameter
     public TextBuilder Format<T>(
-        in T? value, 
+        in T? value,
         string? format = null,
         IFormatProvider? formatProvider = null,
         TypeConstraints.AllowsRefStruct<T> _ = default)

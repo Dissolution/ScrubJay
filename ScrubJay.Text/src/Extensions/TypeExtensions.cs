@@ -17,12 +17,12 @@ public static class TypeExtensions
                 return false;
             }
         }
-        
+
         public bool ImplementsInterface(Type? interfaceType)
         {
             if (interfaceType is null || !interfaceType.IsInterface)
                 return false;
-            
+
             Type? baseType = type;
             while (baseType is not null)
             {
@@ -35,7 +35,7 @@ public static class TypeExtensions
                     if (it == interfaceType || it.ImplementsInterface(interfaceType))
                         return true;
                 }
-            
+
                 baseType = baseType.BaseType;
             }
 

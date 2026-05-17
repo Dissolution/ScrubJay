@@ -13,7 +13,7 @@ public static partial class TextHelper
         }
         return false;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryCopyTo(string source, Span<char> dest)
     {

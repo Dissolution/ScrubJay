@@ -12,13 +12,17 @@ public static partial class Ex
     }
 
     public static NotImplementedException NotImplemented(
-        string? message = null,
+        string? info = null,
         Exception? innerException = null,
         [CallerLineNumber] int? lineNumber = null,
         [CallerFilePath] string? filePath = null,
         [CallerMemberName] string? memberName = null)
     {
         var caller = new CallerInfo(filePath, lineNumber, memberName);
+        var message = TextBuilder.Rent()
+            .Render(caller).Append(" has not yet been implemented")
+            .AppendInfo(info)
+            .ToStringAndDispose();
         return new NotImplementedException(message, innerException);
     }
 }

@@ -43,7 +43,7 @@ partial class Renderers
             .Delimit(", ", list, TB.Render)
             .Append(']');
     }
-    
+
     [RenderToMethod]
     public static void RenderSpanTo<T>(scoped Span<T> span, TextBuilder builder)
     {
@@ -55,7 +55,7 @@ partial class Renderers
             .Delimit(", ", span, TB.Render)
             .Append(']');
     }
-    
+
     [RenderToMethod]
     public static void RenderReadOnlySpanTo<T>(scoped ReadOnlySpan<T> span, TextBuilder builder)
     {

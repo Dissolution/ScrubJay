@@ -1,7 +1,6 @@
 #if NET9_0_OR_GREATER
 using System.Reflection;
 using System.Reflection.Emit;
-using ScrubJay.Universal.Reflection;
 #endif
 // ReSharper disable MethodOverloadWithOptionalParameter
 
@@ -10,7 +9,7 @@ namespace ScrubJay.Universal;
 partial class Any
 {
     /// <summary>
-    /// Returns a <see cref="int"/> hashcode for the <typeparamref name="T"/> <paramref name="instance"/>. 
+    /// Returns a <see cref="int"/> hashcode for the <typeparamref name="T"/> <paramref name="instance"/>.
     /// </summary>
     /// <param name="instance">
     /// The instance to get the hashcode of.
@@ -30,7 +29,7 @@ partial class Any
 
 #if NET9_0_OR_GREATER
     /// <summary>
-    /// Returns a <see cref="int"/> hashcode for the <typeparamref name="T"/> <paramref name="instance"/>. 
+    /// Returns a <see cref="int"/> hashcode for the <typeparamref name="T"/> <paramref name="instance"/>.
     /// </summary>
     /// <param name="instance">
     /// The instance to get the hashcode of.
@@ -48,7 +47,7 @@ partial class Any
             return 0;
         return GetHashCodeCache<T>.Invoke(in instance);
     }
-    
+
     private static class GetHashCodeCache<T>
         where T : allows ref struct
     {
@@ -66,7 +65,7 @@ partial class Any
 
             if (method is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyGetHashCode>($"Any_{instanceType}_GetHashCode");
+                var dynamicMethod = CreateDynamicMethod<AnyGetHashCode>($"Any_{instanceType}_GetHashCode");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);
@@ -107,7 +106,7 @@ partial class Any
                 _delegateTested = true;
             }
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Invoke(ref readonly T value)
         {

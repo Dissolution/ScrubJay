@@ -9,7 +9,7 @@ partial class Demand
     {
         throw Ex.PredicateFail<P>(predicate, expected, info, predicateName);
     }
-    
+
     public static void True(
         [DoesNotReturnIf(false)] bool predicate,
         string? info = null,
@@ -19,7 +19,7 @@ partial class Demand
         if (!predicate)
             ThrowPredicateFail(predicate, true, info, predicateName);
     }
-    
+
     public static void True(
         [DoesNotReturnIf(false)] bool? predicate,
         string? info = null,
@@ -29,7 +29,7 @@ partial class Demand
         if (predicate != true)
             ThrowPredicateFail(predicate, true, info, predicateName);
     }
-    
+
     public static void True(
         [AllowNull, NotNull] Func<bool>? predicate,
         string? info = null,
@@ -41,7 +41,7 @@ partial class Demand
         if (!predicate.Invoke())
             ThrowPredicateFail(predicate, true, info, predicateName);
     }
-    
+
     public static void True(
         [AllowNull, NotNull] Expression<Func<bool>>? predicate,
         string? info = null,

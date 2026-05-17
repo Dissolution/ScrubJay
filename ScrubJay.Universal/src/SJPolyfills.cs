@@ -42,6 +42,21 @@ namespace ScrubJay.Polyfills
                 return value;
             }
         }
+        
+        extension(Type? type)
+        {
+            public bool IsByRefLike
+            {
+                get
+                {
+                    if (type is null)
+                        return false;
+                    return Attribute
+                        .GetCustomAttributes(type, false)
+                        .Any(attr => attr.GetType().FullName == "System.Runtime.CompilerServices.IsByRefLikeAttribute");
+                }
+            }
+        }
     }
 }
 

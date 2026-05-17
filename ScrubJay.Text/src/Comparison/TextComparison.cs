@@ -144,7 +144,7 @@ public sealed class TextComparison :
         if (str is null) return 0;
         return ((StringComparer)this).GetHashCode(str);
     }
-    
+
     public int GetHashCode(text text)
     {
         return ((StringComparer)this).GetHashCode(text.ToString());

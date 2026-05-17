@@ -1,7 +1,7 @@
 ﻿namespace ScrubJay.Universal.Extensions;
 
 /// <summary>
-/// 
+///
 /// </summary>
 [PublicAPI]
 public static class UniversalExtensions

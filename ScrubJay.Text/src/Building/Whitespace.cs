@@ -8,7 +8,7 @@ public sealed class Whitespace : IDisposable
 {
     private char[] _whitespace;
     private int _offset;
-    
+
     private readonly MiniStack _indentOffsets;
 
     [NotNull, AllowNull]
@@ -27,7 +27,7 @@ public sealed class Whitespace : IDisposable
 
     public text FullNewLine => _whitespace.AsSpan(0, _offset);
     public string FullNewLineString => new string(_whitespace, 0, _offset);
-    
+
     public text OutdentNewLine
     {
         get
@@ -42,7 +42,7 @@ public sealed class Whitespace : IDisposable
     public text IndentsOnly => FullNewLine.Slice(CurrentNewLine.Length);
 
     public int IndentCount => _indentOffsets.Count;
-    
+
     public Whitespace()
     {
         _whitespace = TextPool.Rent(16);
@@ -85,7 +85,7 @@ public sealed class Whitespace : IDisposable
         _offset += delta;
         field = newline;
     }
-    
+
     public void AddIndent(scoped text indent)
     {
         // what we store in the stack is the starting offset for this indent
@@ -102,7 +102,7 @@ public sealed class Whitespace : IDisposable
         TextHelper.Unsafe.CopyTo(indent, _whitespace.AsSpan(offset), indentLength);
         _offset = newOffset;
     }
-    
+
     public void AddIndent(string? indent = null)
     {
         // what we store in the stack is the starting offset for this indent
@@ -110,7 +110,7 @@ public sealed class Whitespace : IDisposable
 
         int offset = _offset;
         _indentOffsets.Push(offset);
-        
+
         indent ??= CurrentDefaultIndent;
         int indentLength = indent.Length;
         int newOffset = offset + indentLength;
@@ -130,7 +130,7 @@ public sealed class Whitespace : IDisposable
         lastIndent = null;
         return false;
     }
-    
+
     public bool TryRemoveIndent()
     {
         if (_indentOffsets.TryPop(out int newOffset))

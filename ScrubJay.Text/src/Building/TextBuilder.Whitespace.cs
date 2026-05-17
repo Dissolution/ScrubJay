@@ -261,4 +261,25 @@ partial class TextBuilder
             }
         }
     }
+
+    internal void IndentAwareInvoke<T1, T2>(Action<TextBuilder, T1, T2>? buildItem, T1 first, T2 second)
+    {
+        if (buildItem is null)
+            return;
+        
+        if (IndentAware)
+        {
+            // ReSharper disable once NotDisposedResource
+            Whitespace? oldWhitespace = Interlocked.Exchange(ref _whitespace, new Whitespace());
+            text currentIndent = GetCurrentPositionIndent();
+            _whitespace!.AddIndent(currentIndent);
+            buildItem(this, first, second);
+            Whitespace newWhitespace = Interlocked.Exchange(ref _whitespace, oldWhitespace)!;
+            newWhitespace.Dispose();
+        }
+        else
+        {
+            buildItem(this, first, second);
+        }
+    }
 }

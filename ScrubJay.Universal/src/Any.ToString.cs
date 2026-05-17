@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Reflection.Emit;
-using ScrubJay.Universal.Reflection;
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
@@ -19,6 +18,7 @@ partial class Any
     /// <returns>
     /// The <paramref name="instance"/>'s <see cref="string"/> representation.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
     public static string? ToString<T>(in T? instance)
     {
@@ -43,6 +43,7 @@ partial class Any
     /// <returns>
     /// The <paramref name="instance"/>'s <see cref="string"/> representation.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
     public static string? ToString<T>(in T? instance, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
@@ -71,7 +72,7 @@ partial class Any
 
             if (method is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyToString>($"Any_{instanceType}_ToString");
+                var dynamicMethod = CreateDynamicMethod<AnyToString>($"Any_{instanceType}_ToString");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);
@@ -88,7 +89,7 @@ partial class Any
 
             Invoke = Fallback;
         }
-        
+
         private static string Fallback(ref readonly T value)
             => typeof(T).ToString(); // same as object.ToString()
     }

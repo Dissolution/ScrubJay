@@ -32,8 +32,8 @@ public static class ExceptionUrn
             })
             .Where(static type => type.IsAssignableTo(typeof(Exception)))
             .ToTypeSet();
-    
-    
+
+
     public static string ToTypeUrn<E>(E? exception)
         where E : Exception
     {
@@ -55,7 +55,7 @@ public static class ExceptionUrn
     {
         if (string.IsNullOrEmpty(urn))
             return null;
-        
+
         Regex regex = new Regex("urn:([a-zA-Z_][a-zA-Z0-9_.]*):([a-zA-Z_][a-zA-Z0-9_]+)", RegexOptions.Compiled);
         var match = regex.Match(urn);
         if (match.Success)
@@ -65,7 +65,7 @@ public static class ExceptionUrn
             return _exceptionTypes
                 .FirstOrDefault(ex => ex.Namespace == ns && ex.Name == name);
         }
-        
+
         foreach (var exType in _exceptionTypes)
         {
             if (string.Equals(urn, exType.Name, StringComparison.Ordinal))

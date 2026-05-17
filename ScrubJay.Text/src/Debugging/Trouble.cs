@@ -18,7 +18,7 @@ internal static class Trouble
     [Conditional("DEBUG")]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void Hold() { }
-    
+
     static Trouble()
     {
         lock (_consoleLock)
@@ -117,14 +117,14 @@ internal static class Trouble
             }
         }
     }
-    
+
     private static void WriteToDebugger(LogMessage log)
     {
         lock (_debuggerLock)
         {
             if (!Debugger.IsLogging())
                 return;
-            
+
             var builder = new StringBuilder()
                 .AppendLine($"[{log.Timestamp:HH:mm:ss}] - {log.Level}");
 
@@ -151,7 +151,7 @@ internal static class Trouble
                 message: message);
         }
     }
-    
+
     private static void WriteToTrace(LogMessage log)
     {
         lock (_traceLock)

@@ -1,3 +1,5 @@
+#pragma warning disable CA2201
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -132,7 +134,7 @@ public static class AspResultExtensions
         public Result ToResult()
         {
             Demand.NotNull(ir);
-            
+
             if (ir is IValueHttpResult valueHttpResult)
             {
                 var value = valueHttpResult.Value;
@@ -155,13 +157,13 @@ public static class AspResultExtensions
             // Assume this is an error
             return new Exception(R($"IResult Error: {ir:@}"));
         }
-        
+
         public Result<T> ToResult<T>()
         {
             Demand.NotNull(ir);
 
             int? statusCode = (ir is IStatusCodeHttpResult statusResult) ? statusResult.StatusCode : null;
-            
+
             if (ir is IValueHttpResult valueHttpResult)
             {
                 var value = valueHttpResult.Value;

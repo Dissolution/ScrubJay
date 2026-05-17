@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Reflection.Emit;
-using ScrubJay.Universal.Reflection;
 
 namespace ScrubJay.Universal;
 
@@ -30,7 +29,7 @@ partial class Any
             {
                 Debug.Assert(method.IsStatic);
 
-                var dynamicMethod = DynamicMethod.New<TryParse>($"{type}_TryParse");
+                var dynamicMethod = CreateDynamicMethod<TryParse>($"{type}_TryParse");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);

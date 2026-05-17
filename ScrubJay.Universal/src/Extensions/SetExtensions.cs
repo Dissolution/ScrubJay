@@ -16,7 +16,7 @@ public static class SetExtensions
                 }
             }
         }
-        
+
         public void AddMany(IEnumerable<T>? items)
         {
             if (set is not null && items is not null)

@@ -5,7 +5,7 @@ using Any = ScrubJay.Universal.Any;
 namespace ScrubJay.Errors.Problems;
 
 /// <summary>
-/// 
+///
 /// </summary>
 [PublicAPI]
 public static class ProblemDetailsExtensions
@@ -15,7 +15,7 @@ public static class ProblemDetailsExtensions
     public const string STATUS_PROPERTY = "status";
     public const string DETAIL_PROPERTY = "detail";
     public const string INSTANCE_PROPERTY = "instance";
-    
+
     extension<E>(E exception)
         where E : Exception
     {
@@ -23,7 +23,9 @@ public static class ProblemDetailsExtensions
         /// A URI-like reference that identifies the Problem type.
         /// </summary>
         /// <remarks>
-        /// The Type URI is allowed to be a non-resolvable URI, so it is not typed as an <see cref="Uri"/>.
+        /// The Type URI is allowed to be a non-resolvable URI, so it is not typed as an <see cref="Uri"/>.<br/>
+        /// If "type" is not present in the <paramref name="exception"/>'s <see cref="Exception.Data"/>,
+        /// a urn for the <see cref="Exception"/>'s <see cref="Type"/> will be returned.
         /// </remarks>
         /// <seealso href="https://www.rfc-editor.org/rfc/rfc9457.html#name-type"/>
         public string? Type
@@ -38,7 +40,7 @@ public static class ProblemDetailsExtensions
             }
             set => exception.Data.SetOrRemove(TYPE_PROPERTY, value);
         }
-        
+
         /// <summary>
         /// A short, human-readable summary of the Problem.
         /// </summary>
@@ -53,7 +55,7 @@ public static class ProblemDetailsExtensions
             }
             set => exception.Data.SetOrRemove(TITLE_PROPERTY, value);
         }
-        
+
         /// <summary>
         /// An <see cref="int"/> HTTP Status Code for this occurrence of a Problem.
         /// </summary>

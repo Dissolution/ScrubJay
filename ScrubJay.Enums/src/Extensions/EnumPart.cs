@@ -10,12 +10,12 @@ public enum EnumPart
     /// The name of the member (as it was declared)
     /// </summary>
     Name,
-    
+
     /// <summary>
     /// The underlying value of the member
     /// </summary>
     Value,
-    
+
     /// <summary>
     /// A defined <see cref="Attribute"/> format
     /// </summary>

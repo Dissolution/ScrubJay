@@ -8,7 +8,7 @@ public partial class TextBuilder
         Write(ch);
         return this;
     }
-    
+
     public TextBuilder Append(scoped text text)
     {
         if (!IndentAware)
@@ -21,7 +21,7 @@ public partial class TextBuilder
         }
         return this;
     }
-    
+
     public TextBuilder Append(string? str)
     {
         if (!IndentAware)

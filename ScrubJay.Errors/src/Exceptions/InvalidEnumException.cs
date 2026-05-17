@@ -1,23 +1,22 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace ScrubJay.Errors.Exceptions;
 
+[PublicAPI]
 public sealed class InvalidEnumException : InvalidEnumArgumentException
 {
-    public InvalidEnumException()
-    {
-    }
+    public Argument Argument { get; }
+    
+    /// <summary>
+    /// Gets the unaltered error message for this Exception.
+    /// </summary>
+    public override string Message => ExceptionFields.RefMessageField(this) ?? "";
 
-    public InvalidEnumException(string message) : base(message)
+    public InvalidEnumException(Argument argument, string? message = null, Exception? innerException = null)
+        : base()
     {
-    }
-
-    public InvalidEnumException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
-
-    public InvalidEnumException(string argumentName, int invalidValue, Type enumClass) : base(argumentName, invalidValue, enumClass)
-    {
+        this.Argument = argument;
+        ExceptionFields.RefMessageField(this) = message;
+        ExceptionFields.RefInnerExceptionField(this) = innerException;
     }
 }

@@ -16,9 +16,6 @@ public static partial class Renderer
                 Action = GetRenderToForCache<T>();
                 return;
             }
-
-
-           
         }
     }
 }

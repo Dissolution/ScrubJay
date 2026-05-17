@@ -13,7 +13,7 @@ public static partial class Validate
             return Ex.ArgNull(argument, info, argumentName);
         return argument;
     }
-    
+
     public static Result<T> NotNull<T>(
         Nullable<T> argument,
         string? info = null,

@@ -47,7 +47,7 @@ public partial class TextBuilder : IDisposable
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _chars.Length;
     }
-    
+
     /// <summary>
     /// Gets the current count of characters that have been written to this <see cref="TextBuilder"/>
     /// </summary>
@@ -97,7 +97,7 @@ public partial class TextBuilder : IDisposable
         span = default;
         return false;
     }
-    
+
     public bool TrySlice(int index, int length, out Span<char> span)
     {
         if ((uint)index + (uint)length <= (uint)_position)
@@ -108,7 +108,7 @@ public partial class TextBuilder : IDisposable
         span = default;
         return false;
     }
-    
+
     public bool TrySlice(Range range, out Span<char> span)
     {
         int start = range.Start.GetOffset(_position);
@@ -121,11 +121,11 @@ public partial class TextBuilder : IDisposable
             span = _chars.AsSpan(start, end - start);
             return true;
         }
-        
+
         span = default;
         return false;
     }
-    
+
     public bool TryCopyTo(Span<char> destination)
     {
         if (_position <= destination.Length)
@@ -135,7 +135,7 @@ public partial class TextBuilder : IDisposable
         }
         return false;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<char> AsSpan() => _chars.AsSpan(0, _position);
 
@@ -149,7 +149,7 @@ public partial class TextBuilder : IDisposable
         TextHelper.Unsafe.CopyTo(_chars, array, len);
         return array;
     }
-    
+
     public override bool Equals(object? obj)
     {
         if (obj is TextBuilder textBuilder)
@@ -165,7 +165,7 @@ public partial class TextBuilder : IDisposable
     {
         return _chars.AsSpan(0, _position).Equals(text, StringComparison.Ordinal);
     }
-    
+
     public override int GetHashCode()
     {
         return Hasher.HashMany<char>(Written);

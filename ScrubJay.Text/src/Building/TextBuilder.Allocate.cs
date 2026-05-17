@@ -16,7 +16,7 @@ public partial class TextBuilder
             allocated = [];
         }
     }
-    
+
     public Span<char> Allocate(int length)
     {
         if (length > 0)
@@ -39,7 +39,7 @@ public partial class TextBuilder
                 Allocate(length, out allocated);
                 return true;
             }
-            
+
             if (length <= 0)
             {
                 allocated = [];
@@ -53,7 +53,7 @@ public partial class TextBuilder
             _position += length;
             return true;
         }
-        
+
         allocated = default;
         return false;
     }

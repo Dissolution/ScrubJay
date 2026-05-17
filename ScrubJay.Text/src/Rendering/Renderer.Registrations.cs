@@ -63,7 +63,7 @@ public static partial class Renderer
             })
             .ToArray();
     }
-    
+
     private static Option<int> InputConversionSpecificity(Type inputType, Type destinationType)
     {
         // exact > subclass > interface > object
@@ -129,7 +129,7 @@ public static partial class Renderer
 
         return None;
     }
-    
+
     private static Option<(MethodInfo ConcreteMethod, int Specificity)> MatchSpecificity(MethodInfo renderToMethod, Type valueType)
     {
         // default is not matching at worst specificity
@@ -304,9 +304,9 @@ public static partial class Renderer
         }
         return DefaultRenderTo<object>;
     }
-    
-    
-    
+
+
+
     public static void Print()
     {
         var msg = TextBuilder.Rent()

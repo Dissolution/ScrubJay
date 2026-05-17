@@ -1,6 +1,7 @@
 namespace ScrubJay.Errors.Utilities;
 
-public sealed record class CallerInfo
+[PublicAPI]
+public sealed record class CallerInfo : IRenderable
 {
     public static CallerInfo Capture(
         [CallerFilePath] string? filePath = null,
@@ -28,5 +29,14 @@ public sealed record class CallerInfo
     public override string ToString()
     {
         return $"{FilePath}:{LineNumber} - {MemberName}";
+    }
+
+    public void RenderTo(TextBuilder builder)
+    {
+        builder.IfNotEmpty(FilePath, TB.Append, TB.Write("????.???"))
+            .Append(':')
+            .IfNotNull(LineNumber, TB.Append<int>, TB.Write('?'))
+            .Append(" - ")
+            .IfNotEmpty(MemberName, TB.Append, TB.Write("??"));
     }
 }

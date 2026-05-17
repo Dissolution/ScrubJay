@@ -19,7 +19,7 @@ public sealed class ResultJsonConverterFactory : JsonConverterFactory
         var genericType = typeToConvert.GetGenericTypeDefinition();
         return genericType == typeof(Result<>) || genericType == typeof(Result<,>);
     }
-    
+
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
         if (typeToConvert == typeof(Result))
@@ -29,10 +29,10 @@ public sealed class ResultJsonConverterFactory : JsonConverterFactory
 
         if (!typeToConvert.IsGenericType)
             throw new JsonException();
-        
+
         var genericTypeDef = typeToConvert.GetGenericTypeDefinition();
         var genericTypes =  typeToConvert.GetGenericArguments();
-        
+
         if (genericTypeDef == typeof(Result<>))
         {
             object inst = Activator.CreateInstance(typeof(ResultJsonConverter<>)!.MakeGenericType(genericTypes))!;
@@ -40,15 +40,14 @@ public sealed class ResultJsonConverterFactory : JsonConverterFactory
                 return converter;
             throw new JsonException();
         }
-        
+
         if (genericTypeDef == typeof(Result<,>))
         {
             object inst = Activator.CreateInstance(typeof(ResultJsonConverter<,>)!.MakeGenericType(genericTypes))!;
             if (inst is JsonConverter converter)
                 return converter;
-            throw new JsonException();
         }
-        
+
         throw new JsonException();
     }
 }
