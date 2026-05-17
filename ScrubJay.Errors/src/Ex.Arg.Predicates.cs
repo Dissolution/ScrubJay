@@ -3,8 +3,8 @@ namespace ScrubJay.Errors;
 partial class Ex
 {
     internal static ArgException PredicateFail<P>(
-        P? predicate, 
-        bool expected, 
+        P? predicate,
+        bool expected,
         string? info = null,
         [CallerArgumentExpression(nameof(predicate))]
         string? predicateName = null)

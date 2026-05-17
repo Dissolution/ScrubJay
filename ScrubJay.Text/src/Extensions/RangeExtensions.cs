@@ -17,7 +17,7 @@ public static class RangeExtensions
                 length = end - start;
                 return true;
             }
-            
+
             offset = -1;
             length = -1;
             return false;
@@ -36,7 +36,7 @@ public static class RangeExtensions
             offsetLength = (-1, -1);
             return false;
         }
-        
+
         public Option<(int Offset, int Length)> TryGetOffsetAndLength(int available)
         {
             int start = range.Start.GetOffset(available);
@@ -45,7 +45,7 @@ public static class RangeExtensions
             {
                 return (start, end - start);
             }
-            
+
             return None;
         }
     }
@@ -56,7 +56,7 @@ public static class RangeExtensions
         {
             if (optionalRange.TryGetValue(out var range))
                 return range.TryGetOffsetAndLength(available, out offset, out length);
-            
+
             offset = -1;
             length = -1;
             return false;
@@ -70,7 +70,7 @@ public static class RangeExtensions
             offsetLength = (-1, -1);
             return false;
         }
-        
+
         public Option<(int Offset, int Length)> TryGetOffsetAndLength(int available)
         {
            if (optionalRange.TryGetValue(out var range))
@@ -85,7 +85,7 @@ public static class RangeExtensions
         {
             if (optionalRange.IsSome(out var range))
                 return range.TryGetOffsetAndLength(available, out offset, out length);
-            
+
             offset = -1;
             length = -1;
             return false;
@@ -99,7 +99,7 @@ public static class RangeExtensions
             offsetLength = (-1, -1);
             return false;
         }
-        
+
         public Option<(int Offset, int Length)> TryGetOffsetAndLength(int available)
         {
             if (optionalRange.IsSome(out var range))

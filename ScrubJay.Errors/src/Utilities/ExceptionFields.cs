@@ -19,7 +19,7 @@ internal static class ExceptionFields
         if (exceptionField is null)
             throw new MissingFieldException(Type.Render(key.ExceptionType), key.FieldName);
 
-        var method = DynamicMethod.New<RefExceptionFieldDelegate<TException, TField>>($"{Type.Render(key.Item1)}.{key.Item2}");
+        var method = Any.CreateDynamicMethod<RefExceptionFieldDelegate<TException, TField>>($"{Type.Render(key.Item1)}.{key.Item2}");
         var gen = method.GetILGenerator();
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldflda, exceptionField);
@@ -53,6 +53,23 @@ internal static class ExceptionFields
     }
 #endif
 
+#if NET8_0_OR_GREATER
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_actualValue")]
+    public static extern ref object? RefActualValueField(ArgumentOutOfRangeException exception);
+#else
+    public static ref object? RefActualValueField(ArgumentOutOfRangeException exception)
+    {
+        return ref RefExceptionField<ArgumentOutOfRangeException, object?>(exception,
+#if NETFRAMEWORK
+            "m_actualValue"
+#else
+            "_actualValue"
+#endif
+        );
+    }
+#endif
+
+
 
 
 #if NET8_0_OR_GREATER
@@ -84,4 +101,7 @@ internal static class ExceptionFields
         return ref RefExceptionField<Exception, IDictionary>(exception, "_data");
     }
 #endif
+
+
+
 }

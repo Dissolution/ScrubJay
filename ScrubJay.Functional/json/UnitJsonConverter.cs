@@ -17,7 +17,7 @@ public sealed class UnitJsonConverter : JsonConverter<Unit>
             return default;
         throw new JsonException();
     }
-    
+
     public override void Write(Utf8JsonWriter writer, Unit _, JsonSerializerOptions options)
     {
         writer.WriteStringValue("()");

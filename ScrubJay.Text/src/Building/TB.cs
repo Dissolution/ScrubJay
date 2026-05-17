@@ -17,7 +17,7 @@ public static class TB
 #region Action<TextBuilder, char>
     public static Action<TextBuilder> Write(char ch) => tb => tb.Write(ch);
     public static void Write(TextBuilder builder, char ch) => builder.Write(ch);
-    
+
     public static Action<TextBuilder> Append(char ch) => tb => tb.Append(ch);
     public static void Append(TextBuilder builder, char ch) => builder.Append(ch);
 #endregion
@@ -30,7 +30,7 @@ public static class TB
     }
 
     public static void Write(TextBuilder builder, scoped text text) => builder.Write(text);
-    
+
     public static Action<TextBuilder> Append(scoped text text)
     {
         string str = text.ToString();
@@ -39,11 +39,11 @@ public static class TB
 
     public static void Append(TextBuilder builder, scoped text text) => builder.Append(text);
 #endregion
-    
+
 #region Action<TextBuilder, string?>
     public static Action<TextBuilder> Write(string? str) => tb => tb.Write(str);
     public static void Write(TextBuilder builder, string? str) => builder.Write(str);
-    
+
     public static Action<TextBuilder> Append(string? str) => tb => tb.Append(str);
     public static void Append(TextBuilder builder, string? str) => builder.Append(str);
 #endregion
@@ -62,8 +62,8 @@ public static class TB
         where T : allows ref struct
         => builder.Write<T>(value, _);
 #endif
-    
-    
+
+
     public static Action<TextBuilder> Append<T>(T? value) => tb => tb.Append<T>(value);
     public static Action<TextBuilder, T?> Append<T>() => static (tb, value) => tb.Append<T>(value);
     public static void Append<T>(TextBuilder builder, T? value) => builder.Append<T>(value);
@@ -153,7 +153,7 @@ public static class TB
 #endif
 #endregion
 #endregion
-    
+
 }
 
 public static class TB<T>

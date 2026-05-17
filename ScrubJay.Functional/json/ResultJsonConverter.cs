@@ -18,7 +18,7 @@ public sealed class ResultJsonConverter : JsonConverter<Result>
     {
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException();
-        
+
         reader.Read();
         if (reader.TokenType != JsonTokenType.PropertyName)
             throw new JsonException();
@@ -48,11 +48,11 @@ public sealed class ResultJsonConverter : JsonConverter<Result>
 
         return result;
     }
-    
+
     public override void Write(Utf8JsonWriter writer, Result result, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        
+
         if (!result.IsError(out var error))
         {
             //ok
@@ -65,7 +65,7 @@ public sealed class ResultJsonConverter : JsonConverter<Result>
             var converter = options.GetConverter<Exception>()!;
             converter.Write(writer, error, options);
         }
-        
+
         writer.WriteEndObject();
     }
 }

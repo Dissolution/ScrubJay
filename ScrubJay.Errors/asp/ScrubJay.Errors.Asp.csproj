@@ -32,9 +32,5 @@
         <Using Include="ScrubJay.Text.Building"/>
         <Using Include="ScrubJay.Text.Rendering"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Utilities\" />
-    </ItemGroup>
     
 </Project>

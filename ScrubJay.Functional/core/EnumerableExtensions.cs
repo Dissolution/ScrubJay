@@ -251,7 +251,7 @@ public static class EnumerableExtensions
             foreach (T value in enumerable)
             {
                 IEnumerable<N>? many = null;
-                
+
                 try
                 {
                     many = selector(value);

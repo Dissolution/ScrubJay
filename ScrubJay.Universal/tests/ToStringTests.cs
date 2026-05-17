@@ -12,7 +12,7 @@ public partial class ToStringTests
     {
         string? toString = obj?.ToString();
         string? anyToString = Any.ToString(obj);
-        
+
         Assert.Equal(toString, anyToString);
     }
 }

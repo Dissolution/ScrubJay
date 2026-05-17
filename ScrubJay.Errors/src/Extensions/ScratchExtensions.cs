@@ -27,7 +27,7 @@ public static class ScratchExtensions
                 return ex;
             }
         }
-        
+
         public static Result<object?> TryCreateInstance(Type? instanceType, params object?[]? args)
         {
             try

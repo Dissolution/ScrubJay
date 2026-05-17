@@ -574,4 +574,52 @@ public partial class TextBuilder
     }
 #endregion
 
+
+    public TextBuilder IfAppend<T>(bool condition, T? valueToAppendIfTrue)
+    {
+        if (condition)
+        {
+            return Append<T>(valueToAppendIfTrue);
+        }
+        else
+        {
+            return this;
+        }
+    }
+
+    public TextBuilder IfAppend<T, F>(bool condition, T? valueToAppendIfTrue, F? valueToAppendIfFalse)
+    {
+        if (condition)
+        {
+            return Append<T>(valueToAppendIfTrue);
+        }
+        else
+        {
+            return Append<F>(valueToAppendIfFalse);
+        }
+    }
+    
+    public TextBuilder IfRender<T>(bool condition, T? valueToAppendIfTrue)
+    {
+        if (condition)
+        {
+            return Render<T>(valueToAppendIfTrue);
+        }
+        else
+        {
+            return this;
+        }
+    }
+
+    public TextBuilder IfRender<T, F>(bool condition, T? valueToAppendIfTrue, F? valueToAppendIfFalse)
+    {
+        if (condition)
+        {
+            return Render<T>(valueToAppendIfTrue);
+        }
+        else
+        {
+            return Render<F>(valueToAppendIfFalse);
+        }
+    }
 }

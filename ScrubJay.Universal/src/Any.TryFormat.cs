@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Reflection.Emit;
-using ScrubJay.Universal.Reflection;
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
@@ -45,7 +44,7 @@ partial class Any
 
             if (method is not null)
             {
-                var dynamicMethod = DynamicMethod.New<AnyTryFormat>($"Any_{instanceType}_Format");
+                var dynamicMethod = CreateDynamicMethod<AnyTryFormat>($"Any_{instanceType}_Format");
                 var gen = dynamicMethod.GetILGenerator();
 
                 gen.Emit(OpCodes.Ldarg_0);
@@ -66,7 +65,7 @@ partial class Any
 
             Invoke = Fallback;
         }
-        
+
         private static bool Fallback(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
             string str = Any.ToString<T>(in instance)!;

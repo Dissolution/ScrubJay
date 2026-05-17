@@ -24,7 +24,7 @@ public class SwitchBuilder
     {
         _textBuilder = textBuilder;
     }
-    
+
     public SwitchBuilder Case(bool condition, Action<TextBuilder>? onTrue)
     {
         if (!_invoked && condition)
@@ -34,7 +34,7 @@ public class SwitchBuilder
         }
         return this;
     }
-    
+
     public SwitchBuilder Case(Func<bool> predicate, Action<TextBuilder>? onTrue)
     {
         if (!_invoked && predicate())

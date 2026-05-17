@@ -23,10 +23,10 @@ public partial class Demand
             ThrowArgNull(value, null, argumentName);
         return value.GetValueOrDefault();
     }
-    
+
     public static T ThrowIfNot<T>(
-        this object? obj, 
-        [CallerArgumentExpression(nameof(obj))] 
+        this object? obj,
+        [CallerArgumentExpression(nameof(obj))]
         string? objectName = null)
     {
         if (obj is not T)

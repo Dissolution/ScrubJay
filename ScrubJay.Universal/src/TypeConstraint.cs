@@ -313,7 +313,7 @@ public static class TypeConstraints
         , allows ref struct
 #endif
     ;
-    
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="struct"/> and <c>allows ref struct</c>.
     /// </summary>

@@ -40,8 +40,8 @@ public static class TFlaggedEnumInstanceExtensions
             Emit.Neg();
             return Return<E>();
         }
-        
-        
+
+
         public bool HasFlag(E flag)
         {
             throw new NotImplementedException();
@@ -71,7 +71,7 @@ public static class TFlaggedEnumInstanceExtensions
         {
             throw new NotImplementedException();
         }
-        
+
         public bool Any(E flag)
         {
             throw new NotImplementedException();

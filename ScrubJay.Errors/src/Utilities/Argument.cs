@@ -105,8 +105,8 @@ public sealed record class Argument : IRenderable
         name = Name;
         valueString = ValueString;
     }
-
-    public override string ToString() => R($"'{Name}' ({Type:@}) = {ValueString}");
+    
+    public override string ToString() => TextBuilder.Build(RenderTo);
 
     public void RenderTo(TextBuilder builder)
     {
@@ -120,15 +120,13 @@ public sealed record class Argument : IRenderable
 
         if (Type is not null)
         {
-            builder.If(wrote, TB.Write(' '))
-                .RenderType(Type);
+            builder.IfAppend(wrote, ' ').RenderType(Type);
             wrote = true;
         }
 
         if (!string.IsNullOrEmpty(ValueString))
         {
-            builder.If(wrote, TB.Write(" = "))
-                .Append(ValueString);
+            builder.IfAppend(wrote, " = ").Append(ValueString);
             wrote = true;
         }
 

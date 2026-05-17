@@ -3,10 +3,10 @@
 public partial class TextBuilder
 {
     public static TextBuilder Rent() => new TextBuilder();
-    
+
     public static TextBuilder Rent(int minCapacity) => new TextBuilder(minCapacity);
-    
-    
+
+
     public static string Build(Action<TextBuilder>? build)
     {
         if (build is not null)
@@ -17,7 +17,7 @@ public partial class TextBuilder
         }
         return string.Empty;
     }
-    
+
     public static string Build<S>(S state, Action<TextBuilder, S>? statefulBuild)
 #if NET9_0_OR_GREATER
         where S : allows ref struct
@@ -34,7 +34,7 @@ public partial class TextBuilder
         }
         return tb.ToString();
     }
-    
+
     public static string Build(
         [HandlesResourceDisposal]
         ref InterpolatedTextBuilder interpolatedTextBuilder)

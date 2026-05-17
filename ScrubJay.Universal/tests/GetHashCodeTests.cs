@@ -1,8 +1,10 @@
+#pragma warning disable MA0021
+
 using ScrubJay.Universal.Tests.Internal;
 
 namespace ScrubJay.Universal.Tests;
 
-public partial class GetHashCodeTests
+public class GetHashCodeTests
 {
     [Theory]
     [InlineData(int.MinValue)]
@@ -42,16 +44,16 @@ public partial class GetHashCodeTests
 
         Assert.Equal(hashCode, anyHashCode);
     }
-    
+
     public static TheoryData<object?> ObjectData { get; } = new(TestTypes.Objects);
-    
+
     [Theory]
     [MemberData(nameof(ObjectData))]
     public void CanHashCodeObject(object? obj)
     {
         int hashCode = obj?.GetHashCode() ?? 0;
         int anyHashCode = Any.GetHashCode<object>(in obj);
-        
+
         Assert.Equal(hashCode, anyHashCode);
     }
 }

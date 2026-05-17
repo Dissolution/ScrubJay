@@ -13,7 +13,7 @@ public sealed class SJExceptionHandler : IExceptionHandler
     public SJExceptionHandler(StackTraceLevel stackTraceLevel)
     {
         _stackTraceLevel = stackTraceLevel;
-        ProblemDetailsHelper.StackTraceLevel = stackTraceLevel;
+        ProblemDetailsConverter.StackTraceLevel = stackTraceLevel;
     }
 
     public async ValueTask<bool> TryHandleAsync(
@@ -21,8 +21,8 @@ public sealed class SJExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken = default)
     {
-        var problem = ProblemDetailsHelper.ToProblemDetails(exception);
-        httpContext.Response.StatusCode = problem.Status ?? ProblemDetailsHelper.DefaultErrorStatusCode;
+        var problem = ProblemDetailsConverter.ToProblemDetails(exception);
+        httpContext.Response.StatusCode = problem.Status ?? ProblemDetailsConverter.DefaultErrorStatusCode;
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
         return true;
     }

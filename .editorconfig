@@ -116,6 +116,9 @@ dotnet_diagnostic.CA1031.severity = none
 dotnet_diagnostic.CA1034.severity = none
 ### Do not declare visible instance fields
 dotnet_diagnostic.CA1051.severity = none
+### Make URI types URIs
+dotnet_diagnostic.CA1054.severity = suggestion
+dotnet_diagnostic.CA1055.severity = suggestion
 ### In externally visible method validate parameter is not null
 dotnet_diagnostic.CA1062.severity = none
 ### Dispose stuff

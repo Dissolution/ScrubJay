@@ -20,22 +20,22 @@ public enum Alignment
     /// Right-align
     /// </summary>
     Right = 0,
-    
+
     /// <summary>
     /// Left-align
     /// </summary>
     Left = 1 << 0,
-    
+
     /// <summary>
     /// Center-align with a right-bias
     /// </summary>
     Center = 1 << 1,
-    
+
     /// <summary>
     /// Center-align with a right-bias
     /// </summary>
     CenterRight = Center | Right,
-    
+
     /// <summary>
     /// Center-align with a left-bias
     /// </summary>

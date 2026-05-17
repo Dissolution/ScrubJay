@@ -82,7 +82,7 @@ partial class TextBuilder
 
     public bool TryInsert<T>(int index, T? value)
         => TryInsert<T>(index, value, TB.Append);
-    
+
 
 #if NET9_0_OR_GREATER
     public bool TryInsert<T>(int index, T? value, Action<TextBuilder,T?>? buildValue,
@@ -90,7 +90,7 @@ partial class TextBuilder
     where T : allows ref struct
     {
         buildValue ??= TB.Append<T>(_);
-        
+
         if ((uint)index <= (uint)_position)
         {
             // we have to build the value to know what to insert

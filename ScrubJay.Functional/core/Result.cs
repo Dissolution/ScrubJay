@@ -173,7 +173,7 @@ public readonly struct Result :
         {
             if (_error is not null)
                 return _error.GetHashCode();
-            
+
             return typeof(Exception).GetHashCode();
         }
 #else

@@ -6,7 +6,7 @@ public ref struct InterpolatedTextBuilder : IDisposable
 {
     internal readonly bool _passedBuilder;
     internal readonly TextBuilder _builder;
-    
+
     public readonly int Length => _builder.Length;
 
     [MustDisposeResource(true)]
@@ -55,41 +55,46 @@ public ref struct InterpolatedTextBuilder : IDisposable
         => throw new NotImplementedException();
 
     public void AppendFormatted<T>(T? value) => _builder.Append<T>(value);
-    
+
     public void AppendFormatted<T>(T? value, string? format)
         => _builder.Format<T>(value, format);
-    
+
     public void AppendFormatted<T>(T? value, string? format, IFormatProvider? provider)
         => _builder.Format<T>(value, format, provider);
-    
+
     public void AppendFormatted<T>(T? value, scoped text format)
         => _builder.Format<T>(value, format);
-    
+
 #if NET9_0_OR_GREATER
     public void AppendFormatted<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         _builder.Append<T>(in value, _);
     }
-    
+
     public void AppendFormatted<T>(in T? value, string? format, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         _builder.Format<T>(in value, format, null, _);
     }
 #endif
-    
+
     public void AppendFormatted(Action<TextBuilder>? build)
     {
         _builder.IndentAwareInvoke(build);
     }
-    
-    public void AppendFormatted<T>((Action<TextBuilder,T> BuildItem, T Value) tuple)
+
+    public void AppendFormatted<T>((Action<TextBuilder, T> BuildItem, T Item) tuple)
     {
-        _builder.IndentAwareInvoke<T>(tuple.BuildItem, tuple.Value);
+        _builder.IndentAwareInvoke<T>(tuple.BuildItem, tuple.Item);
     }
     
-    
+    public void AppendFormatted<T1, T2>((Action<TextBuilder, T1, T2> BuildItem, T1 First, T2 Second) tuple)
+    {
+        _builder.IndentAwareInvoke<T1, T2>(tuple.BuildItem, tuple.First, tuple.Second);
+    }
+
+
     public override string ToString() => _builder.ToString();
 
     [HandlesResourceDisposal]

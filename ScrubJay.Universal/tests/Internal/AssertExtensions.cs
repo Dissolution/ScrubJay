@@ -9,7 +9,7 @@ internal static class AssertExtensions
         {
             Assert.True(value is null);
         }
-        
+
         [AssertionMethod]
         public static void NotNull<T>(T? value)
         {

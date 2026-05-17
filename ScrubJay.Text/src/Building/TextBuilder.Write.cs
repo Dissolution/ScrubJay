@@ -67,7 +67,7 @@ public partial class TextBuilder
             }
         }
     }
-    
+
     internal void Write<T>(T? value)
     {
         if (value is IFormattable)

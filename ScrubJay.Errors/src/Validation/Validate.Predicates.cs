@@ -14,7 +14,7 @@ partial class Validate
             return Ex.PredicateFail(predicate, true, info, predicateName);
         return Result.Ok;
     }
-    
+
     public static Result True(
         bool? predicate,
         string? info = null,
@@ -25,7 +25,7 @@ partial class Validate
             return Ex.PredicateFail(predicate, true, info, predicateName);
         return Result.Ok;
     }
-    
+
     public static Result True(
         Func<bool>? predicate,
         string? info = null,
@@ -38,7 +38,7 @@ partial class Validate
             return Ex.PredicateFail(predicate, true, info, predicateName);
         return Result.Ok;
     }
-    
+
     public static Result True(
         Expression<Func<bool>>? predicate,
         string? info = null,

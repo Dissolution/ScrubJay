@@ -15,7 +15,7 @@ public sealed class NoneJsonConverter : JsonConverter<IMPL.None>
             throw new JsonException();
         return default;
     }
-    
+
     public override void Write(Utf8JsonWriter writer, IMPL.None _, JsonSerializerOptions options)
     {
         writer.WriteNullValue();

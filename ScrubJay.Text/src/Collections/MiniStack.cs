@@ -6,13 +6,13 @@ internal sealed class MiniStack
     private int _count;
 
     public int Count => _count;
-    
+
     private MiniStack(int[] array, int count)
     {
         _array = array;
         _count = count;
     }
-    
+
     public MiniStack()
     {
         _array = [];
@@ -37,7 +37,7 @@ internal sealed class MiniStack
         }
         _array[_count++] = value;
     }
-    
+
     public bool TryPeek(out int topValue)
     {
         int i = _count - 1;
@@ -49,7 +49,7 @@ internal sealed class MiniStack
         topValue = 0;
         return false;
     }
-    
+
     public bool TryPop(out int topValue)
     {
         int i = _count - 1;
@@ -62,7 +62,7 @@ internal sealed class MiniStack
         topValue = 0;
         return false;
     }
-    
+
     public void OffsetAll(int offset)
     {
         for (var i = 0; i < _count; i++)

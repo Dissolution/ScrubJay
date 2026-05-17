@@ -16,6 +16,7 @@ partial class Any
     /// <returns>
     /// The <paramref name="instance"/>'s <see cref="Type"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Type GetType<T>(in T? instance)
     {
         if (instance is null)
@@ -47,13 +48,13 @@ partial class Any
         return typeof(T);
     }
 #endif
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Type GetType<T>(scoped Span<T> span)
     {
         return typeof(Span<T>);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Type GetType<T>(scoped ReadOnlySpan<T> span)
     {

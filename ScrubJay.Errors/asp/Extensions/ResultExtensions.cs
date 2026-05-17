@@ -43,10 +43,10 @@ public static class ResultExtensions
                     return problem.ToActionResult();
                 return new ActionResult<T>(ok);
             }
-            
+
             return exception.ToProblemDetails().ToActionResult();
         }
-        
+
 #if NET7_0_OR_GREATER
         public IResult ToHttpResult()
         {
@@ -58,12 +58,12 @@ public static class ResultExtensions
                     return problem.ToHttpResult();
                 return TypedResults.Ok<T>(ok);
             }
-            
+
             return exception.ToProblemDetails().ToHttpResult();
         }
 #endif
     }
-    
+
     extension<T,E>(Result<T,E> result)
     {
         public ActionResult<T> ToActionResult()
@@ -86,11 +86,11 @@ public static class ResultExtensions
                     return ar;
                 if (error is ProblemDetails problemDetails)
                     return problemDetails.ToActionResult();
-                var problem = ProblemDetailsHelper.ToProblemDetails(error);
+                var problem = ProblemDetailsConverter.ToProblemDetails(error);
                 return problem.ToActionResult();
             }
         }
-        
+
 #if NET7_0_OR_GREATER
         public IResult ToHttpResult()
         {
@@ -108,7 +108,7 @@ public static class ResultExtensions
                     return ir;
                 if (error is ProblemDetails problemDetails)
                     return problemDetails.ToHttpResult();
-                var problem = ProblemDetailsHelper.ToProblemDetails(error);
+                var problem = ProblemDetailsConverter.ToProblemDetails(error);
                 return problem.ToHttpResult();
             }
         }

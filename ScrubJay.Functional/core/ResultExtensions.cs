@@ -33,7 +33,7 @@ public static class ResultExtensions
                 return value;
             return new ArgumentException($"Could not parse \"{str}\" to a {typeof(T)} value", nameof(str));
         }
-        
+
         public static Result<N> Parse<N>(
             scoped ReadOnlySpan<char> text,
             NumberStyles numberStyle = NumberStyles.Number,
@@ -44,7 +44,7 @@ public static class ResultExtensions
                 return value;
             return new ArgumentException($"Could not parse '{text}' to a {typeof(N)} number", nameof(text));
         }
-        
+
         public static Result<N> Parse<N>(
             string? str,
             NumberStyles numberStyle = NumberStyles.Number,
@@ -177,9 +177,9 @@ public static class ResultExtensions
                 return false;
             }
         }
-        
+
         public bool IsOk(
-            [MaybeNullWhen(false)] out T1 item1, 
+            [MaybeNullWhen(false)] out T1 item1,
             [MaybeNullWhen(false)] out T2 item2,
             [NotNullWhen(false)] out Exception? error)
         {
@@ -197,7 +197,7 @@ public static class ResultExtensions
             }
         }
     }
-    
+
     extension<T1, T2, T3>(in Result<(T1, T2, T3)> result)
     {
         public bool IsOk(

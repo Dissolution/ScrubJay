@@ -22,7 +22,7 @@ partial class TextBuilder
         }
         return this;
     }
-    
+
     public TextBuilder Measure<S>(S state, Action<TextBuilder, S>? statefulBuild, out int charsWritten)
 #if NET9_0_OR_GREATER
         where S : allows ref struct
@@ -40,7 +40,7 @@ partial class TextBuilder
         }
         return this;
     }
-    
+
     public TextBuilder Capture(Action<TextBuilder>? build, out Span<char> written)
     {
         if (build is not null)

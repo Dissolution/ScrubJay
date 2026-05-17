@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScrubJay.Errors.Problems;
+using ScrubJay.Errors.Validation;
 using ScrubJay.Text.Collections;
 using ScrubJay.Universal.Extensions;
 using Any = ScrubJay.Universal.Any;
@@ -12,9 +13,12 @@ using Any = ScrubJay.Universal.Any;
 namespace ScrubJay.Errors.Asp;
 
 [PublicAPI]
-public static class ProblemDetailsHelper
+public static class ProblemDetailsConverter
 {
-    public static TypeMap<int> ExceptionTypeToStatusCodeMap { get; } = new()
+    /// <summary>
+    /// A map of Error <see cref="Type">Types</see> to HTTP Status Codes.
+    /// </summary>
+    public static TypeMap<int> ErrorTypeToHttpStatusCodeMap { get; } = new()
     {
         [typeof(ArgumentNullException)] = StatusCodes.Status400BadRequest,
         [typeof(ArgumentException)] = StatusCodes.Status400BadRequest,
@@ -43,33 +47,21 @@ public static class ProblemDetailsHelper
         [typeof(OutOfMemoryException)] = StatusCodes.Status503ServiceUnavailable,
     };
 
-    public static int DefaultOkStatusCode
-    {
-        get => field;
-        set => field = ValidateHttpStatusCode(value);
-    } = StatusCodes.Status200OK;
-
+    /// <summary>
+    /// Gets or sets the default HTTP Status Code returned for Errors when their <see cref="Type"/> is not in <see cref="ErrorTypeToHttpStatusCodeMap"/>.
+    /// </summary>
     public static int DefaultErrorStatusCode
     {
-        get => field;
-        set => field = ValidateHttpStatusCode(value);
+        get;
+        set => field = Validate.InRange(value, 100, 600).OkOr(StatusCodes.Status500InternalServerError);
     } = StatusCodes.Status500InternalServerError;
 
+    /// <summary>
+    /// Gets or sets the default level of StackTrace that appears in generated <see cref="ProblemDetails"/>.
+    /// </summary>
     public static StackTraceLevel StackTraceLevel { get; set; } = StackTraceLevel.None;
 
-    private static int ValidateHttpStatusCode(int code)
-    {
-        if (code < 100 || code > 599)
-            throw new ArgumentOutOfRangeException();
-        return code;
-    }
-
-    public static int GetHttpStatusCode(Exception? exception)
-    {
-        Type exceptionType = exception?.GetType() ?? typeof(Exception);
-        int statusCode = ExceptionTypeToStatusCodeMap.GetValueOrDefault(exceptionType, DefaultErrorStatusCode);
-        return statusCode;
-    }
+   
 
 
     private static string GetSanitizedStackTrace(Exception exception)
@@ -148,12 +140,24 @@ public static class ProblemDetailsHelper
         return dict;
     }
 
+   
+    public static int GetHttpStatusCode(Exception? exception)
+    {
+        Type exceptionType = Any.GetType<Exception>(exception);
+        int statusCode = ErrorTypeToHttpStatusCodeMap.GetValueOrDefault(exceptionType, DefaultErrorStatusCode);
+        return statusCode;
+    }
+    
+    public static int GetHttpStatusCode<E>(in E? error)
+    {
+        Type errorType = Any.GetType(in error);
+        int statusCode = ErrorTypeToHttpStatusCodeMap.GetValueOrDefault(errorType, DefaultErrorStatusCode);
+        return statusCode;
+    }
+    
     public static ProblemDetails ToProblemDetails(Exception exception)
     {
         var extensions = DataToExtensions(exception.Data);
-
-        exception.Status ??= GetHttpStatusCode(exception);
-
         string? stackTrace = FixStackTrace(exception);
         extensions["StackTrace"] = stackTrace;
 
@@ -161,7 +165,7 @@ public static class ProblemDetailsHelper
         {
             Type = exception.Type,
             Title = exception.Title,
-            Status = exception.Status,
+            Status = exception.Status ?? GetHttpStatusCode(exception),
             Detail = exception.Detail,
             Instance = exception.Instance,
         };
@@ -176,16 +180,16 @@ public static class ProblemDetailsHelper
             return problemDetails;
         if (error is Exception exception)
             return ToProblemDetails(exception);
-
-        var errorType = Any.GetType(in error);
+        
+        var errorType = Any.GetType<E>(in error);
         
         problemDetails = new ProblemDetails()
         {
-            Type = null,
+            Type = $"urn:{errorType.Namespace}:{Type.Render(errorType)}",
             Title = "Error",
-            Status = StatusCodes.Status500InternalServerError,
+            Status = GetHttpStatusCode(error),
             Detail = error?.ToString(),
-            Instance = Type.Render(errorType),
+            Instance = null,
         };
 
         var properties = errorType.GetProperties(BindingFlags.Public | BindingFlags.Instance);

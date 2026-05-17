@@ -26,7 +26,7 @@ public static class TupleExtensions
             return None;
         }
     }
-    
+
     extension<T>(T? tuple)
         where T : ITuple
     {

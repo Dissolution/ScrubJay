@@ -5,7 +5,12 @@
 		<BuildType Name="Release" />
 		<BuildType Name="Nuget" />
 	</Configurations>
-	<Folder Name="/Reflection/" />
+	<Folder Name="/Reflection/">
+		<Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
+	</Folder>
 	<Folder Name="/Sandboxes/">
 		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />
 		<Project Path="Sandboxes/Standalone/Standalone.csproj" />
