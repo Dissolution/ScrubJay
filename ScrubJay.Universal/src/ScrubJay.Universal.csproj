@@ -55,6 +55,10 @@
         <InternalsVisibleTo Include="ScrubJay.Errors.Asp"/>
         <InternalsVisibleTo Include="ScrubJay.Enums"/>
         <InternalsVisibleTo Include="ScrubJay.Enums.SourceGen"/>
+        <InternalsVisibleTo Include="ScrubJay.Enums.Tests"/>
+        <InternalsVisibleTo Include="ScrubJay.Reflection"/>
+        <InternalsVisibleTo Include="ScrubJay.Reflection.Tests"/>
+
     </ItemGroup>
     <ItemGroup>
         <Content Include="..\README.md">

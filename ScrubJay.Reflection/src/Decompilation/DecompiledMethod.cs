@@ -5,6 +5,7 @@ using ScrubJay.Errors.Validation;
 using ScrubJay.Reflection.Extensions;
 using ScrubJay.Reflection.Utilities;
 using ScrubJay.Text.Building;
+using ScrubJay.Text.Memory;
 using ScrubJay.Text.Rendering;
 
 namespace ScrubJay.Reflection.Decompilation;

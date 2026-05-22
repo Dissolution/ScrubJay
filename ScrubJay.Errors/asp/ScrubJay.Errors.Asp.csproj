@@ -25,8 +25,9 @@
 
     <ItemGroup>
         <Using Include="ScrubJay.Universal"/>
-        <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Extensions"/>        
         <Using Include="ScrubJay.Text"/>
         <Using Include="ScrubJay.Text.Prelude" Static="true"/>
         <Using Include="ScrubJay.Text.Building"/>

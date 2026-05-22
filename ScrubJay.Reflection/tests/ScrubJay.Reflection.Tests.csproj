@@ -7,6 +7,7 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UserSecretsId>76572368-21ce-4171-a579-c900e32071ce</UserSecretsId>
         <!--
         This template uses native xUnit.net command line options when using 'dotnet run' and
         VSTest by default when using 'dotnet test'. For more information on how to enable support

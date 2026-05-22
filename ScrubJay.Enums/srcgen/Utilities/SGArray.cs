@@ -35,7 +35,7 @@ public static class SGArray
         return new(newArray);
     }
 
-    public static SGArray<T> Create<T>(System.Collections.Generic.List<T>? list)
+    public static SGArray<T> Create<T>(List<T>? list)
     {
         if (list is not null)
         {
@@ -74,7 +74,7 @@ public static class SGArray
     }
 }
 
-public readonly struct SGArray<T> : System.Collections.Generic.IReadOnlyList<T>,
+public readonly struct SGArray<T> : IReadOnlyList<T>,
     ICollection<T>,
     IEnumerable<T>,
     IEquatable<SGArray<T>>,
@@ -83,7 +83,7 @@ public readonly struct SGArray<T> : System.Collections.Generic.IReadOnlyList<T>,
 {
     public static implicit operator SGArray<T>(T[]? array) => SGArray.Create<T>(array);
     public static implicit operator SGArray<T>(ImmutableArray<T> array) => SGArray.Create<T>(array);
-    public static implicit operator SGArray<T>(System.Collections.Generic.List<T>? list) => SGArray.Create<T>(list);
+    public static implicit operator SGArray<T>(List<T>? list) => SGArray.Create<T>(list);
 
     public static bool operator ==(SGArray<T> left, SGArray<T> right) => left.Equals(right);
     public static bool operator !=(SGArray<T> left, SGArray<T> right) => !left.Equals(right);
@@ -187,7 +187,7 @@ public readonly struct SGArray<T> : System.Collections.Generic.IReadOnlyList<T>,
 
         for (var i = 0; i < count; i++)
         {
-            if (!System.Collections.Generic.EqualityComparer<T>.Default.Equals(array[i], other[i]))
+            if (!EqualityComparer<T>.Default.Equals(array[i], other[i]))
                 return false;
         }
 
@@ -207,7 +207,7 @@ public readonly struct SGArray<T> : System.Collections.Generic.IReadOnlyList<T>,
 
         for (var i = 0; i < count; i++)
         {
-            if (!System.Collections.Generic.EqualityComparer<T>.Default.Equals(array[i], other[i]))
+            if (!EqualityComparer<T>.Default.Equals(array[i], other[i]))
                 return false;
         }
 
@@ -227,7 +227,7 @@ public readonly struct SGArray<T> : System.Collections.Generic.IReadOnlyList<T>,
 
         for (var i = 0; i < count; i++)
         {
-            if (!System.Collections.Generic.EqualityComparer<T>.Default.Equals(array[i], other[i]))
+            if (!EqualityComparer<T>.Default.Equals(array[i], other[i]))
                 return false;
         }
 

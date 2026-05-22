@@ -15,7 +15,7 @@ public sealed class InvalidEnumException : InvalidEnumArgumentException
     public InvalidEnumException(Argument argument, string? message = null, Exception? innerException = null)
         : base()
     {
-        this.Argument = argument;
+        Argument = argument;
         ExceptionFields.RefMessageField(this) = message;
         ExceptionFields.RefInnerExceptionField(this) = innerException;
     }

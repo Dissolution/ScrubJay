@@ -1,6 +1,8 @@
+#if NET7_0_OR_GREATER
 using System.Globalization;
+#endif
 
-namespace ScrubJay.Functional;
+namespace ScrubJay.Functional.Extensions;
 
 /// <summary>
 /// Extensions on <see cref="Result"/>

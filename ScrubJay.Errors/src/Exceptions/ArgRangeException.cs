@@ -13,7 +13,7 @@ public sealed class ArgRangeException : ArgumentOutOfRangeException
     public ArgRangeException(Argument argument, object? argValue, string? message = null, Exception? innerException = null)
         : base()
     {
-        this.Argument = argument;
+        Argument = argument;
         ExceptionFields.RefActualValueField(this) = argValue;
         ExceptionFields.RefMessageField(this) = message;
         ExceptionFields.RefInnerExceptionField(this) = innerException;

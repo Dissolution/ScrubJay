@@ -16,11 +16,11 @@ public sealed class ReturnParameterInfo : ParameterInfo
 
     public ReturnParameterInfo(MethodBase method, Type? returnType = null)
     {
-        this.AttrsImpl = ParameterAttributes.Retval;
-        this.MemberImpl = method;
-        this.ClassImpl = returnType ?? method.ReturnType;
-        this.NameImpl = "return";
-        this.PositionImpl = -1;
+        AttrsImpl = ParameterAttributes.Retval;
+        MemberImpl = method;
+        ClassImpl = returnType ?? method.ReturnType;
+        NameImpl = "return";
+        PositionImpl = -1;
     }
     
     public override object[] GetCustomAttributes(bool inherit) => [];

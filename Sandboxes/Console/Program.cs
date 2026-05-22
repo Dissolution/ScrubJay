@@ -75,20 +75,20 @@ namespace ScrubJay.Sandboxes.Console
 
         public FormatInfo()
         {
-            this.Format = null;
-            this.Provider = null;
+            Format = null;
+            Provider = null;
         }
 
         public FormatInfo(string? format)
         {
-            this.Format = format;
-            this.Provider = null;
+            Format = format;
+            Provider = null;
         }
 
         public FormatInfo(string? format, IFormatProvider? provider)
         {
-            this.Format = format;
-            this.Provider = provider;
+            Format = format;
+            Provider = provider;
         }
     }
 

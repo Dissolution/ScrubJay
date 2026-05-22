@@ -19,6 +19,13 @@ internal static class Trouble
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void Hold() { }
 
+    [DebuggerHidden]
+    [StackTraceHidden]
+    public static void Break()
+    {
+        Debugger.Break();
+    }
+
     static Trouble()
     {
         lock (_consoleLock)

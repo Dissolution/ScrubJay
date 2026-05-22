@@ -14,7 +14,7 @@ public sealed class DebuggingLogger : ILogger
 
     public DebuggingLogger(LogLevel minLogLevel = LogLevel.Debug)
     {
-        this.MinLogLevel = minLogLevel;
+        MinLogLevel = minLogLevel;
     }
 
     void ILogger.AddSink(ILogSink sink)

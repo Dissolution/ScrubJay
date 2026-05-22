@@ -107,8 +107,7 @@ partial class TextBuilder
 
         _whitespace ??= new();
 
-        return this
-            .If(!IsStartLine(), TB.NewLine)
+        return If(!IsStartLine(), TB.NewLine)
             .Append('{')
             .Indent()
             .NewLine()
@@ -192,7 +191,7 @@ partial class TextBuilder
 
     internal text GetCurrentPositionIndent()
     {
-        var written = this.Written;
+        var written = Written;
 
         // find the last newline that was written
         int lastNewLineIndex = written.LastIndexOfAny(CurrentNewLine);

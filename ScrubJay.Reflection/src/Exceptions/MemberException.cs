@@ -16,19 +16,19 @@ public class MemberException : ReflectionException
     public MemberException(MemberInfo? member)
         : base()
     {
-        this.Member = member;
+        Member = member;
     }
 
     public MemberException(MemberInfo? member, ref InterpolatedTextBuilder message)
         : base(ref message)
     {
-        this.Member = member;
+        Member = member;
     }
 
     public MemberException(MemberInfo? member, ref InterpolatedTextBuilder message, Exception? innerException)
         : base(ref message, innerException)
     {
-        this.Member = member;
+        Member = member;
     }
 
     public override string ToString()

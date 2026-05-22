@@ -1,4 +1,5 @@
-﻿using ScrubJay.Reflection.Exceptions;
+﻿using ScrubJay.Functional.Extensions;
+using ScrubJay.Reflection.Exceptions;
 using ScrubJay.Text.Building;
 
 

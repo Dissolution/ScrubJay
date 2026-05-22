@@ -1,23 +1,22 @@
 namespace ScrubJay.Errors.Exceptions;
 
-/// <summary>
-/// An enhanced <see cref="ArgumentException"/>.
-/// </summary>
 [PublicAPI]
-public sealed class ArgException : ArgumentException, IRenderable
+public sealed class ParseException : FormatException
 {
-    public Argument Argument { get; }
-
+    public string? InputString { get; }
+    
+    public Type? DestinationType { get; }
+    
     /// <summary>
     /// Gets the unaltered error message for this Exception.
     /// </summary>
     public override string Message => ExceptionFields.RefMessageField(this) ?? "";
-
-    public ArgException(Argument argument, string? message = null, Exception? innerException = null)
+    
+    public ParseException(string? inputString, Type? destinationType, string? message = null, Exception? innerException = null)
         : base()
     {
-        Argument = argument;
-        ExceptionFields.RefParamNameField(this) = Argument.Name;
+        this.InputString = inputString;
+        this.DestinationType = destinationType;
         ExceptionFields.RefMessageField(this) = message;
         ExceptionFields.RefInnerExceptionField(this) = innerException;
     }
@@ -26,7 +25,8 @@ public sealed class ArgException : ArgumentException, IRenderable
     {
         ExceptionRenderer.RenderExceptionTo(this, builder, static (tb, ex) =>
         {
-            tb.AppendLineIfNotNull(ex.Argument, $"Argument: {ex.Argument:@}");
+            tb.AppendLineIfNotNull(ex.InputString, $"Input Str: \"{ex.InputString}\"")
+                .AppendLineIfNotNull(ex.DestinationType, $"Dest Type: {ex.DestinationType:@}");
         });
     }
 

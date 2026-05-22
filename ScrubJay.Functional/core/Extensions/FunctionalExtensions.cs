@@ -1,4 +1,4 @@
-namespace ScrubJay.Functional;
+namespace ScrubJay.Functional.Extensions;
 
 /// <summary>
 /// Functional extensions

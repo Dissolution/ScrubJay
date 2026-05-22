@@ -153,7 +153,7 @@ public record class OpCodeInstruction : Instruction
 
     public OpCodeType OpCodeType => OpCode.OpCodeType;
 
-    public override int Size => this.OpCode.Size;
+    public override int Size => OpCode.Size;
 
     public OpCodeInstruction(OpCode opCode)
     {
@@ -190,7 +190,7 @@ public abstract record class OpCodeValueInstruction : OpCodeInstruction
     {
         if (OperandType == OperandType.InlineNone)
             throw Ex.Arg(opCode, $"OpCode.{opCode.Name} does not require an argument");
-        this.Argument = argument;
+        Argument = argument;
     }
 }
 
@@ -202,6 +202,6 @@ public record class OpCodeValueInstruction<T> : OpCodeValueInstruction
     public OpCodeValueInstruction(OpCode opCode, T value)
         : base(opCode, (object?)value)
     {
-        this.Value = value;
+        Value = value;
     }
 }

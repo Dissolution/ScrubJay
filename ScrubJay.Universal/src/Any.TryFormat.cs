@@ -68,7 +68,7 @@ partial class Any
 
         private static bool Fallback(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
-            string str = Any.ToString<T>(in instance)!;
+            string str = ToString<T>(in instance)!;
             charsWritten = str.Length;
             if (str.TryCopyTo(destination))
             {

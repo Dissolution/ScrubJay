@@ -188,8 +188,8 @@ public partial class TextBuilder : IDisposable
     [HandlesResourceDisposal]
     public string ToStringAndDispose()
     {
-        string str = this.ToString();
-        this.Dispose();
+        string str = ToString();
+        Dispose();
         return str;
     }
 }

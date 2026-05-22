@@ -19,7 +19,7 @@ public sealed record class Instruction(ILOffset Offset, OpCode OpCode, Option<ob
     {
         get
         {
-            int size = this.OpCode.Size;
+            int size = OpCode.Size;
             switch (OpCode.OperandType)
             {
                 case OperandType.InlineSwitch:

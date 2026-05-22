@@ -11,10 +11,10 @@ public static class CharacterExtensions
 #if NET7_0_OR_GREATER
             return new text(in ch);
 #else
-            IL.Emit.Ldarg(nameof(ch));
-            IL.Emit.Ldc_I4_1();
-            IL.Emit.Call(MethodRef.Constructor(typeof(text), [typeof(void*), typeof(int)]));
-            IL.Emit.Ret();
+            Emit.Ldarg(nameof(ch));
+            Emit.Ldc_I4_1();
+            Emit.Call(MethodRef.Constructor(typeof(text), [typeof(void*), typeof(int)]));
+            Emit.Ret();
             throw Unreachable();
 #endif
         }

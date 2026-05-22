@@ -229,7 +229,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
 
     public EnumMemberInfo<TEnum>? GetMemberInfo(TEnum @enum)
     {
-        return this.MemberInfos.FirstOrDefault(info => info.Member == @enum);
+        return MemberInfos.FirstOrDefault(info => info.Member == @enum);
     }
 
     public override Option<EnumMemberInfo> TryGetMemberInfo(Enum? @enum)
@@ -241,7 +241,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
 
     public Option<EnumMemberInfo<TEnum>> TryGetMemberInfo(TEnum @enum)
     {
-        var info = this.MemberInfos.FirstOrDefault(info => info.Member == @enum);
+        var info = MemberInfos.FirstOrDefault(info => info.Member == @enum);
         return Option.NotNull(info);
     }
 }

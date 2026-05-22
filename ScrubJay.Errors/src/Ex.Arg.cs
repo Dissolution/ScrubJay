@@ -9,25 +9,13 @@ public partial class Ex
         string? message = null,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
         var arg = Argument.Capture<T>(in argument, argumentName);
         return new ArgException(arg, message);
     }
-
-#if NET9_0_OR_GREATER
-    public static ArgException Arg<T>(
-        in T? argument,
-        string? message = null,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null,
-        // ReSharper disable once MethodOverloadWithOptionalParameter
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        var arg = Argument.Capture<T>(in argument, argumentName, _);
-        return new ArgException(arg, message);
-    }
-#endif
 
     public static ArgException Arg(object? argument,
         string? message = null,

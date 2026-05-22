@@ -214,7 +214,7 @@ public partial class TextBuilder
 #if NET9_0_OR_GREATER
         Action<TextBuilder, text>? buildSegment)
 #else
-        BuildWithReadOnlySpan<char>? buildSegment)
+        TextBuildWithReadOnlySpan<char>? buildSegment)
 #endif
     {
         if (buildSegment is not null)

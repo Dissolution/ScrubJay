@@ -1,4 +1,6 @@
-﻿using ScrubJay.Functional.IMPL;
+﻿global using ScrubJay.Functional.Extensions;
+using ScrubJay.Functional.IMPL;
+
 
 namespace ScrubJay.Functional;
 

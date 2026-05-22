@@ -152,7 +152,7 @@ public partial class CodeBuilder : IDisposable
 
     public int GetCurrentIndent()
     {
-        var written = this.Written;
+        var written = Written;
 
         var lastNewLine = written.LastIndexOf(_newline);
         if (lastNewLine < 0)
@@ -204,8 +204,8 @@ public partial class CodeBuilder : IDisposable
 
     public string ToStringAndDispose()
     {
-        string str = this.ToString();
-        this.Dispose();
+        string str = ToString();
+        Dispose();
         return str;
     }
 }

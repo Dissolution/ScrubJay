@@ -9,27 +9,27 @@ public class OverridableParameterInfo : ParameterInfo
     
     public new ParameterAttributes Attributes
     {
-        get => base.AttrsImpl;
-        set => base.AttrsImpl = value;
+        get => AttrsImpl;
+        set => AttrsImpl = value;
     }
 
     public new string? Name
     {
-        get => base.NameImpl;
-        set => base.NameImpl = value;
+        get => NameImpl;
+        set => NameImpl = value;
     }
 
     public new int Position
     {
-        get => base.PositionImpl;
-        set => base.PositionImpl = value;
+        get => PositionImpl;
+        set => PositionImpl = value;
     }
 
     [AllowNull]
     public new Type ParameterType
     {
-        get => base.ClassImpl ?? typeof(void);
-        set => base.ClassImpl = value ?? typeof(void);
+        get => ClassImpl ?? typeof(void);
+        set => ClassImpl = value ?? typeof(void);
     }
 
     public new IEnumerable<CustomAttributeData> CustomAttributes
@@ -40,7 +40,7 @@ public class OverridableParameterInfo : ParameterInfo
 
     public Option<object?> Default { get; set; } = Option<object?>.None;
 
-    public sealed override bool HasDefaultValue => this.Default.IsSome();
+    public sealed override bool HasDefaultValue => Default.IsSome();
 
     public sealed override object? DefaultValue => Default.SomeOr(DBNull.Value);
 
@@ -53,12 +53,12 @@ public class OverridableParameterInfo : ParameterInfo
 
     public OverridableParameterInfo(ParameterInfo parameter)
     {
-        base.AttrsImpl = parameter.Attributes;
-        base.ClassImpl = parameter.ParameterType;
-        base.PositionImpl = parameter.Position;
-        base.NameImpl = parameter.Name;
-        this.Default = parameter.HasDefaultValue ? Some<object?>(parameter.DefaultValue) : None;
-        this.CustomAttributes = parameter.CustomAttributes;
+        AttrsImpl = parameter.Attributes;
+        ClassImpl = parameter.ParameterType;
+        PositionImpl = parameter.Position;
+        NameImpl = parameter.Name;
+        Default = parameter.HasDefaultValue ? Some<object?>(parameter.DefaultValue) : None;
+        CustomAttributes = parameter.CustomAttributes;
     }
 
     public sealed override object[] GetCustomAttributes(bool inherit)

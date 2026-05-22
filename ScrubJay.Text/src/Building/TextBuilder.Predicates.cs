@@ -311,7 +311,7 @@ public partial class TextBuilder
 #if NET9_0_OR_GREATER
         Action<TextBuilder, text>? onNotEmpty = null,
 #else
-        BuildWithReadOnlySpan<char>? onNotEmpty = null,
+        TextBuildWithReadOnlySpan<char>? onNotEmpty = null,
 #endif
         Action<TextBuilder>? onEmpty = null)
     {
@@ -332,7 +332,7 @@ public partial class TextBuilder
 #if NET9_0_OR_GREATER
         Action<TextBuilder, ReadOnlySpan<T>>? onNotEmpty = null,
 #else
-        BuildWithReadOnlySpan<T>? onNotEmpty = null,
+        TextBuildWithReadOnlySpan<T>? onNotEmpty = null,
 #endif
         Action<TextBuilder>? onEmpty = null)
     {

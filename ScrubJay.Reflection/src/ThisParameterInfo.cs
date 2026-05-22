@@ -16,10 +16,10 @@ public sealed class ThisParameterInfo : ParameterInfo
     
     public ThisParameterInfo(MethodBase method)
     {
-        this.MemberImpl = Guard.IsNotStatic(method);
-        this.ClassImpl = method.DeclaringType.ThrowIfNull();
-        this.NameImpl = "this";
-        this.PositionImpl = 0;
+        MemberImpl = Guard.IsNotStatic(method);
+        ClassImpl = method.DeclaringType.ThrowIfNull();
+        NameImpl = "this";
+        PositionImpl = 0;
     }
 
     public override object[] GetCustomAttributes(bool inherit) => [];

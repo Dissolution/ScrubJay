@@ -10,6 +10,10 @@
 			<BuildType Solution="Analyze|*" Project="Debug" />
 			<BuildType Solution="Nuget|*" Project="Debug" />
 		</Project>
+		<Project Path="ScrubJay.Reflection/tests/ScrubJay.Reflection.Tests.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
 	</Folder>
 	<Folder Name="/Sandboxes/">
 		<Project Path="Sandboxes/Console/ScrubJay.Sandboxes.Console.csproj" />

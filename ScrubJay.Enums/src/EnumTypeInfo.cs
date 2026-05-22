@@ -14,11 +14,11 @@ public abstract partial class EnumTypeInfo : IEqualityComparer<Enum>, IComparer<
     {
         Debug.Assert(enumType is not null);
         Debug.Assert(enumType!.IsEnum);
-        this.EnumType = enumType;
-        this.EnumUnderlyingType = enumType.GetEnumUnderlyingType();
-        this.IsSigned = Type.GetTypeCode(EnumUnderlyingType) is TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64;
-        this.Attributes = Attribute.GetCustomAttributes(EnumType, true);
-        this.MemberNames = Enum.GetNames(EnumType);
+        EnumType = enumType;
+        EnumUnderlyingType = enumType.GetEnumUnderlyingType();
+        IsSigned = Type.GetTypeCode(EnumUnderlyingType) is TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64;
+        Attributes = Attribute.GetCustomAttributes(EnumType, true);
+        MemberNames = Enum.GetNames(EnumType);
     }
 
     public abstract Result<Enum> TryParseEnum(scoped text text, bool ignoreCase = true, bool includeAttributes = true);

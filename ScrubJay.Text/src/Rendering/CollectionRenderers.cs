@@ -1,8 +1,9 @@
 namespace ScrubJay.Text.Rendering;
 
-partial class Renderers
+[PublicAPI]
+public static class CollectionRenderers
 {
-    [RenderToMethod(AcceptsNull = true)]
+    [RenderToMethod]
     public static void RenderDictionaryTo<D, K, V>(D? dictionary, TextBuilder builder)
         where D : IDictionary<K, V>
     {
@@ -40,6 +41,19 @@ partial class Renderers
             .Append(")[")
             .Delimit(", ", list, TB.Render)
             .Append(']');
+    }
+    
+    [RenderToMethod]
+    public static void RenderCollectionTo<C, T>(C collection, TextBuilder builder)
+        where C : IList<T>
+    {
+        builder
+            .RenderTypeOf<C>(collection)
+            .Append('(')
+            .Append(collection.Count)
+            .Append(")(")
+            .Delimit(", ", collection, TB.Render)
+            .Append(')');
     }
 
     [RenderToMethod]
