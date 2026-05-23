@@ -34,7 +34,7 @@ public static class TB
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => builder.Append<T>(value, _);
+        => builder.Append<T>(value);
 #endregion
 
 #region Render
@@ -69,13 +69,13 @@ public static class TB
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => (tb, value) => tb.Format<T>(value, format, null, _);
+        => (tb, value) => tb.Format<T>(value, format, null);
 
     public static Action<TextBuilder, T?> Format<T>(string? format, IFormatProvider? provider, TypeConstraints.AllowsRefStruct<T> _ = default)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => (tb, value) => tb.Format<T>(value, format, provider, _);
+        => (tb, value) => tb.Format<T>(value, format, provider);
 
     public static Action<TextBuilder> Format<T>(T? value)
         => tb => tb.Format<T>(value);
@@ -96,18 +96,32 @@ public static class TB
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => builder.Format<T>(value, null, null, _);
+        => builder.Format<T>(value, null, null);
 
     public static void Format<T>(TextBuilder builder, T? value, string? format, TypeConstraints.AllowsRefStruct<T> _ = default)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => builder.Format<T>(value, format, null, _);
+        => builder.Format<T>(value, format, null);
 
     public static void Format<T>(TextBuilder builder, T? value, string? format, IFormatProvider? provider, TypeConstraints.AllowsRefStruct<T> _ = default)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-        => builder.Format<T>(value, format, provider, _);
+        => builder.Format<T>(value, format, provider);
 #endregion
+}
+
+/// <summary>
+/// Cached delegates for common <see cref="TextBuilder"/> methods.
+/// </summary>
+[PublicAPI]
+public static class TB<T>
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
+{
+    public static readonly Action<TextBuilder, T> Append = static (tb, value) => tb.Append<T>(value);
+    public static readonly Action<TextBuilder, T> Render = static (tb, value) => tb.Render<T>(value);
+    public static readonly Action<TextBuilder, T> Format = static (tb, value) => tb.Format<T>(value);
 }

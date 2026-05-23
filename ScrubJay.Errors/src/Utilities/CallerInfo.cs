@@ -33,10 +33,10 @@ public sealed record class CallerInfo : IRenderable
 
     public void RenderTo(TextBuilder builder)
     {
-        builder.IfNotEmpty(FilePath, TB.Append, TB.Write("????.???"))
+        builder.IfNotEmpty(FilePath, TB.Append, TB.Append("????.???"))
             .Append(':')
-            .IfNotNull(LineNumber, TB.Append<int>, TB.Write('?'))
+            .IfNotNull(LineNumber, TB.Append<int>, TB.Append('?'))
             .Append(" - ")
-            .IfNotEmpty(MemberName, TB.Append, TB.Write("??"));
+            .IfNotEmpty(MemberName, TB.Append, TB.Append("??"));
     }
 }

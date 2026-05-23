@@ -342,6 +342,40 @@ namespace System.Numerics
             value |= value >> 16;
             return value + 1U;
         }
+    
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint RotateLeft(uint value, int offset) => (value << offset) | (value >> (32 - offset));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong RotateLeft(ulong value, int offset) => (value << offset) | (value >> (64 - offset));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nuint RotateLeft(nuint value, int offset)
+        {
+#if TARGET_64BIT
+            return (nuint)RotateLeft((ulong)value, offset);
+#else
+            return (nuint)RotateLeft((uint)value, offset);
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint RotateRight(uint value, int offset)
+            => (value >> offset) | (value << (32 - offset));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong RotateRight(ulong value, int offset)
+            => (value >> offset) | (value << (64 - offset));
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static nuint RotateRight(nuint value, int offset)
+        {
+#if TARGET_64BIT
+            return (nuint)RotateRight((ulong)value, offset);
+#else
+            return (nuint)RotateRight((uint)value, offset);
+#endif
+        }
     }
 }
 

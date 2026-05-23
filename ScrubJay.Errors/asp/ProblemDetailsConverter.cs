@@ -99,7 +99,7 @@ public static class ProblemDetailsConverter
                     .Append(" - ");
 
                 var method = frame.GetMethod();
-                tb.IfNotNull(method, TB.Render, TB.Write("<unknown method>"));
+                tb.IfNotNull(method, TB.Render, TB.Append("<unknown method>"));
             })
             .If(indented, tb => tb.Outdent())
             .ToStringAndDispose();

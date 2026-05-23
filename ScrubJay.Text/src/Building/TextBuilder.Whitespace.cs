@@ -1,4 +1,6 @@
-﻿namespace ScrubJay.Text.Building;
+﻿using ScrubJay.Functional.Utilities;
+
+namespace ScrubJay.Text.Building;
 
 partial class TextBuilder
 {
@@ -91,7 +93,7 @@ partial class TextBuilder
 
     public IDisposable TemporaryIndent(string? indent = null)
     {
-        var disposable = new DisposableTBA(this, static tb => tb.Outdent());
+        var disposable = new ActionDisposable(() => this.Outdent());
         Indent(indent);
         return disposable;
     }
@@ -185,7 +187,7 @@ partial class TextBuilder
         else
         {
             var lines = text.SplitOn(currentNewLine);
-            Delimit(fullNewLine, ref lines, TB.Write);
+            Delimit(fullNewLine, ref lines, TB.Append);
         }
     }
 

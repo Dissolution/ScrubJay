@@ -70,7 +70,7 @@ public static class ReflectionRenderers
     {
         builder.Render(parameter.ParameterType)
             .Append(' ')
-            .IfNotEmpty(parameter.Name, TB.Write, TB.Write($"p{parameter.Position}"))
+            .IfNotEmpty(parameter.Name, TB.Append, TB.Append($"p{parameter.Position}"))
             .If(parameter.HasDefaultValue, tb => tb.Append(" = ").Render(parameter.DefaultValue));
     }
 
