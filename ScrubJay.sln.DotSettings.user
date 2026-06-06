@@ -75,7 +75,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=59434350_002D099a_002D4c6d_002D8f62_002Da690e79b599e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=00334e12_002D6685_002D9e80_002D1d58_002D634fb555b097_0023ScrubJay_002EReflection/@EntryIndexedValue">True</s:Boolean>
+	
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=5a98b819_002Dc6f3_002D8459_002D504c_002Dccc498815722_0023ScrubJay_002EReflection_002ETests/@EntryIndexedValue">True</s:Boolean>
 	
 	

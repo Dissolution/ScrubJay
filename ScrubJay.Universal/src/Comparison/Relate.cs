@@ -1,11 +1,9 @@
 // ReSharper disable InvokeAsExtensionMember
 
-using ScrubJay.Universal.Extensions;
-
 namespace ScrubJay.Universal.Comparison;
 
 [PublicAPI]
-public static class Relate
+public static partial class Relate
 {
 #region Equal
 #region Value
@@ -31,28 +29,7 @@ public static class Relate
 #endregion /Equal Value
 
 #region Text
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equal(char left, scoped text right)
-    {
-        return right.Length == 1 && right[0] == left;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equal(char left, scoped text right, StringComparison comparison)
-    {
-        return MemoryExtensions.Equals(left.AsSpan(), right, comparison);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Equal(char left, scoped text right, IEqualityComparer<char>? charEqualityComparer)
-    {
-        if (right.Length != 1)
-            return false;
-        if (charEqualityComparer is null)
-            return left == right[0];
-        return charEqualityComparer.Equals(left, right[0]);
-    }
-    
+   
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(scoped text left, scoped text right)

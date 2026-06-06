@@ -1,4 +1,4 @@
-namespace ScrubJay.Universal;
+namespace ScrubJay.Universal.Comparison;
 
 /// <summary>
 /// An <see cref="IEqualityComparer{T}"/> and <see cref="IComparer{T}"/> that works on any generic type.

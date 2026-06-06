@@ -37,7 +37,7 @@ partial class Demand
         string? predicateName = null)
     {
         if (predicate is null)
-            ThrowArgNull(predicate, info, predicateName);
+            Throw.ArgNull(predicate, info, predicateName);
         if (!predicate.Invoke())
             ThrowPredicateFail(predicate, true, info, predicateName);
     }
@@ -49,7 +49,7 @@ partial class Demand
         string? predicateName = null)
     {
         if (predicate is null)
-            ThrowArgNull(predicate, info, predicateName);
+            Throw.ArgNull(predicate, info, predicateName);
         if (!predicate.Compile().Invoke())
             ThrowPredicateFail(predicate, true, info, predicateName);
     }

@@ -1,4 +1,6 @@
-namespace ScrubJay.Reflection;
+using ScrubJay.Reflection.Extensions;
+
+namespace ScrubJay.Reflection.Runtime;
 
 [PublicAPI]
 public static class RuntimeBuilder
@@ -12,5 +14,21 @@ public static class RuntimeBuilder
     static RuntimeBuilder()
     {
      
+    }
+    
+    public static DynamicMethod<D> CreateDynamicMethod<D>(string methodName)
+        where D : Delegate
+    {
+        var invoke = Delegate.GetInvokeMethod<D>();
+        var dynamicMethod = new DynamicMethod(
+            name: methodName,
+            attributes: MethodAttributes.Public | MethodAttributes.Static,
+            callingConvention: CallingConventions.Standard,
+            returnType: invoke.ReturnType,
+            parameterTypes: invoke.GetParameterTypes(),
+            m: Module,
+            skipVisibility: true);
+
+        return new DynamicMethod<D>(dynamicMethod);
     }
 }

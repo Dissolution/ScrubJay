@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="InlineIL.IL" Static="True"/>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Polyfills"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="True"/>
+        <Using Include="ScrubJay.Functional"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Fody"/>
+        <PackageReference Include="InlineIL.Fody"/>
+        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1' "
+                          Include="System.Runtime.CompilerServices.Unsafe">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+
+</Project>

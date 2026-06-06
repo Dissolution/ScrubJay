@@ -30,6 +30,12 @@
         </PackageReference>
     </ItemGroup>
 
+    <!-- Expose our internals -->
+    <ItemGroup>
+        <InternalsVisibleTo Include="ScrubJay.Reflection"/>
+        <InternalsVisibleTo Include="ScrubJay.Reflection.Tests"/>
+    </ItemGroup>
+    
     <ItemGroup>
         <Content Include="..\README.md">
             <Link>README.md</Link>

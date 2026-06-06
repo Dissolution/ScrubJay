@@ -51,6 +51,7 @@
         <InternalsVisibleTo Include="ScrubJay.Functional"/>
         <InternalsVisibleTo Include="ScrubJay.Functional.Json"/>
         <InternalsVisibleTo Include="ScrubJay.Functional.Tests"/>
+		 <InternalsVisibleTo Include="ScrubJay.Memory"/>
         <InternalsVisibleTo Include="ScrubJay.Errors"/>
         <InternalsVisibleTo Include="ScrubJay.Errors.Asp"/>
         <InternalsVisibleTo Include="ScrubJay.Enums"/>
@@ -58,8 +59,8 @@
         <InternalsVisibleTo Include="ScrubJay.Enums.Tests"/>
         <InternalsVisibleTo Include="ScrubJay.Reflection"/>
         <InternalsVisibleTo Include="ScrubJay.Reflection.Tests"/>
-
     </ItemGroup>
+    
     <ItemGroup>
         <Content Include="..\README.md">
             <Link>README.md</Link>

@@ -94,4 +94,78 @@ public static class Prelude
     {
         return Result.Try<T>(func);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static R Try<S, R>(S state, Func<S, R>? func, R fallback)
+#if NET9_0_OR_GREATER
+        where S : allows ref struct
+        where R : allows ref struct
+#endif
+    {
+        if (func is null)
+            return fallback;
+
+        try
+        {
+            return func.Invoke(state);
+        }
+        catch // ignore all exceptions
+        {
+            return fallback;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static R Try<R>(Func<R>? func, R fallback)
+#if NET9_0_OR_GREATER
+        where R : allows ref struct
+#endif
+    {
+        if (func is null)
+            return fallback;
+
+        try
+        {
+            return func.Invoke();
+        }
+        catch // ignore all exceptions
+        {
+            return fallback;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Swallow(Action? action)
+    {
+        try
+        {
+            if (action is not null)
+            {
+                action.Invoke();
+            }
+        }
+        catch
+        {
+            // ignore all exceptions, as it says
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Swallow<R>(Func<R>? func)
+#if NET9_0_OR_GREATER
+        where R : allows ref struct
+#endif
+    {
+        try
+        {
+            if (func is not null)
+            {
+                _ = func.Invoke();
+            }
+        }
+        catch
+        {
+            // ignore all exceptions, as it says
+        }
+    }
 }

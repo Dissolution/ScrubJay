@@ -5,6 +5,10 @@
 # JetBrains
 .idea/
 
+# Visual Studio
+.vs/
+
+
 # Git
 .git/
 

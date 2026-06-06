@@ -10,10 +10,28 @@ using JetBrains.Annotations;
 
 namespace ScrubJay.Polyfills
 {
-    [PublicAPI]
+
     internal static partial class CompatExtensions
     {
 
+    }
+
+    [PublicAPI]
+    public static class UniversalExtensions
+    {
+        extension(Unsafe)
+        {
+            public static ref readonly O InAsIn<I, O>(ref readonly I input)
+#if NET9_0_OR_GREATER
+                where I : allows ref struct
+                where O : allows ref struct
+#endif
+            {
+                Emit.Ldarg_0();
+                Emit.Ret();
+                throw Unreachable();
+            }
+        }
     }
 }
 
@@ -217,8 +235,7 @@ namespace System.Diagnostics.CodeAnalysis
 #endif // net48 or netstandard2.0
 
 
-#if NETFRAMEWORK || NETSTANDARD
-
+#if NETFRAMEWORK || NETSTANDARD // !NET6_0_OR_GREATER
 namespace ScrubJay.Polyfills
 {
     internal static partial class CompatExtensions
@@ -241,6 +258,12 @@ namespace ScrubJay.Polyfills
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool TryCopyTo(Span<char> destination) => str.AsSpan().TryCopyTo(destination);
+        }
+
+        extension(char)
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static bool IsAscii(char ch) => (uint)ch <= '\x007f';
         }
     }
 }
@@ -404,7 +427,6 @@ namespace System.Runtime.CompilerServices
 #endif
 
 #if !NET7_0_OR_GREATER
-
 namespace System
 {
     /// <summary>Defines a mechanism for parsing a string to a value.</summary>

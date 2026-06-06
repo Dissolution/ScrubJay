@@ -66,16 +66,7 @@ public static class MethodBaseExtensions
         public Type[] GetParameterTypes()
         {
             if (method is null) return [];
-
-            var parameters = method.GetParameters();
-            Type[] types = new Type[parameters.Length];
-            // reverse to elide bounds checks
-            for (var i = parameters.Length - 1; i >= 0; i--)
-            {
-                types[i] = parameters[i].ParameterType;
-            }
-
-            return types;
+            return Array.ConvertAll(method.GetParameters(), static param => param.ParameterType);
         }
 
         /// <summary>

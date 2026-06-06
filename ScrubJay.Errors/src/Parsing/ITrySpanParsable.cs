@@ -16,6 +16,11 @@ public interface ITrySpanParsable<T> : ISpanParsable<T>, ITryParsable<T>
         return false;
     }
 
+    static Result<T> ITryParsable<T>.TryParse([NotNullWhen(true)] string? str, IFormatProvider? provider)
+    {
+        return T.TryParse(str.AsSpan(), provider);
+    }
+
     static abstract Result<T> TryParse(scoped text text, IFormatProvider? provider = null);
 #endif
 }

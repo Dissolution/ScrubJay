@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace ScrubJay.Reflection;
+namespace ScrubJay.Reflection.Runtime;
 
 public sealed class DynamicMethod<D> : MethodInfo
     where D : Delegate

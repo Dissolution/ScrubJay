@@ -5,6 +5,12 @@
 		<BuildType Name="Release" />
 		<BuildType Name="Nuget" />
 	</Configurations>
+	<Folder Name="/Memory/">
+		<Project Path="ScrubJay.Memory/src/ScrubJay.Memory.csproj">
+			<BuildType Solution="Analyze|*" Project="Release" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
+	</Folder>
 	<Folder Name="/Reflection/">
 		<Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj">
 			<BuildType Solution="Analyze|*" Project="Debug" />

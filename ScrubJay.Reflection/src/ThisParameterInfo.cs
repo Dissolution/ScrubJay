@@ -1,4 +1,5 @@
 using ScrubJay.Errors.Validation;
+using ScrubJay.Reflection.Validation;
 
 namespace ScrubJay.Reflection;
 
@@ -16,7 +17,8 @@ public sealed class ThisParameterInfo : ParameterInfo
     
     public ThisParameterInfo(MethodBase method)
     {
-        MemberImpl = Guard.IsNotStatic(method);
+        Demand.NotStatic(method);
+        MemberImpl = method;
         ClassImpl = method.DeclaringType.ThrowIfNull();
         NameImpl = "this";
         PositionImpl = 0;

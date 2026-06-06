@@ -24,7 +24,7 @@ partial class Demand
         string? argumentName = null)
     {
         if (array is null)
-            ThrowArgNull(array, info, argumentName);
+            Throw.ArgNull(array, info, argumentName);
         if (array.Length == 0)
             ThrowArgEmpty(array, info, argumentName);
     }
@@ -47,7 +47,7 @@ partial class Demand
         where C : ICollection<T>
     {
         if (collection is null)
-            ThrowArgNull(collection, info, argumentName);
+            Throw.ArgNull(collection, info, argumentName);
         if (collection.Count == 0)
             ThrowArgEmpty(collection, info, argumentName);
     }

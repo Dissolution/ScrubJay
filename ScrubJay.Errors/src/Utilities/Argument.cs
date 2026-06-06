@@ -47,20 +47,8 @@ public sealed record class Argument : IRenderable
         return new Argument(typeof(T), argumentName, null);
     }
 
-#if NET9_0_OR_GREATER
-    // ReSharper disable once MethodOverloadWithOptionalParameter
-    public static Argument Null<T>(
-        T? argument,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        Debug.Assert(argument is null);
-        return new Argument(typeof(T), argumentName, null);
-    }
-#endif
-
+    public static Argument Null() => new(null, null, null);
+    
     /// <summary>
     /// The <see cref="Type"/> of the argument.
     /// </summary>

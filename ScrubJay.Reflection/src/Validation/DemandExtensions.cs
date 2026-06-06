@@ -1,34 +1,35 @@
 using ScrubJay.Errors;
+using ScrubJay.Errors.Utilities;
+using ScrubJay.Errors.Validation;
 using ScrubJay.Reflection.Extensions;
 
 namespace ScrubJay.Reflection.Validation;
 
-public static class GuardExtensions
+public static class DemandExtensions
 {
-    extension(Guard)
+    extension(Demand)
     {
-        public static M IsStatic<M>([AllowNull, NotNull] M? member,
+        public static void Static<M>(
+            [AllowNull, NotNull] M? member,
             [CallerArgumentExpression(nameof(member))]
             string? memberName = null)
             where M : MemberInfo
         {
-            if (member is null)
-                throw Ex.ArgNull(member, memberName);
+            Demand.NotNull(member, null, memberName);
             if (!member.IsStatic)
-                throw Ex.Arg(member, "is not static", memberName);
-            return member;
+                Throw.Arg(member, "was not static", memberName);
         }
 
-        public static M IsNotStatic<M>([AllowNull, NotNull] M? member,
+        public static void NotStatic<M>(
+            [AllowNull, NotNull] M? member,
+            string? info = null,
             [CallerArgumentExpression(nameof(member))]
             string? memberName = null)
             where M : MemberInfo
         {
-            if (member is null)
-                throw Ex.ArgNull(member, memberName);
+            Demand.NotNull(member, null, memberName);
             if (member.IsStatic)
-                throw Ex.Arg(member, "is static", memberName);
-            return member;
+                Throw.Arg(member, "was static", memberName);
         }
     }
 }

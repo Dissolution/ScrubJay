@@ -4,6 +4,7 @@ using ScrubJay.Errors.Parsing;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Memory;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Universal.Comparison;
 
 
 namespace ScrubJay.Reflection;
@@ -39,20 +40,14 @@ public readonly struct ILOffset :
 
     public static readonly ILOffset Unknown = new ILOffset(-1);
 
-    public static Result<ILOffset> TryParse(text text, IFormatProvider? provider = null)
+    public static Result<ILOffset> TryParse(scoped text text, IFormatProvider? provider = null)
     {
         var reader = new SpanReader<char>(text);
         reader.SkipWhile(char.IsWhiteSpace);
         reader.SkipWhileMatching("IL_".AsSpan());
 
-#if NET9_0_OR_GREATER
-        if (reader.TryPeek(4).IsSome(out var four) && four.Equate("????"))
+        if (reader.TryPeekMany(4, out var four) && Relate.Equal(four, "????"))
             return Ok(Unknown);
-#else
-        Span<char> four = stackalloc char[4];
-        if (reader.TryPeekInto(four) && four.Equate("????"))
-            return Ok(Unknown);
-#endif
 
         var hex = reader.TakeWhile(ch => char.IsAsciiHexDigit(ch));
         reader.SkipWhile(char.IsWhiteSpace);

@@ -6,17 +6,18 @@ using ScrubJay.Errors;
 using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Universal.Comparison;
 using Any = ScrubJay.Universal.Any;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-//var alpha = new RenderableThing(147, "TRJ");
-//var beta = new RenderableThing(13, "TRJ");
+char[] left = "abc".ToCharArray();
+char[] right = "def".ToCharArray();
 
-var alpha = new TestRefStruct();
-var beta = new TestRefStruct();
-var result = Any.Equals(in alpha, in beta);
+var eq = Relate.Equal(left, right);
+
+
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
