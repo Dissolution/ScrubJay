@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors.Validation;
 
-public partial class Demand
+public static class ThrowExtensions
 {
     public static T ThrowIfNull<T>(
         [AllowNull, JetBrains.Annotations.NotNull] this T? value,
