@@ -1,4 +1,4 @@
-﻿// Prefix generic type parameter with T
+// Prefix generic type parameter with T
 // Do not declare static methods on generic types
 // Do not catch Exception
 

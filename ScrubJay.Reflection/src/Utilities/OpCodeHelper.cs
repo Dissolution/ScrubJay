@@ -1,4 +1,4 @@
-using ScrubJay.Text.Memory;
+using ScrubJay.Memory;
 
 namespace ScrubJay.Reflection.Utilities;
 

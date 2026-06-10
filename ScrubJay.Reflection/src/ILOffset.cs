@@ -2,7 +2,7 @@ using System.Globalization;
 using ScrubJay.Errors;
 using ScrubJay.Errors.Parsing;
 using ScrubJay.Text.Building;
-using ScrubJay.Text.Memory;
+using ScrubJay.Memory;
 using ScrubJay.Text.Rendering;
 using ScrubJay.Universal.Comparison;
 

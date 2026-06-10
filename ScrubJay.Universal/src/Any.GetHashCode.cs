@@ -127,7 +127,7 @@ partial class Any
         return Hasher.HashMany(span);
     }
 
-    public static int GetHashCode(scoped ReadOnlySpan<char> text)
+    public static int GetHashCode(scoped text text)
     {
 #if NET6_0_OR_GREATER
         return string.GetHashCode(text, StringComparison.Ordinal);

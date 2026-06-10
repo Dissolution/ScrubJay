@@ -55,6 +55,7 @@
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Memory\src\ScrubJay.Memory.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Errors\src\ScrubJay.Errors.csproj"/>
     </ItemGroup>
 </Project>

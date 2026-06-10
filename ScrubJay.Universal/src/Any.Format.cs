@@ -8,6 +8,18 @@ partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
+    public static string? Format<T>(in T? instance)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        if (instance is null)
+            return null;
+        return ToStringCache<T>.Invoke(in instance);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(instance))]
     public static string? Format<T>(
         in T? instance,
         string? format = null,

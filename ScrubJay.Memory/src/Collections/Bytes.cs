@@ -1,8 +1,8 @@
-﻿using ScrubJay.Memory.Bits;
+﻿namespace ScrubJay.Memory.Collections;
 
-namespace ScrubJay.Memory.Streaming;
-
-
+/// <summary>
+/// Represents a concrete readonly slice of bytes.
+/// </summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 public readonly struct Bytes : 
     IReadOnlyList<byte>,
@@ -52,7 +52,7 @@ public readonly struct Bytes :
         }
     }
 
-    public string ToString(string? format, IFormatProvider? provider = null)
+    public string ToString(string? format, IFormatProvider? _ = default)
     {
         if (string.IsNullOrEmpty(format))
             return ToString();
@@ -89,7 +89,7 @@ public readonly struct Bytes :
 
         var bytes = _bytes;
         int count = Count;
-        DefaultInterpolatedStringHandler text = new(2 + (count - 1), count, provider);
+        InterpolatedStringHandler text = new(2 + (count - 1), count);
         text.AppendLiteral("[");
         if (count > 0)
         {
@@ -101,14 +101,14 @@ public readonly struct Bytes :
             }
         }
         text.AppendLiteral("]");
-        return text.ToStringAndClear();
+        return text.ToStringAndDispose();
     }
 
     public override string ToString()
     {
         var bytes = _bytes;
         int count = Count;
-        DefaultInterpolatedStringHandler text = new((3 * count) + 1, 0);
+        InterpolatedStringHandler text = new((3 * count) + 1, 0);
         text.AppendLiteral("[");
         if (count > 0)
         {
@@ -120,7 +120,7 @@ public readonly struct Bytes :
             }
         }
         text.AppendLiteral("]");
-        return text.ToStringAndClear();
+        return text.ToStringAndDispose();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

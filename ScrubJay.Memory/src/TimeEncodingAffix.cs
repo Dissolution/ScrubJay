@@ -1,23 +1,4 @@
-namespace ScrubJay.Text.Memory;
-
-/// <summary>
-/// Indicates what kind of prefix or postfix that will be used to determine the length of the resulting string
-/// </summary>
-[PublicAPI]
-public enum StringEncodingAffix
-{
-    None,
-    SevenBitEncodedLenPrefix,
-    U8Prefix,
-    U16Prefix,
-    U32Prefix,
-    U64Prefix,
-    I8Prefix,
-    I16Prefix,
-    I32Prefix,
-    I64Prefix,
-    NullTerminated,
-}
+namespace ScrubJay.Memory;
 
 /// <summary>
 /// Indicates a possible Prefix or Postfix associated with a sequence of bytes
@@ -50,16 +31,4 @@ public enum TimeEncodingAffix
     /// Size = 8 bytes
     /// </remarks>
     TimeU64,
-}
-
-[PublicAPI]
-public static class TimeEncodingAffixExtensions
-{
-    private static readonly DateTime _dateOrigin = new DateTime(1970, 1, 1);
-
-    extension(TimeEncodingAffix)
-    {
-        public static DateTime OriginDateTime
-            => _dateOrigin;
-    }
 }

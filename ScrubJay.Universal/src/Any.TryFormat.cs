@@ -6,6 +6,12 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    public static bool HasTryFormat<T>()
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        => TryFormatCache<T>.HasTryFormat;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryFormat<T>(
         in T? instance,
@@ -23,7 +29,7 @@ partial class Any
             return true;
         }
 
-        return TryFormatCache<T>.Invoke(in instance, destination, out charsWritten, format, provider);
+        return TryFormatCache<T>.TryFormat(in instance, destination, out charsWritten, format, provider);
     }
 
     private static class TryFormatCache<T>
@@ -33,7 +39,9 @@ partial class Any
     {
         internal delegate bool AnyTryFormat(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider);
 
-        internal static volatile AnyTryFormat Invoke;
+
+        internal static readonly AnyTryFormat TryFormat;
+        internal static readonly bool HasTryFormat;
 
         static TryFormatCache()
         {
@@ -58,15 +66,17 @@ partial class Any
 
                 if (dynamicMethod.TryCreateDelegate<AnyTryFormat>(out var func))
                 {
-                    Invoke = func;
+                    TryFormat = func;
+                    HasTryFormat = true;
                     return;
                 }
             }
 
-            Invoke = Fallback;
+            TryFormat = FallbackTryFormat;
+            HasTryFormat = false;
         }
 
-        private static bool Fallback(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
+        private static bool FallbackTryFormat(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
             string str = ToString<T>(in instance)!;
             charsWritten = str.Length;

@@ -1,4 +1,4 @@
-﻿namespace ScrubJay.Memory.Bits;
+﻿namespace ScrubJay.Memory.Collections;
 
 public interface IBytes;
 
@@ -194,7 +194,7 @@ public static class BytesExtensions
         {
             unsafe
             {
-                void* ptr = Unsafe.AsPointer(ref bytes);
+                void* ptr = Unsafe.RefAsVoidPtr(ref bytes);
                 return new Span<byte>(ptr, sizeof(B));
             }
         }
@@ -204,7 +204,7 @@ public static class BytesExtensions
         {
             unsafe
             {
-                void* ptr = Unsafe.AsPointer(in bytes);
+                void* ptr = Unsafe.RefAsVoidPtr(ref bytes);
                 return new ReadOnlySpan<byte>(ptr, sizeof(B));
             }
         }
@@ -221,7 +221,5 @@ public static class BytesExtensions
             var bytesSpan = BytesExtensions.AsReadOnlySpan<B>(ref bytes);
             return bytesSpan.SequenceEqual(other);
         }
-
-
     }
 }
