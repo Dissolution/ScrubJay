@@ -3,6 +3,7 @@ using System.Collections.Frozen;
 #endif
 using System.Globalization;
 using Microsoft.CodeAnalysis.CSharp;
+using ScrubJay.Errors.Validation;
 using ScrubJay.Text.Building;
 
 namespace ScrubJay.Reflection.Utilities;
@@ -75,7 +76,7 @@ public static class Naming
 
     public static string FixIdentifier(scoped text identifier)
     {
-        Guard.IsNotEmpty(identifier);
+        Demand.NotEmpty(identifier);
         using var builder = new TextBuilder();
 
         int i = 0;
@@ -106,7 +107,7 @@ public static class Naming
         string name = builder.ToString();
         if (_keywords.Contains(name))
         {
-            builder.Insert(0, '@');
+            builder.TryInsert(0, '@');
             return builder.ToString();
         }
 

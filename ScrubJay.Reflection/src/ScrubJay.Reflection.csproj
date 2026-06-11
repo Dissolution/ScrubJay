@@ -17,6 +17,9 @@
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
 
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Universal.Extensions"/>
+        
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Functional"/>
     </ItemGroup>

@@ -2,12 +2,14 @@
 [Bb]in/
 [Oo]bj/
 
+# Source Generated
+.GeneratedFiles/
+
 # JetBrains
 .idea/
 
 # Visual Studio
 .vs/
-
 
 # Git
 .git/

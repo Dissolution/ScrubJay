@@ -1,30 +1,30 @@
 namespace ScrubJay.Universal.Extensions;
 
 [PublicAPI]
-public static class SetExtensions
+public static class CollectionExtensions
 {
-    extension<T>(ISet<T>? set)
+    extension<T>(ICollection<T>? collection)
     {
-        public bool IsNullOrEmpty() => set is null || set.Count == 0;
+        public bool IsNullOrEmpty() => collection is null || collection.Count == 0;
         
         public void AddMany(params ReadOnlySpan<T> items)
         {
-            if (set is not null)
+            if (collection is not null)
             {
                 foreach (var item in items)
                 {
-                    set.Add(item);
+                    collection.Add(item);
                 }
             }
         }
 
         public void AddMany(IEnumerable<T>? items)
         {
-            if (set is not null && items is not null)
+            if (collection is not null && items is not null)
             {
                 foreach (var item in items)
                 {
-                    set.Add(item);
+                    collection.Add(item);
                 }
             }
         }

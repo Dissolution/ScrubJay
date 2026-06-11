@@ -56,7 +56,7 @@ public readonly struct ILOffset :
             return Ex.Parse<ILOffset>(text);
 
 #if NETSTANDARD2_0 || NETFRAMEWORK
-        var hexStr = hex.AsString();
+        var hexStr = hex.ToString();
 
         if (short.TryParse(hexStr, NumberStyles.HexNumber, provider, out var offset))
             return Ok(new ILOffset(offset));

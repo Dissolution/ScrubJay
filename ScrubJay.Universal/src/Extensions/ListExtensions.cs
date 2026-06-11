@@ -3,9 +3,10 @@ namespace ScrubJay.Universal.Extensions;
 [PublicAPI]
 public static class ListExtensions
 {
-    extension<L, T>(L? list)
-        where L : IList<T>
+    extension<T>(IList<T>? list)
     {
+        public bool IsNullOrEmpty() => list is null || list.Count == 0;
+        
         public void AddMany(params ReadOnlySpan<T> items)
         {
             if (list is not null)
