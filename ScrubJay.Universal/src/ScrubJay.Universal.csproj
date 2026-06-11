@@ -3,6 +3,13 @@
     <PropertyGroup>
         <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
         <LangVersion>preview</LangVersion>
+
+        <!-- Expose all the polyfills to consuming projects -->
+        <PolyPublic>true</PolyPublic>
+        <!-- Adds Interpolation features from Polyfill -->
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+        <!-- Add Nullability features from Polyfill -->
+        <PolyNullability>true</PolyNullability>
     </PropertyGroup>
 
     <!-- NuGet -->
@@ -25,6 +32,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        
         <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
@@ -38,9 +46,8 @@
                           Include="System.Runtime.CompilerServices.Unsafe">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory"/>
+        
+        <PackageReference Include="Polyfill" PrivateAssets="all"/>
     </ItemGroup>
 
     <!-- Expose our internals -->
@@ -52,7 +59,7 @@
         <InternalsVisibleTo Include="ScrubJay.Functional"/>
         <InternalsVisibleTo Include="ScrubJay.Functional.Json"/>
         <InternalsVisibleTo Include="ScrubJay.Functional.Tests"/>
-		 <InternalsVisibleTo Include="ScrubJay.Memory"/>
+        <InternalsVisibleTo Include="ScrubJay.Memory"/>
         <InternalsVisibleTo Include="ScrubJay.Errors"/>
         <InternalsVisibleTo Include="ScrubJay.Errors.Asp"/>
         <InternalsVisibleTo Include="ScrubJay.Enums"/>
@@ -61,7 +68,7 @@
         <InternalsVisibleTo Include="ScrubJay.Reflection"/>
         <InternalsVisibleTo Include="ScrubJay.Reflection.Tests"/>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Content Include="..\README.md">
             <Link>README.md</Link>

@@ -47,7 +47,7 @@ partial class Any
         {
             Type instanceType = typeof(T);
             MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods(nameof(ISpanFormattable.TryFormat), typeof(bool), [typeof(Span<char>), typeof(int).MakeByRefType(), typeof(text), typeof(IFormatProvider)])
+                .FindMatchingInstanceMethods("TryFormat", typeof(bool), [typeof(Span<char>), typeof(int).MakeByRefType(), typeof(text), typeof(IFormatProvider)])
                 .FirstOrDefault();
 
             if (method is not null)

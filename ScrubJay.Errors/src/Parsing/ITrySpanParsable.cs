@@ -1,7 +1,11 @@
 namespace ScrubJay.Errors.Parsing;
 
 [PublicAPI]
-public interface ITrySpanParsable<T> : ISpanParsable<T>, ITryParsable<T>
+public interface ITrySpanParsable<T> :
+#if NET7_0_OR_GREATER
+    ISpanParsable<T>,
+#endif
+    ITryParsable<T>
     where T : ITrySpanParsable<T>
 {
 #if NET7_0_OR_GREATER
@@ -26,7 +30,10 @@ public interface ITrySpanParsable<T> : ISpanParsable<T>, ITryParsable<T>
 }
 
 [PublicAPI]
-public interface ITryParsable<T> : IParsable<T>
+public interface ITryParsable<T>
+#if NET7_0_OR_GREATER
+    : IParsable<T>
+#endif
     where T : ITryParsable<T>
 {
 #if NET7_0_OR_GREATER

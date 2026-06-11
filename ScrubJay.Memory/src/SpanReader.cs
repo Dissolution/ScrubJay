@@ -1,4 +1,5 @@
 using ScrubJay.Universal.Comparison;
+using ScrubJay.Universal.Extensions;
 
 namespace ScrubJay.Memory;
 
@@ -42,7 +43,7 @@ public ref struct SpanReader<T>
         string? info = null,
         [CallerMemberName] string? methodName = null)
     {
-        using InterpolatedStringHandler message = new();
+        DefaultInterpolatedStringHandler message = new();
         message.Write("Cannot ");
         if (!string.IsNullOrEmpty(methodName))
         {
@@ -70,7 +71,7 @@ public ref struct SpanReader<T>
             message.Write(info);
         }
 
-        return new InvalidOperationException(message.ToString());
+        return new InvalidOperationException(message.ToStringAndClear());
     }
 
 #region Take
@@ -920,7 +921,7 @@ public ref struct SpanReader<T>
 
     private readonly string Display()
     {
-        using var builder = new InterpolatedStringHandler();
+        var builder = new DefaultInterpolatedStringHandler();
 
         // special handling for string-types
         if (typeof(T) == typeof(char))
@@ -937,7 +938,7 @@ public ref struct SpanReader<T>
                 // there are previous characters we are not showing
                 builder.Write("… ");
             }
-            builder.Write(_span[previousStart.._position]);
+            builder.Write(_span[previousStart.._position].ToString());
 
             // we are here
             builder.Write(" ⌖ ");
@@ -947,11 +948,11 @@ public ref struct SpanReader<T>
             if (nextEnd >= _spanLength)
             {
                 // all the rest
-                builder.Write(_span[_position..]);
+                builder.Write(_span[_position..].ToString());
             }
             else
             {
-                builder.Write(_span[_position..nextEnd]);
+                builder.Write(_span[_position..nextEnd].ToString());
                 // there were more
                 builder.Write(" …");
             }
@@ -1008,7 +1009,7 @@ public ref struct SpanReader<T>
             }
 
         }
-        return builder.ToString();
+        return builder.ToStringAndClear();
     }
 
     public override string ToString() => $"[0..{_position}..{_spanLength})";

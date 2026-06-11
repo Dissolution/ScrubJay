@@ -37,11 +37,16 @@
         <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
     </ItemGroup>
 
-    <!-- All Projects reference JetBrains.Annotations -->
     <ItemGroup>
+        <!-- All Projects reference JetBrains.Annotations -->
         <PackageReference Include="JetBrains.Annotations">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+
+        <!-- Net Framework and Net Standard include System.Memory -->
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
+                                     $(TargetFrameworkIdentifier) == '.NETFramework'"
+                          Include="System.Memory"/>
     </ItemGroup>
 
     <!-- Build Configurations -->

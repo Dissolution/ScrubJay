@@ -1,5 +1,6 @@
 ﻿using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Text.Utilities;
 
 namespace ScrubJay.Reflection.Decompilation;
 

@@ -22,8 +22,6 @@
         <Using Include="InlineIL"/>
         <Using Include="System.Buffers"/>
 
-        <Using Include="ScrubJay.Polyfills"/>
-
         <Using Include="ScrubJay.Universal"/>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Functional"/>
@@ -47,8 +45,6 @@
         <PackageReference Include="InlineIL.Fody">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory"/>
 
         <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Reflection.Emit.Lightweight">
             <PrivateAssets>all</PrivateAssets>
@@ -67,14 +63,5 @@
         <Content Include="..\README.md">
             <Link>README.md</Link>
         </Content>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-      <PackageReference Include="Microsoft.Bcl.Memory" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-      <PackageReference Include="Microsoft.Bcl.Memory" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-      <PackageReference Include="Microsoft.Bcl.Memory" />
     </ItemGroup>
 </Project>

@@ -254,7 +254,7 @@ public static class ByteSpanReaderExtensions
         {
             return Unmanaged.Read<char>(reader.TakeMany(sizeof(char)));
         }
-        
+
         public char ReadChar(Endianness endianness)
         {
             char ch = Unmanaged.Read<char>(reader.TakeMany(sizeof(char)));
@@ -267,22 +267,36 @@ public static class ByteSpanReaderExtensions
         {
             if (length <= 0)
                 return string.Empty;
+#if NETFRAMEWORK || NETSTANDARD2_0
+            var bytes = reader.TakeManyToArray(length);
+            return (encoding ?? Encoding.UTF8).GetString(bytes);
+#else
             var bytes = reader.TakeMany(length);
             return (encoding ?? Encoding.UTF8).GetString(bytes);
+#endif
         }
-        
+
         public string ReadString(int length, Endianness endianness, Encoding? encoding = null)
         {
             if (length <= 0)
                 return string.Empty;
             if (endianness.IsSystem)
             {
-                var bytes = reader.TakeMany(length);
+#if NETFRAMEWORK || NETSTANDARD2_0
+                var bytes = reader.TakeManyToArray(length);
                 return (encoding ?? Encoding.UTF8).GetString(bytes);
+#else
+            var bytes = reader.TakeMany(length);
+            return (encoding ?? Encoding.UTF8).GetString(bytes);
+#endif
             }
             else
             {
+#if NETFRAMEWORK || NETSTANDARD2_0
+                byte[] bytes = new byte[length];
+#else
                 Span<byte> bytes = length <= 64 ? stackalloc byte[length] : new byte[length];
+#endif
                 reader.Fill(bytes);
                 bytes.Reverse();
                 return (encoding ?? Encoding.UTF8).GetString(bytes);
@@ -358,7 +372,12 @@ public static class ByteSpanReaderExtensions
                     int charSize = encoding.GetByteCount("J");
                     Span<byte> nullChar = stackalloc byte[charSize];
 
-                    var bytes = reader.TakeUntilMatching(nullChar, chunk: true);
+                    var bytes = reader.TakeUntilMatching(nullChar, chunk: true)
+#if NETFRAMEWORK || NETSTANDARD2_0
+                            .ToArray()
+#endif
+                        ;
+
                     string str = encoding.GetString(bytes);
                     return str;
                 }

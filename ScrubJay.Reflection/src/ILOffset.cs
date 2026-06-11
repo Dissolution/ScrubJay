@@ -1,9 +1,11 @@
 using System.Globalization;
+using Polyfills;
 using ScrubJay.Errors;
 using ScrubJay.Errors.Parsing;
 using ScrubJay.Text.Building;
 using ScrubJay.Memory;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Text.Utilities;
 using ScrubJay.Universal.Comparison;
 
 
@@ -152,7 +154,7 @@ public readonly struct ILOffset :
 
     public string ToString(string? format, IFormatProvider? provider = null)
     {
-        return TextBuilder.New
+        return TextBuilder.Rent()
             .Append("IL_")
             .If(_offset, static o => o >= 0,
                 (tb, o) => tb.Format(o, format, provider),

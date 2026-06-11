@@ -10,7 +10,6 @@
     <ItemGroup>
         <Using Include="InlineIL.IL" Static="True"/>
         <Using Include="ScrubJay.Universal"/>
-        <Using Include="ScrubJay.Polyfills"/>
         <Using Include="ScrubJay.Functional.Prelude" Static="True"/>
         <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Memory.Extensions"/>
@@ -23,17 +22,11 @@
                           Include="System.Runtime.CompilerServices.Unsafe">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
-                          Include="System.Memory"/>
     </ItemGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Bits\" />
     </ItemGroup>
 
 </Project>

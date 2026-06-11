@@ -89,7 +89,7 @@ public readonly struct Bytes :
 
         var bytes = _bytes;
         int count = Count;
-        InterpolatedStringHandler text = new(2 + (count - 1), count);
+        DefaultInterpolatedStringHandler text = new(2 + (count - 1), count);
         text.AppendLiteral("[");
         if (count > 0)
         {
@@ -101,14 +101,14 @@ public readonly struct Bytes :
             }
         }
         text.AppendLiteral("]");
-        return text.ToStringAndDispose();
+        return text.ToStringAndClear();
     }
 
     public override string ToString()
     {
         var bytes = _bytes;
         int count = Count;
-        InterpolatedStringHandler text = new((3 * count) + 1, 0);
+        DefaultInterpolatedStringHandler text = new((3 * count) + 1, 0);
         text.AppendLiteral("[");
         if (count > 0)
         {
@@ -120,7 +120,7 @@ public readonly struct Bytes :
             }
         }
         text.AppendLiteral("]");
-        return text.ToStringAndDispose();
+        return text.ToStringAndClear();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
