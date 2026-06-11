@@ -1,5 +1,4 @@
 using System.Globalization;
-using Polyfills;
 using ScrubJay.Errors;
 using ScrubJay.Errors.Parsing;
 using ScrubJay.Text.Building;

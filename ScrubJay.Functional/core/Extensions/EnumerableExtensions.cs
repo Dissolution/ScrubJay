@@ -268,5 +268,83 @@ public static class EnumerableExtensions
             }
         }
 #endregion
+
+
+    }
+
+
+    extension<T>(IEnumerable<T>? enumerable)
+    {
+#region One
+        public T One()
+        {
+            if (enumerable is null)
+                throw new ArgumentNullException(nameof(enumerable));
+            using var e = enumerable.GetEnumerator();
+            if (!e.MoveNext())
+                throw new InvalidOperationException("Enumerable contained no values");
+            var one = e.Current;
+            if (e.MoveNext())
+                throw new InvalidOperationException("Enumerable contained more than one value");
+            return one;
+        }
+
+        public T? OneOrDefault()
+        {
+            if (enumerable is null)
+                return default;
+            using var e = enumerable.GetEnumerator();
+            if (!e.MoveNext())
+                return default;
+            var one = e.Current;
+            if (e.MoveNext())
+                return default;
+            return one;
+        }
+
+        [return: NotNullIfNotNull(nameof(fallback))]
+        public T? OneOrDefault(T? fallback)
+        {
+            if (enumerable is null)
+                return fallback;
+            using var e = enumerable.GetEnumerator();
+            if (!e.MoveNext())
+                return fallback;
+            var one = e.Current;
+            if (e.MoveNext())
+                return fallback;
+            return one;
+        }
+
+        public bool TryGetOne([MaybeNullWhen(false)] out T? value)
+        {
+            if (enumerable is null)
+                goto fail;
+
+            using (var e = enumerable.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                    goto fail;
+                value = e.Current;
+                if (e.MoveNext())
+                    goto fail;
+                return true;
+            }
+
+            fail:
+            value = default;
+            return false;
+        }
+
+        public Option<T> TryGetOne()
+        {
+            if (enumerable is null) return None;
+            using var e = enumerable.GetEnumerator();
+            if (!e.MoveNext()) return None;
+            var value = e.Current;
+            if (e.MoveNext()) return None;
+            return Some(value);
+        }
+#endregion
     }
 }

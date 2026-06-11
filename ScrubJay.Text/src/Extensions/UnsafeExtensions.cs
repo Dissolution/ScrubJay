@@ -3,7 +3,7 @@ namespace ScrubJay.Text.Extensions;
 [PublicAPI]
 public static unsafe class UnsafeExtensions
 {
-    extension(Unsafe)
+    extension(TextHelper.Unsafe)
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyBlock<T>(T* destination, T* source, uint itemCount)

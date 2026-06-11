@@ -1,65 +1,29 @@
-﻿using ScrubJay.Text.Building;
-using ScrubJay.Text.Utilities;
+﻿using ScrubJay.Errors;
+using ScrubJay.Errors.Exceptions;
+using ScrubJay.Errors.Utilities;
+using ScrubJay.Text.Building;
 #pragma warning disable CA1010
 
 namespace ScrubJay.Reflection.Exceptions;
 
 [PublicAPI]
-public class ReflectionException : Exception, IEnumerable
+public class ReflectionException : Exception, ISJException
 {
-    private static readonly Action<Exception, string> _setExceptionMessage;
-    
-    static ReflectionException()
-    {
-        // Message Setter
-        var messageField = typeof(Exception)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .Where(field => TextHelper.Contains(field.Name, "message", StringComparison.OrdinalIgnoreCase))
-            .OneOrDefault()
-            .ThrowIfNull("Could not find Exception._message field");
+    /// <summary>
+    /// Gets the unaltered error message for this Exception.
+    /// </summary>
+    public override string Message => ExceptionFields.RefMessageField(this) ?? "";
 
-        var dyn = DynamicMethod.New($"set_{messageField.Name}", typeof(void), [typeof(Exception), typeof(string)]);
-        var gen = dyn.GetILGenerator();
-        gen.Emit(OpCodes.Ldarg_0);
-        gen.Emit(OpCodes.Ldarg_1);
-        gen.Emit(OpCodes.Stfld, messageField);
-        gen.Emit(OpCodes.Ret);
-        _setExceptionMessage = dyn.CreateDelegate<Action<Exception, string>>();
-    }
-    
-    
-    public new string Message
+    public ReflectionException(string? message = null, Exception? innerException = null)
+        : base(message, innerException)
     {
-        get => base.Message;
-        set => _setExceptionMessage(this, value);
+
     }
 
-    public new IDictionary<string, object?> Data
+    public void RenderTo(TextBuilder builder)
     {
-        get => new DictionaryAdapter<string, object?>(base.Data);
-    }
-    
-    public ReflectionException() : base() { }
-    
-    public ReflectionException(ref InterpolatedTextBuilder message) 
-        : base(message.ToStringAndDispose()) { }
-    
-    public ReflectionException(ref InterpolatedTextBuilder message, Exception? innerException) 
-        : base(message.ToStringAndDispose(), innerException) { }
-    
-    public ReflectionException(string? message) 
-        : base(message) { }
-    
-    public ReflectionException(string? message, Exception? innerException) 
-        : base(message, innerException) { }
-
-    public void Add(string key, object? value)
-    {
-        base.Data[key] = value;
+        ExceptionRenderer.RenderExceptionTo(this, builder);
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        yield break;
-    }
+    public override string ToString() => TextBuilder.Build(RenderTo);
 }

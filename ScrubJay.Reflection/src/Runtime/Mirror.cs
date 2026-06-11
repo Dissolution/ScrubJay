@@ -1,5 +1,3 @@
-using ScrubJay.Universal;
-
 namespace ScrubJay.Reflection.Runtime;
 
 public static partial class Mirror

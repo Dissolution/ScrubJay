@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
-using ScrubJay.Polyfills;
 using ScrubJay.Text.Collections;
 using ScrubJay.Text.Extensions;
 using Any = ScrubJay.Universal.Any;

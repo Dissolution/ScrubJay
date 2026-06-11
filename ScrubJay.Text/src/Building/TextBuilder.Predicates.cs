@@ -362,10 +362,10 @@ public partial class TextBuilder
         }
         return this;
     }
-
+    
     public TextBuilder IfNotEmpty<T>(
-        ICollection<T>? collection,
-        Action<TextBuilder, ICollection<T>>? onNotEmpty = null,
+        IReadOnlyCollection<T>? collection,
+        Action<TextBuilder, IReadOnlyCollection<T>>? onNotEmpty = null,
         Action<TextBuilder>? onEmpty = null)
     {
         if (collection is null || collection.Count == 0)
@@ -598,7 +598,7 @@ public partial class TextBuilder
             return Append<F>(valueToAppendIfFalse);
         }
     }
-    
+
     public TextBuilder IfRender<T>(bool condition, T? valueToAppendIfTrue)
     {
         if (condition)

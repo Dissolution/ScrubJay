@@ -6,6 +6,7 @@ using ScrubJay.Reflection.Extensions;
 using ScrubJay.Reflection.Utilities;
 using ScrubJay.Text.Building;
 using ScrubJay.Memory;
+using ScrubJay.Memory.Extensions;
 using ScrubJay.Text.Rendering;
 
 namespace ScrubJay.Reflection.Decompilation;
@@ -223,7 +224,7 @@ public sealed class DecompiledMethod
                 return None;
             }
             default:
-                throw Ex.UndefinedEnum(operandType);
+                throw Ex.InvalidEnum(operandType);
         }
     }
 
@@ -277,15 +278,15 @@ public sealed class DecompiledMethod
                 .Append("Locals:")
                 .Indent()
                 .NewLine()
-                .Delimit(TBA.NewLine, locals)
-                .Dedent()
+                .Delimit(TB.NewLine, locals)
+                .Outdent()
                 .NewLine())
             .IfNotEmpty(Instructions, static (tb, instructions) => tb
                 .Append("Instructions:")
                 .Indent()
                 .NewLine()
-                .Delimit(TBA.NewLine, instructions)
-                .Dedent()
+                .Delimit(TB.NewLine, instructions)
+                .Outdent()
                 .NewLine());
 
         return builder.ToString();

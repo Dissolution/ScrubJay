@@ -72,5 +72,12 @@ public static class MemberInfoExtensions
                 };
             }
         }
+
+        public Attribute[] GetAttributes()
+        {
+            if (member is null)
+                return [];
+            return Attribute.GetCustomAttributes(member, true);
+        }
     }
 }

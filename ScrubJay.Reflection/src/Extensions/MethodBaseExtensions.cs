@@ -59,6 +59,15 @@ public static class MethodBaseExtensions
             }
         }
 
+        /// <summary>
+        /// Is this <see cref="MethodBase"/> a generic method?
+        /// </summary>
+        public bool IsGeneric
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => method is not null && method.GetGenericArguments().Length > 0;
+        }
+
 
         /// <summary>
         /// Get the <see cref="Type">Types</see> of the parameters in this <see cref="MethodBase"/>
@@ -80,7 +89,7 @@ public static class MethodBaseExtensions
                 MethodInfo info => info.ReturnType,
                 ConstructorInfo { IsStatic: true } => typeof(void),
                 ConstructorInfo ctor => ctor.DeclaringType!,
-                _ => throw Ex.ThisMethodIsNotSupported(method),
+                _ => throw Ex.NotSupported("Invalid method"),
             };
         
         public Type[] GetGenericTypes()

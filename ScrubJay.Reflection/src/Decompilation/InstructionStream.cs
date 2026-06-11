@@ -47,7 +47,7 @@ public sealed class InstructionStream :
         return _instructions.GetEnumerator();
     }
 
-    public void RenderTo(TextBuilder builder) => builder.Delimit(TBA.NewLine, _instructions, static (tb, i) => tb.Render(i));
+    public void RenderTo(TextBuilder builder) => builder.Delimit(TB.NewLine, _instructions, TB.Render);
 
     public override string ToString() => TextBuilder.Build(RenderTo);
 }

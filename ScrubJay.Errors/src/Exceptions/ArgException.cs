@@ -4,7 +4,7 @@ namespace ScrubJay.Errors.Exceptions;
 /// An enhanced <see cref="ArgumentException"/>.
 /// </summary>
 [PublicAPI]
-public sealed class ArgException : ArgumentException, IRenderable
+public sealed class ArgException : ArgumentException, ISJException
 {
     public Argument Argument { get; }
 

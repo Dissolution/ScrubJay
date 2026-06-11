@@ -24,6 +24,7 @@
 
     <!-- Global Usings -->
     <ItemGroup>
+        <Using Include="Polyfills"/>
         <Using Include="JetBrains.Annotations"/>
         <Using Include="System.Collections"/>
         <Using Include="System.Diagnostics"/>

@@ -35,24 +35,26 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
-        <ProjectReference Include="..\..\ScrubJay.Memory\src\ScrubJay.Memory.csproj" />
+        <ProjectReference Include="..\..\ScrubJay.Memory\src\ScrubJay.Memory.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
 
         <PackageReference Include="Fody">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="InlineIL.Fody">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
 
-        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Reflection.Emit.Lightweight">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'"
+                          Include="System.Reflection.Emit.Lightweight"
+                          PrivateAssets="all"/>
 
-        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Reflection.Emit">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'"
+                          Include="System.Reflection.Emit"
+                          PrivateAssets="all"/>
+
+        <PackageReference Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'" 
+                          Include="System.Runtime.CompilerServices.Unsafe"
+                          PrivateAssets="all"/>
     </ItemGroup>
 
     <!-- Expose our internals -->

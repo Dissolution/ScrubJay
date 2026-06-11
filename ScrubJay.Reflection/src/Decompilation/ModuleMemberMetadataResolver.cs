@@ -1,5 +1,6 @@
 ﻿using ScrubJay.Functional.Extensions;
 using ScrubJay.Reflection.Exceptions;
+using ScrubJay.Reflection.Extensions;
 using ScrubJay.Text.Building;
 
 
@@ -21,7 +22,7 @@ public sealed class ModuleMemberMetadataResolver : IMemberMetadataResolver
 
     private ReflectionException GetEx<T>(MetadataToken metadataToken)
     {
-        var message = TextBuilder.New
+        var message = TextBuilder.Rent()
             .Render(Module)
             .Append("::Type")
             .RenderGenericTypes(DeclaredGenericTypes)

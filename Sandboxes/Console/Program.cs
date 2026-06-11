@@ -3,19 +3,12 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ScrubJay.Errors;
-using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
-using ScrubJay.Universal.Comparison;
-using Any = ScrubJay.Universal.Any;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-char[] left = "abc".ToCharArray();
-char[] right = "def".ToCharArray();
-
-var eq = Relate.Equal(left, right);
 
 
 

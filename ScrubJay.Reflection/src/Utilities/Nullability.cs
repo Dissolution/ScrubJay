@@ -1,69 +1,8 @@
 ﻿using ScrubJay.Errors;
+using ScrubJay.Functional.Extensions;
 using ScrubJay.Reflection.Extensions;
 
 namespace ScrubJay.Reflection.Utilities;
-
-#if !NET6_0_OR_GREATER
-public sealed class NullabilityInfo
-{
-    public NullabilityInfo(Type type,
-        NullabilityState readState,
-        NullabilityState writeState,
-        NullabilityInfo? elementType,
-        NullabilityInfo[] typeArguments)
-    {
-        Type = type;
-        ReadState = readState;
-        WriteState = writeState;
-        ElementType = elementType;
-        GenericTypeArguments = typeArguments;
-    }
-
-    /// <summary>
-    /// The <see cref="System.Type" /> of the member or generic parameter
-    /// to which this NullabilityInfo belongs
-    /// </summary>
-    public Type Type { get; }
-
-    /// <summary>
-    /// The nullability read state of the member
-    /// </summary>
-    public NullabilityState ReadState { get; }
-
-    /// <summary>
-    /// The nullability write state of the member
-    /// </summary>
-    public NullabilityState WriteState { get; }
-
-    /// <summary>
-    /// If the member type is an array, gives the <see cref="NullabilityInfo" /> of the elements of the array, null otherwise
-    /// </summary>
-    public NullabilityInfo? ElementType { get; }
-
-    /// <summary>
-    /// If the member type is a generic type, gives the array of <see cref="NullabilityInfo" /> for each type parameter
-    /// </summary>
-    public NullabilityInfo[] GenericTypeArguments { get; }
-}
-
-public enum NullabilityState
-{
-    /// <summary>
-    /// Nullability context not enabled (oblivious)
-    /// </summary>
-    Unknown,
-
-    /// <summary>
-    /// Non nullable value or reference type
-    /// </summary>
-    NotNull,
-
-    /// <summary>
-    /// Nullable value or reference type
-    /// </summary>
-    Nullable,
-}
-#endif
 
 
 /// <summary>
@@ -192,9 +131,9 @@ public static class Nullability
         }
 
         NullabilityInfo? nullabilityInfo = Get(property);
-        property.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out var nullableAttribute);
+        property.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsSome(out var nullableAttribute);
         var propertyType = property.PropertyType;
-        propertyType.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out var nullableContextAttribute);
+        propertyType.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsSome(out var nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {
@@ -303,8 +242,8 @@ public static class Nullability
         NullableAttribute? nullableAttribute = null;
         NullableContextAttribute? nullableContextAttribute = null;
 
-        member.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out nullableAttribute);
-        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out nullableContextAttribute);
+        member.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsSome(out nullableAttribute);
+        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsSome(out nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {
@@ -351,7 +290,7 @@ public static class Nullability
             NullableContext.Oblivious => false,
             NullableContext.NotAnnotated => false,
             NullableContext.Annotated => true,
-            _ => throw Ex.UndefinedEnum(propertyContext),
+            _ => throw Ex.InvalidEnum(propertyContext),
         };
 
         if (!typeNullable)
@@ -385,8 +324,8 @@ public static class Nullability
         NullableAttribute? nullableAttribute = null;
         NullableContextAttribute? nullableContextAttribute = null;
 
-        parameter.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsOk(out nullableAttribute);
-        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsOk(out nullableContextAttribute);
+        parameter.GetAttributes().OfType<NullableAttribute>().TryGetOne().IsSome(out nullableAttribute);
+        relatedType?.GetAttributes().OfType<NullableContextAttribute>().TryGetOne().IsSome(out nullableContextAttribute);
 
         if (nullabilityInfo is null && nullableContextAttribute is null)
         {
@@ -433,7 +372,7 @@ public static class Nullability
             NullableContext.Oblivious => false,
             NullableContext.NotAnnotated => false,
             NullableContext.Annotated => true,
-            _ => throw Ex.UndefinedEnum(propertyContext),
+            _ => throw Ex.InvalidEnum(propertyContext),
         };
 
         if (!typeNullable)

@@ -15,6 +15,8 @@
         </PackageReference>
 
         <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj"/>
+
+        <ProjectReference Include="..\..\ScrubJay.Errors\asp\ScrubJay.Errors.Asp.csproj" />
         <!--        <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>-->
         <ProjectReference Include="..\..\ScrubJay.Errors\src\ScrubJay.Errors.csproj"/>
         <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;net48;</TargetFrameworks>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net48;</TargetFrameworks>
         <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
         <IsPackable>false</IsPackable>
         <NoWarn>$(NoWarn);CA2201;CA1515;RS0016;RS0037;</NoWarn>
