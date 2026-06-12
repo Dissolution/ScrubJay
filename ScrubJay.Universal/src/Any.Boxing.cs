@@ -91,7 +91,7 @@ partial class Any
             return null;
         if (!TryBox<T>(value, out object? boxed))
             boxed = (object)GetReferenceBytes<T>(in value).ToArray();
-        return boxed;
+        return boxed!;
     }
 
 

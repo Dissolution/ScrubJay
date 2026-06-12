@@ -87,6 +87,8 @@ public static partial class Relate
 #if NET6_0_OR_GREATER
         return MemoryExtensions.SequenceEqual<char>(left, right, charEqualityComparer);
 #else
+        if (left is null) return false;
+
         if (left.Length != right.Length)
         {
             return false;

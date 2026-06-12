@@ -61,7 +61,7 @@ public static partial class Relate
     {
         if (stringComparer is null)
             return Equal(left, right);
-        return stringComparer.Equals(left.ToString(), right);
+        return stringComparer.Equals(left.ToString(), right!);
     }
 #endregion
     
