@@ -28,14 +28,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Fody">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        
-        <PackageReference Include="InlineIL.Fody">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
 
         <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'"
                           Include="System.Reflection.Emit.Lightweight">

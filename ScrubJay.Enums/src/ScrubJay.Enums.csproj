@@ -28,12 +28,8 @@
                           Include="System.Runtime.CompilerServices.Unsafe">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Fody">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="InlineIL.Fody">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup>

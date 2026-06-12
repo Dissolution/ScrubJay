@@ -26,13 +26,8 @@
 
     <!-- NuGet Packages -->
     <ItemGroup>
-        <PackageReference Include="Fody">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="InlineIL.Fody">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
     </ItemGroup>
 
