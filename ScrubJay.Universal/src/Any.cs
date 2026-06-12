@@ -17,7 +17,7 @@ public static partial class Any
     {
         var invokeMethod = typeof(D)
             .GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-        
+
         if (invokeMethod is null)
             throw new InvalidOperationException("Could not find Delegate Invoke Method");
 
@@ -32,9 +32,9 @@ public static partial class Any
 
         return dynamicMethod;
     }
-    
+
     internal static bool TryCreateDelegate<D>(
-        this DynamicMethod dynamicMethod, 
+        this DynamicMethod dynamicMethod,
         [NotNullWhen(true)] out D? del)
         where D : Delegate
     {
@@ -51,8 +51,8 @@ public static partial class Any
             return false;
         }
     }
-    
-      private static Func<MethodInfo, bool> GetMatchPredicate(string? name, Type? returnType, Type?[]? parameterTypes)
+
+    private static Func<MethodInfo, bool> GetMatchPredicate(string? name, Type? returnType, Type?[]? parameterTypes)
     {
         Func<MethodInfo, bool>? predicate = null;
 
@@ -77,7 +77,8 @@ public static partial class Any
                 for (var i = 0; i < mp.Length; i++)
                 {
                     var pt = parameterTypes[i];
-                    if (pt is null) continue;
+                    if (pt is null)
+                        continue;
                     if (!mp[i].ParameterType.IsAssignableFrom(pt))
                         return false;
                 }

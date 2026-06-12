@@ -73,7 +73,7 @@ public ref struct SplitTextEnumerator :
 #endif
 
 
-#region Constructors
+    #region Constructors
     internal SplitTextEnumerator(text source, char separator, TextComparison? comparison = null)
     {
         Source = source;
@@ -106,7 +106,7 @@ public ref struct SplitTextEnumerator :
         _comparison = comparison ?? TextComparison.Ordinal;
     }
 #endif
-#endregion
+    #endregion
 
     /// <summary>
     /// Advances the enumerator to the next element of the enumeration.

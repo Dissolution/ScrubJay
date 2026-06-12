@@ -2,7 +2,7 @@
 
 public partial class TextBuilder
 {
-#region Remove At (index, range)
+    #region Remove At (index, range)
     public bool TryRemoveAt(int index)
     {
         if ((uint)index < (uint)_position)
@@ -74,7 +74,7 @@ public partial class TextBuilder
         removed = null;
         return false;
     }
-#endregion
+    #endregion
 
 
     public int RemoveWhere(Func<char, bool>? charPredicate)

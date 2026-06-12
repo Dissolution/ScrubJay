@@ -30,7 +30,7 @@ public partial class Ex
             .ToStringAndDispose();
         return new ArgException(arg, message);
     }
-    
+
     public static ArgException Arg(Argument? arg,
         string? info = null,
         Exception? innerException = null)

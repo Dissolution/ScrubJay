@@ -1,6 +1,6 @@
 ﻿namespace ScrubJay.Text.Building;
 
-partial class TextBuilder
+public partial class TextBuilder
 {
     /// <summary>
     /// Measures the number of characters written during a <see cref="TB"/>.

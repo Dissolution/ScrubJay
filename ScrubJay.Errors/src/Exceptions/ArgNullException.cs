@@ -13,7 +13,7 @@ public sealed class ArgNullException : ArgumentNullException, IRenderable
     /// Gets the unaltered error message for this Exception.
     /// </summary>
     public override string Message => ExceptionFields.RefMessageField(this) ?? "";
-    
+
     public ArgNullException(Argument argument, string? message = null, Exception? innerException = null)
         : base()
     {

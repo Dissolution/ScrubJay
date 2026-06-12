@@ -5,8 +5,8 @@ namespace ScrubJay.Universal.Comparison;
 [PublicAPI]
 public static partial class Relate
 {
-#region Equal
-#region Value
+    #region Equal
+    #region Value
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal<T>(in T? left, in T? right)
 #if NET9_0_OR_GREATER
@@ -26,11 +26,11 @@ public static partial class Relate
             return Any.Equals<T>(in left, in right);
         return equalityComparer.Equals(left!, right!);
     }
-#endregion /Equal Value
+    #endregion /Equal Value
 
-#region Text
-   
-    
+    #region Text
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(scoped text left, scoped text right)
     {
@@ -67,8 +67,8 @@ public static partial class Relate
         return true;
 #endif
     }
-    
-    
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(string? left, scoped text right)
     {
@@ -87,7 +87,8 @@ public static partial class Relate
 #if NET6_0_OR_GREATER
         return MemoryExtensions.SequenceEqual<char>(left, right, charEqualityComparer);
 #else
-        if (left is null) return false;
+        if (left is null)
+            return false;
 
         if (left.Length != right.Length)
         {
@@ -107,13 +108,13 @@ public static partial class Relate
         return true;
 #endif
     }
-    
-    
 
-  
-#endregion /Equal Text
 
-#region Many
+
+
+    #endregion /Equal Text
+
+    #region Many
 #if NET6_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -224,6 +225,6 @@ public static partial class Relate
                 return false;
         }
     }
-#endregion /Equal Many
-#endregion /Equal
+    #endregion /Equal Many
+    #endregion /Equal
 }

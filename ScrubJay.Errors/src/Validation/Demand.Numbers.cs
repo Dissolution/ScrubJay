@@ -2,7 +2,7 @@
 
 namespace ScrubJay.Errors.Validation;
 
-partial class Demand
+public partial class Demand
 {
     [DoesNotReturn]
     private static void ThrowIsZero<T>(T value, string? paramName)

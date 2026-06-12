@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     public static bool HasTryFormat<T>()
 #if NET9_0_OR_GREATER

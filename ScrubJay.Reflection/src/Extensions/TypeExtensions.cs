@@ -1,5 +1,3 @@
-using ScrubJay.Universal;
-
 namespace ScrubJay.Reflection.Extensions;
 
 [PublicAPI]

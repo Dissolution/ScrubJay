@@ -9,7 +9,7 @@ public partial class TextBuilder
      * - Func<Option<T>> iterator
      */
 
-#region Enumerate Append
+    #region Enumerate Append
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> span)
     {
         foreach (T item in span)
@@ -101,9 +101,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region Enumerate Build
+    #region Enumerate Build
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> span, Action<TextBuilder, T>? itemBuild)
     {
         if (itemBuild is not null)
@@ -139,7 +139,8 @@ public partial class TextBuilder
     {
         if (itemBuild is not null)
         {
-            if (values is null) return this;
+            if (values is null)
+                return this;
 
             foreach (var value in values)
             {
@@ -159,7 +160,8 @@ public partial class TextBuilder
     {
         if (itemBuild is not null)
         {
-            if (values is null) return this;
+            if (values is null)
+                return this;
 
             foreach (var value in values)
             {
@@ -177,7 +179,8 @@ public partial class TextBuilder
     {
         if (itemBuild is not null)
         {
-            if (iterator is null) return this;
+            if (iterator is null)
+                return this;
 
             while (iterator().IsSome(out var nextItem))
             {
@@ -196,7 +199,8 @@ public partial class TextBuilder
     {
         if (itemBuild is not null)
         {
-            if (iterator is null) return this;
+            if (iterator is null)
+                return this;
 
             while (iterator().IsSome(out var nextItem))
             {
@@ -227,9 +231,9 @@ public partial class TextBuilder
         }
         return Enumerate(ref textSplitEnumerator);
     }
-#endregion
+    #endregion
 
-#region Enumerate w/Index
+    #region Enumerate w/Index
     public TextBuilder Enumerate<T>(scoped ReadOnlySpan<T> values, Action<TextBuilder, T, int>? itemIndexBuild)
     {
         if (itemIndexBuild is not null)
@@ -249,7 +253,8 @@ public partial class TextBuilder
     {
         if (itemIndexBuild is not null)
         {
-            if (values is null) return this;
+            if (values is null)
+                return this;
 
             for (int i = 0; i < values.Length; i++)
             {
@@ -274,7 +279,8 @@ public partial class TextBuilder
             }
             else
             {
-                if (values is null) return this;
+                if (values is null)
+                    return this;
 
                 int i = 0;
                 foreach (var value in values)
@@ -296,7 +302,8 @@ public partial class TextBuilder
     {
         if (itemIndexBuild is not null)
         {
-            if (values is null) return this;
+            if (values is null)
+                return this;
 
             int i = 0;
             foreach (var value in values)
@@ -316,7 +323,8 @@ public partial class TextBuilder
     {
         if (itemIndexBuild is not null)
         {
-            if (iterator is null) return this;
+            if (iterator is null)
+                return this;
 
             int i = 0;
             while (iterator().IsSome(out var nextItem))
@@ -337,7 +345,8 @@ public partial class TextBuilder
     {
         if (itemIndexBuild is not null)
         {
-            if (iterator is null) return this;
+            if (iterator is null)
+                return this;
 
             int i = 0;
             while (iterator().IsSome(out var nextItem))
@@ -352,5 +361,5 @@ public partial class TextBuilder
         return Enumerate<T>(iterator, _);
     }
 #endif
-#endregion
+    #endregion
 }

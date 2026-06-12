@@ -1,4 +1,5 @@
 // ReSharper disable InvokeAsExtensionMember
+#pragma warning disable CA1307
 
 using ScrubJay.Universal.Extensions;
 
@@ -7,7 +8,7 @@ namespace ScrubJay.Universal.Comparison;
 
 public static partial class Relate
 {
-#region char, char
+    #region char, char
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(char left, char right) => left == right;
 
@@ -34,9 +35,9 @@ public static partial class Relate
             return left == right;
         return stringComparer.Equals(left.ToString(), right.ToString());
     }
-#endregion /char,char
+    #endregion /char,char
 
-#region char, string
+    #region char, string
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(char left, string? right) => right is not null && right.Length == 1 && right[0] == left;
 
@@ -63,9 +64,9 @@ public static partial class Relate
             return Equal(left, right);
         return stringComparer.Equals(left.ToString(), right!);
     }
-#endregion
-    
-#region char, text
+    #endregion
+
+    #region char, text
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Equal(char left, scoped text right) => right.Length == 1 && right[0] == left;
 
@@ -92,6 +93,6 @@ public static partial class Relate
             return Equal(left, right);
         return stringComparer.Equals(left.ToString(), right.ToString());
     }
-#endregion
+    #endregion
 
 }

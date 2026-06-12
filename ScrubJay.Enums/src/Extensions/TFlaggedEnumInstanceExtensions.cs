@@ -47,10 +47,10 @@ public static class TFlaggedEnumInstanceExtensions
             throw new NotImplementedException();
         }
 
-//        public EnumEnumerable<E> AsEnumerable()
-//        {
-//            return new(@enum);
-//        }
+        //        public EnumEnumerable<E> AsEnumerable()
+        //        {
+        //            return new(@enum);
+        //        }
 
         public EnumEnumerator<E> GetEnumerator()
         {

@@ -15,7 +15,7 @@ public readonly struct Result :
 #endif
     IEquatable<Result>
 {
-#region Operators
+    #region Operators
 
     public static implicit operator bool(Result result) => result._isOk;
     public static implicit operator Result(bool success) => success ? Ok : Error(null);
@@ -25,7 +25,7 @@ public readonly struct Result :
     public static bool operator ==(Result left, Result right) => left.Equals(right);
     public static bool operator !=(Result left, Result right) => !left.Equals(right);
 
-#endregion
+    #endregion
 
 
     public static readonly Result Ok = new Result(true, null);
@@ -46,7 +46,7 @@ public readonly struct Result :
     public bool IsOk() => _isOk;
 
 
-#region Error
+    #region Error
 
     public bool IsError() => !_isOk;
 
@@ -87,9 +87,9 @@ public readonly struct Result :
         }
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action onOk, Action<Exception> onError)
     {
@@ -119,7 +119,7 @@ public readonly struct Result :
         }
     }
 
-#endregion
+    #endregion
 
     public Option<Unit> AsOption()
     {
@@ -133,7 +133,7 @@ public readonly struct Result :
         }
     }
 
-#region Equality
+    #region Equality
 
     public bool Equals(Result other)
     {
@@ -181,9 +181,9 @@ public readonly struct Result :
 #endif
     }
 
-#endregion
+    #endregion
 
-#region Formatting
+    #region Formatting
 
     public override string ToString()
     {
@@ -197,5 +197,5 @@ public readonly struct Result :
         }
     }
 
-#endregion
+    #endregion
 }

@@ -18,7 +18,7 @@ public sealed record class Argument : IRenderable
     {
         return new Argument(Any.GetType<T>(in argument), argumentName, Any.Render<T>(in argument));
     }
-    
+
     public static Argument Capture<T>(
         scoped ReadOnlySpan<T> argument,
         [CallerArgumentExpression(nameof(argument))]
@@ -48,7 +48,7 @@ public sealed record class Argument : IRenderable
     }
 
     public static Argument Null() => new(null, null, null);
-    
+
     /// <summary>
     /// The <see cref="Type"/> of the argument.
     /// </summary>

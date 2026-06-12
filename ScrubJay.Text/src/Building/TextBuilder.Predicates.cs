@@ -5,7 +5,7 @@ namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
 {
-#region If(predicate)
+    #region If(predicate)
     public TextBuilder If(bool condition,
         Action<TextBuilder>? onTrue = null,
         Action<TextBuilder>? onFalse = null)
@@ -35,9 +35,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region If(value, valuePredicate)
+    #region If(value, valuePredicate)
     public TextBuilder If<T>(T? value, Func<T?, bool>? predicate)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -72,9 +72,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region If Option / Result
+    #region If Option / Result
     public TextBuilder If<T>(Option<T> option,
         Action<TextBuilder, T>? onSome = null,
         Action<TextBuilder>? onNone = null)
@@ -152,10 +152,10 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
 
-#region IfSelect
+    #region IfSelect
     public TextBuilder IfSelect<T, N>(T value, Func<T, Option<N>> selectWhere)
     {
         if (selectWhere(value).IsSome(out var selected))
@@ -209,9 +209,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region IfNotNull
+    #region IfNotNull
     public TextBuilder IfNotNull<T>(T? value)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -268,9 +268,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region If Not Empty
+    #region If Not Empty
     public TextBuilder IfNotEmpty(string? str)
     {
         if (!string.IsNullOrEmpty(str))
@@ -362,7 +362,7 @@ public partial class TextBuilder
         }
         return this;
     }
-    
+
     public TextBuilder IfNotEmpty<T>(
         IReadOnlyCollection<T>? collection,
         Action<TextBuilder, IReadOnlyCollection<T>>? onNotEmpty = null,
@@ -398,9 +398,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region IfSome
+    #region IfSome
     public TextBuilder IfSome<T>(Option<T> option)
     {
         if (option.IsSome(out var some))
@@ -456,9 +456,9 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
-#region IfOk
+    #region IfOk
     public TextBuilder IfOk(
         Result result,
         Action<TextBuilder>? onOk = null,
@@ -572,7 +572,7 @@ public partial class TextBuilder
         }
         return this;
     }
-#endregion
+    #endregion
 
 
     public TextBuilder IfAppend<T>(bool condition, T? valueToAppendIfTrue)

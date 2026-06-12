@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors.Validation;
 
-partial class Demand
+public partial class Demand
 {
     [DoesNotReturn]
     private static void ThrowIsGreaterOrEqual<T>(T value, T? other, string? paramName)

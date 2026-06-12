@@ -5,16 +5,16 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType<T>(scoped Span<T> span)
+    public static Type GetType<T>(scoped Span<T> _)
     {
         return typeof(Span<T>);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType<T>(scoped ReadOnlySpan<T> span)
+    public static Type GetType<T>(scoped ReadOnlySpan<T> _)
     {
         return typeof(ReadOnlySpan<T>);
     }
@@ -29,7 +29,7 @@ partial class Any
             return typeof(T);
         return GetTypeCache<T>.Invoke(in instance);
     }
-    
+
     private static class GetTypeCache<T>
 #if NET9_0_OR_GREATER
         where T : allows ref struct

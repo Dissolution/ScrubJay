@@ -12,7 +12,7 @@ public sealed class ResultJsonConverter : JsonConverter<Result>
     /// <summary>
     /// Gets the default <see cref="ResultJsonConverter"/> instance
     /// </summary>
-    public static ResultJsonConverter Default { get; } = new ();
+    public static ResultJsonConverter Default { get; } = new();
 
     public override Result Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

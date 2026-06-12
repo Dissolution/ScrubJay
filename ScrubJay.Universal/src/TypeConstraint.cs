@@ -1,4 +1,4 @@
-#pragma warning disable S2326, CA1711
+#pragma warning disable S2326, CA1711, CA1034
 
 namespace ScrubJay.Universal;
 
@@ -244,14 +244,14 @@ public static class TypeConstraints
 
 #if NET7_0_OR_GREATER
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IEqualityOperators{T,T,bool}"/>.
+    /// Constrains <typeparamref name="T"/> <see cref="IEqualityOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIEqualityOperators<T>
         where T : IEqualityOperators<T, T, bool>;
 #else
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="IEqualityOperators{T,T,bool}"/>.
+    /// Constrains <typeparamref name="T"/> to <see langword="IEqualityOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIEqualityOperators<T>;
@@ -259,15 +259,14 @@ public static class TypeConstraints
 
 #if NET7_0_OR_GREATER
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to
-    /// <see cref="IComparisonOperators{T,T,int}"/>.
+    /// Constrains <typeparamref name="T"/> to <see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIComparisonOperators<T>
         where T : IComparisonOperators<T, T, int>;
 #else
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="IComparisonOperators{T,T,int}"/>
+    /// Constrains <typeparamref name="T"/> to <see langword="IComparisonOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIComparisonOperators<T>;

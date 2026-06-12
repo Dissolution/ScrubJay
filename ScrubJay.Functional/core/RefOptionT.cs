@@ -9,7 +9,7 @@ public readonly ref struct RefOption<T>
     where T : allows ref struct
 #endif
 {
-#region Operators
+    #region Operators
 
     /// <summary>
     /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
@@ -31,7 +31,7 @@ public readonly ref struct RefOption<T>
     public static implicit operator RefOption<T>(None _) => None;
 
     public static implicit operator RefOption<T>(T value) => Some(value);
-#endregion
+    #endregion
 
     public static RefOption<T> None => default;
 
@@ -85,7 +85,7 @@ public readonly ref struct RefOption<T>
 
     public bool IsNone() => !_isSome;
 
-#region Some-ness
+    #region Some-ness
 
     public bool IsSome() => _isSome;
 
@@ -143,9 +143,9 @@ public readonly ref struct RefOption<T>
         return default;
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T> onSome, Action onNone)
     {
@@ -198,9 +198,9 @@ public readonly ref struct RefOption<T>
         }
     }
 
-#endregion
+    #endregion
 
-#region LINQ + IEnumerable
+    #region LINQ + IEnumerable
 
     public RefOption<N> Select<N>(Func<T, N> selector)
     {
@@ -315,7 +315,7 @@ public readonly ref struct RefOption<T>
         }
     }
 
-#endregion
+    #endregion
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {

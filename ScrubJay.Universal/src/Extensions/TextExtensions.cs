@@ -3,6 +3,17 @@ namespace ScrubJay.Universal.Extensions;
 [PublicAPI]
 public static class TextExtensions
 {
+    extension(string? str)
+    {
+        public bool IsNullOrEmpty() => string.IsNullOrEmpty(str);
+    }
+
+    extension(scoped text text)
+    {
+        public bool IsNullOrEmpty() => text.IsEmpty;
+    }
+
+
     extension(ref DefaultInterpolatedStringHandler handler)
     {
         public void Write(in char ch)
@@ -33,10 +44,5 @@ public static class TextExtensions
             handler.AppendFormatted(Any.ToString<T>(in value));
         }
 #endif
-//
-//        public void Write<T>(scoped ReadOnlySpan<T> items)
-//        {
-//            
-//        }
     }
 }

@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors;
 
-partial class Ex
+public partial class Ex
 {
     public static ArgException ArgNotEqual<T>(T? argument, T? expected,
         string? info = null,

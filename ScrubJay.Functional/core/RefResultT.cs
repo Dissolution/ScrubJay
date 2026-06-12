@@ -31,7 +31,7 @@ public readonly ref struct RefResult<T>
     where T : allows ref struct
 #endif
 {
-#region Operators
+    #region Operators
 
     public static implicit operator bool(in RefResult<T> refResult) => refResult._isOk;
     public static implicit operator RefResult<T>(T value) => Ok(value);
@@ -39,7 +39,7 @@ public readonly ref struct RefResult<T>
     public static implicit operator RefResult<T>(IMPL.Ok<T> ok) => Ok(ok.Value);
     public static implicit operator RefResult<T>(IMPL.Error<Exception> error) => Error(error.Value);
 
-#endregion
+    #endregion
 
 
     /// <summary>
@@ -73,7 +73,7 @@ public readonly ref struct RefResult<T>
     }
 
 
-#region Ok
+    #region Ok
 
     public bool IsOk() => _isOk;
 
@@ -159,9 +159,9 @@ public readonly ref struct RefResult<T>
         throw (_error ?? new InvalidOperationException(exceptionMessage ?? $"{ToString()} is not Ok"));
     }
 
-#endregion
+    #endregion
 
-#region Error
+    #region Error
 
     public bool IsError() => _isOk;
 
@@ -215,9 +215,9 @@ public readonly ref struct RefResult<T>
         }
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T> onOk, Action<Exception> onError)
     {
@@ -244,7 +244,7 @@ public readonly ref struct RefResult<T>
         }
     }
 
-#endregion
+    #endregion
 
     public RefOption<T> AsOption()
     {
@@ -258,7 +258,7 @@ public readonly ref struct RefResult<T>
         }
     }
 
-#region Linq
+    #region Linq
 
     public RefResult<N> Select<N>(Func<T, N> selector)
     {
@@ -324,9 +324,9 @@ public readonly ref struct RefResult<T>
     }
 #endif
 
-#endregion
+    #endregion
 
-#region IEnumerable
+    #region IEnumerable
 
     [MustDisposeResource(false)]
     public RefResultEnumerator GetEnumerator() => new RefResultEnumerator(this);
@@ -366,7 +366,7 @@ public readonly ref struct RefResult<T>
         }
     }
 
-#endregion
+    #endregion
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {

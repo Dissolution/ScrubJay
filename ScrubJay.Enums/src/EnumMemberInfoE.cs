@@ -1,4 +1,5 @@
-using System.Collections.ObjectModel;
+#pragma warning disable IDE0052
+
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -35,9 +36,7 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
         Member = (TEnum)memberField.GetValue(null)!;
         MemberName = memberField.Name;
         Attributes = Attribute.GetCustomAttributes(memberField);
-
-
-
+        
         var aliases = new Dictionary<string, string>();
         foreach (var attribute in Attributes)
         {
@@ -51,18 +50,18 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
             }
             else
 #endif
-            if (attribute is DescriptionAttribute descriptionAttribute)
-            {
-                addAlias("Description", descriptionAttribute.Description);
-            }
-            else if (attribute is EnumMemberAttribute enumMemberAttribute)
-            {
-                addAlias("EnumMember", enumMemberAttribute.Value);
-            }
-            else if (attribute is DataMemberAttribute dataMemberAttribute)
-            {
-                addAlias("DataMember", dataMemberAttribute.Name);
-            }
+                if (attribute is DescriptionAttribute descriptionAttribute)
+                {
+                    addAlias("Description", descriptionAttribute.Description);
+                }
+                else if (attribute is EnumMemberAttribute enumMemberAttribute)
+                {
+                    addAlias("EnumMember", enumMemberAttribute.Value);
+                }
+                else if (attribute is DataMemberAttribute dataMemberAttribute)
+                {
+                    addAlias("DataMember", dataMemberAttribute.Name);
+                }
         }
 
 #if NETSTANDARD2_1 || NET6_0_OR_GREATER

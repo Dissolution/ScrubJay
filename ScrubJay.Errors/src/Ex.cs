@@ -25,7 +25,7 @@ public static partial class Ex
             .ToStringAndDispose();
         return new NotImplementedException(message, innerException);
     }
-    
+
     public static NotSupportedException NotSupported(
         string? info = null,
         Exception? innerException = null,

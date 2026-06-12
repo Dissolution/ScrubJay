@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
@@ -17,7 +17,7 @@ partial class Any
             return null;
         return ToStringCache<T>.Invoke(in instance);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
     public static string? Format<T>(

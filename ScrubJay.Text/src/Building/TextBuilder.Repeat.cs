@@ -4,7 +4,7 @@ namespace ScrubJay.Text.Building;
 
 public partial class TextBuilder
 {
-#region Repeat Write
+    #region Repeat Write
     public TextBuilder Repeat(int count, char ch)
     {
         if (count > 0)
@@ -91,9 +91,9 @@ public partial class TextBuilder
         return this;
     }
 #endif
-#endregion
+    #endregion
 
-#region Repeat Action
+    #region Repeat Action
     public TextBuilder Repeat(int count, Action<TextBuilder>? build)
     {
         if (build is not null)
@@ -122,6 +122,6 @@ public partial class TextBuilder
         }
         return Repeat<T>(count, value);
     }
-#endregion
+    #endregion
 
 }

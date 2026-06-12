@@ -2,7 +2,7 @@
 
 namespace ScrubJay.Text.Building;
 
-partial class TextBuilder
+public partial class TextBuilder
 {
     private Whitespace? _whitespace;
 
@@ -48,13 +48,13 @@ partial class TextBuilder
 
     internal bool IndentAware => _whitespace is not null && _whitespace.IndentCount > 0;
 
-#region NewLine
+    #region NewLine
     public TextBuilder NewLine() => Append(CurrentNewLine);
 
     public TextBuilder NewLines(int count) => Repeat(count, CurrentNewLine);
-#endregion
+    #endregion
 
-#region Indents
+    #region Indents
     public TextBuilder Indent(string? indent = null)
     {
         _whitespace ??= new();
@@ -97,9 +97,9 @@ partial class TextBuilder
         Indent(indent);
         return disposable;
     }
-#endregion
+    #endregion
 
-#region Blocks
+    #region Blocks
     public TextBuilder BracesBlock(Action<TextBuilder>? indentedBlock)
     {
         if (indentedBlock is null)
@@ -127,7 +127,7 @@ partial class TextBuilder
             .Append('}')
             .NewLine();
     }
-#endregion
+    #endregion
 
     internal bool IsStartLine()
     {
@@ -267,7 +267,7 @@ partial class TextBuilder
     {
         if (buildItem is null)
             return;
-        
+
         if (IndentAware)
         {
             // ReSharper disable once NotDisposedResource

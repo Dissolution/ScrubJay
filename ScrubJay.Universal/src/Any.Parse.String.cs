@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
 
     private static class TryParseCache<T>
@@ -64,7 +64,9 @@ partial class Any
             {
                 return _delegate(str, provider, out instance);
             }
+#pragma warning disable CA1031
             catch
+#pragma warning restore CA1031
             {
                 _delegate = Fallback;
                 return _delegate(str, provider, out instance);

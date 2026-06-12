@@ -49,7 +49,7 @@ public sealed class TextComparison :
         _stringComparison = stringComparison;
     }
 
-#region Equals
+    #region Equals
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(char x, char y)
     {
@@ -112,9 +112,9 @@ public sealed class TextComparison :
             yText = y?.ToString();
         return Equals(xText, yText);
     }
-#endregion
+    #endregion
 
-#region GetHashCode
+    #region GetHashCode
 #if NET6_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetHashCode(char ch)
@@ -141,7 +141,8 @@ public sealed class TextComparison :
 
     public int GetHashCode(string? str)
     {
-        if (str is null) return 0;
+        if (str is null)
+            return 0;
         return ((StringComparer)this).GetHashCode(str);
     }
 
@@ -157,9 +158,9 @@ public sealed class TextComparison :
             text = obj?.ToString();
         return GetHashCode(text);
     }
-#endregion
+    #endregion
 
-#region Compare
+    #region Compare
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Compare(char x, char y)
     {
@@ -222,5 +223,5 @@ public sealed class TextComparison :
             yText = y?.ToString();
         return Compare(xText, yText);
     }
-#endregion
+    #endregion
 }

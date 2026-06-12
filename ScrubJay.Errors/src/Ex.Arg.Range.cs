@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors;
 
-partial class Ex
+public partial class Ex
 {
     public static ArgRangeException ArgRange<T>(
         in T? argument,

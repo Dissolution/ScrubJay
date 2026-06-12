@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace ScrubJay.Errors.Validation;
 
-partial class Demand
+public partial class Demand
 {
     [DoesNotReturn]
     private static void ThrowPredicateFail<P>(P? predicate, bool expected, string? info, string? predicateName)

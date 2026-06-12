@@ -11,6 +11,9 @@
         <!-- CA1303; Do not pass literals as localized parameters -->
         <!-- CA1051; Do not declare visible instance fields -->
         <NoWarn>$(NoWarn);CS8981;CS1591;CA1303;CA1051;</NoWarn>
+        
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CA0022;</NoWarn>
     </PropertyGroup>
 
     <!-- NuGet common to all Projects -->

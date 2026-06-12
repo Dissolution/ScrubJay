@@ -15,7 +15,7 @@ public static class ThrowExtensions
     }
 
     public static T ThrowIfNull<T>(
-        [AllowNull,NotNull] this Nullable<T> value,
+        [AllowNull, NotNull] this Nullable<T> value,
         string? info = null,
         [CallerArgumentExpression(nameof(value))]
         string? argumentName = null)

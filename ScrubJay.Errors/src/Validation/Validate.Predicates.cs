@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace ScrubJay.Errors.Validation;
 
-partial class Validate
+public partial class Validate
 {
     public static Result True(
         bool predicate,

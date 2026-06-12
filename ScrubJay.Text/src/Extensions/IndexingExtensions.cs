@@ -117,7 +117,7 @@ public static class IndexingExtensions
                     return None;
                 }
 
-                fin:
+fin:
 #endif
 
                 if (i >= 0)

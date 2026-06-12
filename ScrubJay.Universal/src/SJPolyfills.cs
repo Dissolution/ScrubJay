@@ -1,3 +1,5 @@
+#pragma warning disable IDE0130
+
 
 #if NETSTANDARD2_0
 namespace System.Runtime.CompilerServices
@@ -28,6 +30,18 @@ namespace ScrubJay.Universal
         extension(Type? type)
         {
             public bool IsByRefLike => false;
+        }
+
+        extension<T>(T[]? array)
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public Span<T> AsSpan(Range range)
+            {
+                if (array is null)
+                    return [];
+                (int start, int length) = range.GetOffsetAndLength(array.Length);
+                return new Span<T>(array, start, length);
+            }
         }
     }
 }

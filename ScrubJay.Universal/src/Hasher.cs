@@ -63,7 +63,7 @@ public ref struct Hasher
     private const uint PRIME5 = 0x165667B1U;
 
 
-#region Static
+    #region Static
     /// <summary>
     /// The current seed for this <see cref="Hasher"/>.
     /// </summary>
@@ -150,7 +150,7 @@ public ref struct Hasher
         return hash;
     }
 
-#region Hash (one)
+    #region Hash (one)
     /// <summary>
     /// Gets the hashcode for a <typeparamref name="T"/> <paramref name="value"/>.
     /// </summary>
@@ -229,9 +229,9 @@ public ref struct Hasher
         return Any.GetHashCode<T>(in value, _);
     }
 #endif
-#endregion /Hash (one)
+    #endregion /Hash (one)
 
-#region HashMany
+    #region HashMany
     /// <summary>
     /// Gets a hashcode generated from multiple values.
     /// </summary>
@@ -425,15 +425,24 @@ public ref struct Hasher
     {
         switch (span.Length)
         {
-            case 0: return EmptyHash;
-            case 1: return Hash(span[0]);
-            case 2: return HashMany(span[0], span[1]);
-            case 3: return HashMany(span[0], span[1], span[2]);
-            case 4: return HashMany(span[0], span[1], span[2], span[3]);
-            case 5: return HashMany(span[0], span[1], span[2], span[3], span[4]);
-            case 6: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5]);
-            case 7: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6]);
-            case 8: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6], span[7]);
+            case 0:
+                return EmptyHash;
+            case 1:
+                return Hash(span[0]);
+            case 2:
+                return HashMany(span[0], span[1]);
+            case 3:
+                return HashMany(span[0], span[1], span[2]);
+            case 4:
+                return HashMany(span[0], span[1], span[2], span[3]);
+            case 5:
+                return HashMany(span[0], span[1], span[2], span[3], span[4]);
+            case 6:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5]);
+            case 7:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6]);
+            case 8:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6], span[7]);
             default:
             {
                 var hasher = new Hasher();
@@ -460,15 +469,24 @@ public ref struct Hasher
     {
         switch (span.Length)
         {
-            case 0: return EmptyHash;
-            case 1: return Hash(span[0]);
-            case 2: return HashMany(span[0], span[1]);
-            case 3: return HashMany(span[0], span[1], span[2]);
-            case 4: return HashMany(span[0], span[1], span[2], span[3]);
-            case 5: return HashMany(span[0], span[1], span[2], span[3], span[4]);
-            case 6: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5]);
-            case 7: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6]);
-            case 8: return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6], span[7]);
+            case 0:
+                return EmptyHash;
+            case 1:
+                return Hash(span[0]);
+            case 2:
+                return HashMany(span[0], span[1]);
+            case 3:
+                return HashMany(span[0], span[1], span[2]);
+            case 4:
+                return HashMany(span[0], span[1], span[2], span[3]);
+            case 5:
+                return HashMany(span[0], span[1], span[2], span[3], span[4]);
+            case 6:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5]);
+            case 7:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6]);
+            case 8:
+                return HashMany(span[0], span[1], span[2], span[3], span[4], span[5], span[6], span[7]);
             default:
             {
                 var hasher = new Hasher();
@@ -497,15 +515,24 @@ public ref struct Hasher
             return NullHash;
         switch (array.Length)
         {
-            case 0: return EmptyHash;
-            case 1: return Hash(array[0]);
-            case 2: return HashMany(array[0], array[1]);
-            case 3: return HashMany(array[0], array[1], array[2]);
-            case 4: return HashMany(array[0], array[1], array[2], array[3]);
-            case 5: return HashMany(array[0], array[1], array[2], array[3], array[4]);
-            case 6: return HashMany(array[0], array[1], array[2], array[3], array[4], array[5]);
-            case 7: return HashMany(array[0], array[1], array[2], array[3], array[4], array[5], array[6]);
-            case 8: return HashMany(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7]);
+            case 0:
+                return EmptyHash;
+            case 1:
+                return Hash(array[0]);
+            case 2:
+                return HashMany(array[0], array[1]);
+            case 3:
+                return HashMany(array[0], array[1], array[2]);
+            case 4:
+                return HashMany(array[0], array[1], array[2], array[3]);
+            case 5:
+                return HashMany(array[0], array[1], array[2], array[3], array[4]);
+            case 6:
+                return HashMany(array[0], array[1], array[2], array[3], array[4], array[5]);
+            case 7:
+                return HashMany(array[0], array[1], array[2], array[3], array[4], array[5], array[6]);
+            case 8:
+                return HashMany(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7]);
             default:
             {
                 var hasher = new Hasher();
@@ -550,9 +577,9 @@ public ref struct Hasher
         hasher.AddMany<T>(enumerable, comparer);
         return hasher.ToHashCode();
     }
-#endregion /HashMany
+    #endregion /HashMany
 
-#region HashBytes
+    #region HashBytes
     /// <summary>
     /// Gets a hashcode generated from all the bytes underpinning a
     /// <see langword="ref"/> <see langword="readonly"/> <typeparamref name="T"/> <paramref name="value"/>.
@@ -569,8 +596,8 @@ public ref struct Hasher
         hasher.AddBytes(Any.GetReferenceBytes<T>(in value));
         return hasher.ToHashCode();
     }
-#endregion /HashBytes
-#endregion /Static
+    #endregion /HashBytes
+    #endregion /Static
 
     // current hasher states
 
@@ -662,7 +689,7 @@ public ref struct Hasher
         }
     }
 
-#region AddMany
+    #region AddMany
     /// <summary>
     /// Adds the hashcodes of the items in a <see cref="Span{T}"/>
     /// </summary>
@@ -747,9 +774,9 @@ public ref struct Hasher
             Add<T>(value, comparer);
         }
     }
-#endregion
+    #endregion
 
-#region AddBytes
+    #region AddBytes
     /// <summary>
     /// Adds a span of bytes to this <see cref="Hasher"/>.
     /// </summary>
@@ -775,7 +802,7 @@ public ref struct Hasher
             pos = ref Unsafe.Add(ref pos, 1);
         }
     }
-#endregion /AddBytes
+    #endregion /AddBytes
 
     /// <summary>
     /// Gets the hashcode generated by this <see cref="Hasher"/> instance

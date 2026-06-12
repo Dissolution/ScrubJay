@@ -5,7 +5,7 @@ namespace ScrubJay.Functional.Tests;
 /// </summary>
 public class ResultTests
 {
-#region Construction Tests
+    #region Construction Tests
     [Fact]
     public void Ok_CreatesOkResult()
     {
@@ -46,9 +46,9 @@ public class ResultTests
         Assert.True(result.IsError(out var error));
         Assert.IsType<InvalidOperationException>(error);
     }
-#endregion
+    #endregion
 
-#region Implicit Conversion Tests
+    #region Implicit Conversion Tests
     [Fact]
     public void ImplicitConversion_FromValue_CreatesOkResult()
     {
@@ -108,9 +108,9 @@ public class ResultTests
         Assert.True(nonGenericResult.IsError(out var error));
         Assert.Same(exception, error);
     }
-#endregion
+    #endregion
 
-#region IsOk Tests
+    #region IsOk Tests
     [Fact]
     public void IsOk_NoParameters_ReturnsTrueForOk()
     {
@@ -197,9 +197,9 @@ public class ResultTests
 
         Assert.False(result.IsOkAnd(x => x > 40));
     }
-#endregion
+    #endregion
 
-#region IsError Tests
+    #region IsError Tests
     [Fact]
     public void IsError_NoParameters_ReturnsTrueForError()
     {
@@ -287,9 +287,9 @@ public class ResultTests
 
         Assert.False(result.IsErrorAnd(ex => true));
     }
-#endregion
+    #endregion
 
-#region OkOr Tests
+    #region OkOr Tests
     [Fact]
     public void OkOr_ReturnsValueWhenOk()
     {
@@ -392,9 +392,9 @@ public class ResultTests
 
         Assert.Same(exception, thrown);
     }
-#endregion
+    #endregion
 
-#region ErrorOr Tests
+    #region ErrorOr Tests
     [Fact]
     public void ErrorOr_ReturnsErrorWhenError()
     {
@@ -471,9 +471,9 @@ public class ResultTests
 
         Assert.Same(exception, thrown);
     }
-#endregion
+    #endregion
 
-#region Match Tests
+    #region Match Tests
     [Fact]
     public void Match_Action_CallsOnOkForOk()
     {
@@ -542,9 +542,9 @@ public class ResultTests
 
         Assert.Equal("Error: test", output);
     }
-#endregion
+    #endregion
 
-#region AsOption Tests
+    #region AsOption Tests
     [Fact]
     public void AsOption_ReturnsSomeForOk()
     {
@@ -566,9 +566,9 @@ public class ResultTests
 
         Assert.True(option.IsNone());
     }
-#endregion
+    #endregion
 
-#region Comparison Tests
+    #region Comparison Tests
     [Fact]
     public void CompareTo_Result_OkLessThanError()
     {
@@ -644,9 +644,9 @@ public class ResultTests
         Assert.True(ok < 50);
         Assert.True(ok <= 42);
     }
-#endregion
+    #endregion
 
-#region Equality Tests
+    #region Equality Tests
     [Fact]
     public void Equals_Result_OkEqualsOkWithSameValue()
     {
@@ -823,9 +823,9 @@ public class ResultTests
 
         Assert.Equal(error1.GetHashCode(), error2.GetHashCode());
     }
-#endregion
+    #endregion
 
-#region Boolean Operators
+    #region Boolean Operators
     [Fact]
     public void TrueOperator_ReturnsTrueForOk()
     {
@@ -855,9 +855,9 @@ public class ResultTests
             Assert.True(true);
         }
     }
-#endregion
+    #endregion
 
-#region Formatting Tests
+    #region Formatting Tests
     [Fact]
     public void ToString_OkResult_FormatsCorrectly()
     {
@@ -905,9 +905,9 @@ public class ResultTests
 
         Assert.Equal("Ok()", ok.ToString());
     }
-#endregion
+    #endregion
 
-#region IEnumerable Tests
+    #region IEnumerable Tests
     [Fact]
     public void GetEnumerator_Ok_YieldsValue()
     {
@@ -968,9 +968,9 @@ public class ResultTests
 
         Assert.False(enumerator.MoveNext());
     }
-#endregion
+    #endregion
 
-#region LINQ Select Tests
+    #region LINQ Select Tests
     [Fact]
     public void Select_Selector_TransformsOkValue()
     {
@@ -1082,9 +1082,9 @@ public class ResultTests
         Assert.True(result.IsError(out var resultError));
         Assert.Same(exception, resultError);
     }
-#endregion
+    #endregion
 
-#region LINQ SelectMany Tests
+    #region LINQ SelectMany Tests
     [Fact]
     public void SelectMany_TransformsAndFlattens()
     {
@@ -1133,8 +1133,8 @@ public class ResultTests
     public void SelectMany_WithLinqSyntax()
     {
         var result = from x in Result<int>.Ok(5)
-            from y in Result<int>.Ok(10)
-            select x + y;
+                     from y in Result<int>.Ok(10)
+                     select x + y;
 
         Assert.True(result.IsOk());
         Assert.True(result.IsOk(out var value));
@@ -1147,16 +1147,16 @@ public class ResultTests
         var exception = new InvalidOperationException();
 
         var result = from x in Result<int>.Ok(5)
-            from y in Result<int>.Error(exception)
-            select x + y;
+                     from y in Result<int>.Error(exception)
+                     select x + y;
 
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
         Assert.Same(exception, error);
     }
-#endregion
+    #endregion
 
-#region Standard LINQ Method Tests
+    #region Standard LINQ Method Tests
     [Fact]
     public void Where_Ok_FiltersProperly()
     {
@@ -1277,9 +1277,9 @@ public class ResultTests
 
         Assert.Empty(array);
     }
-#endregion
+    #endregion
 
-#region Edge Cases and Special Scenarios
+    #region Edge Cases and Special Scenarios
     [Fact]
     public void Result_WithNullableValueType_Ok()
     {
@@ -1399,14 +1399,14 @@ public class ResultTests
         Assert.True(ok.IsOk(out var actualValue));
         Assert.Equal(value, actualValue);
     }
-#endregion
+    #endregion
 
-#region Helper Class
+    #region Helper Class
     private sealed class Person
     {
         public string Name { get; set; } = string.Empty;
 
         public int Age { get; set; }
     }
-#endregion
+    #endregion
 }

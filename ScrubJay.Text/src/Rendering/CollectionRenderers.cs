@@ -42,7 +42,7 @@ public static class CollectionRenderers
             .Delimit(", ", list, TB.Render)
             .Append(']');
     }
-    
+
     [RenderToMethod]
     public static void RenderCollectionTo<C, T>(C collection, TextBuilder builder)
         where C : IList<T>

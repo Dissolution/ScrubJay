@@ -31,7 +31,7 @@ public sealed class ResultJsonConverterFactory : JsonConverterFactory
             throw new JsonException();
 
         var genericTypeDef = typeToConvert.GetGenericTypeDefinition();
-        var genericTypes =  typeToConvert.GetGenericArguments();
+        var genericTypes = typeToConvert.GetGenericArguments();
 
         if (genericTypeDef == typeof(Result<>))
         {

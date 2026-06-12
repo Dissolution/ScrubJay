@@ -88,7 +88,7 @@ public ref struct InterpolatedTextBuilder : IDisposable
     {
         _builder.IndentAwareInvoke<T>(tuple.BuildItem, tuple.Item);
     }
-    
+
     public void AppendFormatted<T1, T2>((Action<TextBuilder, T1, T2> BuildItem, T1 First, T2 Second) tuple)
     {
         _builder.IndentAwareInvoke<T1, T2>(tuple.BuildItem, tuple.First, tuple.Second);

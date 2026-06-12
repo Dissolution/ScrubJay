@@ -44,7 +44,7 @@ public readonly struct Option<T> :
     //IComparable<T>,
     IEnumerable<T>, IFormattable
 {
-#region Operators
+    #region Operators
 
     public static implicit operator bool(Option<T> option) => option._isSome;
 
@@ -94,7 +94,7 @@ public readonly struct Option<T> :
 
     public static bool operator <=(Option<T> option, T some) => option.CompareTo(some) <= 0;
 
-#endregion
+    #endregion
 
     /// <summary>
     /// Gets <see cref="Option{T}"/>.None, which represents the lack of a value
@@ -146,7 +146,7 @@ public readonly struct Option<T> :
 
     public bool IsNone() => !_isSome;
 
-#region Some-ness
+    #region Some-ness
 
     public bool IsSome() => _isSome;
 
@@ -196,9 +196,9 @@ public readonly struct Option<T> :
         throw new InvalidOperationException(errorMessage ?? $"{ToString()} is not Some");
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T> onSome, Action onNone)
     {
@@ -248,9 +248,9 @@ public readonly struct Option<T> :
         }
     }
 
-#endregion
+    #endregion
 
-#region LINQ + IEnumerable
+    #region LINQ + IEnumerable
 
     public Option<N> Select<N>(Func<T, N> selector)
     {
@@ -369,9 +369,9 @@ public readonly struct Option<T> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Comparison
+    #region Comparison
 
     public int CompareTo(Option<T> other)
     {
@@ -467,9 +467,9 @@ public readonly struct Option<T> :
             _ => 1, // unknown values are always less
         };
 
-#endregion
+    #endregion
 
-#region Equality
+    #region Equality
 
     public bool Equals(Option<T> other)
     {
@@ -540,9 +540,9 @@ public readonly struct Option<T> :
         return -1;
     }
 
-#endregion
+    #endregion
 
-#region Formatting
+    #region Formatting
 
     public string ToString(string? format) => ToString(format, null);
 
@@ -579,5 +579,5 @@ public readonly struct Option<T> :
         return nameof(None);
     }
 
-#endregion
+    #endregion
 }

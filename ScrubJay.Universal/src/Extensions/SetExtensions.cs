@@ -6,14 +6,14 @@ public static class SetExtensions
     extension<T>(ISet<T>? set)
     {
         public bool IsNullOrEmpty() => set is null || set.Count == 0;
-        
+
         public void AddMany(params ReadOnlySpan<T> items)
         {
             if (set is not null)
             {
                 foreach (var item in items)
                 {
-                    set.Add(item);
+                    _ = set.Add(item);
                 }
             }
         }
@@ -24,7 +24,7 @@ public static class SetExtensions
             {
                 foreach (var item in items)
                 {
-                    set.Add(item);
+                    _ = set.Add(item);
                 }
             }
         }

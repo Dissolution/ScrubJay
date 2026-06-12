@@ -2,7 +2,7 @@
 
 namespace ScrubJay.Text.Building;
 
-partial class TextBuilder
+public partial class TextBuilder
 {
     public bool TryInsert(int index, char ch)
     {
@@ -86,7 +86,7 @@ partial class TextBuilder
 
 
 #if NET9_0_OR_GREATER
-    public bool TryInsert<T>(int index, T? value, Action<TextBuilder,T?>? buildValue,
+    public bool TryInsert<T>(int index, T? value, Action<TextBuilder, T?>? buildValue,
         TypeConstraints.AllowsRefStruct<T> _ = default)
     where T : allows ref struct
     {

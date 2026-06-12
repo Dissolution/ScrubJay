@@ -9,8 +9,8 @@ using ScrubJay.Text.Rendering;
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-
-
+int[] arr = [1, 4, 7];
+arr.Reverse();
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
@@ -98,15 +98,15 @@ namespace ScrubJay.Sandboxes.Console
             throw Ex.NotImplemented();
         }
 
-//        public static string EnumThing<E>(E left, E right)
-//            where E : struct, Enum
-//        {
-//            //var eq = left == right;
-//            
-//            
-//            
-//            throw Ex.NotImplemented();
-//        }
+        //        public static string EnumThing<E>(E left, E right)
+        //            where E : struct, Enum
+        //        {
+        //            //var eq = left == right;
+        //            
+        //            
+        //            
+        //            throw Ex.NotImplemented();
+        //        }
 
     }
 

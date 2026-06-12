@@ -8,7 +8,7 @@ namespace ScrubJay.Functional;
 [PublicAPI]
 public static class Option
 {
-#region Constructors
+    #region Constructors
 
     /// <summary>
     /// Gets a <see cref="IMPL.None"/> that implicitly converts into any <see cref="Option{T}.None"/>
@@ -67,9 +67,9 @@ public static class Option
         return Option<T>.None;
     }
 
-#endregion
+    #endregion
 
-#region Extensions
+    #region Extensions
 
     public static Option<T> Flatten<T>(this Option<Option<T>> nestedOptions)
     {
@@ -164,5 +164,5 @@ public static class Option
         }
     }
 
-#endregion
+    #endregion
 }

@@ -73,9 +73,9 @@ public static class RangeExtensions
 
         public Option<(int Offset, int Length)> TryGetOffsetAndLength(int available)
         {
-           if (optionalRange.TryGetValue(out var range))
-               return range.TryGetOffsetAndLength(available);
-           return None;
+            if (optionalRange.TryGetValue(out var range))
+                return range.TryGetOffsetAndLength(available);
+            return None;
         }
     }
 

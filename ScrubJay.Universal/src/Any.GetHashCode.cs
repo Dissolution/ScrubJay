@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     /// <summary>
     /// Returns a <see cref="int"/> hashcode for the <typeparamref name="T"/> <paramref name="instance"/>.
@@ -34,6 +34,7 @@ partial class Any
     /// <param name="instance">
     /// The instance to get the hashcode of.
     /// </param>
+    /// <param name="_"></param>
     /// <typeparam name="T">
     /// The generic <see cref="Type"/> this method was called with.
     /// </typeparam>
@@ -96,7 +97,9 @@ partial class Any
             {
                 return _delegate(in value);
             }
+#pragma warning disable CA1031
             catch
+#pragma warning restore CA1031
             {
                 _delegate = Fallback;
                 return _delegate(in value);

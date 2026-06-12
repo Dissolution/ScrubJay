@@ -30,14 +30,15 @@ internal static class RenderToCache
             .ToArray();
     }
 
-#region RenderToMethod Search
+    #region RenderToMethod Search
     private static bool FilterAssembly(Assembly assembly)
     {
         // assemblies can throw at runtime
         try
         {
             // cannot load types from dynamic assemblies
-            if (assembly.IsDynamic) return false;
+            if (assembly.IsDynamic)
+                return false;
             // skip anything from Microsoft or System
             string fullname = assembly.FullName!;
             if (fullname.StartsWith("Microsoft", StringComparison.Ordinal) ||
@@ -109,7 +110,7 @@ internal static class RenderToCache
             // we capture the instance type and the priority as well
             return new RenderToMethodInfo(method, instanceType, priority);
         });
-#endregion
+    #endregion
 
 
     private static Option<int> InputConversionSpecificity(Type inputType, Type destinationType)
@@ -268,7 +269,7 @@ internal static class RenderToCache
             goto end;
         }
 
-        end:
+end:
         if (concreteMethod is null)
             return None;
         return Some((ConcreteMethod: concreteMethod, Specificity: specificity));

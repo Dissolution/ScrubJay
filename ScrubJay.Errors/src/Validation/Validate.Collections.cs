@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors.Validation;
 
-partial class Validate
+public partial class Validate
 {
     public static Result<T[]> NotEmpty<T>(
         T[]? array,

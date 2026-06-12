@@ -1,8 +1,8 @@
 ﻿namespace ScrubJay.Text.Building;
 
-partial class TextBuilder
+public partial class TextBuilder
 {
-#region Invoke(action)
+    #region Invoke(action)
 
     /// <summary>
     /// Invokes an <see cref="Action"/> with this <see cref="TextBuilder"/> instance.
@@ -74,9 +74,9 @@ partial class TextBuilder
         return this;
     }
 
-#endregion /Invoke(action)
+    #endregion /Invoke(action)
 
-#region Invoke(func)
+    #region Invoke(func)
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TextBuilder Invoke<R>(Func<TextBuilder, R>? buildOut)
@@ -237,5 +237,5 @@ partial class TextBuilder
         return this;
     }
 
-#endregion /Invoke(func)
+    #endregion /Invoke(func)
 }

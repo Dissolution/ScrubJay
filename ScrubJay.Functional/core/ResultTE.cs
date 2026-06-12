@@ -40,7 +40,7 @@ public readonly struct Result<T, E> :
     IEnumerable<T>,
     IFormattable
 {
-#region Operators
+    #region Operators
 
     public static implicit operator bool(Result<T, E> result) => result._isOk;
 
@@ -94,7 +94,7 @@ public readonly struct Result<T, E> :
     public static bool operator <=(Result<T, E> result, E? error)
         => result.CompareTo(error) <= 0;
 
-#endregion
+    #endregion
 
     /// <summary>
     /// Creates a new Ok <see cref="Result{T,E}"/>
@@ -132,7 +132,7 @@ public readonly struct Result<T, E> :
         _error = error;
     }
 
-#region Ok
+    #region Ok
 
     public bool IsOk() => _isOk;
 
@@ -220,9 +220,9 @@ public readonly struct Result<T, E> :
         throw new InvalidOperationException(exceptionMessage ?? $"{ToString()} is not Ok");
     }
 
-#endregion
+    #endregion
 
-#region Error
+    #region Error
 
     public bool IsError() => !_isOk;
 
@@ -289,9 +289,9 @@ public readonly struct Result<T, E> :
         throw new InvalidOperationException(exceptionMessage ?? $"{ToString()} is not Error");
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T> onOk, Action<E> onError)
     {
@@ -321,7 +321,7 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
     public Option<T> AsOption()
     {
@@ -335,7 +335,7 @@ public readonly struct Result<T, E> :
         }
     }
 
-#region Compare
+    #region Compare
 
     public int CompareTo(Result<T, E> other)
     {
@@ -389,9 +389,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Equal
+    #region Equal
 
     public bool Equals(Result<T, E> other)
     {
@@ -452,7 +452,7 @@ public readonly struct Result<T, E> :
     public override int GetHashCode()
     {
 #if NETSTANDARD2_0 || NETFRAMEWORK
-       if (_isOk)
+        if (_isOk)
         {
             if (_value is not null)
             {
@@ -475,9 +475,9 @@ public readonly struct Result<T, E> :
 #endif
     }
 
-#endregion
+    #endregion
 
-#region ToString / TryFormat
+    #region ToString / TryFormat
 
     public string ToString(string? format)
         => ToString(
@@ -528,9 +528,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Linq
+    #region Linq
 
     public Result<N, E> Select<N>(Func<T, N> selector)
     {
@@ -575,9 +575,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region IEnumerable
+    #region IEnumerable
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -628,5 +628,5 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 }

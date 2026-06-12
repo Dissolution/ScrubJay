@@ -10,7 +10,7 @@ public static class Renderer
     /// </summary>
     public const char FORMAT = '@';
 
-#region Render To
+    #region Render To
     internal static void RenderNullTo<T>(TextBuilder builder)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -81,7 +81,7 @@ public static class Renderer
     {
         CollectionRenderers.RenderSpanTo(span, builder);
     }
-#endregion
+    #endregion
 
     public static string Render<T>(in T instance)
 #if NET9_0_OR_GREATER

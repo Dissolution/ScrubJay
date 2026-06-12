@@ -16,7 +16,8 @@ public ref struct TryFormatWriter : IEnumerable<char>, IEnumerable
         int pos = _written;
         var dest = _destination;
 
-        if (pos < 0) return;
+        if (pos < 0)
+            return;
         if (pos >= dest.Length)
         {
             _written = -1;
@@ -29,7 +30,8 @@ public ref struct TryFormatWriter : IEnumerable<char>, IEnumerable
 
     public void Add(string? str)
     {
-        if (str is null || _written < 0) return;
+        if (str is null || _written < 0)
+            return;
         if (str.TryCopyTo(_destination[_written..]))
         {
             _written += str.Length;
@@ -139,7 +141,7 @@ public ref struct TryFormatWriter : IEnumerable<char>, IEnumerable
         charsWritten = _written;
         return charsWritten >= 0;
     }
-    
+
     IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 
     IEnumerator<char> IEnumerable<char>.GetEnumerator() => throw new NotImplementedException();

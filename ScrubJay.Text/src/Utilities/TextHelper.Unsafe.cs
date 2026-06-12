@@ -1,4 +1,5 @@
 // ReSharper disable EntityNameCapturedOnly.Global
+#pragma warning disable CA1034, IDE0060
 
 namespace ScrubJay.Text.Utilities;
 
@@ -9,7 +10,7 @@ public static partial class TextHelper
     /// </summary>
     public static unsafe class Unsafe
     {
-#region CopyTo
+        #region CopyTo
         /* Specialized CopyBlock version of text copying for maximum speed
          * No null checks, no length checks
          *   Source Types: void*, char*, ref readonly char, ReadOnlySpan<char>, char[], string
@@ -17,7 +18,7 @@ public static partial class TextHelper
          */
 
 
-#region Source: void*
+        #region Source: void*
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -148,9 +149,9 @@ public static partial class TextHelper
                 CopyTo(source, dest, count);
             }
         }
-#endregion /Source: void*
+        #endregion /Source: void*
 
-#region Source: char*
+        #region Source: char*
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -281,9 +282,9 @@ public static partial class TextHelper
                 CopyTo(source, dest, count);
             }
         }
-#endregion /Source: char*
+        #endregion /Source: char*
 
-#region Source: ref readonly char
+        #region Source: ref readonly char
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -414,9 +415,9 @@ public static partial class TextHelper
                 CopyTo(in source, dest, count);
             }
         }
-#endregion /Source: ref readonly char
+        #endregion /Source: ref readonly char
 
-#region Source: ReadOnlySpan<char>
+        #region Source: ReadOnlySpan<char>
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -543,9 +544,9 @@ public static partial class TextHelper
                 CopyTo(src, dst, count);
             }
         }
-#endregion /Source: ReadOnlySpan<char>
+        #endregion /Source: ReadOnlySpan<char>
 
-#region Source: Span<char>
+        #region Source: Span<char>
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -672,9 +673,9 @@ public static partial class TextHelper
                 CopyTo(src, dst, count);
             }
         }
-#endregion /Source: Span<char>
+        #endregion /Source: Span<char>
 
-#region Source: char[]
+        #region Source: char[]
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -801,9 +802,9 @@ public static partial class TextHelper
                 CopyTo(src, dst, count);
             }
         }
-#endregion /Source: char[]
+        #endregion /Source: char[]
 
-#region Source: string
+        #region Source: string
         /// <summary>
         /// Copy <paramref name="count"/> <see cref="char">characters</see>
         /// from <paramref name="source"/> to <paramref name="destination"/>.
@@ -930,10 +931,10 @@ public static partial class TextHelper
                 CopyTo(src, dst, count);
             }
         }
-#endregion /Source: string
-#endregion
+        #endregion /Source: string
+        #endregion
 
-#region Init
+        #region Init
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InitCharBlock(char* source, int count)
         {
@@ -955,9 +956,9 @@ public static partial class TextHelper
             Emit.Mul();
             Emit.Initblk();
         }
-#endregion
+        #endregion
 
-#region SelfCopy
+        #region SelfCopy
         public static void SelfCopy(char[] array, int sourceIndex, int destIndex, int count)
         {
 #if DEBUG
@@ -1072,10 +1073,10 @@ public static partial class TextHelper
             ref char dst = ref chars[destStart];
             CopyTo(ref src, ref dst, sourceLength);
         }
-#endregion
+        #endregion
 
 
-#region Shift
+        #region Shift
         internal static void ShiftItemsRight(
             char[] array, int arrayUsed,
             int index, int length)
@@ -1108,7 +1109,7 @@ public static partial class TextHelper
 
             CopyTo(ref array[index + length], ref array[index], arrayUsed - (index + length));
         }
-#endregion
+        #endregion
     }
 
 }

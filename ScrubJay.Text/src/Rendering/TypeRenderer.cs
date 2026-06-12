@@ -30,27 +30,27 @@ public static class TypeRenderer
     static TypeRenderer()
     {
         _typeAliases = new Dictionary<Type, string>
-                {
-                    [typeof(byte)] = "byte",
-                    [typeof(sbyte)] = "sbyte",
-                    [typeof(short)] = "short",
-                    [typeof(ushort)] = "ushort",
-                    [typeof(int)] = "int",
-                    [typeof(uint)] = "uint",
-                    [typeof(long)] = "long",
-                    [typeof(ulong)] = "ulong",
-                    [typeof(nint)] = "nint",
-                    [typeof(nuint)] = "nuint",
-                    [typeof(float)] = "float",
-                    [typeof(double)] = "double",
-                    [typeof(decimal)] = "decimal",
-                    [typeof(bool)] = "bool",
-                    [typeof(char)] = "char",
-                    [typeof(string)] = "string",
-                    [typeof(object)] = "object",
-                    [typeof(void)] = "void",
-                    [typeof(ValueTuple)] = "()",
-                }
+        {
+            [typeof(byte)] = "byte",
+            [typeof(sbyte)] = "sbyte",
+            [typeof(short)] = "short",
+            [typeof(ushort)] = "ushort",
+            [typeof(int)] = "int",
+            [typeof(uint)] = "uint",
+            [typeof(long)] = "long",
+            [typeof(ulong)] = "ulong",
+            [typeof(nint)] = "nint",
+            [typeof(nuint)] = "nuint",
+            [typeof(float)] = "float",
+            [typeof(double)] = "double",
+            [typeof(decimal)] = "decimal",
+            [typeof(bool)] = "bool",
+            [typeof(char)] = "char",
+            [typeof(string)] = "string",
+            [typeof(object)] = "object",
+            [typeof(void)] = "void",
+            [typeof(ValueTuple)] = "()",
+        }
 #if NET8_0_OR_GREATER
                 .ToFrozenDictionary()
 #endif
@@ -265,12 +265,12 @@ public static class TypeRenderer
             return;
         }
 
-//        if (type.IsGenericParameter)
-//        {
-//            // these are part of definition, not declaration, so we don't show them
-//            // otherwise it would be T, T1, etc
-//            return;
-//        }
+        //        if (type.IsGenericParameter)
+        //        {
+        //            // these are part of definition, not declaration, so we don't show them
+        //            // otherwise it would be T, T1, etc
+        //            return;
+        //        }
 
         builder.Append(type.Name);
     }

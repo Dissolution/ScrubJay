@@ -25,7 +25,7 @@ public readonly struct HResult :
     public static bool operator ==(HResult left, HResult right) => left.Equals(right);
     public static bool operator !=(HResult left, HResult right) => !left.Equals(right);
 
-#region Constants
+    #region Constants
     /// <summary>
     /// Operation successful
     /// </summary>
@@ -150,7 +150,7 @@ public readonly struct HResult :
     /// Invalid index
     /// </summary>
     public static readonly HResult DISP_E_BADINDEX = 0x8002000B;
-#endregion
+    #endregion
 
     [FieldOffset(0)]
     private readonly uint _hresult;

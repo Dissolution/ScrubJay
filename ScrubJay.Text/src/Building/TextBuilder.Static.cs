@@ -24,7 +24,7 @@ public partial class TextBuilder
         return interpolatedTextBuilder.ToStringAndDispose();
     }
 
-#region Build with State
+    #region Build with State
     public static string Build<T>(T instance, Action<T, TextBuilder>? instanceBuild)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -98,5 +98,5 @@ public partial class TextBuilder
         instanceBuild(builder, span);
         return builder.ToStringAndDispose();
     }
-#endregion
+    #endregion
 }

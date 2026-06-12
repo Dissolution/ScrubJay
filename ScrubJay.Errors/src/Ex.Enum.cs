@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors;
 
-partial class Ex
+public partial class Ex
 {
     public static InvalidEnumException InvalidEnum<E>(
         E @enum,

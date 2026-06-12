@@ -20,8 +20,8 @@ public static class EnumExtensions
             return typeof(E).GetEnumUnderlyingType();
         }
 
-#region TryParse -> Result
-#region TryParse(Type)
+        #region TryParse -> Result
+        #region TryParse(Type)
         public static Result<Enum> TryParse(Type enumType,
             scoped text text, bool ignoreCase = true, bool includeAttributes = true)
         {
@@ -63,9 +63,9 @@ public static class EnumExtensions
             return Enum.TryGetInfo(enumType)
                 .Select(info => info.TryParseEnum(obj, ignoreCase, includeAttributes));
         }
-#endregion
+        #endregion
 
-#region TryParse<E>
+        #region TryParse<E>
         public static Result<E> TryParse<E>(scoped text text, bool ignoreCase = true, bool includeAttributes = true)
             where E : struct, Enum
         {
@@ -97,7 +97,7 @@ public static class EnumExtensions
         {
             return Enum.GetInfo<E>().TryParse(obj, ignoreCase, includeAttributes);
         }
-#endregion
-#endregion
+        #endregion
+        #endregion
     }
 }

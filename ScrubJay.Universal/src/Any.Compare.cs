@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Compare<T>(in T? instance, in T? other)

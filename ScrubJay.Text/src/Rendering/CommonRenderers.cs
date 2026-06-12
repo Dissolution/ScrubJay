@@ -93,7 +93,7 @@ public static class CommonRenderers
             builder.Write("false");
         }
     }
-    
+
     [RenderToMethod]
     public static void RenderTupleTo<T>(T? tuple, TextBuilder builder)
         where T : ITuple
@@ -105,7 +105,7 @@ public static class CommonRenderers
                 .Append(')');
         }
     }
-    
+
     [RenderToMethod]
     public static void RenderGuidTo(Guid guid, TextBuilder builder)
     {

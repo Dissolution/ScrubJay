@@ -2,23 +2,28 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <!--        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>-->
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
+        <!-- <TargetFramework>net10.0</TargetFramework> -->
 
-<!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
-<!--        <CompilerGeneratedFilesOutputPath>.GeneratedFiles</CompilerGeneratedFilesOutputPath>-->
+        <!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
+        <!--        <CompilerGeneratedFilesOutputPath>.GeneratedFiles</CompilerGeneratedFilesOutputPath>-->
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj"/>
-
-        <ProjectReference Include="..\..\ScrubJay.Errors\asp\ScrubJay.Errors.Asp.csproj" />
-        <!--        <ProjectReference Include="..\..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>-->
-        <ProjectReference Include="..\..\ScrubJay.Errors\src\ScrubJay.Errors.csproj"/>
-        <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
-        <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj"/>
-        <!--        <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>-->
+        <!-- Universal -->
         <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+        <!-- Functional -->
+        <ProjectReference Include="..\..\ScrubJay.Functional\core\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>
+        <!-- Memory -->
+        <ProjectReference Include="..\..\ScrubJay.Memory\src\ScrubJay.Memory.csproj"/>
+        <!-- Enums -->
+        <ProjectReference Include="..\..\ScrubJay.Enums\src\ScrubJay.Enums.csproj"/>
+        <!-- Text -->
+        <ProjectReference Include="..\..\ScrubJay.Text\src\ScrubJay.Text.csproj"/>
+        <!-- Errors -->
+        <ProjectReference Include="..\..\ScrubJay.Errors\src\ScrubJay.Errors.csproj"/>
+        <!--<ProjectReference Include="..\..\ScrubJay.Errors\asp\ScrubJay.Errors.Asp.csproj"/>-->
 
         <!--        <ProjectReference-->
         <!--                Include="..\..\ScrubJay.Enums\srcgen\ScrubJay.Enums.SourceGen.csproj"-->

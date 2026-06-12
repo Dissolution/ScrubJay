@@ -64,7 +64,7 @@ public static class ResultExtensions
 #endif
     }
 
-    extension<T,E>(Result<T,E> result)
+    extension<T, E>(Result<T, E> result)
     {
         public ActionResult<T> ToActionResult()
         {

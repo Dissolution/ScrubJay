@@ -2,7 +2,7 @@
 
 namespace ScrubJay.Errors.Validation;
 
-partial class Demand
+public partial class Demand
 {
     public static void Equal<T>(T? argument, T? expected,
         string? info = null,
@@ -35,7 +35,7 @@ partial class Demand
             Throw.ArgNotEqual(argument, expected, info, argumentName);
     }
 #endif
-    
+
 
     public static void NotEqual<T>(T? argument, T? expected,
         string? info = null,

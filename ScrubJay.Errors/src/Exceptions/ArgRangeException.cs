@@ -4,12 +4,12 @@ namespace ScrubJay.Errors.Exceptions;
 public sealed class ArgRangeException : ArgumentOutOfRangeException
 {
     public Argument Argument { get; }
-    
+
     /// <summary>
     /// Gets the unaltered error message for this Exception.
     /// </summary>
     public override string Message => ExceptionFields.RefMessageField(this) ?? "";
-    
+
     public ArgRangeException(Argument argument, object? argValue, string? message = null, Exception? innerException = null)
         : base()
     {

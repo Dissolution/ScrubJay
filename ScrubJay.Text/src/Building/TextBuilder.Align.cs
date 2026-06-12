@@ -12,7 +12,8 @@ public partial class TextBuilder
 
         if (width == 0)
         {
-            if (trim) return this;
+            if (trim)
+                return this;
             return Append(ch);
         }
         if (width == 1 || width == -1)

@@ -17,16 +17,16 @@ public sealed class ActionDisposable : IDisposable
     public void Dispose()
     {
         var onDispose = Interlocked.Exchange(ref _onDispose, null);
-        
+
         try
         {
             onDispose?.Invoke();
         }
-        catch 
+        catch
         {
             // swallow everything
         }
-        
+
         GC.SuppressFinalize(this);
     }
 }

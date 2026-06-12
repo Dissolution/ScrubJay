@@ -12,7 +12,7 @@
 public readonly struct None :
 #if NET7_0_OR_GREATER
     IEqualityOperators<None, None, bool>,
-    IComparisonOperators<None,None,bool>,
+    IComparisonOperators<None, None, bool>,
 #endif
     IEquatable<None>,
     IComparable<None>

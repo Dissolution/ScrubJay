@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors;
 
-partial class Ex
+public partial class Ex
 {
     public static ParseException Parse<T>(
         string? input,
@@ -15,7 +15,7 @@ partial class Ex
             .ToStringAndDispose();
         return new ParseException(input, typeof(T), message);
     }
-    
+
     public static ParseException Parse<T>(
         scoped text input,
         string? info = null)

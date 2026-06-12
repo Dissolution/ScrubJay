@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors;
 
-partial class Ex
+public partial class Ex
 {
     internal static ArgException ArgEmpty(Argument argument, string? info)
     {

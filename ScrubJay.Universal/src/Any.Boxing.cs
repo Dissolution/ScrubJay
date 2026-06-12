@@ -1,6 +1,8 @@
+#pragma warning disable IDE0060
+
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)

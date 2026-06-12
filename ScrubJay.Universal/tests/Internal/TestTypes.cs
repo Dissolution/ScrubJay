@@ -105,7 +105,7 @@ internal static partial class TestTypes
 
         public ref struct TestRefStruct
         {
-            public override string ToString()=> $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRefStruct)}.{nameof(ToString)}()";
+            public override string ToString() => $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRefStruct)}.{nameof(ToString)}()";
         }
 
         public readonly ref struct TestReadonlyRefStruct
@@ -115,7 +115,7 @@ internal static partial class TestTypes
 
         public record struct TestRecordStruct
         {
-            public override string ToString()=> $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRecordStruct)}.{nameof(ToString)}()";
+            public override string ToString() => $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRecordStruct)}.{nameof(ToString)}()";
         }
 
         public readonly record struct TestReadonlyRecordStruct
@@ -125,7 +125,7 @@ internal static partial class TestTypes
 
         public class TestClass
         {
-            public override string ToString()=> $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestClass)}.{nameof(ToString)}()";
+            public override string ToString() => $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestClass)}.{nameof(ToString)}()";
         }
 
         public sealed class TestSealedClass
@@ -145,12 +145,12 @@ internal static partial class TestTypes
 
         public class TestGrandParentClass : TestParentClass
         {
-            public override string ToString()=> $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestGrandParentClass)}.{nameof(ToString)}()";
+            public override string ToString() => $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestGrandParentClass)}.{nameof(ToString)}()";
         }
 
         public record class TestRecordClass
         {
-            public override string ToString()=> $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRecordClass)}.{nameof(ToString)}()";
+            public override string ToString() => $"{nameof(TestTypes)}.{nameof(OverrideToString)}.{nameof(TestRecordClass)}.{nameof(ToString)}()";
         }
 
         public sealed record class TestSealedRecordClass

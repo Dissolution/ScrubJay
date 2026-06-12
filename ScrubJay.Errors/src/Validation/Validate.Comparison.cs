@@ -1,6 +1,6 @@
 namespace ScrubJay.Errors.Validation;
 
-partial class Validate
+public partial class Validate
 {
     [DoesNotReturn]
     private static void ThrowNotInRange<T>(T value, LowerBound<T> lowerBound, UpperBound<T> upperBound, string? paramName)

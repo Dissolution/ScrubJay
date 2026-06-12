@@ -21,8 +21,8 @@ public partial class TextBuilder
      * */
 
 
-#region Append (the default)
-#region ReadOnlySpan<T>
+    #region Append (the default)
+    #region ReadOnlySpan<T>
     public TextBuilder Delimit<T>(char delimiter, scoped ReadOnlySpan<T> span)
     {
         if (!span.IsEmpty)
@@ -72,9 +72,9 @@ public partial class TextBuilder
         }
         return Enumerate<T>(span);
     }
-#endregion
+    #endregion
 
-#region T[]
+    #region T[]
     public TextBuilder Delimit<T>(char delimiter, T[]? array)
     {
         if (!array.IsNullOrEmpty())
@@ -124,9 +124,9 @@ public partial class TextBuilder
         }
         return Enumerate<T>(array);
     }
-#endregion
+    #endregion
 
-#region IEnumerable<T>
+    #region IEnumerable<T>
     public TextBuilder Delimit<T>(char delimiter, IEnumerable<T>? enumerable)
     {
         if (enumerable is not null)
@@ -185,9 +185,9 @@ public partial class TextBuilder
         }
         return Enumerate<T>(enumerable);
     }
-#endregion
+    #endregion
 
-#region Func<Option<T>>? iterator
+    #region Func<Option<T>>? iterator
     public TextBuilder Delimit<T>(char delimiter, Func<Option<T>>? iterator)
     {
         if (iterator is not null)
@@ -243,9 +243,9 @@ public partial class TextBuilder
         }
         return Enumerate<T>(iterator);
     }
-#endregion
+    #endregion
 
-#region SplitTextEnumerator
+    #region SplitTextEnumerator
     public TextBuilder Delimit(char delimiter, ref SplitTextEnumerator textSplitEnumerator)
     {
         if (textSplitEnumerator.MoveNext())
@@ -295,11 +295,11 @@ public partial class TextBuilder
         }
         return Enumerate(ref textSplitEnumerator);
     }
-#endregion
-#endregion
+    #endregion
+    #endregion
 
-#region Build Action
-#region ReadOnlySpan<T>
+    #region Build Action
+    #region ReadOnlySpan<T>
     public TextBuilder Delimit<T>(char delimiter, scoped ReadOnlySpan<T> span, Action<TextBuilder, T>? buildItem)
     {
         if (buildItem is not null)
@@ -361,9 +361,9 @@ public partial class TextBuilder
         }
         return Delimit<T>(delimit, span);
     }
-#endregion
+    #endregion
 
-#region T[]
+    #region T[]
     public TextBuilder Delimit<T>(char delimiter, T[]? array, Action<TextBuilder, T>? buildItem)
     {
         if (buildItem is not null)
@@ -425,9 +425,9 @@ public partial class TextBuilder
         }
         return Delimit<T>(delimit, array);
     }
-#endregion
+    #endregion
 
-#region IEnumerable<T>
+    #region IEnumerable<T>
     public TextBuilder Delimit<T>(char delimiter, IEnumerable<T>? enumerable, Action<TextBuilder, T>? buildItem)
     {
         if (buildItem is not null)
@@ -498,9 +498,9 @@ public partial class TextBuilder
         }
         return Delimit<T>(delimit, enumerable);
     }
-#endregion
+    #endregion
 
-#region Func<Option<T>>? iterator
+    #region Func<Option<T>>? iterator
     public TextBuilder Delimit<T>(char delimiter, Func<Option<T>>? iterator, Action<TextBuilder, T>? buildItem)
     {
         if (buildItem is not null)
@@ -568,9 +568,9 @@ public partial class TextBuilder
         }
         return Delimit<T>(delimit, iterator);
     }
-#endregion
+    #endregion
 
-#region SplitTextEnumerator
+    #region SplitTextEnumerator
     public TextBuilder Delimit(char delimiter, ref SplitTextEnumerator textSplitEnumerator,
 #if NET9_0_OR_GREATER
         Action<TextBuilder, text>? buildSegment)
@@ -647,6 +647,6 @@ public partial class TextBuilder
         }
         return Delimit(delimit, ref textSplitEnumerator);
     }
-#endregion
-#endregion
+    #endregion
+    #endregion
 }

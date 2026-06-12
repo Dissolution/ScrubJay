@@ -6,7 +6,7 @@ namespace ScrubJay.Errors.Exceptions;
 public sealed class InvalidEnumException : InvalidEnumArgumentException
 {
     public Argument Argument { get; }
-    
+
     /// <summary>
     /// Gets the unaltered error message for this Exception.
     /// </summary>

@@ -21,7 +21,7 @@ public static class TextExtensions
 
     extension(scoped ReadOnlySpan<char> charSpan)
     {
-#region Contains
+        #region Contains
 #if !NET6_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(char ch)
@@ -61,7 +61,7 @@ public static class TextExtensions
         {
             return charSpan.Contains(txt, StringComparison.Ordinal);
         }
-#endregion /Contains
+        #endregion /Contains
     }
 
     extension(text text)

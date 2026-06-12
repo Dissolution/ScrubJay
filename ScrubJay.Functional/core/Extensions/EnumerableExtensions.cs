@@ -147,7 +147,7 @@ public static class EnumerableExtensions
 
     extension<T>(IEnumerable<T>? enumerable)
     {
-#region SelectWhere
+        #region SelectWhere
         public IEnumerable<N> SelectWhere<N>(Func<T, Option<N>>? selectWhere)
         {
             if (enumerable is null || selectWhere is null)
@@ -192,9 +192,9 @@ public static class EnumerableExtensions
                 }
             }
         }
-#endregion
+        #endregion
 
-#region TryLINQ
+        #region TryLINQ
         public IEnumerable<T> TryEnumerate()
         {
             return new TryEnumerable<IEnumerable<T>, T>(enumerable);
@@ -267,7 +267,7 @@ public static class EnumerableExtensions
                 }
             }
         }
-#endregion
+        #endregion
 
 
     }
@@ -275,7 +275,7 @@ public static class EnumerableExtensions
 
     extension<T>(IEnumerable<T>? enumerable)
     {
-#region One
+        #region One
         public T One()
         {
             if (enumerable is null)
@@ -331,20 +331,23 @@ public static class EnumerableExtensions
                 return true;
             }
 
-            fail:
+fail:
             value = default;
             return false;
         }
 
         public Option<T> TryGetOne()
         {
-            if (enumerable is null) return None;
+            if (enumerable is null)
+                return None;
             using var e = enumerable.GetEnumerator();
-            if (!e.MoveNext()) return None;
+            if (!e.MoveNext())
+                return None;
             var value = e.Current;
-            if (e.MoveNext()) return None;
+            if (e.MoveNext())
+                return None;
             return Some(value);
         }
-#endregion
+        #endregion
     }
 }

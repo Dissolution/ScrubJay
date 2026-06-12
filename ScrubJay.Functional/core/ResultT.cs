@@ -4,6 +4,9 @@
 
 #pragma warning disable CA1715, CA1000, CA1031
 
+#if DEBUG
+#pragma warning disable IDE1006
+#endif
 
 namespace ScrubJay.Functional;
 
@@ -47,8 +50,7 @@ public readonly struct Result<T> :
     IEnumerable<T>,
     IFormattable
 {
-#region Operators
-
+    #region Operators
     /// <summary>
     /// Implicitly convert a <see cref="Result{T}"/> into a <c>bool</c> (Ok -> <c>true</c>, Error -> <c>false</c>)
     /// </summary>
@@ -105,8 +107,7 @@ public readonly struct Result<T> :
     public static bool operator >=(Result<T> left, T right) => left.CompareTo(right) >= 0;
     public static bool operator <(Result<T> left, T right) => left.CompareTo(right) < 0;
     public static bool operator <=(Result<T> left, T right) => left.CompareTo(right) <= 0;
-
-#endregion
+    #endregion
 
     /// <summary>
     /// Creates an Ok <see cref="Result{T}"/>
@@ -156,8 +157,7 @@ public readonly struct Result<T> :
         _error = error;
     }
 
-#region Ok
-
+    #region Ok
     /// <summary>
     /// Is this an Ok <see cref="Result{T}"/>?
     /// </summary>
@@ -225,7 +225,7 @@ public readonly struct Result<T> :
     public T? OkOrDefault()
     {
         if (_isOk)
-            return _value!;
+            return _value;
         return default(T);
     }
 
@@ -235,11 +235,9 @@ public readonly struct Result<T> :
             return _value!;
         throw _error!;
     }
+    #endregion
 
-#endregion
-
-#region Error
-
+    #region Error
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsError() => !_isOk;
 
@@ -284,11 +282,9 @@ public readonly struct Result<T> :
             throw _error!;
         }
     }
+    #endregion
 
-#endregion
-
-#region Match
-
+    #region Match
     public void Match(Action<T> onOk, Action<Exception> onError)
     {
         if (_isOk)
@@ -316,8 +312,7 @@ public readonly struct Result<T> :
             return onError(_error!);
         }
     }
-
-#endregion
+    #endregion
 
     public Option<T> AsOption()
     {
@@ -331,8 +326,7 @@ public readonly struct Result<T> :
         }
     }
 
-#region Comparison
-
+    #region Comparison
     public int CompareTo(Result<T> other)
     {
         if (_isOk)
@@ -369,11 +363,9 @@ public readonly struct Result<T> :
 
         return 1; // Error < Ok
     }
+    #endregion
 
-#endregion
-
-#region Equality
-
+    #region Equality
     public bool Equals(Result<T> other)
     {
         if (_isOk)
@@ -455,11 +447,9 @@ public readonly struct Result<T> :
         return HashCode.Combine(_isOk, _value, _error);
 #endif
     }
+    #endregion
 
-#endregion
-
-#region Formatting
-
+    #region Formatting
     public override string ToString()
     {
         if (_isOk)
@@ -496,12 +486,10 @@ public readonly struct Result<T> :
             return $"Error({_error})";
         }
     }
+    #endregion
 
-#endregion
 
-
-#region IEnumerable
-
+    #region IEnumerable
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
@@ -556,11 +544,9 @@ public readonly struct Result<T> :
             _canYield = _result._isOk;
         }
     }
+    #endregion
 
-#endregion
-
-#region Linq
-
+    #region Linq
     public Result<N> Select<N>(Func<T, N> selector)
     {
         if (_isOk)
@@ -630,6 +616,5 @@ public readonly struct Result<T> :
 
         return this;
     }
-
-#endregion
+    #endregion
 }

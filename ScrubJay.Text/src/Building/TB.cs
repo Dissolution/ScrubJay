@@ -12,7 +12,7 @@ public static class TB
 
     public static Action<TextBuilder> NewLine { get; } = static tb => tb.NewLine();
 
-#region Append
+    #region Append
     public static Action<TextBuilder, T> Append<T>() => static (tb, value) => tb.Append<T>(value);
 
     public static Action<TextBuilder, T?> Append<T>(TypeConstraints.AllowsRefStruct<T> _ = default)
@@ -35,9 +35,9 @@ public static class TB
         where T : allows ref struct
 #endif
         => builder.Append<T>(value);
-#endregion
+    #endregion
 
-#region Render
+    #region Render
     public static Action<TextBuilder, T?> Render<T>()
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -52,9 +52,9 @@ public static class TB
         where T : allows ref struct
 #endif
         => builder.Render<T>(value);
-#endregion
+    #endregion
 
-#region Format
+    #region Format
     public static Action<TextBuilder, T?> Format<T>() => static (tb, value) => tb.Format<T>(value);
     public static Action<TextBuilder, T?> Format<T>(string? format) => (tb, value) => tb.Format<T>(value, format);
     public static Action<TextBuilder, T?> Format<T>(string? format, IFormatProvider? provider) => (tb, value) => tb.Format<T>(value, format, provider);
@@ -109,7 +109,7 @@ public static class TB
         where T : allows ref struct
 #endif
         => builder.Format<T>(value, format, provider);
-#endregion
+    #endregion
 }
 
 /// <summary>

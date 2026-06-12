@@ -25,7 +25,7 @@ public static class TypeExtensions
                 interfaceType.IsInterface &&
                 type.GetInterfaces().Contains(interfaceType);
         }
-        
+
         public bool ImplementsInterface<I>()
             where I : class
         {

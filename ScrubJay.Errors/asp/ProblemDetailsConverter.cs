@@ -61,7 +61,7 @@ public static class ProblemDetailsConverter
     /// </summary>
     public static StackTraceLevel StackTraceLevel { get; set; } = StackTraceLevel.None;
 
-   
+
 
 
     private static string GetSanitizedStackTrace(Exception exception)
@@ -140,21 +140,21 @@ public static class ProblemDetailsConverter
         return dict;
     }
 
-   
+
     public static int GetHttpStatusCode(Exception? exception)
     {
         Type exceptionType = Any.GetType<Exception>(exception);
         int statusCode = ErrorTypeToHttpStatusCodeMap.GetValueOrDefault(exceptionType, DefaultErrorStatusCode);
         return statusCode;
     }
-    
+
     public static int GetHttpStatusCode<E>(in E? error)
     {
         Type errorType = Any.GetType(in error);
         int statusCode = ErrorTypeToHttpStatusCodeMap.GetValueOrDefault(errorType, DefaultErrorStatusCode);
         return statusCode;
     }
-    
+
     public static ProblemDetails ToProblemDetails(Exception exception)
     {
         var extensions = DataToExtensions(exception.Data);
@@ -180,9 +180,9 @@ public static class ProblemDetailsConverter
             return problemDetails;
         if (error is Exception exception)
             return ToProblemDetails(exception);
-        
+
         var errorType = Any.GetType<E>(in error);
-        
+
         problemDetails = new ProblemDetails()
         {
             Type = $"urn:{errorType.Namespace}:{Type.Render(errorType)}",

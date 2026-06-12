@@ -1,6 +1,6 @@
 namespace ScrubJay.Text.Building;
 
-partial class TextBuilder
+public partial class TextBuilder
 {
     public TextBuilder Wrap(char wrapChar, Action<TextBuilder>? build)
     {

@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace ScrubJay.Universal;
 
-partial class Any
+public partial class Any
 {
     /// <summary>
     /// Returns a <see cref="string"/> representation of the <typeparamref name="T"/> <paramref name="instance"/>.

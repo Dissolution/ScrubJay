@@ -6,25 +6,7 @@
 [PublicAPI]
 public static class UniversalExtensions
 {
-    /// <summary>
-    /// Is this <see cref="object"/> a <typeparamref name="T"/> <paramref name="value"/>?
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="value"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Is<T>(this object? obj, [MaybeNullWhen(false)] out T value)
-    {
-        // ReSharper disable once MergeCastWithTypeCheck
-        if (obj is T)
-        {
-            value = (T)obj;
-            return true;
-        }
-        value = default;
-        return false;
-    }
+
 
     extension<T>(Nullable<T> nullable)
         where T : struct
@@ -35,5 +17,25 @@ public static class UniversalExtensions
             value = nullable.GetValueOrDefault();
             return nullable.HasValue;
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNotNull<T>(this Nullable<T> nullable, out T nonNullValue)
+        where T : struct
+    {
+        nonNullValue = nullable.GetValueOrDefault();
+        return nullable.HasValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNotNull<T>(
+        [AllowNull, NotNullWhen(true)]
+        this T? maybeNull,
+        [NotNullWhen(true)]
+        out T? nonNullValue)
+        where T : class
+    {
+        nonNullValue = maybeNull;
+        return maybeNull is not null;
     }
 }
