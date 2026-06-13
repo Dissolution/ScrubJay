@@ -2,7 +2,7 @@
 // Do not declare static methods on generic types
 // Do not catch Exception
 
-#pragma warning disable CA1715, CA1000, CA1031
+#pragma warning disable CA1715, CA1000
 
 
 namespace ScrubJay.Functional;
@@ -138,7 +138,7 @@ public readonly ref struct RefResult<T>
     public T? OkOrDefault()
     {
         if (_isOk)
-            return _value!;
+            return _value;
         return default(T);
     }
 
@@ -156,7 +156,7 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
             return _value!;
-        throw (_error ?? new InvalidOperationException(exceptionMessage ?? $"{ToString()} is not Ok"));
+        throw _error ?? new InvalidOperationException(exceptionMessage ?? $"{ToString()} is not Ok");
     }
 
     #endregion
@@ -339,7 +339,7 @@ public readonly ref struct RefResult<T>
         private readonly RefResult<T> _result;
         private bool _canYield;
 
-        public T Current => _result.OkOrThrow();
+        public readonly T Current => _result.OkOrThrow();
 
         public RefResultEnumerator(RefResult<T> refResult)
         {

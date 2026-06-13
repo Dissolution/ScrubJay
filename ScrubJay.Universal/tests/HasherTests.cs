@@ -22,11 +22,11 @@ public class HasherTests
         var emptyhash = Hasher.EmptyHash;
 
         // array
-        var a = Hasher.HashMany<int>(array: Array.Empty<int>());
+        var a = Hasher.HashMany<int>(array: []);
         Assert.Equal(emptyhash, a);
 
         // span
-        var b = Hasher.HashMany<string?>(span: ReadOnlySpan<string>.Empty);
+        var b = Hasher.HashMany<string?>(span: []);
         Assert.Equal(emptyhash, b);
 
         // enumerable

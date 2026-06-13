@@ -23,10 +23,10 @@ public readonly struct None :
 
     public static bool operator ==(None _, None __) => true;
     public static bool operator !=(None _, None __) => false;
-    public static bool operator >(None left, None right) => false;
-    public static bool operator >=(None left, None right) => true;
-    public static bool operator <(None left, None right) => false;
-    public static bool operator <=(None left, None right) => true;
+    public static bool operator >(None _, None __) => false;
+    public static bool operator >=(None _, None __) => true;
+    public static bool operator <(None _, None __) => false;
+    public static bool operator <=(None _, None __) => true;
 
 
     /// <summary>

@@ -33,8 +33,8 @@ public readonly struct Bytes :
 
     internal string DebuggerDisplay() => $"""
         {Count} Bytes
-        Hex: {(ToString("X2"))}
-        ASCII: {(ToString("ascii"))}
+        Hex: {ToString("X2")}
+        ASCII: {ToString("ascii")}
         """;
 
     public string ToString(Encoding? encoding)
@@ -108,7 +108,7 @@ public readonly struct Bytes :
     {
         var bytes = _bytes;
         int count = Count;
-        DefaultInterpolatedStringHandler text = new((3 * count) + 1, 0);
+        DefaultInterpolatedStringHandler text = new(3 * count + 1, 0);
         text.AppendLiteral("[");
         if (count > 0)
         {

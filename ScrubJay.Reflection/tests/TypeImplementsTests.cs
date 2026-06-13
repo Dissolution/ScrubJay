@@ -33,11 +33,11 @@ public class TypeExtensionsTests
         typeof(NestedTestList<DateTime>),
         typeof(AttributeTargets),
         typeof((int Id, string Name)),
-        (new
+        new
         {
             Id = 3,
             Name = "TJ",
-        }).GetType(),
+        }.GetType(),
     ];
 
     public static TheoryData<Type?> TestTypes { get; } = new TheoryData<Type>(Types);

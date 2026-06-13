@@ -162,7 +162,7 @@ public static class AspResultExtensions
         {
             Demand.NotNull(ir);
 
-            int? statusCode = (ir is IStatusCodeHttpResult statusResult) ? statusResult.StatusCode : null;
+            int? statusCode = ir is IStatusCodeHttpResult statusResult ? statusResult.StatusCode : null;
 
             if (ir is IValueHttpResult valueHttpResult)
             {

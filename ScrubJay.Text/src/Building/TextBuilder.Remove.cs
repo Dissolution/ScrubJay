@@ -87,7 +87,7 @@ public partial class TextBuilder
         var span = Written;
 
         // Find the first item which needs to be removed.
-        while ((freeIndex < pos) && !charPredicate(span[freeIndex]))
+        while (freeIndex < pos && !charPredicate(span[freeIndex]))
             freeIndex++;
 
         if (freeIndex >= pos)
@@ -97,7 +97,7 @@ public partial class TextBuilder
         while (current < pos)
         {
             // Find the first item which needs to be kept.
-            while ((current < pos) && charPredicate(span[current]))
+            while (current < pos && charPredicate(span[current]))
                 current++;
 
             if (current < pos)

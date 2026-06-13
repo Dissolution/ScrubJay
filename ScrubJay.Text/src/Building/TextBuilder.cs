@@ -57,7 +57,7 @@ public partial class TextBuilder : IDisposable
         get => _position;
         internal set
         {
-            Debug.Assert((value >= 0) && (value < Capacity));
+            Debug.Assert(value >= 0 && value < Capacity);
             _position = value;
         }
     }

@@ -145,22 +145,22 @@ public sealed class DecompiledMethod
             // ---
             case OperandType.ShortInlineBrTarget:
             {
-                ILOffset offset = (reader.ReadI8() + reader.Position);
+                ILOffset offset = reader.ReadI8() + reader.Position;
                 return Some<object?>(offset);
             }
             case OperandType.InlineBrTarget:
             {
-                ILOffset offset = (reader.ReadI32() + reader.Position);
+                ILOffset offset = reader.ReadI32() + reader.Position;
                 return Some<object?>(offset);
             }
             case OperandType.InlineSwitch:
             {
                 int length = reader.ReadI32();
-                int baseOffset = reader.Position + (4 * length);
+                int baseOffset = reader.Position + 4 * length;
                 ILOffset[] branches = new ILOffset[length];
                 for (int i = 0; i < length; i++)
                 {
-                    branches[i] = (reader.ReadI32() + baseOffset);
+                    branches[i] = reader.ReadI32() + baseOffset;
                 }
 
                 return Some<object?>(branches);

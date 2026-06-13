@@ -43,9 +43,7 @@ public static partial class Any
             del = dynamicMethod.CreateDelegate(typeof(D)) as D;
             return del is not null;
         }
-#pragma warning disable CA1031
         catch
-#pragma warning restore CA1031
         {
             del = null;
             return false;
@@ -58,18 +56,18 @@ public static partial class Any
 
         if (!string.IsNullOrEmpty(name))
         {
-            predicate &= (method => string.Equals(method.Name, name, StringComparison.Ordinal));
+            predicate &= method => string.Equals(method.Name, name, StringComparison.Ordinal);
         }
 
         if (returnType is not null)
         {
-            predicate &= (method => method.ReturnType.IsAssignableTo(returnType));
+            predicate &= method => method.ReturnType.IsAssignableTo(returnType);
         }
 
         if (parameterTypes is not null)
         {
             int parameterCount = parameterTypes.Length;
-            predicate &= (method =>
+            predicate &= method =>
             {
                 var mp = method.GetParameters();
                 if (mp.Length != parameterCount)
@@ -83,7 +81,7 @@ public static partial class Any
                         return false;
                 }
                 return true;
-            });
+            };
         }
 
         return predicate ?? Predicate<MethodInfo>.True;
@@ -129,6 +127,7 @@ public static partial class Any
         params Type?[]? parameterTypes)
         => FindMatchingMethods(type, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, name, returnType, parameterTypes);
 
+#pragma warning disable IDE0060
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static ReadOnlySpan<byte> GetReferenceBytes<T>(scoped ref readonly T value)
 #if NET9_0_OR_GREATER

@@ -2,7 +2,7 @@
 // Do not declare static methods on generic types
 // Do not catch Exception
 
-#pragma warning disable CA1715, CA1000, CA1031
+#pragma warning disable CA1715, CA1000
 
 #if DEBUG
 #pragma warning disable IDE1006
@@ -505,9 +505,9 @@ public readonly struct Result<T> :
         private readonly Result<T> _result;
         private bool _canYield;
 
-        object? IEnumerator.Current => _result.OkOrThrow();
+        readonly object? IEnumerator.Current => _result.OkOrThrow();
 
-        public T Current
+        public readonly T Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _result.OkOrThrow();
@@ -520,7 +520,7 @@ public readonly struct Result<T> :
             _canYield = result._isOk;
         }
 
-        void IDisposable.Dispose()
+        readonly void IDisposable.Dispose()
         {
             /* Do Nothing */
         }

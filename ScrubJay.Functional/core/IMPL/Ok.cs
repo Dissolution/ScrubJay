@@ -16,7 +16,7 @@ public readonly ref struct Ok<T>
     /// <summary>
     /// Any <see cref="Ok{T}"/> is a success and implicitly converts to <see cref="Result"/> as <c>true</c>
     /// </summary>
-    public static implicit operator Result(Ok<T> ok) => Result.Ok;
+    public static implicit operator Result(Ok<T> _) => Result.Ok;
 
     /// <summary>
     /// The <typeparamref name="T"/> Ok value

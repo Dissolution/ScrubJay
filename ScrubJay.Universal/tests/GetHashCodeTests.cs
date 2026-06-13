@@ -27,7 +27,7 @@ public class GetHashCodeTests
     [MemberData(nameof(StringData))]
     public void CanGetHashCodeString(string? str)
     {
-        int hashCode = str?.GetHashCode() ?? 0;
+        int hashCode = str?.GetHashCode(StringComparison.Ordinal) ?? 0;
         int anyHashCode = Any.GetHashCode<string>(in str);
 
         Assert.Equal(hashCode, anyHashCode);

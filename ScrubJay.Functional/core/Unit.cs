@@ -58,8 +58,8 @@ public readonly struct Unit :
     public override int GetHashCode() => typeof(Unit).GetHashCode();
 
     public bool TryFormat(Span<char> destination, out int charsWritten,
-        text format = default,
-        IFormatProvider? provider = default)
+        text _ = default,
+        IFormatProvider? __ = default)
     {
         if (destination.Length >= 2)
         {

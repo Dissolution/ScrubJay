@@ -1,4 +1,4 @@
-#pragma warning disable IDE0130
+#pragma warning disable IDE0130, IDE0161
 
 
 #if NETSTANDARD2_0
@@ -29,7 +29,9 @@ namespace ScrubJay.Universal
     {
         extension(Type? type)
         {
+#pragma warning disable CA1822
             public bool IsByRefLike => false;
+#pragma warning restore CA1822
         }
 
         extension<T>(T[]? array)

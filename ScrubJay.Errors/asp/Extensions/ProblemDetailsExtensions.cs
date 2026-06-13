@@ -23,7 +23,7 @@ public static class ProblemDetailsExtensions
 
             // Construct that exception
             string? message = problemDetails.Detail ?? problemDetails.Title;
-            Exception ex = Activator.TryCreateInstance<Exception>(exType, [message]).OkOr(new Exception(message));
+            Exception ex = Activator.TryCreateInstance<Exception>(exType, [message]).OkOr(new InvalidOperationException(message));
 
             // Add properties
             ex.Type = problemDetails.Type;

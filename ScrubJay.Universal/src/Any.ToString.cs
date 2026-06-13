@@ -25,7 +25,9 @@ public partial class Any
     {
         if (instance is null)
             return null;
+#pragma warning disable IDE0370
         return instance.ToString()!;
+#pragma warning restore IDE0370
     }
 #else
     public static string? ToString<T>(in T? instance)

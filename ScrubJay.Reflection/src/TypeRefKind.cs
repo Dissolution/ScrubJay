@@ -27,13 +27,13 @@ public enum TypeRefKind
     /// <c>in</c>
     /// </summary>
     [Description("in ")]
-    In = (1 << 1) | Ref,
+    In = 1 << 1 | Ref,
 
     /// <summary>
     /// <c>out</c>
     /// </summary>
     [Description("out ")]
-    Out = (1 << 2) | Ref,
+    Out = 1 << 2 | Ref,
 
     /// <summary>
     /// Any and all <see cref="TypeRefKind"/>s

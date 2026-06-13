@@ -330,7 +330,7 @@ public partial class TextBuilder
             // if padding is even, pre + post are the same
             if (int.IsEvenInteger(padding))
             {
-                prePadding = postPadding = (padding / 2);
+                prePadding = postPadding = padding / 2;
             }
             else
             {

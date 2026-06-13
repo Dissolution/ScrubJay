@@ -64,9 +64,7 @@ public partial class Any
             {
                 return _delegate(str, provider, out instance);
             }
-#pragma warning disable CA1031
             catch
-#pragma warning restore CA1031
             {
                 _delegate = Fallback;
                 return _delegate(str, provider, out instance);

@@ -22,7 +22,7 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
 #elif NET6_0_OR_GREATER
     private readonly ImmutableDictionary<string, string> _aliases;
 #else
-    private readonly ReadOnlyDictionary<string, string> _aliases;
+    private readonly Dictionary<string, string> _aliases;
 #endif
 
     public readonly string MemberName;
@@ -33,10 +33,10 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
 
     internal EnumMemberInfo(FieldInfo memberField)
     {
-        Member = (TEnum)memberField.GetValue(null)!;
+        Member = (TEnum)memberField.GetValue(null);
         MemberName = memberField.Name;
         Attributes = Attribute.GetCustomAttributes(memberField);
-        
+
         var aliases = new Dictionary<string, string>();
         foreach (var attribute in Attributes)
         {
@@ -50,18 +50,18 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
             }
             else
 #endif
-                if (attribute is DescriptionAttribute descriptionAttribute)
-                {
-                    addAlias("Description", descriptionAttribute.Description);
-                }
-                else if (attribute is EnumMemberAttribute enumMemberAttribute)
-                {
-                    addAlias("EnumMember", enumMemberAttribute.Value);
-                }
-                else if (attribute is DataMemberAttribute dataMemberAttribute)
-                {
-                    addAlias("DataMember", dataMemberAttribute.Name);
-                }
+            if (attribute is DescriptionAttribute descriptionAttribute)
+            {
+                addAlias("Description", descriptionAttribute.Description);
+            }
+            else if (attribute is EnumMemberAttribute enumMemberAttribute)
+            {
+                addAlias("EnumMember", enumMemberAttribute.Value);
+            }
+            else if (attribute is DataMemberAttribute dataMemberAttribute)
+            {
+                addAlias("DataMember", dataMemberAttribute.Name);
+            }
         }
 
 #if NETSTANDARD2_1 || NET6_0_OR_GREATER

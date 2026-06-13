@@ -26,7 +26,7 @@ public static class ArrayRenderers
             }
 
             // any dimension other than the last
-            if (dim < (rank - 1))
+            if (dim < rank - 1)
             {
                 // bracket all my children
                 builder.Write('[');

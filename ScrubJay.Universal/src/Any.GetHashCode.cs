@@ -97,9 +97,7 @@ public partial class Any
             {
                 return _delegate(in value);
             }
-#pragma warning disable CA1031
             catch
-#pragma warning restore CA1031
             {
                 _delegate = Fallback;
                 return _delegate(in value);

@@ -27,7 +27,7 @@ public sealed record class Instruction(ILOffset Offset, OpCode OpCode, Option<ob
                     var targets = Operand
                         .SomeOrThrow()
                         .ThrowIfNot<Instruction[]>();
-                    size += ((1 + targets.Length) * 4);
+                    size += (1 + targets.Length) * 4;
                     break;
                 }
                 case OperandType.InlineI8:

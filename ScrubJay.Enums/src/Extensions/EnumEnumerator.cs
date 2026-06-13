@@ -1,3 +1,5 @@
+#pragma warning disable
+
 namespace ScrubJay.Enums.Extensions;
 
 public struct EnumEnumerator<E> : IEnumerator<E>

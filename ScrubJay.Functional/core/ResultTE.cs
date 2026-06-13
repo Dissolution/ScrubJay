@@ -197,7 +197,7 @@ public readonly struct Result<T, E> :
     public T? OkOrDefault()
     {
         if (_isOk)
-            return _value!;
+            return _value;
         return default(T);
     }
 
@@ -594,9 +594,9 @@ public readonly struct Result<T, E> :
         private readonly Result<T, E> _result;
         private bool _canYield;
 
-        object? IEnumerator.Current => _result.OkOrThrow();
+        readonly object? IEnumerator.Current => _result.OkOrThrow();
 
-        public T Current => _result.OkOrThrow();
+        public readonly T Current => _result.OkOrThrow();
 
         public ResultEnumerator(Result<T, E> result)
         {
@@ -604,7 +604,7 @@ public readonly struct Result<T, E> :
             _canYield = result._isOk;
         }
 
-        void IDisposable.Dispose()
+        readonly void IDisposable.Dispose()
         {
             /* Do Nothing */
         }

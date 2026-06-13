@@ -93,7 +93,7 @@ internal static partial class TestTypes
         public const string CSHARP_LITERALS = "\'\"\\\0\a\b\f\n\r\t\v";
 
         // https://en.wikipedia.org/wiki/Pangram
-        private static readonly string[] PANGRAMS =
+        private static readonly string[] _pangrams =
         [
             "Quick nymph bugs vex fjord waltz.",
             "Waltz, bad nymph, for quick jigs vex.",
@@ -148,7 +148,7 @@ internal static partial class TestTypes
 #if NET8_0_OR_GREATER
             var builder = new StringBuilder()
                 .AppendJoin(null, scaryChars)
-                .AppendJoin(null, PANGRAMS);
+                .AppendJoin(null, _pangrams);
             var seed = new char[builder.Length];
             builder.CopyTo(0, seed, 0, builder.Length);
             RandomNumberGenerator.Shuffle<char>(seed);
@@ -159,7 +159,7 @@ internal static partial class TestTypes
             {
                 builder.Append(ch);
             }
-            foreach (var p in PANGRAMS)
+            foreach (var p in _pangrams)
             {
                 builder.Append(p);
             }
@@ -186,7 +186,7 @@ internal static partial class TestTypes
                 ",",
                 "\r\n",
                 "Exception",
-                PANGRAMS[3],
+                _pangrams[3],
                 CreateTestString(128),
                 CreateTestString(512),
                 CreateTestString(4096),
@@ -198,7 +198,7 @@ internal static partial class TestTypes
                 ",",
                 "\r\n",
                 "Exception",
-                PANGRAMS[3],
+                _pangrams[3],
                 CreateTestString(128),
                 CreateTestString(512),
                 CreateTestString(4096),

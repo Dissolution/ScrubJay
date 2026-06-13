@@ -39,7 +39,7 @@ public readonly struct MetadataToken :
     public MetadataTokenType MetadataTokenType
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (MetadataTokenType)(_token >> (8 * 3));
+        get => (MetadataTokenType)(_token >> 8 * 3);
     }
 
     public uint Identifier

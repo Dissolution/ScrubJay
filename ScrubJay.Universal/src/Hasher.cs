@@ -49,7 +49,7 @@ namespace ScrubJay.Universal;
 /// A universal, <see langword="null"/>-safe <see cref="int"/> hashcode generator.
 /// </summary>
 /// <remarks>
-/// Heavily inspired by <see cref="System.HashCode"/> (only available in netStandard2.1 and net6.0+)<br/>
+/// Heavily inspired by <see langword="System.HashCode"/> (only available in netStandard2.1 and net6.0+)<br/>
 /// As with HashCode, results of hash operations are only deterministic until the application restarts.
 /// </remarks>
 [PublicAPI]
@@ -142,11 +142,11 @@ public ref struct Hasher
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint HashFinalize(uint hash)
     {
-        hash ^= (hash >> 15);
+        hash ^= hash >> 15;
         hash *= PRIME2;
-        hash ^= (hash >> 13);
+        hash ^= hash >> 13;
         hash *= PRIME3;
-        hash ^= (hash >> 16);
+        hash ^= hash >> 16;
         return hash;
     }
 
@@ -832,7 +832,7 @@ public ref struct Hasher
 
         // _length is incremented once per AddHash() and is therefore 4 times too small
         // (xxHash length is in bytes, and we are using uints)
-        hash += (length * 4);
+        hash += length * 4;
 
         // Mix what remains in the queue
         if (position > 0)

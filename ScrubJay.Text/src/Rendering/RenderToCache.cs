@@ -163,7 +163,7 @@ internal static class RenderToCache
                 for (int i = 0; i < inTypeInterfaces.Length; i++)
                 {
                     if (inTypeInterfaces[i] == destinationType)
-                        return (90 - classDepth) - (5 * i);
+                        return 90 - classDepth - (5 * i);
                 }
             }
             else

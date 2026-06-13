@@ -1,4 +1,4 @@
-#pragma warning disable CA1707
+#pragma warning disable CA1707, IDE1006
 
 namespace ScrubJay.Errors.Utilities;
 

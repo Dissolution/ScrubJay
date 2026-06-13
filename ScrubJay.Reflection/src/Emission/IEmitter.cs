@@ -175,12 +175,12 @@ public abstract record class OpCodeValueInstruction : OpCodeInstruction
             {
                 if (Argument is not Array array)
                     throw new InvalidOperationException();
-                return size + ((1 + array.Length) * 4);
+                return size + (1 + array.Length) * 4;
             }
             else
             {
                 Debug.Assert(OperandType.Size is not null);
-                return size + (OperandType.Size.GetValueOrDefault());
+                return size + OperandType.Size.GetValueOrDefault();
             }
         }
     }

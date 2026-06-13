@@ -412,7 +412,7 @@ public static class ByteSpanReaderExtensions
                 throw new InvalidOperationException();
             }
 
-            result |= (uint)u8 << (MAX_BYTES_WITHOUT_OVERFLOW * 7);
+            result |= (uint)u8 << MAX_BYTES_WITHOUT_OVERFLOW * 7;
             return (int)result;
         }
 
@@ -440,7 +440,7 @@ public static class ByteSpanReaderExtensions
                 throw new InvalidOperationException();
             }
 
-            result |= (ulong)u8 << (MAX_BYTES_WITHOUT_OVERFLOW * 7);
+            result |= (ulong)u8 << MAX_BYTES_WITHOUT_OVERFLOW * 7;
             return (long)result;
         }
 #endregion

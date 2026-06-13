@@ -64,9 +64,7 @@ internal static class InternalExtensions
                 del = dynamicMethod.CreateDelegate<D>();
                 return true;
             }
-#pragma warning disable CA1031
             catch
-#pragma warning restore CA1031
             {
                 del = null;
                 return false;
@@ -78,7 +76,23 @@ internal static class InternalExtensions
     {
         internal MethodInfo? FindBestMethod(string name, Type returnType, params Type[] parameterTypes)
         {
-            Func<MethodInfo, bool> isMatchingMethod = m =>
+            // go through type and all subtypes to find a matching method
+            while (type is not null)
+            {
+                MethodInfo? method = type
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                    .FirstOrDefault(isMatchingMethod);
+                if (method is not null)
+                    return method;
+#if !NETFRAMEWORK && !NETSTANDARD2_0
+                if (type.IsByRefLike)
+                    return null; // only methods declared directly on the ref struct can be used
+#endif
+                type = type.BaseType;
+            }
+            return null;
+
+            bool isMatchingMethod(MethodInfo m)
             {
                 if (m.Name != name || !returnType.IsAssignableFrom(m.ReturnType))
                     return false;
@@ -91,25 +105,7 @@ internal static class InternalExtensions
                         return false;
                 }
                 return true;
-            };
-
-            // go through type and all subtypes to find a matching method
-
-            while (type is not null)
-            {
-                MethodInfo? method = type
-                    .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                    .Where(isMatchingMethod)
-                    .FirstOrDefault();
-                if (method is not null)
-                    return method;
-#if !NETFRAMEWORK && !NETSTANDARD2_0
-                if (type.IsByRefLike)
-                    return null; // only methods declared directly on the ref struct can be used
-#endif
-                type = type.BaseType;
             }
-            return null;
         }
     }
 

@@ -119,7 +119,7 @@ public static class ProblemDetailsConverter
         };
     }
 
-    private static IDictionary<string, object?> DataToExtensions(IDictionary data)
+    private static Dictionary<string, object?> DataToExtensions(IDictionary data)
     {
         var dict = new Dictionary<string, object?>(capacity: data.Count, StringComparer.Ordinal);
 

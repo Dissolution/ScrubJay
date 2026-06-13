@@ -1,3 +1,5 @@
+#pragma warning disable CA1055
+
 using System.Reflection;
 using System.Text.RegularExpressions;
 using ScrubJay.Text.Collections;
@@ -29,7 +31,7 @@ public static class ExceptionUrn
                     return Type.EmptyTypes;
                 }
             })
-            .Where(static type => type.IsAssignableTo(typeof(Exception)))
+            .Where(static type => type.IsAssignableTo<Exception>())
             .ToTypeSet();
 
 

@@ -1,12 +1,7 @@
+#pragma warning disable IDE0060
+
 using System.Reflection;
 using ScrubJay.Enums.Extensions;
-#if !NETFRAMEWORK && !NETSTANDARD
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
-#endif
-#if NET8_0_OR_GREATER
-using System.Collections.Frozen;
-#endif
 
 namespace ScrubJay.Enums;
 
@@ -51,12 +46,12 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
     #region TryParse
     public override Result<Enum> TryParseEnum(scoped text text, bool ignoreCase = true, bool includeAttributes = true)
     {
-        return TryParse(text, ignoreCase, includeAttributes).Select(e => (Enum)e);
+        return TryParse(text, ignoreCase, includeAttributes).Select(static e => (Enum)e);
     }
 
     public override Result<Enum> TryParseEnum(string? str, bool ignoreCase = true, bool includeAttributes = true)
     {
-        return TryParse(str, ignoreCase, includeAttributes).Select(e => (Enum)e);
+        return TryParse(str, ignoreCase, includeAttributes).Select(static e => (Enum)e);
     }
 
     public override Result<Enum> TryParseEnum(long i64)
@@ -71,7 +66,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
 
     public override Result<Enum> TryParseEnum(object? obj, bool ignoreCase = true, bool useAttributes = true)
     {
-        return TryParse(obj, ignoreCase, useAttributes).Select(e => (Enum)e);
+        return TryParse(obj, ignoreCase, useAttributes).Select(static e => (Enum)e);
     }
 
     public Result<TEnum> TryParse(scoped text text, bool ignoreCase = true, bool includeAttributes = true)
@@ -235,7 +230,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
     public override Option<EnumMemberInfo> TryGetMemberInfo(Enum? @enum)
     {
         if (@enum is TEnum t)
-            return TryGetMemberInfo(t).Select(e => (EnumMemberInfo)e);
+            return TryGetMemberInfo(t).Select(static e => (EnumMemberInfo)e);
         return None;
     }
 

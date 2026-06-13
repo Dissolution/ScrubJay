@@ -28,7 +28,7 @@ public static class Prelude
     public static None None
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => field;
+        get;
     } = None.Default;
 
     /// <summary>
@@ -139,10 +139,7 @@ public static class Prelude
     {
         try
         {
-            if (action is not null)
-            {
-                action.Invoke();
-            }
+            action?.Invoke();
         }
         catch
         {

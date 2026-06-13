@@ -204,13 +204,23 @@ dotnet_diagnostic.IDE0008.severity = suggestion
 csharp_prefer_braces = when_multiline
 dotnet_diagnostic.IDE0011.severity = suggestion
 
+; IDE0018
+csharp_style_inlined_variable_declaration = true;
+dotnet_diagnostic.IDE0018.severity = suggestion
+
 ; IDE0022
 csharp_style_expression_bodied_methods = when_on_single_line
 dotnet_diagnostic.IDE0022.severity = suggestion
+
 ; IDE0023 + IDE0024
 csharp_style_expression_bodied_operators = when_on_single_line
 dotnet_diagnostic.IDE0023.severity = suggestion
 dotnet_diagnostic.IDE0024.severity = suggestion
+
+; IDE0028
+dotnet_style_collection_initializer = false
+dotnet_style_prefer_collection_expression = when_types_exactly_match
+dotnet_diagnostic.IDE0028.severity = none
 
 ; IDE0029 + IDE0030 + IDE0270
 dotnet_style_coalesce_expression = true;
@@ -249,12 +259,20 @@ csharp_style_namespace_declarations = file_scoped
 dotnet_diagnostic.IDE0160.severity = none
 dotnet_diagnostic.IDE0161.severity = error
 
+; IDE0290
+csharp_style_prefer_primary_constructors = false
+dotnet_diagnostic.IDE0290.severity = warning
 
+; IDE0370  -- conflicts with multi-targetting
+dotnet_diagnostic.IDE0370.severity = warning
 
 ### CA
 
 ; CA1000 - I understand
 dotnet_diagnostic.CA1000.severity = none
+
+; CA1031 - complains with Result
+dotnet_diagnostic.CA1031.severity = none
 
 ; CA1034 - Why not?
 dotnet_diagnostic.CA1034.severity = none
@@ -262,11 +280,29 @@ dotnet_diagnostic.CA1034.severity = none
 ; CA1062 - Respect the nullability attributes
 dotnet_diagnostic.CA1062.severity = none
 
+; CA1305 - localization
+dotnet_diagnostic.CA1305.severity = none
+
+; CA1510 - I'm multitargetting
+dotnet_diagnostic.CA1510.severity = none
+
+; CA1707 - My naming
+dotnet_diagnostic.CA1707.severity = none
+
 ; CA1715 - I don't always want to prefix my generic type parameter with T
 dotnet_diagnostic.CA1715.severity = none
 
+; CA1716 - I just fight these no matter what
+dotnet_diagnostic.CA1716.severity = none
+
+; CA1725 - I prefer better names
+dotnet_diagnostic.CA1725.severity = none
+
 ; CA1810 - reads easier in the constructor
 dotnet_diagnostic.CA1810.severity = none
+
+; CA1819 - I want to
+dotnet_diagnostic.CA1819.severity = suggestion
 
 ; CA2208 - does not work with new extension block syntax
 dotnet_diagnostic.CA2208.severity = none
