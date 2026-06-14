@@ -14,14 +14,14 @@ public sealed class Whitespace : IDisposable
     [JetBrains.Annotations.NotNull, AllowNull]
     public string CurrentNewLine
     {
-        get => field;
+        get;
         set => SetNewLine(ref field, value);
     } = WhitespaceManager.DefaultNewLine;
 
     [JetBrains.Annotations.NotNull, AllowNull]
     public string CurrentDefaultIndent
     {
-        get => field;
+        get;
         set => field = value ?? WhitespaceManager.DefaultIndent;
     } = WhitespaceManager.DefaultIndent;
 
@@ -39,7 +39,7 @@ public sealed class Whitespace : IDisposable
             return FullNewLine;
         }
     }
-    public text IndentsOnly => FullNewLine.Slice(CurrentNewLine.Length);
+    public text IndentsOnly => FullNewLine[CurrentNewLine.Length..];
 
     public int IndentCount => _indentOffsets.Count;
 
@@ -97,7 +97,7 @@ public sealed class Whitespace : IDisposable
         int newOffset = offset + indentLength;
         if (newOffset > _whitespace.Length)
         {
-            TextPool.GrowBy(ref _whitespace, indentLength);
+            TextPool.GrowBy(ref _whitespace!, indentLength);
         }
         TextHelper.Unsafe.CopyTo(indent, _whitespace.AsSpan(offset), indentLength);
         _offset = newOffset;
@@ -115,7 +115,7 @@ public sealed class Whitespace : IDisposable
         int indentLength = indent.Length;
         int newOffset = offset + indentLength;
         if (newOffset > _whitespace.Length)
-            TextPool.GrowBy(ref _whitespace, indentLength);
+            TextPool.GrowBy(ref _whitespace!, indentLength);
         TextHelper.Unsafe.CopyTo(indent, _whitespace.AsSpan(offset), indentLength);
         _offset = newOffset;
     }

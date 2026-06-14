@@ -16,7 +16,7 @@ public sealed record class Argument : IRenderable
         where T : allows ref struct
 #endif
     {
-        return new Argument(Any.GetType<T>(in argument), argumentName, Any.Render<T>(in argument));
+        return new Argument(Any.GetType<T>(in argument), argumentName, Any.Render<T?>(in argument));
     }
 
     public static Argument Capture<T>(

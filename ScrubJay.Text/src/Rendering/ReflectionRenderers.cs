@@ -41,28 +41,23 @@ public static class ReflectionRenderers
         switch (member)
         {
             case EventInfo eventInfo:
-                break;
+                RenderEventTo(eventInfo, builder);
+                return;
             case FieldInfo fieldInfo:
-                break;
+                RenderFieldTo(fieldInfo, builder);
+                return;
             case MethodBase method:
-            {
                 RenderMethodTo(method, builder);
                 return;
-            }
             case PropertyInfo propertyInfo:
-                break;
+                RenderPropertyTo(propertyInfo, builder);
+                return;
             case Type type:
-            {
                 TypeRenderer.RenderTypeTo(type, builder);
                 return;
-            }
             default:
-                break;
+                return;
         }
-
-        // nothing
-        Debugger.Break();
-        return;
     }
 
     [RenderToMethod]
@@ -84,7 +79,7 @@ public static class ReflectionRenderers
         string name = method.Name;
         if (method.IsGenericMethod)
         {
-            int i = name.IndexOf('`');
+            int i = name.IndexOf('`', StringComparison.Ordinal);
             if (i >= 0)
             {
                 builder.Append(name.AsSpan(0, i));
@@ -138,5 +133,49 @@ public static class ReflectionRenderers
                 .Append(" : ")
                 .Delimit(", ", constraints, TB.Render);
         }
+    }
+
+    [RenderToMethod]
+    public static void RenderFieldTo(FieldInfo field, TextBuilder builder)
+    {
+        builder.Render(field.ParentType)
+            .Append('.')
+            .Append(field.Name)
+            .Append(": ")
+            .Render(field.FieldType);
+
+        var isConst = Try(field.GetRawConstantValue);
+        if (isConst.IsOk(out var value))
+        {
+            builder.Append(" = ")
+                .Render(value);
+        }
+    }
+
+    [RenderToMethod]
+    public static void RenderPropertyTo(PropertyInfo property, TextBuilder builder)
+    {
+        builder.Render(property.ParentType)
+            .Append('.')
+            .Append(property.Name)
+            .Append(": ")
+            .Render(property.PropertyType);
+
+        var hasDefault = Try(property.GetConstantValue);
+        if (hasDefault.IsOk(out var value))
+        {
+            builder.Append(" = ")
+                .Render(value);
+        }
+    }
+
+    [RenderToMethod]
+    public static void RenderEventTo(EventInfo eventInfo, TextBuilder builder)
+    {
+        builder.Render(eventInfo.ParentType)
+            .Append('.')
+            .Append(eventInfo.Name)
+            .Append(": ")
+            .Render(eventInfo.EventHandlerType);
     }
 }

@@ -9,7 +9,7 @@ public partial class Demand
 #endif
     {
         var arg = Argument.Capture<T>(in value, paramName);
-        Any.TryBox(value, out var box);
+        var box = Any.BoxOrToString<T>(in value);
         throw new ArgRangeException(arg, box, R($"Argument {arg:@} was greater than or equal to {other:@}"));
     }
 
@@ -34,7 +34,7 @@ public partial class Demand
 #endif
     {
         var arg = Argument.Capture<T>(in value, paramName);
-        Any.TryBox(value, out var box);
+        var box = Any.BoxOrToString<T>(in value);
         throw new ArgRangeException(arg, box, R($"Argument {arg:@} was greater than {other:@}"));
     }
 
@@ -59,7 +59,7 @@ public partial class Demand
 #endif
     {
         var arg = Argument.Capture<T>(in value, paramName);
-        Any.TryBox(value, out var box);
+        var box = Any.BoxOrToString<T>(in value);
         throw new ArgRangeException(arg, box, R($"Argument {arg:@} was less than or equal to {other:@}"));
     }
 
@@ -84,7 +84,7 @@ public partial class Demand
 #endif
     {
         var arg = Argument.Capture<T>(in value, paramName);
-        Any.TryBox(value, out var box);
+        var box = Any.BoxOrToString<T>(in value);
         throw new ArgRangeException(arg, box, R($"Argument {arg:@} was less than {other:@}"));
     }
 

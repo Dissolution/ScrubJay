@@ -86,7 +86,7 @@ public partial class TextBuilder
             _whitespace ??= new();
             _whitespace.AddIndent();
             build(this);
-            _whitespace.TryRemoveIndent();
+            _ = _whitespace.TryRemoveIndent();
         }
         return this;
     }
@@ -116,10 +116,10 @@ public partial class TextBuilder
             .Invoke(indentedBlock)
             .Outdent()
             .Switch(sw => sw
-                .Case(IsStartLine(), _ =>
+                .Case(IsStartLine(), __ =>
                 {
                     // we need to back off 1 indent before writing the }
-                    _whitespace.TryPeekLastIndent(out var lastIndent);
+                    _ = _whitespace.TryPeekLastIndent(out var lastIndent);
                     _position -= lastIndent!.Length;
                 })
                 .Case(IsStartOutdentedLine(), TB.None)
@@ -212,12 +212,12 @@ public partial class TextBuilder
             if (!char.IsWhiteSpace(written[i]))
             {
                 // whatever we found
-                return written.Slice(start, i - start);
+                return written[start..i];
             }
         }
 
         // everything was whitespace
-        return written.Slice(start);
+        return written[start..];
     }
 
     internal void IndentAwareInvoke(Action<TextBuilder>? build)

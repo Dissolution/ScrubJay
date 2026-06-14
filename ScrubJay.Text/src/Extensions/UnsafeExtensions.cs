@@ -1,3 +1,5 @@
+#pragma warning disable IDE0060
+
 namespace ScrubJay.Text.Extensions;
 
 [PublicAPI]

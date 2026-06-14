@@ -8,6 +8,7 @@ namespace ScrubJay.Text.Extensions;
 [PublicAPI]
 public static class TextExtensions
 {
+    /*
     private static (int start, int end) Resolve(bool firstToLast, Index? startIndex, int available, int matchLength)
     {
         if (!startIndex.TryGetOffset(available, out int start))
@@ -18,10 +19,11 @@ public static class TextExtensions
         int end = available - matchLength;
         return (start, end);
     }
+    */
 
     extension(scoped ReadOnlySpan<char> charSpan)
     {
-        #region Contains
+#region Contains
 #if !NET6_0_OR_GREATER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(char ch)
@@ -61,7 +63,7 @@ public static class TextExtensions
         {
             return charSpan.Contains(txt, StringComparison.Ordinal);
         }
-        #endregion /Contains
+#endregion /Contains
     }
 
     extension(text text)

@@ -19,7 +19,7 @@ public sealed class ResultJsonConverter : JsonConverter<Result>
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException();
 
-        reader.Read();
+        _ = reader.Read();
         if (reader.TokenType != JsonTokenType.PropertyName)
             throw new JsonException();
 

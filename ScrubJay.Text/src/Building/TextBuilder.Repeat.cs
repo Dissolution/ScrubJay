@@ -59,7 +59,7 @@ public partial class TextBuilder
             for (var i = 1; i < count; i++)
             {
                 TextHelper.Unsafe.CopyTo(written, ref d, writtenLen);
-                Unsafe.Add<char>(ref d, writtenLen);
+                d = ref Unsafe.Add<char>(ref d, writtenLen);
             }
             _position = newPos;
         }
@@ -83,7 +83,7 @@ public partial class TextBuilder
             for (var i = 1; i < count; i++)
             {
                 TextHelper.Unsafe.CopyTo(written, ref d, writtenLen);
-                Unsafe.Add<char>(ref d, writtenLen);
+                d = ref Unsafe.Add<char>(ref d, writtenLen);
             }
             _position = newPos;
         }

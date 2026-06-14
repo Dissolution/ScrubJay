@@ -297,7 +297,10 @@ end:
     }
 
 
+    // ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0051
     private static Action<T, TextBuilder>? GetRenderToFor<T>()
+#pragma warning restore IDE0051
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif

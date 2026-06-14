@@ -1,3 +1,5 @@
+#pragma warning disable IDE0051 // member is unused
+
 namespace ScrubJay.Text.Collections;
 
 internal sealed class MiniStack

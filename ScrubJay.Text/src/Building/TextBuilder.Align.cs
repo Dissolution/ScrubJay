@@ -8,7 +8,7 @@ public partial class TextBuilder
 
     public TextBuilder Align(char ch, int width, AlignmentOptions options)
     {
-        var (padChar, alignment, trim, truncateChar) = options;
+        var (padChar, alignment, trim, _) = options;
 
         if (width == 0)
         {
@@ -354,7 +354,7 @@ public partial class TextBuilder
 
         if (prePadding > 0)
         {
-            TryAllocateAt(start, prePadding, out var allocated);
+            _ = TryAllocateAt(start, prePadding, out var allocated);
             allocated.Fill(padChar);
         }
 

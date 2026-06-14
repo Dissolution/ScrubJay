@@ -1,3 +1,5 @@
+#pragma warning disable CA1822 // member does not access instance data and could be static
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ScrubJay.Errors.Asp.Extensions;

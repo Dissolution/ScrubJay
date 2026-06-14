@@ -241,7 +241,7 @@ public static partial class TextHelper
         /// The source <see langword="char*"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -374,7 +374,7 @@ public static partial class TextHelper
         /// The source <see langword="ref readonly"/> <see cref="char"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -423,7 +423,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="void*"/> to copy characters to.
@@ -448,7 +448,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="char*"/> to copy characters to.
@@ -473,7 +473,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="ref char"/> to copy characters to.
@@ -498,10 +498,10 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -524,7 +524,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="ReadOnlySpan{char}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="ReadOnlySpan{T}">ReadOnlySpan&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="char[]"/> to copy characters to.
@@ -552,7 +552,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="void*"/> to copy characters to.
@@ -577,7 +577,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="char*"/> to copy characters to.
@@ -602,7 +602,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="ref char"/> to copy characters to.
@@ -627,10 +627,10 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -653,7 +653,7 @@ public static partial class TextHelper
         /// from <paramref name="source"/> to <paramref name="destination"/>.
         /// </summary>
         /// <param name="source">
-        /// The source <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters from.
+        /// The source <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters from.
         /// </param>
         /// <param name="destination">
         /// The destination <see langword="char[]"/> to copy characters to.
@@ -759,7 +759,7 @@ public static partial class TextHelper
         /// The source <see cref="char"/><see langword="[]"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.
@@ -888,7 +888,7 @@ public static partial class TextHelper
         /// The source <see cref="string"/> to copy characters from.
         /// </param>
         /// <param name="destination">
-        /// The destination <see cref="Span{char}">Span&lt;char&gt;</see> to copy characters to.
+        /// The destination <see cref="Span{T}">Span&lt;char&gt;</see> to copy characters to.
         /// </param>
         /// <param name="count">
         /// The total number of characters to copy.

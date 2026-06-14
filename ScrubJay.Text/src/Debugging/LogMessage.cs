@@ -8,9 +8,9 @@ internal sealed record class LogMessage
 
     public required string? Message { get; init; }
 
-    public Exception? Exception { get; init; } = null;
+    public Exception? Exception { get; init; }
 
-    public CallerInfo? CallerInfo { get; init; } = null;
+    public CallerInfo? CallerInfo { get; init; }
 
     public LogMessage()
     {

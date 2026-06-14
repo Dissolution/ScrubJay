@@ -2,8 +2,10 @@
 
 public partial class TextBuilder
 {
+    [MustDisposeResource]
     public static TextBuilder Rent() => new TextBuilder();
 
+    [MustDisposeResource]
     public static TextBuilder Rent(int minCapacity) => new TextBuilder(minCapacity);
 
 
@@ -33,9 +35,9 @@ public partial class TextBuilder
         if (instanceBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         instanceBuild(instance, builder);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 
     public static string Build<T>(Action<TextBuilder, T>? instanceBuild, T instance)
@@ -46,9 +48,9 @@ public partial class TextBuilder
         if (instanceBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         instanceBuild(builder, instance);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 
 
@@ -60,9 +62,9 @@ public partial class TextBuilder
         if (instanceBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         instanceBuild(in instance, builder);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 
     public static string Build<T>(TextBuildWithInValue<T>? instanceBuild, in T instance)
@@ -73,9 +75,9 @@ public partial class TextBuilder
         if (instanceBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         instanceBuild(builder, in instance);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 
 
@@ -84,9 +86,9 @@ public partial class TextBuilder
         if (spanBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         spanBuild(span, builder);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
 
     public static string Build<T>(TextBuildWithReadOnlySpan<T>? instanceBuild, scoped ReadOnlySpan<T> span)
@@ -94,9 +96,9 @@ public partial class TextBuilder
         if (instanceBuild is null)
             return string.Empty;
 
-        var builder = Rent();
+        using var builder = Rent();
         instanceBuild(builder, span);
-        return builder.ToStringAndDispose();
+        return builder.ToString();
     }
     #endregion
 }

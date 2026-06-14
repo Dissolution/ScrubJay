@@ -29,7 +29,7 @@ namespace ScrubJay.Sandboxes.Console
     public class RenderableThing : IRenderable
     {
         public required int Id { get; init; }
-        public string? Name { get; set; } = null;
+        public string? Name { get; set; }
 
         [SetsRequiredMembers]
         public RenderableThing()

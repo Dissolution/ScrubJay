@@ -13,7 +13,7 @@ public sealed class ResultJsonConverter<T> : JsonConverter<Result<T>>
     {
         if (reader.TokenType != JsonTokenType.StartObject)
             throw new JsonException();
-        reader.Read();
+        _ = reader.Read();
 
         if (reader.TokenType != JsonTokenType.PropertyName)
             throw new JsonException();

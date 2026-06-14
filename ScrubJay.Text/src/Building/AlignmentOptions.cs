@@ -5,7 +5,7 @@ public readonly record struct AlignmentOptions
 {
     public static implicit operator AlignmentOptions(Alignment alignment) => new(alignment: alignment);
 
-    public static readonly AlignmentOptions Default = new();
+    public static readonly AlignmentOptions Default;
 
     public readonly char PaddingChar;
     public readonly Alignment Alignment;

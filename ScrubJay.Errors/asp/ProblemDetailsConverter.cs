@@ -64,7 +64,9 @@ public static class ProblemDetailsConverter
 
 
 
+#pragma warning disable IDE0060
     private static string GetSanitizedStackTrace(Exception exception)
+#pragma warning restore IDE0060
     {
         Debugger.Break();
         throw new NotImplementedException();

@@ -36,9 +36,16 @@ generated_code = true
 # C# Files
 [*.cs]
 
+## Special Suppressions
+dotnet_fluent_types = System.Text.StringBuilder, ScrubJay.Text.Building.TextBuilder, ScrubJay.Universal.Any, ScrubJay.Errors.Extensions.InternalTextBuilderExtensions
+
+## Resharper
+csharp_indent_preprocessor_if = no_indent
+csharp_indent_preprocessor_region = no_indent
+csharp_indent_preprocessor_other = no_indent
+
 ## Formatting Options
 ### https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options
-### IDE0055
 
 ### New-line Options
 #csharp_new_line_before_open_brace = all
@@ -102,7 +109,6 @@ dotnet_naming_style.camel_casing.capitalization = camel_case
 dotnet_naming_style.underscore_camel_casing.capitalization = camel_case
 dotnet_naming_style.underscore_camel_casing.required_prefix = _
 
-
 dotnet_naming_style.upper_casing.capitalization = all_upper
 dotnet_naming_style.upper_casing.word_separator = _
 
@@ -121,13 +127,17 @@ dotnet_naming_symbols.constants.applicable_kinds = *
 dotnet_naming_symbols.constants.applicable_accessibilities = *
 dotnet_naming_symbols.constants.required_modifiers = const
 
-; private_fields
-dotnet_naming_symbols.private_fields.applicable_kinds = field
-dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+; public_fields
+dotnet_naming_symbols.public_fields.applicable_kinds = field
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public
 
-; non_private_fields
-dotnet_naming_symbols.non_private_fields.applicable_kinds = field
-dotnet_naming_symbols.non_private_fields.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
+; internal_fields
+dotnet_naming_symbols.internal_fields.applicable_kinds = field
+dotnet_naming_symbols.internal_fields.applicable_accessibilities = internal
+
+; other_fields
+dotnet_naming_symbols.other_fields.applicable_kinds = field
+dotnet_naming_symbols.other_fields.applicable_accessibilities = protected_internal, protected, private_protected, private
 
 ; locals
 dotnet_naming_symbols.locals.applicable_kinds = local, local_function
@@ -157,13 +167,17 @@ dotnet_naming_rule.constants_must_be_upper.symbols = constants
 dotnet_naming_rule.constants_must_be_upper.style = upper_casing
 dotnet_naming_rule.constants_must_be_upper.severity = error
 
-dotnet_naming_rule.private_fields_must_be_underscore_camel.symbols = private_fields
-dotnet_naming_rule.private_fields_must_be_underscore_camel.style = underscore_camel_casing
-dotnet_naming_rule.private_fields_must_be_underscore_camel.severity = error
+dotnet_naming_rule.public_fields_must_be_pascal.symbols = public_fields
+dotnet_naming_rule.public_fields_must_be_pascal.style = pascal_casing
+dotnet_naming_rule.public_fields_must_be_pascal.severity = warning
 
-dotnet_naming_rule.non_private_fields_must_be_pascal.symbols = non_private_fields
-dotnet_naming_rule.non_private_fields_must_be_pascal.style = pascal_casing
-dotnet_naming_rule.non_private_fields_must_be_pascal.severity = error
+dotnet_naming_rule.internal_fields_can_be_pascal_or_underscore_camel.symbols = internal_fields
+dotnet_naming_rule.internal_fields_can_be_pascal_or_underscore_camel.style = pascal_casing
+dotnet_naming_rule.internal_fields_can_be_pascal_or_underscore_camel.severity = none
+
+dotnet_naming_rule.other_fields_must_be_underscore_camel.symbols = other_fields
+dotnet_naming_rule.other_fields_must_be_underscore_camel.style = underscore_camel_casing
+dotnet_naming_rule.other_fields_must_be_underscore_camel.severity = warning
 
 dotnet_naming_rule.locals_must_be_camel.symbols = locals
 dotnet_naming_rule.locals_must_be_camel.style = camel_casing
@@ -217,14 +231,19 @@ csharp_style_expression_bodied_operators = when_on_single_line
 dotnet_diagnostic.IDE0023.severity = suggestion
 dotnet_diagnostic.IDE0024.severity = suggestion
 
-; IDE0028
+; IDE0028 + IDE0305
 dotnet_style_collection_initializer = false
 dotnet_style_prefer_collection_expression = when_types_exactly_match
 dotnet_diagnostic.IDE0028.severity = none
+dotnet_diagnostic.IDE0305.severity = none
 
 ; IDE0029 + IDE0030 + IDE0270
 dotnet_style_coalesce_expression = true;
 dotnet_diagnostic.IDE0270.severity = none
+
+; IDE0032
+dotnet_style_prefer_auto_properties = false
+dotnet_diagnostic.IDE0032.severity = suggestion
 
 ; IDE0034
 csharp_prefer_simple_default_expression = true
@@ -250,6 +269,22 @@ dotnet_style_parentheses_in_other_operators = always_for_clarity
 dotnet_diagnostic.IDE0047.severity = error
 dotnet_diagnostic.IDE0048.severity = error
 
+; IDE0055 - Lots of conflicts with resharper styles
+dotnet_diagnostic.IDE0055.severity = suggestion
+
+; IDE0061
+csharp_style_expression_bodied_local_functions = when_on_single_line
+dotnet_diagnostic.IDE0061.severity = suggestion
+
+; IDE0072
+dotnet_diagnostic.IDE0072.severity = suggestion
+
+; IDE0078 + IDE0260
+csharp_style_prefer_pattern_matching = true
+dotnet_diagnostic.IDE0078.severity = suggestion
+csharp_style_pattern_matching_over_as_with_null_check = false
+dotnet_diagnostic.IDE0260.severity = error 
+
 ; IDE0090
 csharp_style_implicit_object_creation_when_type_is_apparent = true
 dotnet_diagnostic.IDE0090.severity = none
@@ -264,7 +299,7 @@ csharp_style_prefer_primary_constructors = false
 dotnet_diagnostic.IDE0290.severity = warning
 
 ; IDE0370  -- conflicts with multi-targetting
-dotnet_diagnostic.IDE0370.severity = warning
+dotnet_diagnostic.IDE0370.severity = suggestion
 
 ### CA
 
@@ -274,11 +309,20 @@ dotnet_diagnostic.CA1000.severity = none
 ; CA1031 - complains with Result
 dotnet_diagnostic.CA1031.severity = none
 
+; CA1033 - false positives
+dotnet_diagnostic.CA1033.severity = none
+
 ; CA1034 - Why not?
 dotnet_diagnostic.CA1034.severity = none
 
+; CA1054 - Uri has limitations
+dotnet_diagnostic.CA1054.severity = none
+
 ; CA1062 - Respect the nullability attributes
 dotnet_diagnostic.CA1062.severity = none
+
+; CA1063 - Disposable
+dotnet_diagnostic.CA1063.severity = none
 
 ; CA1305 - localization
 dotnet_diagnostic.CA1305.severity = none
@@ -289,11 +333,17 @@ dotnet_diagnostic.CA1510.severity = none
 ; CA1707 - My naming
 dotnet_diagnostic.CA1707.severity = none
 
+; CA1710 - Collection Naming
+dotnet_diagnostic.CA1710.severity = none
+
 ; CA1715 - I don't always want to prefix my generic type parameter with T
 dotnet_diagnostic.CA1715.severity = none
 
 ; CA1716 - I just fight these no matter what
 dotnet_diagnostic.CA1716.severity = none
+
+; CA1720 - Identifiers match type names
+dotnet_diagnostic.CA1720.severity = none
 
 ; CA1725 - I prefer better names
 dotnet_diagnostic.CA1725.severity = none
@@ -301,8 +351,16 @@ dotnet_diagnostic.CA1725.severity = none
 ; CA1810 - reads easier in the constructor
 dotnet_diagnostic.CA1810.severity = none
 
+; CA1814 - Multidimensional arrays
+dotnet_diagnostic.CA1814.severity = none
+
 ; CA1819 - I want to
 dotnet_diagnostic.CA1819.severity = suggestion
+
+; CA2000 - Dispose
+dotnet_diagnostic.CA2000.excluded_symbol_names = TextBuilder
+dotnet_diagnostic.CA2000.dispose_ownership_transfer_at_constructor = true
+dotnet_diagnostic.CA2000.dispose_ownership_transfer_at_method_call = true
 
 ; CA2208 - does not work with new extension block syntax
 dotnet_diagnostic.CA2208.severity = none
@@ -310,7 +368,8 @@ dotnet_diagnostic.CA2208.severity = none
 ; CA2225 - I've never seen anywhere else with this
 dotnet_diagnostic.CA2225.severity = none
 
-
+; CA2263 - Prefer generic overloads - conflicts with multitargetting
+dotnet_diagnostic.CA2263.severity = suggestion
 
 
 

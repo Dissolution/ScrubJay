@@ -1,9 +1,4 @@
 #if NET8_0_OR_GREATER
-
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
@@ -12,11 +7,8 @@ namespace ScrubJay.Errors.Asp;
 [PublicAPI]
 public sealed class SJExceptionHandler : IExceptionHandler
 {
-    private readonly StackTraceLevel _stackTraceLevel;
-
     public SJExceptionHandler(StackTraceLevel stackTraceLevel)
     {
-        _stackTraceLevel = stackTraceLevel;
         ProblemDetailsConverter.StackTraceLevel = stackTraceLevel;
     }
 
@@ -27,7 +19,7 @@ public sealed class SJExceptionHandler : IExceptionHandler
     {
         var problem = ProblemDetailsConverter.ToProblemDetails(exception);
         httpContext.Response.StatusCode = problem.Status ?? ProblemDetailsConverter.DefaultErrorStatusCode;
-        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken).ConfigureAwait(false);
         return true;
     }
 }

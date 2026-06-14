@@ -10,9 +10,6 @@ namespace ScrubJay.Functional.Extensions;
 [PublicAPI]
 public static class ResultExtensions
 {
-    public delegate bool TryInvoke<T>(out T value);
-
-
     extension(Result)
     {
 #if NET7_0_OR_GREATER

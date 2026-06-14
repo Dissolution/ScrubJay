@@ -50,6 +50,19 @@ public static partial class Any
         }
     }
 
+    internal static bool TryGenerateDelegate<D>(
+        string methodName,
+        Action<ILGenerator> generateBody,
+        [NotNullWhen(true)] out D? del)
+        where D : Delegate
+    {
+        var dynamicMethod = CreateDynamicMethod<D>(methodName);
+        generateBody(dynamicMethod.GetILGenerator());
+        return dynamicMethod.TryCreateDelegate<D>(out del);
+    }
+
+
+
     private static Func<MethodInfo, bool> GetMatchPredicate(string? name, Type? returnType, Type?[]? parameterTypes)
     {
         Func<MethodInfo, bool>? predicate = null;

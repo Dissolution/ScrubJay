@@ -17,8 +17,8 @@ public partial class TextBuilder
 public class SwitchBuilder
 {
     protected readonly TextBuilder _textBuilder;
-    protected Action<TextBuilder>? _defaultCase = null;
-    protected bool _invoked = false;
+    protected Action<TextBuilder>? _defaultCase;
+    protected bool _invoked;
 
     internal SwitchBuilder(TextBuilder textBuilder)
     {

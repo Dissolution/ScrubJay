@@ -1,8 +1,9 @@
 namespace ScrubJay.Text.Utilities;
 
+[PublicAPI]
 public ref struct TryFormatWriter : IEnumerable<char>, IEnumerable
 {
-    private Span<char> _destination;
+    private readonly Span<char> _destination;
     private int _written; // if negative, writing has failed
 
     public TryFormatWriter(Span<char> destination)
@@ -136,15 +137,15 @@ public ref struct TryFormatWriter : IEnumerable<char>, IEnumerable
         }
     }
 
-    public bool Wrote(out int charsWritten)
+    public readonly bool Wrote(out int charsWritten)
     {
         charsWritten = _written;
         return charsWritten >= 0;
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+    readonly IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 
-    IEnumerator<char> IEnumerable<char>.GetEnumerator() => throw new NotImplementedException();
+    readonly IEnumerator<char> IEnumerable<char>.GetEnumerator() => throw new NotImplementedException();
 
-    public Span<char>.Enumerator GetEnumerator() => _destination.Slice(0, _written).GetEnumerator();
+    public readonly Span<char>.Enumerator GetEnumerator() => _destination[.._written].GetEnumerator();
 }

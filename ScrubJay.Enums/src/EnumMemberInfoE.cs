@@ -1,18 +1,19 @@
-#pragma warning disable IDE0052
+#pragma warning disable IDE0052, IDE0055
 
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
 #if !NETFRAMEWORK && !NETSTANDARD
-using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 #endif
+
 #if NET8_0_OR_GREATER
 using System.Collections.Frozen;
+#elif NET6_0_OR_GREATER
+using System.Collections.Immutable;
 #endif
 
 namespace ScrubJay.Enums;
-
 
 public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
     where TEnum : struct, Enum
@@ -33,7 +34,7 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
 
     internal EnumMemberInfo(FieldInfo memberField)
     {
-        Member = (TEnum)memberField.GetValue(null);
+        Member = (TEnum)memberField.GetValue(null)!;
         MemberName = memberField.Name;
         Attributes = Attribute.GetCustomAttributes(memberField);
 

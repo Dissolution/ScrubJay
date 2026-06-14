@@ -12,7 +12,7 @@ public sealed class InstructionStream :
     IRenderable
 {
     private readonly List<Instruction> _instructions = [];
-    private int _size = 0;
+    private int _size;
 
 
     public int Count => _instructions.Count;

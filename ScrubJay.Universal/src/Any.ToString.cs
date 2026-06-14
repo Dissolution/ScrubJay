@@ -6,47 +6,32 @@ namespace ScrubJay.Universal;
 
 public partial class Any
 {
-    /// <summary>
-    /// Returns a <see cref="string"/> representation of the <typeparamref name="T"/> <paramref name="instance"/>.
-    /// </summary>
-    /// <param name="instance">
-    /// The instance to return the <see cref="string"/> representation of.
-    /// </param>
-    /// <typeparam name="T">
-    /// The generic <see cref="Type"/> this method was called with.
-    /// </typeparam>
-    /// <returns>
-    /// The <paramref name="instance"/>'s <see cref="string"/> representation.
-    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [return: NotNullIfNotNull(nameof(instance))]
-#if !NET9_0_OR_GREATER
-    public static string? ToString<T>(in T? instance)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString<T>(in T? value)
     {
-        if (instance is null)
-            return null;
-#pragma warning disable IDE0370
-        return instance.ToString()!;
-#pragma warning restore IDE0370
+        return value?.ToString();
     }
-#else
-    public static string? ToString<T>(in T? instance)
+
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (instance is null)
+        if (value is null)
             return null;
-        return ToStringCache<T>.Invoke(in instance);
+        return ToStringCache<T>.Invoke(in value);
     }
 #endif
+
 
     private static class ToStringCache<T>
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
-        internal delegate string AnyToString(in T value);
-
-        internal static readonly AnyToString Invoke;
+        internal static readonly AnyToString<T> Invoke;
 
         static ToStringCache()
         {
@@ -55,27 +40,23 @@ public partial class Any
                 .FindMatchingInstanceMethods("ToString", typeof(string), Type.EmptyTypes)
                 .FirstOrDefault();
 
-            if (method is not null)
-            {
-                var dynamicMethod = CreateDynamicMethod<AnyToString>($"Any_{instanceType}_ToString");
-                var gen = dynamicMethod.GetILGenerator();
-
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Constrained, instanceType);
-                gen.Emit(OpCodes.Callvirt, method);
-                gen.Emit(OpCodes.Ret);
-
-                if (dynamicMethod.TryCreateDelegate<AnyToString>(out var func))
+            if (method is not null && TryGenerateDelegate<AnyToString<T>>(
+                $"Any_{instanceType}_ToString",
+                gen =>
                 {
-                    Invoke = func;
-                    return;
-                }
+                    gen.Emit(OpCodes.Ldarg_0);
+                    gen.Emit(OpCodes.Constrained, instanceType);
+                    gen.Emit(OpCodes.Callvirt, method);
+                    gen.Emit(OpCodes.Ret);
+                }, out Invoke!))
+            {
+                return;
             }
 
             Invoke = Fallback;
         }
 
-        private static string Fallback(in T instance)
-            => typeof(T).ToString(); // same as object.ToString()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string Fallback(in T instance) => typeof(T).ToString(); // same as object.ToString()
     }
 }

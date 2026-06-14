@@ -24,7 +24,7 @@ public partial class Ex
         where T : IComparable<T>
     {
         var arg = Argument.Capture<T>(in argument, argumentName);
-        Any.TryBox(argument, out var box);
+        var box = Any.BoxOrToString<T>(in argument);
         return new ArgRangeException(arg, box,
             R($"Argument {arg:@} was not in {(Bounds.RenderTo, lowerBound, upperBound)}"));
     }

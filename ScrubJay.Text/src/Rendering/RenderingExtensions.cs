@@ -21,7 +21,7 @@ public static class AnyRenderingExtensions
 {
     extension(Any)
     {
-        public static string Render<T>(in T? instance)
+        public static string Render<T>(in T instance)
 #if NET9_0_OR_GREATER
             where T : allows ref struct
 #endif

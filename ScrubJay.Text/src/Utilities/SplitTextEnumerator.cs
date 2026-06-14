@@ -59,17 +59,17 @@ public ref struct SplitTextEnumerator :
     private int _currentStartIndex = 0;
     private int _currentAfterEndIndex = 0;
 
-    public Range CurrentRange => new(_currentStartIndex, _currentAfterEndIndex);
+    public readonly Range CurrentRange => new(_currentStartIndex, _currentAfterEndIndex);
 
-    public text CurrentText => Source.Slice(_currentStartIndex, _currentAfterEndIndex - _currentStartIndex);
+    public readonly text CurrentText => Source[_currentStartIndex.._currentAfterEndIndex];
 
 
-    object? IEnumerator.Current => CurrentRange;
+    readonly object? IEnumerator.Current => CurrentRange;
 
-    Range IEnumerator<Range>.Current => CurrentRange;
+    readonly Range IEnumerator<Range>.Current => CurrentRange;
 
 #if NET9_0_OR_GREATER
-    text IEnumerator<text>.Current => CurrentText;
+    readonly text IEnumerator<text>.Current => CurrentText;
 #endif
 
 
@@ -122,7 +122,7 @@ public ref struct SplitTextEnumerator :
             case SplitMode.SingleElement:
             {
                 separatorIndex = Source
-                    .Slice(_scanStartIndex)
+[_scanStartIndex..]
                     .FindIndexOf(_separator, comparison: _comparison)
                     .SomeOr(-1);
                 break;
@@ -130,7 +130,7 @@ public ref struct SplitTextEnumerator :
             case SplitMode.Any:
             {
                 separatorIndex = Source
-                    .Slice(_scanStartIndex)
+[_scanStartIndex..]
                     .FindIndexOf(_separatorBuffer, comparison: _comparison)
                     .SomeOr(-1);
                 break;
@@ -138,7 +138,7 @@ public ref struct SplitTextEnumerator :
             case SplitMode.Sequence:
             {
                 separatorIndex = Source
-                    .Slice(_scanStartIndex)
+[_scanStartIndex..]
                     .FindIndexOf(_separatorBuffer, comparison: _comparison)
                     .SomeOr(-1);
                 separatorLength = _separatorBuffer.Length;
@@ -148,7 +148,7 @@ public ref struct SplitTextEnumerator :
             case SplitMode.SearchValues:
             {
                 separatorIndex = Source
-                    .Slice(_scanStartIndex)
+[_scanStartIndex..]
                     .IndexOfAny(_searchValues!);
                 break;
             }
@@ -180,7 +180,7 @@ public ref struct SplitTextEnumerator :
         return true;
     }
 
-    void IEnumerator.Reset() => throw new NotSupportedException($"{nameof(SplitTextEnumerator)} cannot be Reset");
+    readonly void IEnumerator.Reset() => throw new NotSupportedException($"{nameof(SplitTextEnumerator)} cannot be Reset");
 
-    void IDisposable.Dispose() { } // do nothing
+    readonly void IDisposable.Dispose() { } // do nothing
 }

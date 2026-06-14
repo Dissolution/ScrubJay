@@ -15,13 +15,4 @@ public static class ExceptionExtensions
         public Uri HResultInfo => new($"https://www.hresult.info/Search?q=0x{exception.HResult:X8}");
 
     }
-
-    extension<E>(E exception)
-        where E : Exception, ISJException
-    {
-        public void Add(string key, object? value)
-        {
-
-        }
-    }
 }

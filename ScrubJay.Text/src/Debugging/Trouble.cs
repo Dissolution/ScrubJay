@@ -1,6 +1,3 @@
-#if !NET9_0_OR_GREATER
-using Lock = System.Object;
-#endif
 using Dbg = System.Diagnostics.Debug;
 
 namespace ScrubJay.Text.Debugging;

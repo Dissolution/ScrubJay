@@ -6,14 +6,14 @@ public static class WhitespaceManager
     [JetBrains.Annotations.NotNull, AllowNull]
     public static string DefaultNewLine
     {
-        get => field;
+        get;
         set => field = value ?? Environment.NewLine;
     } = Environment.NewLine;
 
     [JetBrains.Annotations.NotNull, AllowNull]
     public static string DefaultIndent
     {
-        get => field;
+        get;
         set => field = value ?? "    ";
     } = "    ";
 }

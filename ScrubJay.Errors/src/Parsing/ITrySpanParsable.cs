@@ -1,3 +1,5 @@
+#pragma warning disable CA1040
+
 namespace ScrubJay.Errors.Parsing;
 
 [PublicAPI]

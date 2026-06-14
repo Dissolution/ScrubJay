@@ -43,7 +43,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
 
     }
 
-    #region TryParse
+#region TryParse
     public override Result<Enum> TryParseEnum(scoped text text, bool ignoreCase = true, bool includeAttributes = true)
     {
         return TryParse(text, ignoreCase, includeAttributes).Select(static e => (Enum)e);
@@ -93,7 +93,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
     {
         throw new NotImplementedException();
     }
-    #endregion
+#endregion
 
     public override string? GetName(Enum? @enum)
     {
@@ -143,7 +143,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
     public Option<int> TryFormatTo(TEnum @enum, Span<char> destination, string? format = default) => throw new NotImplementedException();
 
 
-    #region Equate / Compare
+#region Equate / Compare
     public override bool Equals(Enum? left, Enum? right)
     {
         return left is TEnum leftT && right is TEnum rightT && Equals(leftT, rightT);
@@ -213,7 +213,7 @@ public sealed partial class EnumTypeInfo<TEnum> : EnumTypeInfo, IEqualityCompare
             return (l > r ? 1 : 0) - (l < r ? 1 : 0);
         }
     }
-    #endregion
+#endregion
 
     public override EnumMemberInfo? GetMemberInfo(Enum? @enum)
     {

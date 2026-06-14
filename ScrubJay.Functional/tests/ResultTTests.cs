@@ -1,3 +1,4 @@
+// ReSharper disable SuspiciousTypeConversion.Global
 namespace ScrubJay.Functional.Tests;
 
 /// <summary>
@@ -467,7 +468,7 @@ public class ResultTests
         var exception = new InvalidOperationException("test");
         var result = Result<int>.Error(exception);
 
-        var thrown = Assert.Throws<InvalidOperationException>(() => result.ThrowIfError());
+        var thrown = Assert.Throws<InvalidOperationException>(result.ThrowIfError);
 
         Assert.Same(exception, thrown);
     }
@@ -874,8 +875,8 @@ public class ResultTests
 
         var str = error.ToString();
 
-        Assert.StartsWith("Error(", str);
-        Assert.Contains("InvalidOperationException", str);
+        Assert.StartsWith("Error(", str, StringComparison.Ordinal);
+        Assert.Contains("InvalidOperationException", str, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -895,7 +896,7 @@ public class ResultTests
 
         var formatted = error.ToString("F2");
 
-        Assert.StartsWith("Error(", formatted);
+        Assert.StartsWith("Error(", formatted, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -6,16 +6,16 @@ namespace ScrubJay.Text.Pooling;
 [PublicAPI]
 public static class TextPool
 {
-    public const int MinLength = 1024;
-    public const int MaxLength = 0x3FFFFFDF; // = string.MaxLength
+    public const int MIN_LENGTH = 1024;
+    public const int MAX_LENGTH = 0x3FFFFFDF; // = string.MaxLength
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int ClampCapacity(int capacity)
     {
-        if (capacity < MinLength)
-            return MinLength;
-        if (capacity > MaxLength)
-            return MaxLength;
+        if (capacity < MIN_LENGTH)
+            return MIN_LENGTH;
+        if (capacity > MAX_LENGTH)
+            return MAX_LENGTH;
         return capacity;
     }
 

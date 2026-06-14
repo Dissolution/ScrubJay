@@ -7,8 +7,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-
-        <NoWarn>$(NoWarn);CA2201;CA1515;</NoWarn>
+        
+        <!-- Disable warnings -->
+        <NoWarn>
+            $(NoWarn);
+            IDE0058;    <!-- Expression Value is Never Used - conflicts with Assert -->
+            CA2201;     <!-- Exception type System.Exception is fine for testing -->
+        </NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

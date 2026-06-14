@@ -1,3 +1,5 @@
+#pragma warning disable IDE0250, IDE0251 // Cannot be made readonly
+
 namespace ScrubJay.Text.Building;
 
 [PublicAPI]

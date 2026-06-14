@@ -19,7 +19,7 @@ internal static class ExceptionFields
         if (exceptionField is null)
             throw new MissingFieldException(Type.Render(key.ExceptionType), key.FieldName);
 
-        var method = Any.CreateDynamicMethod<RefExceptionFieldDelegate<TException, TField>>($"{Type.Render(key.Item1)}.{key.Item2}");
+        var method = Any.CreateDynamicMethod<RefExceptionFieldDelegate<TException, TField>>($"{Type.Render(key.ExceptionType)}.{key.FieldName}");
         var gen = method.GetILGenerator();
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldflda, exceptionField);

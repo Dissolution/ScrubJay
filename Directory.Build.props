@@ -43,9 +43,9 @@
 
     <ItemGroup>
         <!-- All Projects reference JetBrains.Annotations -->
-        <PackageReference Include="JetBrains.Annotations">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
+        <!-- All Projecte reference Blokyk's Value Not Used Suppressor -->
+        <PackageReference Include="Blokyk.Roslyn.ValueNotUsedSuppressor" PrivateAssets="all"/>
 
         <!-- Net Framework and Net Standard include System.Memory -->
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
