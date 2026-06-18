@@ -1,7 +1,3 @@
-// ReSharper disable MethodOverloadWithOptionalParameter
-
-#pragma warning disable IDE0060
-
 namespace ScrubJay.Universal;
 
 public partial class Any
@@ -13,12 +9,35 @@ public partial class Any
         return (object?)value;
     }
 
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static object? BoxOr<T>(T? value, object? fallback, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        if (TryBox<T>(value, out var boxed, _))
+            return boxed;
+        return fallback;
+    }
+#endif
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
     public static object? BoxOrToString<T>(in T? value)
     {
         return (object?)value;
     }
+
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(value))]
+    public static object? BoxOrToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        if (TryBox<T>(value, out var boxed, _))
+            return boxed;
+        return (object?)ToString<T>(in value, _);
+    }
+#endif
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value))] out object? boxed)
@@ -27,11 +46,10 @@ public partial class Any
         return true;
     }
 
+#if NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
-#if NET9_0_OR_GREATER
         where T : allows ref struct //, but _never_ will be
-#endif
     {
         Emit.Ldarg(nameof(value));
         Emit.Box<T>();
@@ -40,9 +58,7 @@ public partial class Any
 
     // ReSharper disable once MethodOverloadWithOptionalParameter
     public static bool TryBox<T>(T? value, out object? boxed, TypeConstraints.AllowsRefStruct<T> _ = default)
-#if NET9_0_OR_GREATER
         where T : allows ref struct
-#endif
     {
         // ref structs cannot be boxed
         if (typeof(T).IsByRefLike)
@@ -50,8 +66,6 @@ public partial class Any
             boxed = null;
             return false;
         }
-
-
 
         /* The rest of this method is tricky -- _We_ know that the value is not a ref struct, but the compiler does not.
 
@@ -98,43 +112,7 @@ public partial class Any
         Emit.Ret();
         throw Unreachable();
     }
-
-#if NET9_0_OR_GREATER
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [return: NotNullIfNotNull(nameof(value))]
-    public static object? BoxOr<T>(T? value, object? fallback, TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (TryBox<T>(value, out var boxed, _))
-            return boxed;
-        return fallback;
-    }
-    
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [return: NotNullIfNotNull(nameof(value))]
-    public static object? BoxOrToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
-        where T : allows ref struct
-    {
-        if (TryBox<T>(value, out var boxed, _))
-            return boxed;
-        return (object?)Any.ToString<T>(in value, _);
-    }
 #endif
-
-
-    [return: NotNullIfNotNull(nameof(value))]
-    public static object? BoxOrBytes<T>(in T? value)
-#if NET9_0_OR_GREATER
-        where T : allows ref struct
-#endif
-    {
-        if (value is null)
-            return null;
-        if (!TryBox<T>(value, out object? boxed))
-            boxed = (object)GetReferenceBytes<T>(in value).ToArray();
-        return boxed!;
-    }
-
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryUnbox<T>(object? box, [MaybeNullWhen(false)] out T value)

@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using ScrubJay.Functional.Extensions;
+using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Text.Collections;
 using ScrubJay.Text.Debugging;
 
@@ -319,7 +320,7 @@ end:
         {
             // check if the instance type has a RenderTo method
             renderToMethod = instanceType
-                .FindMatchingInstanceMethods("RenderTo", typeof(void), [typeof(TextBuilder)])
+                .FindMatchingMethods<Action<T,TextBuilder>>("RenderTo")
                 .FirstOrDefault();
 
             if (renderToMethod is null)
@@ -378,31 +379,26 @@ internal static class RenderToCache<T>
     static RenderToCache()
     {
         Type instanceType = typeof(T);
-        MethodInfo? method = instanceType.FindMatchingInstanceMethods("RenderTo", typeof(void), [typeof(TextBuilder)])
+        MethodInfo? method = instanceType.FindMatchingMethods<Action<T,TextBuilder>>("RenderTo")
             .FirstOrDefault();
 
-        if (method is not null)
-        {
-            var dynamicMethod = Any.CreateDynamicMethod<AnyRenderTo>($"Any_{instanceType}_RenderTo");
-            var gen = dynamicMethod.GetILGenerator();
-
-            gen.Emit(OpCodes.Ldarg_0);
-            gen.Emit(OpCodes.Ldarg_1);
-            gen.Emit(OpCodes.Constrained, instanceType);
-            gen.Emit(OpCodes.Callvirt, method);
-            gen.Emit(OpCodes.Ret);
-
-            if (dynamicMethod.TryCreateDelegate<AnyRenderTo>(out var func))
+        if (method is not null && DynamicMethod.TryGenerateDelegate<AnyRenderTo>(
+            $"Any_{instanceType}_RenderTo",
+            gen => gen
+                .Ldarg(0)
+                .Ldarg(1)
+                .Constrained(instanceType)
+                .Callvirt(method)
+                .Ret(), out Invoke!))
             {
-                Invoke = func;
                 return;
             }
-        }
+        
 
-        Invoke = Fallback;
+        Invoke = FallbackRenderTo;
     }
 
-    private static void Fallback(in T instance, TextBuilder builder)
+    private static void FallbackRenderTo(in T instance, TextBuilder builder)
     {
         builder.Append(Any.ToString(in instance));
     }

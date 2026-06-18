@@ -3,6 +3,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.Serialization;
+using ScrubJay.Universal.Extensions;
 #if !NETFRAMEWORK && !NETSTANDARD
 using System.ComponentModel.DataAnnotations;
 #endif
@@ -88,4 +89,10 @@ public sealed class EnumMemberInfo<TEnum> : EnumMemberInfo
     }
 
 
+    public bool HasAlias(string? alias)
+    {
+        if (alias.IsNullOrEmpty())
+            return false;
+        return _aliases.ContainsKey(alias);
+    }
 }

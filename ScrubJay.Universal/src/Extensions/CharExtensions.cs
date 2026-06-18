@@ -7,7 +7,7 @@ public static class CharacterExtensions
     public static text AsSpan(this scoped in char ch)
     {
 #if NET7_0_OR_GREATERw
-            return new text(in ch);
+        return new text(in ch);
 #else
         Emit.Ldarg(nameof(ch));
         Emit.Ldc_I4_1();

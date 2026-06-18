@@ -372,7 +372,7 @@ public readonly ref struct RefResult<T>
     {
         if (_isOk)
         {
-            return Any.Equals<T>(_value, obj);
+            return Any.Equate<T>(_value, obj);
         }
         else
         {

@@ -29,6 +29,6 @@ public sealed class ArgException : ArgumentException, ISJException
             tb.AppendLineIfNotNull(ex.Argument, $"Argument: {ex.Argument:@}");
         });
     }
-
-    public override string ToString() => TextBuilder.Build(RenderTo);
+    
+    public override string ToString() => this.Rendered();
 }

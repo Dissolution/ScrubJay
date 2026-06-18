@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection;
+using ScrubJay.Universal.Extensions;
 
 namespace ScrubJay.Enums;
 
@@ -10,12 +11,11 @@ public static class EnumInfoExtensions
 
     private static EnumTypeInfo CacheGet(Type enumType)
     {
-        Debug.Assert(enumType is not null);
-        Debug.Assert(enumType!.IsEnum);
         return _cache.GetOrAdd(enumType, static t =>
             (EnumTypeInfo)typeof(EnumTypeInfo<>)
                 .MakeGenericType(t)
-                .GetField("Instance", BindingFlags.Public | BindingFlags.Static)!
+                .GetField("Instance", BindingFlags.Public | BindingFlags.Static)
+                .ThrowIfNull("Could not find EnumTypeInfo.Instance Field")
                 .GetValue(null)!);
     }
 

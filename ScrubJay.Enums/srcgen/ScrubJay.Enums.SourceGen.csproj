@@ -15,6 +15,7 @@
         <PolyStringInterpolation>true</PolyStringInterpolation>
         <!-- Add Nullability features from Polyfill -->
         <PolyNullability>true</PolyNullability>
+        
         <SgfAddModuleInitializerAttribute>false</SgfAddModuleInitializerAttribute>
     </PropertyGroup>
 

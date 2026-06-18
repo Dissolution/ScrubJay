@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj" />
+    </ItemGroup>
+
 </Project>

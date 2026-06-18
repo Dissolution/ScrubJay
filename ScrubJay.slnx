@@ -12,6 +12,10 @@
 		</Project>
 	</Folder>
 	<Folder Name="/Reflection/">
+		<Project Path="ScrubJay.Reflection.Lightweight/src/ScrubJay.Reflection.Lightweight.csproj">
+			<BuildType Solution="Analyze|*" Project="Debug" />
+			<BuildType Solution="Nuget|*" Project="Debug" />
+		</Project>
 		<Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj">
 			<BuildType Solution="Analyze|*" Project="Debug" />
 			<BuildType Solution="Nuget|*" Project="Debug" />
@@ -36,7 +40,7 @@
 		<Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
 	</Folder>
 	<Folder Name="/Expressions/">
-		<Project Path="ScrubJay.Expressions/ScrubJay.Expressions.csproj">
+		<Project Path="ScrubJay.Expressions/src/ScrubJay.Expressions.csproj">
 			<BuildType Solution="Analyze|*" Project="Debug" />
 			<BuildType Solution="Nuget|*" Project="Debug" />
 		</Project>
@@ -50,7 +54,6 @@
 	<Folder Name="/Text/">
 		<File Path="ScrubJay.Text/README.md" />
 		<Project Path="ScrubJay.Text/src/ScrubJay.Text.csproj" />
-		<Project Path="ScrubJay.Text/tests/ScrubJay.Text.Tests.csproj" />
 	</Folder>
 	<Folder Name="/Errors/">
 		<File Path="ScrubJay.Errors/README.md" />

@@ -1,5 +1,3 @@
-using System.Reflection;
-using System.Reflection.Emit;
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
@@ -7,13 +5,18 @@ namespace ScrubJay.Universal;
 public partial class Any
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Dispose<T>(ref T? instance)
+    public static void Dispose<T>([AllowNull, MaybeNull] ref T? instance)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
         if (instance is not null)
-            DisposeCache<T>.Invoke(ref instance);
+        {
+            DisposeCache<T>.Dispose(ref instance);
+        }
+        
+        // set to default to remove all references
+        instance = default(T);
     }
 
     private static class DisposeCache<T>
@@ -21,37 +24,31 @@ public partial class Any
         where T : allows ref struct
 #endif
     {
-        internal delegate void AnyDispose(ref T instance);
-
-        internal static readonly AnyDispose Invoke;
+        internal static readonly AnyDispose<T> Dispose;
 
         static DisposeCache()
         {
             Type instanceType = typeof(T);
-            MethodInfo? method = instanceType.FindMatchingInstanceMethods("Dispose", typeof(void), [])
+            MethodInfo? method = instanceType
+                .FindMatchingMethods<Action<T>>(nameof(IDisposable.Dispose))
                 .FirstOrDefault();
 
-            if (method is not null)
+            if (method is not null && DynamicMethod.TryGenerateDelegate<AnyDispose<T>>(
+                $"Any_{instanceType}_Dispose", 
+                gen => gen
+                    .Ldarg(0)
+                    .Constrained(instanceType)
+                    .Callvirt(method)
+                    .Ret(),
+                out Dispose!))
             {
-                var dynamicMethod = CreateDynamicMethod<AnyDispose>($"Any_{instanceType}_Dispose");
-                var gen = dynamicMethod.GetILGenerator();
-
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Constrained, instanceType);
-                gen.Emit(OpCodes.Callvirt, method);
-                gen.Emit(OpCodes.Ret);
-
-                if (dynamicMethod.TryCreateDelegate<AnyDispose>(out var func))
-                {
-                    Invoke = func;
-                    return;
-                }
+                return;
             }
 
-            Invoke = Fallback;
+            Dispose = FallbackDispose;
         }
 
-        private static void Fallback(ref T instance)
+        private static void FallbackDispose(ref T? instance)
         {
             // do nothing
         }

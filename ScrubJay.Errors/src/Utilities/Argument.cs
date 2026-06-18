@@ -84,7 +84,6 @@ public sealed record class Argument : IRenderable
         valueString = ValueString;
     }
 
-    public override string ToString() => TextBuilder.Build(RenderTo);
 
     public void RenderTo(TextBuilder builder)
     {
@@ -113,4 +112,6 @@ public sealed record class Argument : IRenderable
             builder.Append("null");
         }
     }
+
+    public override string ToString() => this.Rendered();
 }

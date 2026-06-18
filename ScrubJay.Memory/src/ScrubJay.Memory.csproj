@@ -18,10 +18,6 @@
     <ItemGroup>
         <PackageReference Include="Fody" PrivateAssets="all"/>
         <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
-        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1' "
-                          Include="System.Runtime.CompilerServices.Unsafe">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
     </ItemGroup>
     
     <ItemGroup>

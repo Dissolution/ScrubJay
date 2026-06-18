@@ -3,14 +3,21 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ScrubJay.Errors;
+using ScrubJay.Sandboxes.Console;
 using ScrubJay.Text.Building;
 using ScrubJay.Text.Rendering;
+using ScrubJay.Universal;
 
 Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
-int[] arr = [1, 4, 7];
-arr.Reverse();
+
+var a = "bob";
+var b = "bob";
+
+var c = Any.Compare(a, b);
+
+
 
 Console.WriteLine("Press enter to close this Sandbox.");
 //Console.ReadLine();
@@ -23,6 +30,26 @@ namespace ScrubJay.Sandboxes.Console
     public ref struct TestRefStruct
     {
         public override string ToString() => "TestRefStruct";
+    }
+
+    public ref struct TestRefStructComp
+#if NET9_0_OR_GREATER
+        : IComparable<TestRefStructComp>
+#endif
+    {
+        public readonly int Id;
+
+        public TestRefStructComp()
+        {
+            Id = Guid.NewGuid().GetHashCode();
+        }
+
+        public int CompareTo(TestRefStructComp other)
+        {
+            return this.Id.CompareTo(other.Id);
+        }
+
+        public override string ToString() => nameof(TestRefStructComp);
     }
 
 

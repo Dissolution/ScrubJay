@@ -3,10 +3,7 @@ namespace ScrubJay.Universal.Extensions;
 [PublicAPI]
 public static class TextExtensions
 {
-    extension(string? str)
-    {
-        public bool IsNullOrEmpty() => string.IsNullOrEmpty(str);
-    }
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str) => string.IsNullOrEmpty(str);
 
     extension(scoped text text)
     {

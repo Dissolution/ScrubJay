@@ -28,6 +28,10 @@ namespace ScrubJay.Universal;
 [PublicAPI]
 public static class TypeConstraints
 {
+    /// <summary>
+    /// The lack of a type constraint, for differentiation.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct None<T>;
 
@@ -62,7 +66,7 @@ public static class TypeConstraints
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
-    ;
+        ;
 
     /// <summary>
     /// Constrains <typeparamref name="T"/> to be a reference type.<br/>
@@ -156,20 +160,16 @@ public static class TypeConstraints
     public readonly struct HasIFormattable<T>
         where T : IFormattable;
 
-#if NET6_0_OR_GREATER
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="ISpanFormattable"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasISpanFormattable<T>
-        where T : ISpanFormattable;
-#else
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="ISpanFormattable"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasISpanFormattable<T>;
+    public readonly struct HasISpanFormattable<T>
+#if NET6_0_OR_GREATER
+        where T : ISpanFormattable
 #endif
+        ;
 
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see cref="IDisposable"/>.
@@ -178,99 +178,69 @@ public static class TypeConstraints
     public readonly struct HasIDisposable<T>
         where T : IDisposable;
 
-#if NETSTANDARD2_1 || NET6_0_OR_GREATER
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IAsyncDisposable"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIAsyncDisposable<T>
-        where T : IAsyncDisposable;
-#else
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="IAsyncDisposable"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIAsyncDisposable<T>;
+    public readonly struct HasIAsyncDisposable<T>
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
+        where T : IAsyncDisposable
 #endif
+        ;
 
-
-    // Net7.0+ types
-    // supported on lower versions to allow attributes to just exist
-
-#if NET7_0_OR_GREATER
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IParsable{T}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIParsable<T>
-        where T : IParsable<T>;
-#else
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="IParsable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIParsable<T>;
-#endif
-
+    public readonly struct HasIParsable<T>
 #if NET7_0_OR_GREATER
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="ISpanParsable{T}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasISpanParsable<T>
-        where T : ISpanParsable<T>;
-#else
+        where T : IParsable<T>
+#endif
+        ;
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="ISpanParsable{T}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasISpanParsable<T>;
-#endif
-
+    public readonly struct HasISpanParsable<T>
 #if NET7_0_OR_GREATER
+        where T : ISpanParsable<T>
+#endif
+        ;
+
+
     /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="INumberBase{TSelf}"/>.
+    /// Constrains <typeparamref name="T"/> to <see langword="INumberBase{TSelf}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasINumberBase<T>
-        where T : INumberBase<T>;
-#else
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="INumberBase{T}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasINumberBase<T>;
-#endif
-
 #if NET7_0_OR_GREATER
+        where T : INumberBase<T>
+#endif
+        ;
+
+
+
     /// <summary>
-    /// Constrains <typeparamref name="T"/> <see cref="IEqualityOperators{TSelf,TOther,TResult}"/>.
+    /// Constrains <typeparamref name="T"/> <see langword="IEqualityOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct HasIEqualityOperators<T>
-        where T : IEqualityOperators<T, T, bool>;
-#else
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see langword="IEqualityOperators{TSelf,TOther,TResult}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIEqualityOperators<T>;
-#endif
-
 #if NET7_0_OR_GREATER
-    /// <summary>
-    /// Constrains <typeparamref name="T"/> to <see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIComparisonOperators<T>
-        where T : IComparisonOperators<T, T, int>;
-#else
+        where T : IEqualityOperators<T, T, bool>
+#endif
+        ;
+
     /// <summary>
     /// Constrains <typeparamref name="T"/> to <see langword="IComparisonOperators{TSelf,TOther,TResult}"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0)]
-    public readonly struct HasIComparisonOperators<T>;
+    public readonly struct HasIComparisonOperators<T>
+#if NET7_0_OR_GREATER
+        where T : IComparisonOperators<T, T, int>
 #endif
+        ;
 
     // combinations
 
@@ -319,6 +289,14 @@ public static class TypeConstraints
     [StructLayout(LayoutKind.Auto, Size = 0)]
     public readonly struct IsStructAllowsRefStruct<T>
         where T : struct
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+    ;
+    
+    [StructLayout(LayoutKind.Auto, Size = 0)]
+    public readonly struct IsIComparableAllowsRefStruct<T>
+        where T : IComparable<T>
 #if NET9_0_OR_GREATER
         , allows ref struct
 #endif

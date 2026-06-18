@@ -31,7 +31,7 @@ public partial class Demand
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (!Any.Equals<T>(in argument, in expected))
+        if (!Any.Equate<T>(in argument, in expected))
             Throw.ArgNotEqual(argument, expected, info, argumentName);
     }
 #endif
@@ -64,7 +64,7 @@ public partial class Demand
         TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
-        if (Any.Equals<T>(in argument, in expected))
+        if (Any.Equate<T>(in argument, in expected))
             Throw.ArgEqual(argument, expected, info, argumentName);
     }
 #endif

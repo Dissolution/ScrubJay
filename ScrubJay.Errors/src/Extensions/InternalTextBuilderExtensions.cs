@@ -16,7 +16,7 @@ internal static class InternalTextBuilderExtensions
         }
         return builder;
     }
-
+    
     public static TextBuilder AppendLineIfNotEmpty(
         this TextBuilder builder,
         string? str,
@@ -31,7 +31,7 @@ internal static class InternalTextBuilderExtensions
         }
         return builder;
     }
-
+    
     public static TextBuilder AppendInfo(
         this TextBuilder builder,
         string? info)

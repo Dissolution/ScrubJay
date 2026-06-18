@@ -1,39 +1,38 @@
+using ScrubJay.Universal.Extensions;
+
 namespace ScrubJay.Errors.Validation;
 
 public static class ThrowExtensions
 {
-    public static T ThrowIfNull<T>(
-        [AllowNull, NotNull] this T? value,
-        string? info = null,
-        [CallerArgumentExpression(nameof(value))]
-        string? argumentName = null)
-        where T : class
+    [DoesNotReturn]
+    private static void ThrowObjectNotTypeException<T>(object? obj, string? info, string? objName)
     {
-        if (value is null)
-            Throw.ArgNull<T>(value, info, argumentName);
-        return value;
+        DefaultInterpolatedStringHandler message = new();
+        message.Write(Any.GetType(obj));
+        message.Write(" '");
+        message.Write(objName);
+        message.Write("' is not a valid ");
+        message.Write(typeof(T));
+        if (!info.IsNullOrEmpty())
+        {
+            message.Write(": ");
+            message.Write(info);
+        }
+        throw new ArgumentException(message.ToStringAndClear(), objName);
     }
-
-    public static T ThrowIfNull<T>(
-        [AllowNull, NotNull] this Nullable<T> value,
-        string? info = null,
-        [CallerArgumentExpression(nameof(value))]
-        string? argumentName = null)
-        where T : struct
-    {
-        if (!value.HasValue)
-            Throw.ArgNull<T?>(value, info, argumentName);
-        return value.GetValueOrDefault();
-    }
-
+    
     public static T ThrowIfNot<T>(
         this object? obj,
         string? info = null,
         [CallerArgumentExpression(nameof(obj))]
-        string? objectName = null)
+        string? objName = null)
     {
-        if (obj is not T)
-            Throw.Arg(obj, info, objectName);
-        return (T)obj;
+        if (obj is T value)
+        {
+            return value;
+        }
+        
+        ThrowObjectNotTypeException<T>(obj, info, objName);
+        throw new UnreachableException();
     }
 }

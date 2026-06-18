@@ -147,7 +147,7 @@ public record class OpCodeInstruction : Instruction
 {
     public OpCode OpCode { get; }
 
-    public string Name => OpCode.Name;
+    public string? Name => OpCode.Name;
 
     public OperandType OperandType => OpCode.OperandType;
 

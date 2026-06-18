@@ -1,11 +1,31 @@
-using System.Reflection;
-using System.Reflection.Emit;
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
 
 public partial class Any
 {
+#if NET6_0_OR_GREATER
+    public static bool TryFormat<T>(
+        in T? instance,
+        Span<char> destination,
+        out int charsWritten,
+        text format = default,
+        IFormatProvider? provider = null)
+        where T : ISpanFormattable
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+    {
+        if (instance is null)
+        {
+            charsWritten = 0;
+            return true;
+        }
+
+        return instance.TryFormat(destination, out charsWritten, format, provider);
+    }
+#endif
+
     public static bool HasTryFormat<T>()
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -17,8 +37,9 @@ public partial class Any
         in T? instance,
         Span<char> destination,
         out int charsWritten,
-        scoped text format = default,
-        IFormatProvider? provider = null)
+        text format = default,
+        IFormatProvider? provider = null,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
@@ -37,48 +58,42 @@ public partial class Any
         where T : allows ref struct
 #endif
     {
-        internal delegate bool AnyTryFormat(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider);
-
-
-        internal static readonly AnyTryFormat TryFormat;
+        internal static readonly AnyTryFormat<T> TryFormat;
         internal static readonly bool HasTryFormat;
 
         static TryFormatCache()
         {
             Type instanceType = typeof(T);
             MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods("TryFormat", typeof(bool), [typeof(Span<char>), typeof(int).MakeByRefType(), typeof(text), typeof(IFormatProvider)])
+                .FindMatchingMethods("TryFormat",
+                    returnType: typeof(bool),
+                    parameterTypes: [typeof(Span<char>), typeof(int).MakeByRefType(), typeof(text), typeof(IFormatProvider)])
                 .FirstOrDefault();
 
-            if (method is not null)
+            if (method is not null && DynamicMethod.TryGenerateDelegate<AnyTryFormat<T>>(
+                $"Any_{instanceType}_TryFormat",
+                gen => gen
+                    .Ldarg(0)
+                    .Ldarg(1)
+                    .Ldarg(2)
+                    .Ldarg(3)
+                    .Ldarg(4)
+                    .Constrained(instanceType)
+                    .Callvirt(method)
+                    .Ret(), out TryFormat!))
             {
-                var dynamicMethod = CreateDynamicMethod<AnyTryFormat>($"Any_{instanceType}_Format");
-                var gen = dynamicMethod.GetILGenerator();
-
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldarg_1);
-                gen.Emit(OpCodes.Ldarg_2);
-                gen.Emit(OpCodes.Ldarg_3);
-                gen.Emit(OpCodes.Ldarg, 4);
-                gen.Emit(OpCodes.Constrained, instanceType);
-                gen.Emit(OpCodes.Callvirt, method);
-                gen.Emit(OpCodes.Ret);
-
-                if (dynamicMethod.TryCreateDelegate<AnyTryFormat>(out var func))
-                {
-                    TryFormat = func;
-                    HasTryFormat = true;
-                    return;
-                }
+                HasTryFormat = true;
+                return;
             }
+
 
             TryFormat = FallbackTryFormat;
             HasTryFormat = false;
         }
 
-        private static bool FallbackTryFormat(ref readonly T instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
+        private static bool FallbackTryFormat(in T? instance, Span<char> destination, out int charsWritten, scoped text format, IFormatProvider? provider)
         {
-            string str = ToString<T>(in instance)!;
+            string str = Any.ToString<T>(in instance)!;
             charsWritten = str.Length;
             if (str.TryCopyTo(destination))
             {

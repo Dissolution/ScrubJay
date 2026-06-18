@@ -6,14 +6,12 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <Deterministic>true</Deterministic>
-        <!-- CS8981; -->
-        <!-- CS1591; -->
-        <!-- CA1303; Do not pass literals as localized parameters -->
-        <!-- CA1051; Do not declare visible instance fields -->
-        <NoWarn>$(NoWarn);CS8981;CS1591;CA1303;CA1051;</NoWarn>
-        
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <NoWarn>$(NoWarn);</NoWarn>
+
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);CA0022;</NoWarn>
+        <NoWarn>$(NoWarn);CA0022;CS1591;</NoWarn>
     </PropertyGroup>
 
     <!-- NuGet common to all Projects -->
@@ -39,6 +37,7 @@
         <!-- Global Aliases -->
         <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
         <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
+        <Using Include="System.Runtime.CompilerServices.DefaultInterpolatedStringHandler" Alias="InterpolatedBuilder"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -51,6 +50,11 @@
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
                                      $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
+
+        <!-- NetStandard 2.1 includes Unsafe -->
+        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1'"
+                          Include="System.Runtime.CompilerServices.Unsafe"
+                          PrivateAssets="all"/>
     </ItemGroup>
 
     <!-- Build Configurations -->

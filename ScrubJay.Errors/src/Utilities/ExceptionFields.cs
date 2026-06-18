@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Reflection.Emit;
+using ScrubJay.Reflection.Lightweight;
 
 namespace ScrubJay.Errors.Utilities;
 
@@ -19,12 +20,12 @@ internal static class ExceptionFields
         if (exceptionField is null)
             throw new MissingFieldException(Type.Render(key.ExceptionType), key.FieldName);
 
-        var method = Any.CreateDynamicMethod<RefExceptionFieldDelegate<TException, TField>>($"{Type.Render(key.ExceptionType)}.{key.FieldName}");
-        var gen = method.GetILGenerator();
-        gen.Emit(OpCodes.Ldarg_0);
-        gen.Emit(OpCodes.Ldflda, exceptionField);
-        gen.Emit(OpCodes.Ret);
-        return method.CreateDelegate<RefExceptionFieldDelegate<TException, TField>>();
+        return DynamicMethod.GenerateDelegate<RefExceptionFieldDelegate<TException, TField>>(
+            $"{Type.Render(key.ExceptionType)}.{key.FieldName}",
+            gen => gen
+                .Ldarg(0)
+                .Ldflda(exceptionField)
+                .Ret());
     }
 
     public static ref TField? RefExceptionField<TException, TField>(TException exception, string fieldName)

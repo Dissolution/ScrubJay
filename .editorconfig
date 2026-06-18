@@ -205,7 +205,7 @@ dotnet_naming_rule.other_members_must_be_pascal.severity = error
 ### IDE
 
 ; IDE0004
-dotnet_diagnostic.IDE0004.severity = suggestion
+dotnet_diagnostic.IDE0004.severity = none
 
 ; IDE0007 + IDE0008
 csharp_style_var_for_built_in_types = false
@@ -224,7 +224,7 @@ dotnet_diagnostic.IDE0018.severity = suggestion
 
 ; IDE0022
 csharp_style_expression_bodied_methods = when_on_single_line
-dotnet_diagnostic.IDE0022.severity = suggestion
+dotnet_diagnostic.IDE0022.severity = none
 
 ; IDE0023 + IDE0024
 csharp_style_expression_bodied_operators = when_on_single_line
@@ -270,7 +270,7 @@ dotnet_diagnostic.IDE0047.severity = error
 dotnet_diagnostic.IDE0048.severity = error
 
 ; IDE0055 - Lots of conflicts with resharper styles
-dotnet_diagnostic.IDE0055.severity = suggestion
+dotnet_diagnostic.IDE0055.severity = none
 
 ; IDE0061
 csharp_style_expression_bodied_local_functions = when_on_single_line
@@ -315,6 +315,9 @@ dotnet_diagnostic.CA1033.severity = none
 ; CA1034 - Why not?
 dotnet_diagnostic.CA1034.severity = none
 
+; CA1051 - Visible instance fields are fine
+dotnet_diagnostic.CA1051.severity = none
+
 ; CA1054 - Uri has limitations
 dotnet_diagnostic.CA1054.severity = none
 
@@ -323,6 +326,9 @@ dotnet_diagnostic.CA1062.severity = none
 
 ; CA1063 - Disposable
 dotnet_diagnostic.CA1063.severity = none
+
+; CA1303 - localization
+dotnet_diagnostic.CA1303.severity = none
 
 ; CA1305 - localization
 dotnet_diagnostic.CA1305.severity = none
@@ -371,10 +377,13 @@ dotnet_diagnostic.CA2225.severity = none
 ; CA2263 - Prefer generic overloads - conflicts with multitargetting
 dotnet_diagnostic.CA2263.severity = suggestion
 
+# CS?
 
+; CS1591 - missing XML docs
+dotnet_diagnostic.CS1591.severity = none
 
-
-
+; CS8981 - text is named that way for a reason
+dotnet_diagnostic.CS8981.severity = none
 
 
 

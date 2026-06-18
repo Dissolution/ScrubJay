@@ -31,5 +31,5 @@ public sealed class ArgNullException : ArgumentNullException, IRenderable
         });
     }
 
-    public override string ToString() => TextBuilder.Build(RenderTo);
+    public override string ToString() => this.Rendered();
 }

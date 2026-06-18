@@ -126,4 +126,5 @@ public static class Renderer
     {
         return TextBuilder.Build<T>(span, RenderSpanTo);
     }
+
 }

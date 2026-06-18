@@ -12,7 +12,7 @@ public partial class Ex
 #endif
     {
         var arg = Argument.Capture<T>(in argument, argumentName);
-        return new ArgRangeException(arg, Any.BoxOrBytes(in argument), message);
+        return new ArgRangeException(arg, Any.BoxOr(argument, null), message);
     }
 
     public static ArgRangeException ArgRange<T>(

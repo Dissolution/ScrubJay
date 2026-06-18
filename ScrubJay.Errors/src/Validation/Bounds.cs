@@ -67,7 +67,7 @@ public readonly struct LowerBound<T> :
 
     public bool Equals(LowerBound<T> other)
     {
-        return Any.Equals(Value, other.Value) &&
+        return Any.Equate(Value, other.Value) &&
             Condition == other.Condition;
     }
 
@@ -178,7 +178,7 @@ public readonly struct UpperBound<T> :
 
     public bool Equals(UpperBound<T> other)
     {
-        return Any.Equals(Value, other.Value) &&
+        return Any.Equate(Value, other.Value) &&
             Condition == other.Condition;
     }
 

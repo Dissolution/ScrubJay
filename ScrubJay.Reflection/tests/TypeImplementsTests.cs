@@ -40,9 +40,9 @@ public class TypeExtensionsTests
         }.GetType(),
     ];
 
-    public static TheoryData<Type?> TestTypes { get; } = new TheoryData<Type>(Types);
+    public static TheoryData<Type?> TestTypes { get; } = new TheoryData<Type?>(Types);
     
-    public static TheoryData<Type?, Type?> CombinedTestTypes { get; } = new MatrixTheoryData<Type, Type>(Types, Types);
+    public static TheoryData<Type?, Type?> CombinedTestTypes { get; } = new MatrixTheoryData<Type?, Type?>(Types, Types);
     
     // support for testing
     private static T? GetDefault<T>() => default(T);

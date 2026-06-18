@@ -39,9 +39,6 @@ https://raw.githubusercontent.com/Cyan4973/xxHash/5c174cfa4e45a42f94082dc0d4539b
 
 using System.ComponentModel;
 using System.Security.Cryptography;
-#if !NETFRAMEWORK && !NETSTANDARD
-using static System.Numerics.BitOperations;
-#endif
 
 namespace ScrubJay.Universal;
 
@@ -61,9 +58,8 @@ public ref struct Hasher
     private const uint PRIME3 = 0xC2B2AE3DU;
     private const uint PRIME4 = 0x27D4EB2FU;
     private const uint PRIME5 = 0x165667B1U;
-
-
-    #region Static
+    
+#region Static
     /// <summary>
     /// The current seed for this <see cref="Hasher"/>.
     /// </summary>
@@ -105,10 +101,6 @@ public ref struct Hasher
 #endif
     }
 
-#if NETFRAMEWORK || NETSTANDARD // otherwise we have BitOperations imported
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static uint RotateLeft(uint value, int offset) => (value << offset) | (value >> (32 - offset));
-#endif
 
     private static uint StartHash() => _seed + PRIME5;
 
@@ -126,18 +118,18 @@ public ref struct Hasher
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint StateAdd(uint hash, uint input)
-        => RotateLeft(hash + (input * PRIME2), 13) * PRIME1;
+        => BitOperations.RotateLeft(hash + (input * PRIME2), 13) * PRIME1;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint HashAdd(uint hash, uint queuedValue)
-        => RotateLeft(hash + (queuedValue * PRIME3), 17) * PRIME4;
+        => BitOperations.RotateLeft(hash + (queuedValue * PRIME3), 17) * PRIME4;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint StateToHash(uint value1, uint value2, uint value3, uint value4)
-        => RotateLeft(value1, 1) +
-            RotateLeft(value2, 7) +
-            RotateLeft(value3, 12) +
-            RotateLeft(value4, 18);
+        => BitOperations.RotateLeft(value1, 1) +
+            BitOperations.RotateLeft(value2, 7) +
+            BitOperations.RotateLeft(value3, 12) +
+            BitOperations.RotateLeft(value4, 18);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint HashFinalize(uint hash)
@@ -150,7 +142,7 @@ public ref struct Hasher
         return hash;
     }
 
-    #region Hash (one)
+#region Hash (one)
     /// <summary>
     /// Gets the hashcode for a <typeparamref name="T"/> <paramref name="value"/>.
     /// </summary>
@@ -229,9 +221,9 @@ public ref struct Hasher
         return Any.GetHashCode<T>(in value, _);
     }
 #endif
-    #endregion /Hash (one)
+#endregion /Hash (one)
 
-    #region HashMany
+#region HashMany
     /// <summary>
     /// Gets a hashcode generated from multiple values.
     /// </summary>
@@ -577,9 +569,9 @@ public ref struct Hasher
         hasher.AddMany<T>(enumerable, comparer);
         return hasher.ToHashCode();
     }
-    #endregion /HashMany
+#endregion /HashMany
 
-    #region HashBytes
+#region HashBytes
     /// <summary>
     /// Gets a hashcode generated from all the bytes underpinning a
     /// <see langword="ref"/> <see langword="readonly"/> <typeparamref name="T"/> <paramref name="value"/>.
@@ -593,11 +585,11 @@ public ref struct Hasher
 #endif
     {
         var hasher = new Hasher();
-        hasher.AddBytes(Any.GetReferenceBytes<T>(in value));
+        hasher.AddBytes(Unsafe.GetReferenceBytes<T>(in value));
         return hasher.ToHashCode();
     }
-    #endregion /HashBytes
-    #endregion /Static
+#endregion /HashBytes
+#endregion /Static
 
     // current hasher states
 
@@ -638,8 +630,6 @@ public ref struct Hasher
         }
         else // position == 3
         {
-            Debug.Assert(position == 3);
-
             if (previousLength == 3)
             {
                 StartingStates(out _state1, out _state2, out _state3, out _state4);
@@ -689,7 +679,7 @@ public ref struct Hasher
         }
     }
 
-    #region AddMany
+#region AddMany
     /// <summary>
     /// Adds the hashcodes of the items in a <see cref="Span{T}"/>
     /// </summary>
@@ -774,9 +764,9 @@ public ref struct Hasher
             Add<T>(value, comparer);
         }
     }
-    #endregion
+#endregion
 
-    #region AddBytes
+#region AddBytes
     /// <summary>
     /// Adds a span of bytes to this <see cref="Hasher"/>.
     /// </summary>
@@ -785,24 +775,21 @@ public ref struct Hasher
 #endif
     public void AddBytes(scoped ReadOnlySpan<byte> bytes)
     {
-        ref byte pos = ref MemoryMarshal.GetReference(bytes);
-        ref byte end = ref Unsafe.Add(ref pos, bytes.Length);
-
         // Add four bytes at a time until the input has fewer than four bytes remaining.
-        while (Unsafe.ByteOffset(ref pos, ref end) >= (nint)sizeof(uint))
+        while (bytes.Length >= 4)
         {
-            AddHash(Unsafe.ReadUnaligned<uint>(ref pos));
-            pos = ref Unsafe.Add(ref pos, sizeof(uint));
+            uint hash = Unsafe.ReadUnaligned<uint>(ref MemoryMarshal.GetReference(bytes));
+            AddHash(hash);
+            bytes = bytes[4..];
         }
-
-        // Add the remaining bytes a single byte at a time.
-        while (Unsafe.IsAddressLessThan(ref pos, ref end))
+      
+        // Add the remaining bytes
+        foreach (byte u8 in bytes)
         {
-            AddHash((uint)pos);
-            pos = ref Unsafe.Add(ref pos, 1);
+            AddHash((uint)u8);
         }
     }
-    #endregion /AddBytes
+#endregion /AddBytes
 
     /// <summary>
     /// Gets the hashcode generated by this <see cref="Hasher"/> instance
@@ -854,18 +841,21 @@ public ref struct Hasher
 
 #pragma warning disable CS0809
 
+    /// <inheritdoc/>
     [Obsolete("Use ToHashCode() to get the hashcode generated by this Hasher!", true)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public override readonly int GetHashCode() => ToHashCode();
 
+    /// <inheritdoc/>
     [Obsolete("Hasher does not equate to anything!", true)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public override readonly bool Equals(object? obj) => false;
 
 #pragma warning restore CS0809
 
+    /// <inheritdoc/>
     public override readonly string ToString()
     {
-        return $"Hasher.HashCode = {ToHashCode():X8}";
+        return $"Current Hash: {ToHashCode():X8}";
     }
 }

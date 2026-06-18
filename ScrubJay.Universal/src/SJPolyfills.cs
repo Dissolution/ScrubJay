@@ -1,3 +1,4 @@
+// ReSharper disable PartialTypeWithSinglePart
 #pragma warning disable IDE0130, IDE0161
 
 
@@ -43,6 +44,23 @@ namespace ScrubJay.Universal
                     return [];
                 (int start, int length) = range.GetOffsetAndLength(array.Length);
                 return new Span<T>(array, start, length);
+            }
+        }
+
+        extension(StringComparer)
+        {
+            public static StringComparer FromComparison(StringComparison comparisonType)
+            {
+                return comparisonType switch
+                {
+                    StringComparison.CurrentCulture => StringComparer.CurrentCulture,
+                    StringComparison.CurrentCultureIgnoreCase => StringComparer.CurrentCultureIgnoreCase,
+                    StringComparison.InvariantCulture => StringComparer.InvariantCulture,
+                    StringComparison.InvariantCultureIgnoreCase => StringComparer.InvariantCultureIgnoreCase,
+                    StringComparison.Ordinal => StringComparer.Ordinal,
+                    StringComparison.OrdinalIgnoreCase => StringComparer.OrdinalIgnoreCase,
+                    _ => throw new ArgumentOutOfRangeException(nameof(comparisonType)),
+                };
             }
         }
     }

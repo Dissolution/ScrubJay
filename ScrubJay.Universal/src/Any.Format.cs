@@ -1,36 +1,31 @@
-using System.Reflection;
-using System.Reflection.Emit;
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 namespace ScrubJay.Universal;
 
 public partial class Any
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
-    public static string? Format<T>(in T? instance)
+    public static string? Format<T>(in T? instance, string? format = null, IFormatProvider? provider = null)
+        where T : IFormattable
 #if NET9_0_OR_GREATER
-        where T : allows ref struct
+        , allows ref struct
 #endif
     {
         if (instance is null)
             return null;
-        return ToStringCache<T>.Invoke(in instance);
+        return instance.ToString(format, provider);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(instance))]
-    public static string? Format<T>(
-        in T? instance,
-        string? format = null,
-        IFormatProvider? provider = null)
+    public static string? Format<T>(in T? instance, string? format = null, IFormatProvider? provider = null,
+        TypeConstraints.AllowsRefStruct<T> _ = default)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
 #endif
     {
         if (instance is null)
             return null;
-        return FormatCache<T>.Invoke(in instance, format, provider);
+        return FormatCache<T>.Format(in instance, format, provider);
     }
 
     private static class FormatCache<T>
@@ -38,40 +33,32 @@ public partial class Any
         where T : allows ref struct
 #endif
     {
-        internal delegate string AnyFormat(ref readonly T instance, string? format, IFormatProvider? provider);
-
-        internal static readonly AnyFormat Invoke;
+        internal static readonly AnyFormat<T> Format;
 
         static FormatCache()
         {
             Type instanceType = typeof(T);
             MethodInfo? method = instanceType
-                .FindMatchingInstanceMethods(nameof(IFormattable.ToString), typeof(string), [typeof(string), typeof(IFormatProvider)])
+                .FindMatchingMethods<Func<T, string, IFormatProvider, string>>(nameof(IFormattable.ToString))
                 .FirstOrDefault();
 
-            if (method is not null)
+            if (method is not null && DynamicMethod.TryGenerateDelegate(
+                $"Any_{instanceType}_Format",
+                gen => gen
+                    .Ldarg(0)
+                    .Ldarg(1)
+                    .Ldarg(2)
+                    .Constrained(instanceType)
+                    .Callvirt(method)
+                    .Ret(), out Format!))
             {
-                var dynamicMethod = CreateDynamicMethod<AnyFormat>($"Any_{instanceType}_Format");
-                var gen = dynamicMethod.GetILGenerator();
-
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldarg_1);
-                gen.Emit(OpCodes.Ldarg_2);
-                gen.Emit(OpCodes.Constrained, instanceType);
-                gen.Emit(OpCodes.Callvirt, method);
-                gen.Emit(OpCodes.Ret);
-
-                if (dynamicMethod.TryCreateDelegate<AnyFormat>(out var func))
-                {
-                    Invoke = func;
-                    return;
-                }
+                return;
             }
 
-            Invoke = Fallback;
+            Format = FallbackFormat;
         }
 
-        private static string Fallback(ref readonly T instance, string? format, IFormatProvider? provider)
+        private static string FallbackFormat(in T? instance, string? format, IFormatProvider? provider)
         {
             return ToStringCache<T>.Invoke(in instance);
         }

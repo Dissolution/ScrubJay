@@ -1,3 +1,5 @@
+using ScrubJay.Functional.Utilities;
+
 namespace ScrubJay.Functional.Extensions;
 
 /// <summary>
