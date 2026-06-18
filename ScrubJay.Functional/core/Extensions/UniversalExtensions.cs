@@ -3,6 +3,27 @@ namespace ScrubJay.Functional.Extensions;
 [PublicAPI]
 public static class UniversalExtensions
 {
+    extension<E>(E)
+        where E : IEquatable<E>
+    {
+        public static bool Equals(E? left, E? right)
+        {
+            if (left is not null)
+            {
+                return left.Equals(right!);
+            }
+            else if (right is not null)
+            {
+                return right.Equals(left!);
+            }
+            else
+            {
+                return true; // both are null
+            }
+        }
+    }
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Option<T> IsNotNull<T>(this Nullable<T> nullable)
         where T : struct
