@@ -1,0 +1,13 @@
+<Solution>
+	<Configurations>
+		<BuildType Name="Debug" />
+		<BuildType Name="Analyze" />
+		<BuildType Name="Release" />
+		<BuildType Name="Nuget" />
+	</Configurations>
+	<Project Path="app/ScrubJay.Functional.ConsoleApp.csproj" />
+	<Project Path="core/ScrubJay.Functional.csproj">
+		<BuildType Solution="Analyze|*" Project="Debug" />
+		<BuildType Solution="Nuget|*" Project="Debug" />
+	</Project>	
+</Solution>

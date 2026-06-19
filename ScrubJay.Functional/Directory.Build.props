@@ -1,0 +1,33 @@
+<Project>
+
+    <!-- Common to all Projects -->
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Deterministic>true</Deterministic>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+        <NoWarn>$(NoWarn);</NoWarn>
+
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CA0022;CS1591;</NoWarn>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <!-- All Projects reference JetBrains.Annotations -->
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
+        <!-- All Projecte reference Blokyk's Value Not Used Suppressor -->
+        <PackageReference Include="Blokyk.Roslyn.ValueNotUsedSuppressor" PrivateAssets="all"/>
+
+        <!-- Net Framework and Net Standard include System.Memory -->
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
+                                     $(TargetFrameworkIdentifier) == '.NETFramework'"
+                          Include="System.Memory"/>
+
+        <!-- NetStandard 2.1 includes Unsafe -->
+        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1'"
+                          Include="System.Runtime.CompilerServices.Unsafe"
+                          PrivateAssets="all"/>
+    </ItemGroup>
+    
+</Project>
