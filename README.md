@@ -1,10 +1,3 @@
 # ScrubJay
-This the root solution for most public ScrubJay libraries.
 
----
-
-## `ScrubJay.Functional`
-
-## `ScrubJay.Core`
-
-## `ScrubJay.Reflection`
+This solution contains all of the component ScrubJay projects and the files that they all inherit from.

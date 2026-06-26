@@ -1,12 +1,19 @@
-# MSBuild
+# All logs
+[Ll]og/
+[Ll]ogs/
+
+# MSBuild Output
 [Bb]in/
 [Oo]bj/
 
-# JetBrains
+# JetBrains Rider
 .idea/
 
-# Git
-.git/
+# Zed
+.zed/
 
-# GitHub
+# Obsidian
+.obsidian/
+
+# NuGet
 packages/
