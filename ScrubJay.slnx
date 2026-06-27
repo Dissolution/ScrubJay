@@ -1,29 +1,25 @@
 <Solution>
-  <Folder Name="/Sandboxes/">
-    <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj" />
-    <Project Path="StandaloneSandbox/StandaloneSandbox.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Core/">
-    <Project Path="ScrubJay.Core/build_tasks/BuildTasks.csproj" />
-    <Project Path="ScrubJay.Core/src/ScrubJay.Core.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Functional/">
-    <Project Path="ScrubJay.Functional/asp/ScrubJay.Functional.Asp.csproj" />
-    <Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj" />
-    <Project Path="ScrubJay.Functional/src/ScrubJay.Functional.csproj" />
-    <Project Path="ScrubJay.Functional/tests/ScrubJay.Functional.Tests.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Reflection/">
-    <Project Path="ScrubJay.Reflection/benchmarks/ScrubJay.Reflection.Benchmarks.csproj" />
-    <Project Path="ScrubJay.Reflection/src/ScrubJay.Reflection.csproj" />
-    <Project Path="ScrubJay.Reflection/tests/ScrubJay.Reflection.Tests.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Text/">
-    <Project Path="ScrubJay.Text\tests\ScrubJay.Text.Tests.csproj" />
-  </Folder>
-  <Folder Name="/ScrubJay.Universal/">
-    <File Path="ScrubJay.Universal\README.md" />
-    <Project Path="ScrubJay.Universal/src/ScrubJay.Universal.csproj" />
-    <Project Path="ScrubJay.Universal/tests/ScrubJay.Universal.Tests.csproj" />
-  </Folder>
+    <Folder Name="/Common/">
+        <File Path=".gitignore"/>
+        <File Path="ScrubJay.slnx"/>
+        <File Path=".editorconfig"/>
+        <File Path="Directory.Build.targets"/>
+        <File Path="Directory.Build.props"/>
+        <File Path="Directory.Packages.props"/>
+        <File Path="LICENSE.txt"/>
+        <File Path="README.md"/>
+    </Folder>
+
+    <Folder Name="/Sandboxes/">
+        <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.Consoleapp.csproj"/>
+    </Folder>
+
+    <Folder Name="/ScrubJay.Reflection.Lightweight/">
+        <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj"/>
+    </Folder>
+
+    <Folder Name="/ScrubJay.Polyfills/">
+        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
+    </Folder>
+
 </Solution>

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>ScrubJay.Reflection.Lightweight</RootNamespace>
+        <AssemblyName>ScrubJay.Reflection.Lightweight</AssemblyName>
+
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
+
+        <!-- Adds Interpolation features from Polyfill -->
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+        <!-- Add Nullability features from Polyfill -->
+        <PolyNullability>true</PolyNullability>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Reflection"/>
+        <Using Include="System.Reflection.Emit"/>
+
+        <!--        <Using Include="InlineIL"/>-->
+        <Using Include="InlineIL.IL" Static="true"/>
+    </ItemGroup>
+
+    <!-- NuGet Packages -->
+    <ItemGroup>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
+        <PackageReference Include="Polyfill" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Reflection.Emit.Lightweight"/>
+    </ItemGroup>
+</Project>

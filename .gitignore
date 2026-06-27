@@ -6,8 +6,15 @@
 [Bb]in/
 [Oo]bj/
 
+# Source Generated
+.GeneratedFiles/
+
 # JetBrains Rider
 .idea/
+*.DotSettings.user
+
+# Visual Studio
+.vs/
 
 # Zed
 .zed/

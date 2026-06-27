@@ -1,64 +1,122 @@
 <Project>
-	<!-- Common to all Projects -->
-	<PropertyGroup>
-		<LangVersion>latest</LangVersion>
-		<!-- Generate XML documentation -->
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<!-- But suppress warnings about undocumented members -->
-		<NoWarn>$(NoWarn);CS1591;</NoWarn>
-	</PropertyGroup>
-	
-	<!-- Analysis -->
-	<PropertyGroup>
-		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	</PropertyGroup>
-	
-	<!-- NuGet -->
-	<PropertyGroup>
-		<!-- Each will specify PackageId, PackageVersion, Description, -->
-		<Authors>Dissolution</Authors>
-		<RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile.
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	</PropertyGroup>
-	
-	<!-- Release configurations -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<!-- Create NuGet Package -->
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<!-- Validate -->
-		<EnablePackageValidation>false</EnablePackageValidation>
-		<!-- Set common output path for Packages -->
-		<PackageOutputPath>..\..\packages\</PackageOutputPath>
-	</PropertyGroup>
-	
-	<ItemGroup Condition="'$(Configuration)' == 'Release'">
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
-		<None Include="..\..\LICENSE.txt" Pack="true" PackagePath="\"/>
-	</ItemGroup>
-	
-	<!-- global usings -->
-	<ItemGroup>
-		<Using Include="JetBrains.Annotations"/>
-		
-		<Using Include="System.Collections"/>
-		<Using Include="System.Diagnostics"/>
-		<Using Include="System.Diagnostics.CodeAnalysis"/>
-		<Using Include="System.Runtime.CompilerServices"/>
-		<Using Include="System.Runtime.InteropServices"/>
-		<Using Include="System.Text"/>
-		<Using Include="System.Numerics"/>
-		
-		<!-- Aliases -->
-		<Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
-		<Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
-	</ItemGroup>
-	<!-- global packages -->
-	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
-	</ItemGroup>
+    <!-- Common to all Projects -->
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <!-- Ignore old versions -->
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <CheckEolTargetFramework>false</CheckEolTargetFramework>
+
+        <!-- Generate XML documentation -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- But suppress warnings about undocumented members -->
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
+    </PropertyGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <!-- Each will specify PackageId, PackageVersion, Description, -->
+        <Authors>Dissolution</Authors>
+        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <!-- global packages -->
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
+                                     $(TargetFrameworkIdentifier) == '.NETFramework'"
+                          Include="System.Memory"/>
+        <PackageReference Condition="$(TargetFramework) == 'netstandard2.1'"
+                          Include="System.Runtime.CompilerServices.Unsafe"
+                          PrivateAssets="all"/>
+    </ItemGroup>
+
+    <!-- Build Configurations -->
+
+    <!-- Debug + Analyze -->
+    <PropertyGroup Condition="$(Configuration) == 'Debug' Or $(Configuration) == 'Analyze'">
+        <DefineConstants>$(DefineConstants);TRACE;DEBUG;</DefineConstants>
+        <Optimize>false</Optimize>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+
+    <!-- Debug -->
+    <PropertyGroup Condition="$(Configuration) == 'Debug'">
+
+    </PropertyGroup>
+
+    <!-- Analyze : Debug -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Analyze'">
+        <DefineConstants>$(DefineConstants)ANALYZE;</DefineConstants>
+        <NoWarn>$(NoWarn);
+            CS8981; <!-- lower-case type names -->
+        </NoWarn>
+        
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisMode>Recommended</AnalysisMode>
+        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+        <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(Configuration)' == 'Analyze'">
+
+    </ItemGroup>
+
+    <!-- Release + NuGet -->
+    <PropertyGroup Condition="$(Configuration) == 'Release' Or $(Configuration) == 'Nuget'">
+        <DefineConstants>$(DefineConstants);RELEASE;</DefineConstants>
+        <Optimize>true</Optimize>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup Condition="$(Configuration) == 'Release' Or $(Configuration) == 'Nuget'">
+        <Content Include="..\README.md" Pack="true" PackagePath="contentFiles/" PackageCopyToOutput="true"/>
+        <Content Include="..\..\LICENSE.txt" Pack="true" PackagePath="contentFiles/" PackageCopyToOutput="true"/>
+    </ItemGroup>
+
+    <!-- Release configurations -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+
+    </PropertyGroup>
+
+    <!-- Nuget : Release -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Nuget'">
+        <DefineConstants>$(DefineConstants);NUGET;</DefineConstants>
+        <!-- Set common output path for Packages -->
+        <PackageOutputPath>..\..\packages\</PackageOutputPath>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageOutputPath>..\..\packages\</PackageOutputPath>
+    </PropertyGroup>
+
+    <!-- global usings -->
+    <ItemGroup>
+        <Using Include="JetBrains.Annotations"/>
+
+        <Using Include="System.Collections"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Diagnostics.CodeAnalysis"/>
+        <Using Include="System.Runtime.CompilerServices"/>
+        <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Text"/>
+        <Using Include="System.Numerics"/>
+
+        <!-- Aliases -->
+        <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
+        <Using Include="System.ReadOnlySpan&lt;System.Byte&gt;" Alias="bytesview"/>
+        <Using Include="System.Span&lt;System.Byte&gt;" Alias="bytes"/>
+        <!--        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>-->
+    </ItemGroup>
+
 </Project>
 
