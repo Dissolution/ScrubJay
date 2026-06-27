@@ -2,18 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>net48;netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0;net9.0;net10.0;</TargetFrameworks>
     </PropertyGroup>
-
-    <PropertyGroup>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <AnalysisMode>Recommended</AnalysisMode>
-        <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-        <AnalysisLevel>latest</AnalysisLevel>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-
-        <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
-    </PropertyGroup>
-
+    
     <PropertyGroup>
         <NoWarn>
             $(NoWarn); <!-- inherit -->
@@ -21,18 +10,18 @@
         </NoWarn>
     </PropertyGroup>
 
-<!--    &lt;!&ndash; Polyfill layer &ndash;&gt;-->
-<!--    <ItemGroup>-->
-<!--        <PackageReference Include="Polyfill"/>-->
-<!--    </ItemGroup>-->
-<!--    <PropertyGroup>-->
-<!--        &lt;!&ndash; Expose all the polyfills to consuming projects &ndash;&gt;-->
-<!--        <PolyPublic>true</PolyPublic>-->
-<!--        &lt;!&ndash; Adds Interpolation features from Polyfill &ndash;&gt;-->
-<!--        <PolyStringInterpolation>true</PolyStringInterpolation>-->
-<!--        &lt;!&ndash; Add Nullability features from Polyfill &ndash;&gt;-->
-<!--        <PolyNullability>true</PolyNullability>-->
-<!--    </PropertyGroup>-->
+    <!-- Polyfill layer -->
+    <ItemGroup>
+        <PackageReference Include="Polyfill"/>
+    </ItemGroup>
+    <PropertyGroup>
+        <!-- Expose all the polyfills to consuming projects -->
+        <PolyPublic>true</PolyPublic>
+        <!-- Adds Interpolation features from Polyfill -->
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+        <!-- Add Nullability features from Polyfill -->
+        <PolyNullability>true</PolyNullability>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj"

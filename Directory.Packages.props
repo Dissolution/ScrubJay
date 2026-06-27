@@ -36,6 +36,7 @@
         <PackageVersion Include="xunit.v3" Version="3.2.2"/>
         <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2"/>
         <PackageVersion Include="xunit.v3.runner.msbuild" Version="3.2.2"/>
+        <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2"/>
     </ItemGroup>
 
     <!-- Benchmarking -->

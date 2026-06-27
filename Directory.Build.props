@@ -12,7 +12,7 @@
 
         <!-- Generate XML documentation -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        
+
         <NoWarn>$(NoWarn);
             CS1591; <!-- undocumented members -->
             CS8981; <!-- lower-case type names -->
@@ -59,7 +59,7 @@
     <!-- Analyze : Debug -->
     <PropertyGroup Condition="'$(Configuration)' == 'Analyze'">
         <DefineConstants>$(DefineConstants)ANALYZE;</DefineConstants>
-                
+
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <AnalysisMode>Recommended</AnalysisMode>
         <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
@@ -115,7 +115,7 @@
         <Using Include="System.ReadOnlySpan&lt;System.Char&gt;" Alias="text"/>
         <Using Include="System.ReadOnlySpan&lt;System.Byte&gt;" Alias="bytesview"/>
         <Using Include="System.Span&lt;System.Byte&gt;" Alias="bytes"/>
-        <!--        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>-->
+        <Using Include="System.Diagnostics.CodeAnalysis.NotNullAttribute" Alias="NotNullAttribute"/>
     </ItemGroup>
 
 </Project>

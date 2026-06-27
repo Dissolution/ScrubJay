@@ -24,7 +24,7 @@
     <ItemGroup>
         <PackageReference Include="Fody" PrivateAssets="all"/>
         <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
-<!--        <PackageReference Include="Polyfill" PrivateAssets="all"/>-->
+        <PackageReference Include="Polyfill" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
