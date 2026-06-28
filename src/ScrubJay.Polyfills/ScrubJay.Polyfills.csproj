@@ -2,13 +2,19 @@
     <PropertyGroup>
         <TargetFrameworks>net48;netstandard2.0;netstandard2.1;net6.0;net7.0;net8.0;net9.0;net10.0;</TargetFrameworks>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <NoWarn>
             $(NoWarn); <!-- inherit -->
             IDE0130;    <!-- Incorrect namespaces -->
         </NoWarn>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Reflection"/>
+        <Using Include="System.Reflection.Emit"/>
+        <Using Include="ScrubJay.Reflection.Lightweight"/>
+    </ItemGroup>
 
     <!-- Polyfill layer -->
     <ItemGroup>

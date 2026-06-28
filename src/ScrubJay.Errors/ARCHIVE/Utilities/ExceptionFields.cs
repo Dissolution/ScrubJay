@@ -59,25 +59,7 @@
 //
 //
 //
-//#if NET8_0_OR_GREATER
-//    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_message")]
-//    public static extern ref string? RefMessageField(Exception exception);
-//#else
-//    public static ref string? RefMessageField(Exception exception)
-//    {
-//        return ref RefExceptionField<Exception, string?>(exception, "_message");
-//    }
-//#endif
-//
-//#if NET8_0_OR_GREATER
-//    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_innerException")]
-//    public static extern ref Exception? RefInnerExceptionField(Exception exception);
-//#else
-//    public static ref Exception? RefInnerExceptionField(Exception exception)
-//    {
-//        return ref RefExceptionField<Exception, Exception?>(exception, "_innerException");
-//    }
-//#endif
+
 //
 //#if NET8_0_OR_GREATER
 //    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_data")]

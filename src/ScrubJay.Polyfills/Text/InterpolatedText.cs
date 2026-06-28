@@ -11,6 +11,11 @@ public delegate void InterpolatedTextWrite(ref InterpolatedText text);
 [PublicAPI]
 public delegate void InterpolatedTextWrite<in T>(ref InterpolatedText text, T value);
 
+[PublicAPI]
+public delegate void InterpolatedTextWrite<in T1, in T2>(ref InterpolatedText text, T1 arg1, T2 arg2);
+
+
+
 
 [PublicAPI]
 [MustDisposeResource(true)]
@@ -65,7 +70,7 @@ public ref struct InterpolatedText : IDisposable
         _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(MIN_ARRAY_LENGTH);
         _position = 0;
     }
-    
+
     public InterpolatedText(int minCapacity)
     {
         _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(GetMinCapacity(minCapacity));
@@ -540,9 +545,17 @@ public ref struct InterpolatedText : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Align<T>(T? value, int alignment, string? format) => AppendFormatted<T>(value, alignment, format);
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void NewLine() => AppendFormatted(Environment.NewLine);
+
+    public void Fill(int count, char ch)
+    {
+        if (count <= 0) return;
+        EnsureCapacityForAdditionalChars(count);
+        _chars.Slice(_position, count).Fill(ch);
+        _position += count;
+    }
 #endregion
 
     [HandlesResourceDisposal]

@@ -1,38 +1,34 @@
 <Solution>
     <Folder Name="/00_Common/">
-        <File Path=".gitignore"/>
-        <File Path="ScrubJay.slnx"/>
-        <File Path=".editorconfig"/>
-        <File Path="Directory.Build.targets"/>
-        <File Path="Directory.Build.props"/>
-        <File Path="Directory.Packages.props"/>
-        <File Path="LICENSE.txt"/>
-        <File Path="README.md"/>
+        <File Path=".gitignore" />
+        <File Path="ScrubJay.slnx" />
+        <File Path=".editorconfig" />
+        <File Path="Directory.Build.targets" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
+        <File Path="LICENSE.txt" />
+        <File Path="README.md" />
     </Folder>
 
     <Folder Name="/01_Sandboxes/">
-        <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.Consoleapp.csproj"/>
+        <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.ConsoleApp.csproj" />
     </Folder>
 
     <Folder Name="/02_ScrubJay.Polyfills/">
-        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
-        <Project Path="tests/ScrubJay.Polyfills.Tests/ScrubJay.Polyfills.Tests.csproj"/>
+        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj" />
+        <Project Path="tests/ScrubJay.Polyfills.Tests/ScrubJay.Polyfills.Tests.csproj" />
     </Folder>
 
     <Folder Name="/03_ScrubJay.Errors/">
-        <Project Path="src/ScrubJay.Errors/ScrubJay.Errors.csproj"/>
+        <Project Path="src/ScrubJay.Errors/ScrubJay.Errors.csproj" />
     </Folder>
     
     <Folder Name="/ScrubJay.Testing/">
-        <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj"/>
+        <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj" />
     </Folder>
 
     <Folder Name="/ScrubJay.Reflection.Lightweight/">
-        <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj"/>
-    </Folder>
-
-    <Folder Name="/ScrubJay.Polyfills.Nullability/">
-        <Project Path="src/ScrubJay.Polyfills.Nullability/ScrubJay.Polyfills.Nullability.csproj"/>
+        <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj" />
     </Folder>
 
 </Solution>

@@ -1,6 +1,4 @@
-﻿using ScrubJay.Reflection.Lightweight;
-
-namespace ScrubJay.Polyfills;
+﻿namespace ScrubJay.Polyfills;
 
 [PublicAPI]
 public static class HashCodeExtensions

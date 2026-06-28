@@ -1,4 +1,3 @@
-using ScrubJay.Polyfills;
 using ScrubJay.Polyfills.Text;
 using ScrubJay.Polyfills.Universal;
 
@@ -10,6 +9,7 @@ public readonly ref struct Argument<T>
     where T : allows ref struct
 #endif
 {
+    public static implicit operator ArgumentInfo(Argument<T> argument) => new(argument.Type, argument.Name, argument.ValueString);
 
 
 #if NET9_0_OR_GREATER
@@ -47,7 +47,7 @@ public readonly ref struct Argument<T>
     public readonly T? Value;
     public readonly string ValueString;
 
-    private Argument(Type type, string? name, T? value, string valueString)
+    internal Argument(Type type, string? name, T? value, string valueString)
     {
         Type = type;
         Name = name;

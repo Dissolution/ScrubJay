@@ -1,17 +1,18 @@
-﻿using ScrubJay.Polyfills.Universal;
+﻿#pragma warning disable
+// ReSharper disable All
+
+using ScrubJay.Polyfills.Universal;
 text text = "TRJ";
 
-//var str = Utils.AnyToString(text);
-//var str2 = Utils.AnyToString(147);
-//
 
+Debugger.Break();
 
 Console.WriteLine("Press any key to exit.");
 Console.ReadKey();
 return;
 
 
-namespace ScrubJay.Sandboxes.Consoleapp
+namespace ScrubJay.Sandboxes.ConsoleApp
 {
     public static class Utils
     {

@@ -1,13 +1,21 @@
-using System.Reflection;
-using System.Reflection.Emit;
-using ScrubJay.Reflection.Lightweight;
+
 // ReSharper disable StaticMemberInGenericType
-#if NET9_0_OR_GREATER
+
 
 namespace ScrubJay.Polyfills.Universal;
 
 partial class Any
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToString<T>(in T? value)
+    {
+        if (value is null)
+            return null;
+        return value.ToString()!;
+    }
+    
+#if NET9_0_OR_GREATER
     internal delegate string AnyToString<T>(in T value)
         where T : allows ref struct;
 
@@ -18,7 +26,7 @@ partial class Any
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString<T>(in T? value)
+    public static string? ToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         if (value is null)
@@ -111,7 +119,7 @@ partial class Any
 
         private static string ToStringFallback(in T? _) => typeof(T).ToString();
     }
+#endif
 }
 
 
-#endif

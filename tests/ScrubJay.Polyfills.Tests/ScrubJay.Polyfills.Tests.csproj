@@ -22,7 +22,7 @@
 <!--        <PackageReference Include="xunit.v3"/>-->
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
+      <ProjectReference Include="..\..\src\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" PrivateAssets="all"/>
       <ProjectReference Include="..\..\src\ScrubJay.Testing\ScrubJay.Testing.csproj" />
     </ItemGroup>
 

@@ -50,6 +50,7 @@ public sealed class DynamicMethod<D> : MethodInfo
 #if NET6_0_OR_GREATER
         ParameterInfo
 #else
+        // ReSharper disable once ReturnTypeCanBeNotNullable
         ParameterInfo?
 #endif
         ReturnParameter => _dynamicMethod.ReturnParameter;

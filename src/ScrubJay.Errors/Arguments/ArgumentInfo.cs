@@ -1,4 +1,3 @@
-using ScrubJay.Polyfills;
 using ScrubJay.Polyfills.Text;
 using ScrubJay.Polyfills.Universal;
 
@@ -11,21 +10,9 @@ public readonly record struct ArgumentInfo
         in T? argument,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
-    {
-        return new ArgumentInfo(
-            type: argument?.GetType() ?? typeof(T),
-            name: argumentName,
-            valueString: argument?.ToString() ?? "null"
-        );
-    }
-
 #if NET9_0_OR_GREATER
-    public static ArgumentInfo Capture<T>(
-        in T? argument,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null,
-        TypeConstraints.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
+#endif
     {
         return new ArgumentInfo(
             type: Any.GetType(argument),
@@ -33,14 +20,12 @@ public readonly record struct ArgumentInfo
             valueString: Any.ToString(argument) ?? "null"
         );
     }
-#endif
-
 
     public readonly Type Type;
     public readonly string? Name;
     public readonly string ValueString;
 
-    private ArgumentInfo(Type type, string? name, string valueString)
+    internal ArgumentInfo(Type type, string? name, string valueString)
     {
         Type = type;
         Name = name;
