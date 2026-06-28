@@ -6,6 +6,13 @@ using System.ComponentModel;
 namespace ScrubJay.Polyfills.Text;
 
 [PublicAPI]
+public delegate void InterpolatedTextWrite(ref InterpolatedText text);
+
+[PublicAPI]
+public delegate void InterpolatedTextWrite<in T>(ref InterpolatedText text, T value);
+
+
+[PublicAPI]
 [MustDisposeResource(true)]
 [InterpolatedStringHandler]
 public ref struct InterpolatedText : IDisposable
@@ -53,6 +60,12 @@ public ref struct InterpolatedText : IDisposable
         get => _chars.Length;
     }
 
+    public InterpolatedText()
+    {
+        _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(MIN_ARRAY_LENGTH);
+        _position = 0;
+    }
+    
     public InterpolatedText(int minCapacity)
     {
         _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(GetMinCapacity(minCapacity));
@@ -527,6 +540,9 @@ public ref struct InterpolatedText : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Align<T>(T? value, int alignment, string? format) => AppendFormatted<T>(value, alignment, format);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void NewLine() => AppendFormatted(Environment.NewLine);
 #endregion
 
     [HandlesResourceDisposal]

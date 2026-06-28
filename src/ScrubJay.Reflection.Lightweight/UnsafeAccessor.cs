@@ -4,7 +4,12 @@ namespace ScrubJay.Reflection.Lightweight;
 
 public static class UnsafeAccessor
 {
-    public delegate ref TValue FieldRef<TInstance, TValue>(ref TInstance instance);
+    public delegate ref TValue ReferenceFieldRef<in TInstance, TValue>(TInstance instance)
+        where TInstance : class;
+
+    public delegate ref TValue ValueFieldRef<TInstance, TValue>(ref TInstance instance)
+        where TInstance : struct;
+
 
     public delegate void MethodAction<TInstance>(ref TInstance instance);
     public delegate void MethodAction<TInstance, in T1>(ref TInstance instance, T1 arg1);
@@ -22,7 +27,7 @@ public static class UnsafeAccessor
 
         var dynamicMethod = DynamicMethod.CreateDynamicMethod<MethodAction<TInstance, T1>>($"{typeof(TInstance)}_{methodName}");
         var gen = dynamicMethod.GetILGenerator();
-        
+
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldarg_1);
         gen.Emit(OpCodes.Constrained, typeof(TInstance));
@@ -30,6 +35,46 @@ public static class UnsafeAccessor
         gen.Emit(OpCodes.Ret);
 
         return dynamicMethod.CreateDelegate();
+    }
+
+    public static ReferenceFieldRef<TInstance, TValue> GetReferenceFieldRef<TInstance, TValue>(
+        string fieldName,
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+        where TInstance : class
+    {
+        var field = typeof(TInstance)
+            .GetField(fieldName, bindingFlags);
+        if (field is null)
+            throw new InvalidOperationException();
+
+        return DynamicMethod.GenerateDelegate<ReferenceFieldRef<TInstance, TValue>>(
+            $"ref_{typeof(TInstance)}_{field}",
+            gen =>
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldflda, field);
+                gen.Emit(OpCodes.Ret);
+            });
+    }
+    
+    public static ValueFieldRef<TInstance, TValue> GetValueFieldRef<TInstance, TValue>(
+        string fieldName,
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+        where TInstance : struct
+    {
+        var field = typeof(TInstance)
+            .GetField(fieldName, bindingFlags);
+        if (field is null)
+            throw new InvalidOperationException();
+
+        return DynamicMethod.GenerateDelegate<ValueFieldRef<TInstance, TValue>>(
+            $"ref_{typeof(TInstance)}_{field}",
+            gen =>
+            {
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldflda, field);
+                gen.Emit(OpCodes.Ret);
+            });
     }
 }
 

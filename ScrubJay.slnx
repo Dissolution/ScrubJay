@@ -1,5 +1,5 @@
 <Solution>
-    <Folder Name="/Common/">
+    <Folder Name="/00_Common/">
         <File Path=".gitignore"/>
         <File Path="ScrubJay.slnx"/>
         <File Path=".editorconfig"/>
@@ -10,21 +10,25 @@
         <File Path="README.md"/>
     </Folder>
 
-    <Folder Name="/Sandboxes/">
+    <Folder Name="/01_Sandboxes/">
         <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.Consoleapp.csproj"/>
     </Folder>
 
-    <Folder Name="/Testing/">
+    <Folder Name="/02_ScrubJay.Polyfills/">
+        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
+        <Project Path="tests/ScrubJay.Polyfills.Tests/ScrubJay.Polyfills.Tests.csproj"/>
+    </Folder>
+
+    <Folder Name="/03_ScrubJay.Errors/">
+        <Project Path="src/ScrubJay.Errors/ScrubJay.Errors.csproj"/>
+    </Folder>
+    
+    <Folder Name="/ScrubJay.Testing/">
         <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj"/>
     </Folder>
 
     <Folder Name="/ScrubJay.Reflection.Lightweight/">
         <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj"/>
-    </Folder>
-
-    <Folder Name="/ScrubJay.Polyfills/">
-        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
-        <Project Path="tests/ScrubJay.Polyfills.Tests/ScrubJay.Polyfills.Tests.csproj"/>
     </Folder>
 
     <Folder Name="/ScrubJay.Polyfills.Nullability/">

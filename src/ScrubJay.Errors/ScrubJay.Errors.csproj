@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    
+    <ItemGroup>
+      <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
+      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
+    </ItemGroup>
+
+</Project>
