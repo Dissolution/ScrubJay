@@ -1,11 +1,11 @@
-
 // ReSharper disable StaticMemberInGenericType
 
 
-namespace ScrubJay.Polyfills.Universal;
+namespace ScrubJay.Universal;
 
 partial class Any
 {
+#if !NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
     public static string? ToString<T>(in T? value)
@@ -14,19 +14,30 @@ partial class Any
             return null;
         return value.ToString()!;
     }
-    
-#if NET9_0_OR_GREATER
-    internal delegate string AnyToString<T>(in T value)
-        where T : allows ref struct;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool HasToString<T>()
-        where T : allows ref struct
-        => ToStringCache<T>.FoundMethod;
+    [return: NotNullIfNotNull(nameof(fallback))]
+    public static string? ToStringOr<T>(in T? value, string? fallback)
+    {
+        if (value is not null)
+        {
+            return value.ToString();
+        }
+        return fallback;
+    }
 
+    public static string? ToStringOrNull<T>(in T? value)
+    {
+        if (value is not null)
+        {
+            return value.ToString();
+        }
+        return null;
+    }
+
+#else
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public static string? ToString<T>(in T? value)
         where T : allows ref struct
     {
         if (value is null)
@@ -46,7 +57,7 @@ partial class Any
         return fallback;
     }
 
-    public static string? ToStringOrDefault<T>(in T? value)
+    public static string? ToStringOrNull<T>(in T? value)
         where T : allows ref struct
     {
         if (value is not null && ToStringCache<T>.FoundMethod)
@@ -56,7 +67,8 @@ partial class Any
         return null;
     }
 
-
+    internal delegate string AnyToString<T>(in T value)
+        where T : allows ref struct;
 
     internal static class ToStringCache<T>
         where T : allows ref struct
@@ -77,7 +89,7 @@ partial class Any
             {
                 searchTypes = type.EnumerateTypeAndBaseTypes();
             }
-            
+
             var methods = searchTypes
                 .SelectMany(static t => t
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
@@ -89,7 +101,7 @@ partial class Any
 
 
             MethodInfo? method;
-            
+
             if (methods.Count != 1)
             {
                 Debugger.Break();
@@ -99,7 +111,7 @@ partial class Any
             {
                 method = methods[0];
             }
-            
+
             if (method is not null && DynamicMethod.TryGenerateDelegate<AnyToString<T>>($"Any_{type}_ToString",
                 gen =>
                 {
@@ -121,5 +133,3 @@ partial class Any
     }
 #endif
 }
-
-

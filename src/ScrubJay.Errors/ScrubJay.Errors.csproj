@@ -1,8 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    
+
     <ItemGroup>
-      <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
-      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
+        <Using Include="ScrubJay.Universal"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" PrivateAssets="all"/>
+        <PackageReference Include="Polyfill" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+        <PolyNullability>true</PolyNullability>
+    </PropertyGroup>
 
 </Project>

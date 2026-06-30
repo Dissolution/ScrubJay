@@ -1,4 +1,4 @@
-namespace ScrubJay.Polyfills.Universal;
+namespace ScrubJay.Universal;
 
 
 [PublicAPI]

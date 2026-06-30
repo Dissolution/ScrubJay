@@ -1,24 +1,31 @@
-using ScrubJay.Polyfills.Text;
-using ScrubJay.Polyfills.Universal;
+using ScrubJay.Universal;
 
 namespace ScrubJay.Errors.Arguments;
 
 [PublicAPI]
 public readonly record struct ArgumentInfo
 {
+    public static ArgumentInfo Null() => new(typeof(object), null, "null");
+
+    public static ArgumentInfo Null(string? argumentName) => new(typeof(object), argumentName, "null");
+
+    public static ArgumentInfo Create(Type? type, string? name, string? toString)
+    {
+        return new ArgumentInfo(type ?? typeof(object), name, toString ?? "null");
+    }
+
     public static ArgumentInfo Capture<T>(
         in T? argument,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
 #if NET9_0_OR_GREATER
-        where T : allows ref struct
+    where T : allows ref struct
 #endif
     {
         return new ArgumentInfo(
-            type: Any.GetType(argument),
+            type: Any.GetType<T>(in argument),
             name: argumentName,
-            valueString: Any.ToString(argument) ?? "null"
-        );
+            valueString: Any.ToStringOr<T>(in argument, "null"));
     }
 
     public readonly Type Type;
@@ -32,7 +39,7 @@ public readonly record struct ArgumentInfo
         ValueString = valueString;
     }
 
-    public void Deconstruct(out Type? type, out string? name, out string? valueString)
+    public void Deconstruct(out Type type, out string? name, out string valueString)
     {
         type = Type;
         name = Name;
@@ -41,13 +48,6 @@ public readonly record struct ArgumentInfo
 
     public override string ToString()
     {
-        using var text = new InterpolatedText();
-        text.Write('"');
-        text.Write(Name);
-        text.Write("\": ");
-        text.Write(Type);
-        text.Write(" = ");
-        text.Write(ValueString);
-        return text.ToString();
+        return $"\"{Name}\": {Type} = {ValueString}";
     }
 }

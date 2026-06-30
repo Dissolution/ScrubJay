@@ -1,32 +1,86 @@
-//namespace ScrubJay.Errors.Exceptions;
-//
-//[PublicAPI]
-//public sealed class ArgRangeException : ArgumentOutOfRangeException
-//{
-//    public Argument Argument { get; }
-//
-//    /// <summary>
-//    /// Gets the unaltered error message for this Exception.
-//    /// </summary>
-//    public override string Message => ExceptionFields.RefMessageField(this) ?? "";
-//
-//    public ArgRangeException(Argument argument, object? argValue, string? message = null, Exception? innerException = null)
-//        : base()
-//    {
-//        Argument = argument;
-//        ExceptionFields.RefActualValueField(this) = argValue;
-//        ExceptionFields.RefMessageField(this) = message;
-//        ExceptionFields.RefInnerExceptionField(this) = innerException;
-//    }
-//
-//    public void RenderTo(TextBuilder builder)
-//    {
-//        ExceptionRenderer.RenderExceptionTo(this, builder, static (tb, ex) =>
-//        {
-//            tb.AppendLineIfNotNull(ex.Argument, $"Argument: {ex.Argument:@}")
-//                .AppendLineIfNotNull(ex.ActualValue, $"Argument Value: {ex.ActualValue:@}");
-//        });
-//    }
-//
-//    public override string ToString() => TextBuilder.Build(RenderTo);
-//}
+using ScrubJay.Errors.Arguments;
+using ScrubJay.Errors.Utilities;
+
+namespace ScrubJay.Errors.Exceptions;
+
+/// <summary>
+/// An enhanced <see cref="ArgumentOutOfRangeException"/>.
+/// </summary>
+[PublicAPI]
+public class ArgRangeException : ArgumentOutOfRangeException, IScrubJayException<ArgRangeException>
+{
+#region Throw / Create
+    [DoesNotReturn]
+    public static void Throw<T>(
+        in T? argument,
+        string? info = null,
+        Exception? innerException = null,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        throw Create(in argument, info, innerException, argumentName);
+    }
+
+    [DoesNotReturn]
+    public static void Throw(
+        ArgumentInfo argumentInfo,
+        string? info = null,
+        Exception? innerException = null)
+    {
+        throw Create(argumentInfo, info, innerException);
+    }
+
+    public static ArgRangeException Create<T>(
+        in T? argument,
+        string? info = null,
+        Exception? innerException = null,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        var arg = ArgumentInfo.Capture<T>(in argument, argumentName);
+        return Create(arg, info, innerException);
+    }
+
+    public static ArgRangeException Create(
+        ArgumentInfo argumentInfo,
+        string? info = null,
+        Exception? innerException = null)
+    {
+        DefaultInterpolatedStringHandler builder = $"ArgRangeException - {argumentInfo}";
+        if (string.IsNullOrEmpty(info))
+        {
+            builder.AppendLiteral(" was out of range");
+        }
+        else
+        {
+            builder.AppendLiteral(" ");
+            builder.AppendLiteral(info!);
+        }
+        var message = builder.ToStringAndClear();
+
+        return new ArgRangeException(argumentInfo, message, innerException);
+    }
+#endregion
+
+
+    public ArgumentInfo ArgumentInfo { get; }
+
+    public override string Message => ExceptionAccess.RefMessageField(this) ?? string.Empty;
+
+    public ArgRangeException(
+        ArgumentInfo argument,
+        string? message = null,
+        Exception? innerException = null)
+        : base(paramName: argument.Name, actualValue: argument.ValueString, message: message)
+    {
+        ArgumentInfo = argument;
+        ExceptionAccess.RefMessageField(this) = message;
+        ExceptionAccess.RefInnerExceptionField(this) = innerException;
+    }
+}

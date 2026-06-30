@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>
+            $(NoWarn); <!-- inherit -->
+        </NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Reflection"/>
+        <Using Include="System.Reflection.Emit"/>
+        <Using Include="ScrubJay.Reflection.Lightweight"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" PrivateAssets="all"/>
+        <PackageReference Include="Nullable" PrivateAssets="all"/>
+    </ItemGroup>
+
+</Project>

@@ -1,7 +1,5 @@
 using ScrubJay.Errors.Arguments;
 using ScrubJay.Errors.Utilities;
-using ScrubJay.Polyfills;
-using ScrubJay.Polyfills.Text;
 
 namespace ScrubJay.Errors.Exceptions;
 
@@ -9,8 +7,9 @@ namespace ScrubJay.Errors.Exceptions;
 /// An enhanced <see cref="ArgumentException"/>.
 /// </summary>
 [PublicAPI]
-public sealed class ArgException : ArgumentException, IScrubJayException<ArgException>
+public class ArgException : ArgumentException, IScrubJayException<ArgException>
 {
+#region Throw / Create
     [DoesNotReturn]
     public static void Throw<T>(
         in T? argument,
@@ -53,17 +52,22 @@ public sealed class ArgException : ArgumentException, IScrubJayException<ArgExce
         string? info = null,
         Exception? innerException = null)
     {
-        using var message = new InterpolatedText();
-        message.Write("ArgException: ");
-        message.Write(argumentInfo);
-        message.Write(" was invalid");
-        if (info.IsNotEmpty())
+        DefaultInterpolatedStringHandler builder = $"ArgException - {argumentInfo}";
+        if (string.IsNullOrEmpty(info))
         {
-            message.Write(": ");
-            message.Write(info);
+            builder.AppendLiteral(" was invalid");
         }
-        return new ArgException(argumentInfo, message.ToString(), innerException);
+        else
+        {
+            builder.AppendLiteral(" ");
+            builder.AppendLiteral(info!);
+        }
+        var message = builder.ToStringAndClear();
+
+        return new ArgException(argumentInfo, message, innerException);
     }
+#endregion
+
 
     public ArgumentInfo ArgumentInfo { get; }
 
@@ -76,17 +80,5 @@ public sealed class ArgException : ArgumentException, IScrubJayException<ArgExce
         : base(message, argument.Name, innerException)
     {
         ArgumentInfo = argument;
-    }
-
-    public override string ToString()
-    {
-        return ExceptionRenderer.RenderException(this,
-            static (ref text, exception, indent) =>
-            {
-                text.NewLine();
-                text.Fill(indent * 2, ' ');
-                text.Write("ArgumentInfo: ");
-                text.Write(exception.ArgumentInfo);
-            });
     }
 }

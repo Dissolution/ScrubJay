@@ -14,6 +14,8 @@
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
         <Using Include="ScrubJay.Reflection.Lightweight"/>
+        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Errors"/>
     </ItemGroup>
 
     <!-- Polyfill layer -->
@@ -30,8 +32,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj"
-                          PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" PrivateAssets="all"/>
     </ItemGroup>
 
 </Project>

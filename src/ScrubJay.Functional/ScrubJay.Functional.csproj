@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+
+    </PropertyGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Functional</PackageId>
+        <Title>ScrubJay - Functional</Title>
+        <Description>
+            Functional types and extensions for C#.
+        </Description>
+        <Version>0.91.0-alpha</Version>
+    </PropertyGroup>
+
+    <!-- Global Usings -->
+    <ItemGroup>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional.Extensions"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
+    </ItemGroup>
+
+</Project>

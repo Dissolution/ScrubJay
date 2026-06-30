@@ -1,10 +1,13 @@
 // ReSharper disable StaticMemberInGenericType
 
 // ReSharper disable MethodOverloadWithOptionalParameter
-namespace ScrubJay.Polyfills.Universal;
+
+namespace ScrubJay.Universal;
 
 partial class Any
 {
+#if !NET9_0_OR_GREATER
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Type GetType<T>(in T? value)
     {
@@ -13,10 +16,10 @@ partial class Any
         return value.GetType();
     }
 
-#if NET9_0_OR_GREATER
+#else
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Type GetType<T>(in T? value, TypeConstraints.AllowsRefStruct<T> _ = default)
+    public static Type GetType<T>(in T? value)
         where T : allows ref struct
     {
         if (value is null)

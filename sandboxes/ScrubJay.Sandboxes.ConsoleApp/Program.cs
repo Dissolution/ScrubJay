@@ -1,9 +1,12 @@
 ﻿#pragma warning disable
 // ReSharper disable All
 
-using ScrubJay.Polyfills.Universal;
+using ScrubJay.Polyfills;
+using ScrubJay.Universal;
 text text = "TRJ";
 
+HashSet<int> numbers = [1, 4, 7];
+numbers.ForEach(i =>  Console.WriteLine(i));
 
 Debugger.Break();
 
