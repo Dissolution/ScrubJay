@@ -17,12 +17,13 @@
 
     <!-- Global Usings -->
     <ItemGroup>
-        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
-        <Using Include="ScrubJay.Functional.Extensions"/>
+
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
         <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
     </ItemGroup>
 
 </Project>

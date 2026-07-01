@@ -1,14 +1,20 @@
 ﻿#pragma warning disable
 // ReSharper disable All
 
+using System.Reflection;
+using ScrubJay.Functional;
 using ScrubJay.Polyfills;
 using ScrubJay.Universal;
-text text = "TRJ";
 
-HashSet<int> numbers = [1, 4, 7];
-numbers.ForEach(i =>  Console.WriteLine(i));
 
-Debugger.Break();
+Result<int, Exception> result = new(147);
+Result<object, Exception> other = new(147);
+
+var fmt = result.ToString("D");
+
+
+
+
 
 Console.WriteLine("Press any key to exit.");
 Console.ReadKey();
