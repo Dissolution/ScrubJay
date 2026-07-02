@@ -52,5 +52,4 @@ public readonly struct Unit :
     }
 
     public override string ToString() => nameof(Unit);
-
 }

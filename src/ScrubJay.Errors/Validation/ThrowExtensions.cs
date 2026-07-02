@@ -1,9 +1,25 @@
-//using ScrubJay.Universal.Extensions;
-//
-//namespace ScrubJay.Errors.Validation;
-//
-//public static class ThrowExtensions
-//{
+using ScrubJay.Errors.Exceptions;
+
+namespace ScrubJay.Errors.Validation;
+
+[PublicAPI]
+public static class ThrowExtensions
+{
+    [return: NotNull]
+    public static T ThrowIfNull<T>(
+        [AllowNull, NotNull] this T? value,
+        string? info = null,
+        [CallerArgumentExpression(nameof(value))]
+        string? valueName = null)
+    {
+        if (value is null)
+        {
+            ArgNullException.Throw(in value, info, null, valueName);
+        }
+        return value;
+    }
+    
+    
 //    [DoesNotReturn]
 //    private static void ThrowObjectNotTypeException<T>(object? obj, string? info, string? objName)
 //    {
@@ -35,4 +51,4 @@
 //        ThrowObjectNotTypeException<T>(obj, info, objName);
 //        throw new UnreachableException();
 //    }
-//}
+}

@@ -3,6 +3,7 @@ using ScrubJay.Universal;
 namespace ScrubJay.Errors.Arguments;
 
 [PublicAPI]
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ArgumentInfo
 {
     public static ArgumentInfo Null() => new(typeof(object), null, "null");

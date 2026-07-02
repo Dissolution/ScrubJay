@@ -3,6 +3,7 @@ using ScrubJay.Errors.Exceptions;
 
 namespace ScrubJay.Errors;
 
+[StackTraceHidden]
 public partial class Ex
 {
     public static ArgException Arg<T>(

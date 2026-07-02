@@ -7,10 +7,11 @@ namespace ScrubJay.Errors.Exceptions;
 /// An enhanced <see cref="ArgumentOutOfRangeException"/>.
 /// </summary>
 [PublicAPI]
-public class ArgRangeException : ArgumentOutOfRangeException, IScrubJayException<ArgRangeException>
+public class ArgRangeException : ArgumentOutOfRangeException, IArgumentException<ArgRangeException>
 {
 #region Throw / Create
     [DoesNotReturn]
+    [StackTraceHidden]
     public static void Throw<T>(
         in T? argument,
         string? info = null,
@@ -25,6 +26,7 @@ public class ArgRangeException : ArgumentOutOfRangeException, IScrubJayException
     }
 
     [DoesNotReturn]
+    [StackTraceHidden]
     public static void Throw(
         ArgumentInfo argumentInfo,
         string? info = null,
@@ -33,6 +35,7 @@ public class ArgRangeException : ArgumentOutOfRangeException, IScrubJayException
         throw Create(argumentInfo, info, innerException);
     }
 
+    [StackTraceHidden]
     public static ArgRangeException Create<T>(
         in T? argument,
         string? info = null,
@@ -47,6 +50,7 @@ public class ArgRangeException : ArgumentOutOfRangeException, IScrubJayException
         return Create(arg, info, innerException);
     }
 
+    [StackTraceHidden]
     public static ArgRangeException Create(
         ArgumentInfo argumentInfo,
         string? info = null,

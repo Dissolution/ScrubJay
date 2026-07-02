@@ -7,7 +7,7 @@ namespace ScrubJay.Errors.Exceptions;
 /// An enhanced <see cref="ArgumentException"/>.
 /// </summary>
 [PublicAPI]
-public class ArgException : ArgumentException, IScrubJayException<ArgException>
+public class ArgException : ArgumentException, IArgumentException<ArgException>
 {
 #region Throw / Create
     [DoesNotReturn]

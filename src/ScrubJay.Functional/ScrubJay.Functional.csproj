@@ -16,9 +16,6 @@
     </PropertyGroup>
 
     <!-- Global Usings -->
-    <ItemGroup>
-
-    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
