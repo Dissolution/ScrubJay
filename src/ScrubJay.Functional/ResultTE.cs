@@ -15,6 +15,8 @@ public readonly struct Result<T, E> :
 
     public static implicit operator Result<T, E>(T value) => new Result<T, E>(value);
     public static implicit operator Result<T, E>(E error) => new Result<T, E>(error);
+    public static implicit operator Result<T, E>(Implementations.Ok<T> ok) => new Result<T, E>(ok._value);
+    public static implicit operator Result<T, E>(Implementations.Error<E> error) => new Result<T, E>(error._value);
 
     public static implicit operator bool(Result<T, E> result) => result._success;
 
@@ -191,7 +193,7 @@ public readonly struct Result<T, E> :
         {
             if (other._success)
             {
-                return Relate.Equate(_value, other._value);
+                return Relate.Equals(_value, other._value);
             }
             else
             {
@@ -207,19 +209,19 @@ public readonly struct Result<T, E> :
             }
             else
             {
-                return Relate.Equate(_error, other._error);
+                return Relate.Equals(_error, other._error);
             }
         }
     }
 
     public bool Equals(T? other)
     {
-        return _success && Relate.Equate(_value, other);
+        return _success && Relate.Equals(_value, other);
     }
 
     public bool Equals(E? other)
     {
-        return !_success && Relate.Equate(_error, other);
+        return !_success && Relate.Equals(_error, other);
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)

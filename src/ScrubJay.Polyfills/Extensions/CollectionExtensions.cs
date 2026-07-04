@@ -13,5 +13,25 @@ public static class CollectionExtensions
                 perItem(item);
             }
         }
+
+        public void AddMany(params ReadOnlySpan<T> items)
+        {
+            if (collection is null) return;
+
+            foreach (T item in items)
+            {
+                collection.Add(item);
+            }
+        }
+
+        public void AddMany(IEnumerable<T>? items)
+        {
+            if (collection is null || items is null) return;
+
+            foreach (T item in items)
+            {
+                collection.Add(item);
+            }
+        }
     }
 }

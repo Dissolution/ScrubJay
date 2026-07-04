@@ -5,36 +5,29 @@ namespace ScrubJay.Universal;
 
 partial class Any
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(obj))]
+    public static string? ToString(object? obj) => obj?.ToString();
+
 #if !NET9_0_OR_GREATER
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool HasToString<T>() => true;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? ToString<T>(in T? value)
-    {
-        if (value is null)
-            return null;
-        return value.ToString()!;
-    }
+    public static string? ToString<T>(in T? value) => value?.ToString();
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(fallback))]
-    public static string? ToStringOr<T>(in T? value, string? fallback)
-    {
-        if (value is not null)
-        {
-            return value.ToString();
-        }
-        return fallback;
-    }
+    public static string? ToStringOr<T>(in T? value, string? fallback) => value?.ToString() ?? fallback;
 
-    public static string? ToStringOrNull<T>(in T? value)
-    {
-        if (value is not null)
-        {
-            return value.ToString();
-        }
-        return null;
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string? ToStringOrNull<T>(in T? value) => value?.ToString();
 
 #else
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool HasToString<T>() => ToStringCache<T>.FoundMethod;
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
     public static string? ToString<T>(in T? value)
@@ -80,26 +73,13 @@ partial class Any
         {
             var type = typeof(T);
 
-            IEnumerable<Type> searchTypes;
-            if (type.IsByRefLike)
-            {
-                searchTypes = [type];
-            }
-            else
-            {
-                searchTypes = type.EnumerateTypeAndBaseTypes();
-            }
-
-            var methods = searchTypes
-                .SelectMany(static t => t
+            var methods = type
+                .InvokableTypes()
+                .SelectMany(t => t
                     .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                    .Where(static m => string.Equals(m.Name, nameof(object.ToString), StringComparison.Ordinal))
-                    .Where(static m => m.ReturnType == typeof(string))
-                    .Where(static m => m.GetParameters().Length == 0)
-                )
+                    .WithShape(nameof(ToString), typeof(string), []))
                 .ToList();
-
-
+            
             MethodInfo? method;
 
             if (methods.Count != 1)
@@ -112,7 +92,8 @@ partial class Any
                 method = methods[0];
             }
 
-            if (method is not null && DynamicMethod.TryGenerateDelegate<AnyToString<T>>($"Any_{type}_ToString",
+            if (method is not null && DynamicMethod.TryGenerateDelegate<AnyToString<T>>(
+                $"Any_{type}_ToString",
                 gen =>
                 {
                     gen.Emit(OpCodes.Ldarg_0);

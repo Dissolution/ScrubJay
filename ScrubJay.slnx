@@ -20,6 +20,7 @@
 
     <Folder Name="/3_Universal/">
         <Project Path="src/ScrubJay.Universal/ScrubJay.Universal.csproj"/>
+        <Project Path="tests/ScrubJay.Universal.Tests/ScrubJay.Universal.Tests.csproj"/>
     </Folder>
 
     <Folder Name="/4_Errors/">
@@ -35,8 +36,12 @@
         <Project Path="src/ScrubJay.Functional/ScrubJay.Functional.csproj"/>
         <Project Path="tests/ScrubJay.Functional.Tests/ScrubJay.Functional.Tests.csproj"/>
     </Folder>
+
+    <Folder Name="/Expressions/">
+        <Project Path="src/ScrubJay.Expressions/ScrubJay.Expressions.csproj"/>
+    </Folder>
     
-    <Folder Name="/ScrubJay.Testing/">
+    <Folder Name="/Testing/">
         <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj"/>
     </Folder>
 

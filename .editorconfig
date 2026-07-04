@@ -16,6 +16,38 @@ indent_size = 4
 indent_style = space
 tab_width = 4
 
+# XML files
+[*.{xml,csproj,slnx}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+alignment_tab_fill_style = use_spaces
+allow_far_alignment = true
+wrap_tags_and_pi = true
+spaces_around_eq_in_pi_attribute = true
+space_after_last_pi_attribute = true
+pi_attribute_style = first_attribute_on_single_line
+pi_attributes_indent = align_by_first_attribute
+blank_line_after_pi = false
+spaces_around_eq_in_attribute = false
+space_after_last_attribute = false
+space_before_self_closing = false
+attribute_style = first_attribute_on_single_line
+attribute_indent = align_by_first_attribute
+keep_user_linebreaks = false
+linebreaks_inside_tags_for_multiline_elements = true
+linebreaks_inside_tags_for_elements_with_child_elements = true
+spaces_inside_tags = false
+wrap_text = true
+wrap_around_elements = true
+indent_child_elements = one_indent
+indent_text = one_indent
+max_blank_lines_between_tags = 1
+linebreak_before_multiline_elements = true
+linebreak_before_singleline_elements = false
+insert_final_newline = true
+
+
 # .NET files
 [*.{cs,vb}]
 ## Formatting

@@ -6,13 +6,26 @@ namespace ScrubJay.Errors.Arguments;
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct ArgumentInfo
 {
-    public static ArgumentInfo Null() => new(typeof(object), null, "null");
+    private const string NAMEOF_NULL = "null";
 
-    public static ArgumentInfo Null(string? argumentName) => new(typeof(object), argumentName, "null");
+    public static ArgumentInfo Null() => new(typeof(object), null, NAMEOF_NULL);
+
+    public static ArgumentInfo Null(string? argumentName) => new(typeof(object), argumentName, NAMEOF_NULL);
 
     public static ArgumentInfo Create(Type? type, string? name, string? toString)
     {
-        return new ArgumentInfo(type ?? typeof(object), name, toString ?? "null");
+        return new ArgumentInfo(type ?? typeof(object), name, toString ?? NAMEOF_NULL);
+    }
+
+    public static ArgumentInfo Capture(
+        object? argument,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+    {
+        return new ArgumentInfo(
+            type: argument?.GetType() ?? typeof(object),
+            name: argumentName,
+            valueString: argument?.ToString() ?? NAMEOF_NULL);
     }
 
     public static ArgumentInfo Capture<T>(
@@ -20,13 +33,13 @@ public readonly record struct ArgumentInfo
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
 #if NET9_0_OR_GREATER
-    where T : allows ref struct
+        where T : allows ref struct
 #endif
     {
         return new ArgumentInfo(
             type: Any.GetType<T>(in argument),
             name: argumentName,
-            valueString: Any.ToStringOr<T>(in argument, "null"));
+            valueString: Any.ToStringOr<T>(in argument, NAMEOF_NULL));
     }
 
     public readonly Type Type;

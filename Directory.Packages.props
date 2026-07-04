@@ -1,47 +1,40 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-
-    <!-- Utilities -->
-    <ItemGroup>
-        <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0"/>
-        <PackageVersion Include="System.Memory" Version="4.6.3"/>
-        <PackageVersion Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
-        <PackageVersion Include="Polyfill" Version="10.10.0"/>
-        <PackageVersion Include="Nullable" Version="1.3.1"/>
-    </ItemGroup>
-
-    <!-- Reflection + Emission -->
-    <ItemGroup>
-        <PackageVersion Include="Fody" Version="6.9.3"/>
-        <PackageVersion Include="InlineIL.Fody" Version="1.10.2"/>
-        <PackageVersion Include="System.Reflection.Emit" Version="4.7.0"/>
-        <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="4.7.0"/>
-    </ItemGroup>
-
-    <!-- Serialization -->
-    <ItemGroup>
-        <PackageVersion Include="System.Text.Json" Version="10.0.9"/>
-        <PackageVersion Include="Newtonsoft.Json" Version="13.0.4"/>
-    </ItemGroup>
-
-    <!-- Analyzers -->
-    <ItemGroup>
-
-    </ItemGroup>
-
-    <!-- Testing -->
-    <ItemGroup>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0"/>
-        <PackageVersion Include="xunit.v3" Version="3.2.2"/>
-        <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2"/>
-        <PackageVersion Include="xunit.v3.runner.msbuild" Version="3.2.2"/>
-        <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2"/>
-    </ItemGroup>
-
-    <!-- Benchmarking -->
-    <ItemGroup>
-        <PackageVersion Include="BenchmarkDotNet" Version="0.15.8"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <!-- Utilities -->
+  <ItemGroup>
+    <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+    <PackageVersion Include="Polyfill" Version="10.10.0" />
+    <PackageVersion Include="Nullable" Version="1.3.1" />
+  </ItemGroup>
+  <!-- Reflection + Emission -->
+  <ItemGroup>
+    <PackageVersion Include="Fody" Version="6.9.3" />
+    <PackageVersion Include="InlineIL.Fody" Version="1.10.2" />
+    <PackageVersion Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+  </ItemGroup>
+  <!-- Serialization -->
+  <ItemGroup>
+    <PackageVersion Include="System.Text.Json" Version="10.0.9" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <!-- Analyzers -->
+  <ItemGroup>
+  </ItemGroup>
+  <!-- Testing -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.console" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.runner.msbuild" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
+  </ItemGroup>
+  <!-- Benchmarking -->
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
 </Project>

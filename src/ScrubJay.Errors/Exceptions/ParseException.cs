@@ -1,3 +1,5 @@
+using ScrubJay.Errors.Collections;
+using ScrubJay.Errors.Extensions;
 using ScrubJay.Errors.Utilities;
 
 namespace ScrubJay.Errors.Exceptions;
@@ -33,9 +35,19 @@ public sealed class ParseException : FormatException, IException<ParseException>
     }
 
     [StackTraceHidden]
+    public static ParseException Create<T>(string? input)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        var message = $"ParseException - Could not parse \"{input}\" into a {typeof(T)} value";
+        return new ParseException(input, typeof(T), message);
+    }
+
+    [StackTraceHidden]
     public static ParseException Create<T>(
         string? input,
-        string? info = null,
+        string? info,
         Exception? innerException = null)
 #if NET9_0_OR_GREATER
         where T : allows ref struct
@@ -54,6 +66,21 @@ public sealed class ParseException : FormatException, IException<ParseException>
 
     [StackTraceHidden]
     public static ParseException Create<T>(
+        string? input,
+        KeyValues? data)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        var message = $"ParseException - Could not parse \"{input}\" into a {typeof(T)} value";
+        var ex = new ParseException(input, typeof(T), message);
+        ex.Data.SetMany(data);
+        return ex;
+    }
+
+
+    [StackTraceHidden]
+    public static ParseException Create<T>(
         scoped text input,
         string? info = null,
         Exception? innerException = null)
@@ -61,6 +88,15 @@ public sealed class ParseException : FormatException, IException<ParseException>
         where T : allows ref struct
 #endif
         => Create<T>(input.ToString(), info, innerException);
+
+    [StackTraceHidden]
+    public static ParseException Create<T>(
+        scoped text input,
+        KeyValues? data)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        => Create<T>(input.ToString(), data);
 #endregion
 
 

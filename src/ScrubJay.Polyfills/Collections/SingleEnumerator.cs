@@ -5,6 +5,9 @@ namespace ScrubJay.Polyfills.Collections;
 [StructLayout(LayoutKind.Auto)]
 public struct SingleEnumerator<T> : IEnumerator<T>, IEnumerator, IDisposable
 {
+    public static implicit operator SingleEnumerator<T>(EmptyEnumerator _) => new();
+    public static implicit operator SingleEnumerator<T>(EmptyEnumerator<T> _) => new();
+    
     private readonly T _value;
     private bool _canYield;
 
@@ -32,7 +35,6 @@ public struct SingleEnumerator<T> : IEnumerator<T>, IEnumerator, IDisposable
         _canYield = true;
     }
     
-    [HandlesResourceDisposal]
     void IDisposable.Dispose()
     {
         // do nothing

@@ -13,6 +13,9 @@
     <ItemGroup>
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
+        
+        <Using Include="InlineIL.IL" Static="true"/>
+        
         <Using Include="ScrubJay.Reflection.Lightweight"/>
         <Using Include="ScrubJay.Universal"/>
         <Using Include="ScrubJay.Errors"/>
@@ -21,6 +24,8 @@
     <!-- Polyfill layer -->
     <ItemGroup>
         <PackageReference Include="Polyfill"/>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
     </ItemGroup>
     <PropertyGroup>
         <!-- Expose all the polyfills to consuming projects -->

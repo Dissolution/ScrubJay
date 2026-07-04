@@ -2,7 +2,7 @@ namespace ScrubJay.Functional.Extensions;
 
 public static class PolyfillExtensions
 {
-        extension(Activator)
+    extension(Activator)
     {
         public static Result<T, Exception> TryCreateInstance<T>(params object?[]? args)
         {
@@ -38,6 +38,19 @@ public static class PolyfillExtensions
             {
                 return ex;
             }
+        }
+    }
+
+    extension<N>(Nullable<N> nullable)
+        where N : struct
+    {
+        public Option<N> ToOption()
+        {
+            if (nullable.HasValue)
+            {
+                return nullable.GetValueOrDefault(); // fastest path
+            }
+            return default;
         }
     }
 }

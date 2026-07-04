@@ -1,9 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
+
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj"/>
         <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj"
+                          PrivateAssets="all"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" PrivateAssets="all"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
     </ItemGroup>
 </Project>

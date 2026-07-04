@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <NoWarn>$(NoWarn);CA2201;CA1515;RS0016;RS0037;</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3.mtp-v2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\ScrubJay.Errors\ScrubJay.Errors.csproj" />
+      <ProjectReference Include="..\..\src\ScrubJay.Testing\ScrubJay.Testing.csproj" PrivateAssets="all" />
+      <ProjectReference Include="..\..\src\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+    </ItemGroup>
+
+</Project>

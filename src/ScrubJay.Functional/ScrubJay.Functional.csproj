@@ -16,7 +16,10 @@
     </PropertyGroup>
 
     <!-- Global Usings -->
-
+    <ItemGroup>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+    </ItemGroup>
+    
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
         <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>

@@ -8,6 +8,22 @@ public readonly ref struct Argument<T>
     where T : allows ref struct
 #endif
 {
+    public static implicit operator ArgumentInfo(Argument<T> argument)
+    {
+        return new ArgumentInfo(argument.Type, argument.Name, Any.ToString<T>(in argument.Value) ?? "null");
+    }
+    
+    public static Argument<T> Capture(
+        in T? argument,
+        [CallerArgumentExpression(nameof(argument))]
+        string? argumentName = null)
+    {
+        return new Argument<T>(
+            Any.GetType<T>(in argument),
+            argumentName,
+            argument);
+    }
+
     public readonly Type Type;
     public readonly string? Name;
     public readonly T? Value;
