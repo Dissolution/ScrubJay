@@ -72,8 +72,8 @@ public class ArgRangeException : ArgumentOutOfRangeException, IArgumentException
             builder.AppendLiteral(info!);
         }
         var message = builder.ToStringAndClear();
-
-        return new ArgRangeException(argument, argument.Value, message, innerException);
+        object? boxed =Any.Box<T>(argument.Value);
+        return new ArgRangeException(argument, boxed, message, innerException);
     }
 
     [StackTraceHidden]

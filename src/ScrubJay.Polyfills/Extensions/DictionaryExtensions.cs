@@ -38,8 +38,10 @@ public static class DictionaryExtensions
                 return null;
             if (dictionary is Dictionary<K, V> dict)
                 return dict.Comparer;
+#if NET6_0_OR_GREATER
             if (dictionary is ConcurrentDictionary<K, V> concurrentDict)
                 return concurrentDict.Comparer;
+#endif
             return null;
         }
 

@@ -19,19 +19,20 @@ public partial class Any
 
     public static bool Contains<T>(object? box)
     {
-        Emit.Ldarg(nameof(box));
+        throw new NotImplementedException();
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref T? TryUnboxRef<T>(object? box)
     {
-        DeclareLocals([new("unboxed", typeof(T))]);
-        Emit.Ldarg(nameof(box));
-        Emit.Isinst<T>();
-        Emit.Stloc("unboxed");
-        Emit.Ldloc("unboxed");
-        Emit.Ldnull();
-        Emit
+//        DeclareLocals([new("unboxed", typeof(T))]);
+//        Emit.Ldarg(nameof(box));
+//        Emit.Isinst<T>();
+//        Emit.Stloc("unboxed");
+//        Emit.Ldloc("unboxed");
+//        Emit.Ldnull();
+//        Emit
+        throw new NotImplementedException();
     }
 
 
@@ -51,10 +52,14 @@ public partial class Any
     }
 #else
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanBox<T>() => !typeof(T).IsByRefLike;
+    public static bool CanBox<T>() 
+        where T : allows ref struct
+        => !typeof(T).IsByRefLike;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? Box<T>(T? value) => TryBox<T>(value, out var boxed) ? boxed : null;
+    public static object? Box<T>(T? value) 
+        where T : allows ref struct
+        => TryBox<T>(value, out var boxed) ? boxed : null;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static object FastBox<T>(T value)
