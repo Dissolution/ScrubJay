@@ -1,5 +1,3 @@
-using InlineIL;
-
 namespace ScrubJay.Universal;
 
 public partial class Any

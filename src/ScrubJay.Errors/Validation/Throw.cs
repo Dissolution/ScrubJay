@@ -1,4 +1,5 @@
-using ScrubJay.Errors.Arguments;
+#pragma warning disable CS8777
+
 using ScrubJay.Errors.Exceptions;
 
 namespace ScrubJay.Errors.Validation;

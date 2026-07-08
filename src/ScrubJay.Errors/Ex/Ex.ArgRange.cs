@@ -1,4 +1,3 @@
-using ScrubJay.Errors.Arguments;
 using ScrubJay.Errors.Exceptions;
 
 namespace ScrubJay.Errors;

@@ -1,5 +1,6 @@
+#if NET6_0_OR_GREATER
 using System.Collections.Concurrent;
-using System.Dynamic;
+#endif
 
 namespace ScrubJay.Polyfills;
 

@@ -117,9 +117,9 @@ public static class ResultExtensions
                     destination[3] = 'o';
                     destination[4] = 'r';
                     destination[5] = '(';
-                    if (value is not null)
+                    if (error is not null)
                     {
-                        if (!value.TryFormat(destination[6..], out var written, format, provider))
+                        if (!error.TryFormat(destination[6..], out var written, format, provider))
                             goto FAIL;
                         if (6 + written >= capacity)
                             goto FAIL;

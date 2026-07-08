@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using ScrubJay.Errors.Validation;
 
 namespace ScrubJay.Polyfills;

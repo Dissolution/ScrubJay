@@ -1,0 +1,13 @@
+//using Microsoft.AspNetCore.Mvc;
+//
+//namespace ScrubJay.Asp.Extensions;
+//
+//[PublicAPI]
+//public static class ExceptionExtensions
+//{
+//    extension<E>(E exception)
+//        where E : Exception
+//    {
+//        public ProblemDetails ToProblemDetails() => ProblemDetailsConverter.ToProblemDetails(exception);
+//    }
+//}

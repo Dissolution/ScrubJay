@@ -13,12 +13,13 @@
         <Using Include="System.Reflection"/>
         <Using Include="System.Reflection.Emit"/>
         <Using Include="ScrubJay.Reflection.Lightweight"/>
+        <Using Include="InlineIL"/>
         <Using Include="InlineIL.IL" Static="true"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" PrivateAssets="all"/>
-        
+
         <PackageReference Include="Nullable" PrivateAssets="all"/>
         <PackageReference Include="Fody" PrivateAssets="all"/>
         <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>

@@ -70,7 +70,7 @@ internal static class DictionaryExtensions
 
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Value is V v && valueComparer.Equals(v, value))
+                if (entry.Value is V v && valueComparer.Equals(v!, value!))
                     return true;
             }
             return false;

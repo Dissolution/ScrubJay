@@ -2,7 +2,10 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net48;</TargetFrameworks>
+        <IsTestProject>true</IsTestProject>
         <IsPackable>false</IsPackable>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <NoWarn>$(NoWarn);CA2201;CA1515;RS0016;RS0037;</NoWarn>
     </PropertyGroup>
 

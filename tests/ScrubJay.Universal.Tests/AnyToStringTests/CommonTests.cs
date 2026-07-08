@@ -1,9 +1,9 @@
 ﻿using ScrubJay.Testing.Collections;
 using ScrubJay.Testing.Validation;
 
-namespace ScrubJay.Universal.Tests;
+namespace ScrubJay.Universal.Tests.AnyToStringTests;
 
-public partial class AnyToStringTests
+public class AnyToStringTests
 {
     public static TheoryData<object?> ObjectData { get; } = new(TestingData.Objects);
     public static TheoryData<string?> StringData { get; } = new(TestingData.Strings.GetStringsAndNull(10));

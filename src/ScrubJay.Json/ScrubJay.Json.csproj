@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
+                                     $(TargetFrameworkIdentifier) == '.NETFramework'"
+                          Include="System.Text.Json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Json.Extensions"/>
+    </ItemGroup>
+</Project>

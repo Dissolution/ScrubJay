@@ -1,5 +1,3 @@
-using ScrubJay.Universal;
-
 namespace ScrubJay.Errors.Arguments;
 
 [PublicAPI]

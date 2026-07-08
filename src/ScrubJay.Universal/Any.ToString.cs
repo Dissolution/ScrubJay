@@ -82,14 +82,20 @@ partial class Any
             
             MethodInfo? method;
 
-            if (methods.Count != 1)
+            if (methods.Count == 0)
             {
+                method = null; // DNE
                 Debugger.Break();
-                method = null;
+            }
+            else if (methods.Count == 1)
+            {
+                method = methods[0];
             }
             else
             {
                 method = methods[0];
+                if (method.DeclaringType != type)
+                    Debugger.Break();
             }
 
             if (method is not null && DynamicMethod.TryGenerateDelegate<AnyToString<T>>(

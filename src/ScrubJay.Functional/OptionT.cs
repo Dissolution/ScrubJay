@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using ScrubJay.Functional.Implementations;
 using ScrubJay.Polyfills.Collections;
 using ScrubJay.Universal;
 
@@ -14,7 +12,7 @@ public readonly struct Option<T> :
     IEnumerable<T>
 {
     public static implicit operator Option<T>(T value) => new Option<T>(value);
-    public static implicit operator Option<T>(None _) => default;
+    public static implicit operator Option<T>(Impl.None _) => default;
 
     public static implicit operator bool(Option<T> result) => result._some;
 
@@ -36,7 +34,7 @@ public readonly struct Option<T> :
         _value = value;
     }
 
-    public Option(None _)
+    public Option(Impl.None _)
     {
         _some = false;
         _value = default(T);
@@ -98,7 +96,7 @@ public readonly struct Option<T> :
         return !_some && errorPredicate();
     }
 
-    public bool IsNoneAnd(Func<None, bool> errorPredicate)
+    public bool IsNoneAnd(Func<Impl.None, bool> errorPredicate)
     {
         return !_some && errorPredicate(default);
     }
@@ -116,7 +114,7 @@ public readonly struct Option<T> :
         }
     }
 
-    public void Match(Action<T>? onSome, Action<None>? onNone)
+    public void Match(Action<T>? onSome, Action<Impl.None>? onNone)
     {
         if (_some)
         {
@@ -143,7 +141,7 @@ public readonly struct Option<T> :
         }
     }
 
-    public R Match<R>(Func<T, R> onSome, Func<None, R> onNone)
+    public R Match<R>(Func<T, R> onSome, Func<Impl.None, R> onNone)
 #if NET9_0_OR_GREATER
         where R : allows ref struct
 #endif
@@ -176,7 +174,7 @@ public readonly struct Option<T> :
         return _some && Relate.Equals(_value, other);
     }
 
-    public bool Equals(None _)
+    public bool Equals(Impl.None _)
     {
         return !_some;
     }
@@ -187,7 +185,7 @@ public readonly struct Option<T> :
             return Equals(option);
         if (obj is T some)
             return Equals(some);
-        if (obj is None none)
+        if (obj is Impl.None none)
             return Equals(none);
         return false;
     }

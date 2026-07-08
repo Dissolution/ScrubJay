@@ -6,6 +6,8 @@ using ScrubJay.Universal;
 
 namespace ScrubJay.Testing.Validation;
 
+
+[PublicAPI]
 public static partial class Demand
 {
     [AssertionMethod]
@@ -47,7 +49,8 @@ public static partial class Demand
     }
 }
 
-public static partial class ArgumentExtensions
+[PublicAPI]
+public static class ArgumentExtensions
 {
     extension<T>(in Argument<T> argument)
     {

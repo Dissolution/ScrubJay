@@ -6,7 +6,7 @@ public readonly struct EmptyEnumerator : IEnumerator
 {
     public static readonly EmptyEnumerator Default;
 
-    public object? Current
+    public object Current
     {
         [DoesNotReturn]
         get => throw Ex.Enumeration.CannotHappen();
@@ -30,7 +30,7 @@ where T : allows ref struct
 {
     public static readonly EmptyEnumerator<T> Default;
 
-    object? IEnumerator.Current
+    object IEnumerator.Current
     {
         [DoesNotReturn]
         get => throw Ex.Enumeration.CannotHappen();

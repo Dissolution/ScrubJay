@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using ScrubJay.Polyfills.Collections;
 using ScrubJay.Universal;
 
@@ -15,8 +14,8 @@ public readonly struct Result<T, E> :
 
     public static implicit operator Result<T, E>(T value) => new Result<T, E>(value);
     public static implicit operator Result<T, E>(E error) => new Result<T, E>(error);
-    public static implicit operator Result<T, E>(Implementations.Ok<T> ok) => new Result<T, E>(ok._value);
-    public static implicit operator Result<T, E>(Implementations.Error<E> error) => new Result<T, E>(error._value);
+    public static implicit operator Result<T, E>(Impl.Ok<T> ok) => new Result<T, E>(ok._value);
+    public static implicit operator Result<T, E>(Impl.Error<E> error) => new Result<T, E>(error._value);
 
     public static implicit operator bool(Result<T, E> result) => result._success;
 

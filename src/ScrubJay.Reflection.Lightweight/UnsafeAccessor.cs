@@ -47,7 +47,7 @@ public static class UnsafeAccessor
         if (field is null)
             throw new InvalidOperationException();
 
-        return DynamicMethod.GenerateDelegate<ReferenceFieldRef<TInstance, TValue>>(
+        var del = Runtime.TryGenerateDelegate<ReferenceFieldRef<TInstance, TValue>>(
             $"ref_{typeof(TInstance)}_{field}",
             gen =>
             {
@@ -55,27 +55,34 @@ public static class UnsafeAccessor
                 gen.Emit(OpCodes.Ldflda, field);
                 gen.Emit(OpCodes.Ret);
             });
+        
+        if (del is null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return del;
     }
     
-    public static ValueFieldRef<TInstance, TValue> GetValueFieldRef<TInstance, TValue>(
-        string fieldName,
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-        where TInstance : struct
-    {
-        var field = typeof(TInstance)
-            .GetField(fieldName, bindingFlags);
-        if (field is null)
-            throw new InvalidOperationException();
-
-        return DynamicMethod.GenerateDelegate<ValueFieldRef<TInstance, TValue>>(
-            $"ref_{typeof(TInstance)}_{field}",
-            gen =>
-            {
-                gen.Emit(OpCodes.Ldarg_0);
-                gen.Emit(OpCodes.Ldflda, field);
-                gen.Emit(OpCodes.Ret);
-            });
-    }
+//    public static ValueFieldRef<TInstance, TValue> GetValueFieldRef<TInstance, TValue>(
+//        string fieldName,
+//        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+//        where TInstance : struct
+//    {
+//        var field = typeof(TInstance)
+//            .GetField(fieldName, bindingFlags);
+//        if (field is null)
+//            throw new InvalidOperationException();
+//
+//        return DynamicMethod.GenerateDelegate<ValueFieldRef<TInstance, TValue>>(
+//            $"ref_{typeof(TInstance)}_{field}",
+//            gen =>
+//            {
+//                gen.Emit(OpCodes.Ldarg_0);
+//                gen.Emit(OpCodes.Ldflda, field);
+//                gen.Emit(OpCodes.Ret);
+//            });
+//    }
 }
 
 #endif

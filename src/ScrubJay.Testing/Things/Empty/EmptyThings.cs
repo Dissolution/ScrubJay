@@ -1,0 +1,20 @@
+namespace ScrubJay.Testing.Things.Empty;
+
+public ref struct EmptyRefStructThing;
+public readonly ref struct EmptyReadonlyRefStructThing;
+public struct EmptyStructThing;
+public readonly struct EmptyReadonlyStructThing;
+public record struct EmptyRecordStructThing;
+public readonly record struct EmptyReadonlyRecordStructThing;
+public class EmptyClassThing;
+public sealed class EmptySealedClassThing;
+public abstract class EmptyAbstractClassThing;
+public class EmptyClassSuperThing : EmptyAbstractClassThing;
+public sealed class EmptySealedClassSuperThing : EmptyAbstractClassThing;
+public abstract class EmptyAbstractClassSuperThing : EmptyAbstractClassThing;
+public record class EmptyRecordClassThing;
+public sealed record class EmptySealedRecordClassThing;
+public abstract record class EmptyAbstractRecordClassThing;
+public record class EmptyRecordClassSuperThing : EmptyAbstractRecordClassThing;
+public sealed record class EmptyRecordSealedClassSuperThing : EmptyAbstractRecordClassThing;
+public abstract record class EmptyRecordAbstractClassSuperThing : EmptyAbstractRecordClassThing;

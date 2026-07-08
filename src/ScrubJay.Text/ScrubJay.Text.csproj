@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      
+    </PropertyGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Text</PackageId>
+        <Title>ScrubJay - Text</Title>
+        <Description>
+            Many utilities for working with text.
+        </Description>
+        <Version>0.0.1-alpha</Version>
+    </PropertyGroup>
+
+    <!-- Global Usings -->
+    <ItemGroup>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
+        
+        <Using Include="InlineIL.IL" Static="true"/>
+        <Using Include="InlineIL"/>
+    </ItemGroup>
+
+    <ItemGroup>
+    
+
+        <PackageReference Include="Fody">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
+      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
+      <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+    </ItemGroup>
+</Project>

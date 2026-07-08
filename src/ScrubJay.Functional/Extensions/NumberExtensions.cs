@@ -1,3 +1,4 @@
+#if NET7_0_OR_GREATER
 using System.Globalization;
 using ScrubJay.Errors.Exceptions;
 
@@ -6,7 +7,6 @@ namespace ScrubJay.Functional.Extensions;
 [PublicAPI]
 public static class NumberExtensions
 {
-#if NET7_0_OR_GREATER
     extension<N>(N)
         where N : INumberBase<N>
     {
@@ -40,5 +40,5 @@ public static class NumberExtensions
             });
         }
     }
-#endif
 }
+#endif

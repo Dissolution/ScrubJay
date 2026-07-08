@@ -24,6 +24,36 @@ public static class DynamicMethodExtensions
 
             return new(dynamicMethod);
         }
+        
+        public static bool TryCreateDynamicMethod<D>(
+            string methodName,
+            [NotNullWhen(true)]
+            out DynamicMethod<D>? dynamicMethod,
+            Module? module = null,
+            bool skipVisibility = true)
+            where D : Delegate
+        {
+            var invokeMethod = Delegate.GetInvokeMethod<D>();
+
+            try
+            {
+                var dm = new DynamicMethod(
+                    name: methodName,
+                    attributes: MethodAttributes.Public | MethodAttributes.Static,
+                    callingConvention: CallingConventions.Standard,
+                    returnType: invokeMethod.ReturnType,
+                    parameterTypes: Array.ConvertAll(invokeMethod.GetParameters(), static p => p.ParameterType),
+                    m: module ?? typeof(DynamicMethodExtensions).Module,
+                    skipVisibility: skipVisibility);
+                dynamicMethod = new(dm);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                dynamicMethod = null;
+                return false;
+            }
+        }
 
         public static D GenerateDelegate<D>(
             string methodName,
@@ -45,7 +75,11 @@ public static class DynamicMethodExtensions
             bool skipVisibility = true)
             where D : Delegate
         {
-            var dm = DynamicMethod.CreateDynamicMethod<D>(methodName, module, skipVisibility);
+            if (!DynamicMethod.TryCreateDynamicMethod<D>(methodName, out var dm, module, skipVisibility))
+            {
+                generatedDelegate = null;
+                return false;
+            }
             generateMethodBody(dm.GetILGenerator());
             return dm.TryCreateDelegate(out generatedDelegate);
         }

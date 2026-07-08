@@ -11,6 +11,7 @@
     </Folder>
 
     <Folder Name="/1_Sandboxes/">
+        <Project Path="src/ScrubJay.Debugging/ScrubJay.Debugging.csproj"/>
         <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.ConsoleApp.csproj"/>
     </Folder>
 
@@ -37,10 +38,23 @@
         <Project Path="tests/ScrubJay.Functional.Tests/ScrubJay.Functional.Tests.csproj"/>
     </Folder>
 
+    <Folder Name="/7_Text/">
+        <Project Path="src/ScrubJay.Text/ScrubJay.Text.csproj"/>
+        <Project Path="tests/ScrubJay.Text.Tests/ScrubJay.Text.Tests.csproj"/>
+    </Folder>
+
     <Folder Name="/Expressions/">
         <Project Path="src/ScrubJay.Expressions/ScrubJay.Expressions.csproj"/>
     </Folder>
-    
+
+    <Folder Name="/Json/">
+        <Project Path="src/ScrubJay.Json/ScrubJay.Json.csproj"/>
+    </Folder>
+
+    <Folder Name="/ASP/">
+        <Project Path="src/ScrubJay.Asp/ScrubJay.Asp.csproj"/>
+    </Folder>
+
     <Folder Name="/Testing/">
         <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj"/>
     </Folder>
