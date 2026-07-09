@@ -39,7 +39,7 @@ public static class TextPool
         var newArray = Rent(newMinCapacity);
         if (len > 0)
         {
-            TextHelper.Unsafe.Copy(array, newArray, len);
+            TextHelper.Unsafe.CopyCharacters(array, newArray, len);
             _charArrayPool.Return(array);
         }
         array = newArray;

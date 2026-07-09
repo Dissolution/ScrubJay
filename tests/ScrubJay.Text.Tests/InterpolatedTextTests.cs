@@ -33,4 +33,22 @@ public class InterpolatedTextTests
         Assert.Equal(0, text.Length);
         Assert.Equal("", text.ToString());
     }
+
+    [Fact]
+    public void AppendFormattedWithInterpolatedTextWorks()
+    {
+        using InterpolatedText text = new();
+        
+        Guid id = Guid.NewGuid();
+
+        text.AppendFormatted($"ID: {id}");
+        Assert.Equal(40, text.Length);
+        Assert.Equal($"ID: {id}", text.ToString());
+        
+        // still can append
+        text.AppendLiteral("TRJ");
+        Assert.Equal(43, text.Length);
+        Assert.Equal("TRJ", text.Written[^3..]);
+
+    }
 }

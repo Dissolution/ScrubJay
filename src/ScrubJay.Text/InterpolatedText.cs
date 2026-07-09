@@ -78,7 +78,7 @@ public ref struct InterpolatedText : IDisposable
         char[] newArray = TextPool.Rent(minCapacity);
         if (_position > 0)
         {
-            TextHelper.Unsafe.Copy(_chars, newArray, _position);
+            TextHelper.Unsafe.CopyCharacters(_chars, newArray, _position);
         }
         TextPool.Return(_charArray);
         _chars = _charArray = newArray;
@@ -95,7 +95,7 @@ public ref struct InterpolatedText : IDisposable
     public void GrowTo(int minCapacity)
     {
         if (minCapacity <= _chars.Length) return;
-
+        GrowCore(minCapacity);
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -104,7 +104,8 @@ public ref struct InterpolatedText : IDisposable
         int newPos = _position + text.Length;
         Debug.Assert(newPos >= Capacity);
         GrowCore(newPos);
-        TextHelper.Unsafe.Copy(text, Available, text.Length);
+        TextHelper.Unsafe.CopyCharacters(text, Available, text.Length);
+        _position += text.Length;
     }
 
     public void AppendLiteral(string str)
@@ -118,11 +119,44 @@ public ref struct InterpolatedText : IDisposable
         GrowThenAppend(str);
     }
 
-    public void AppendFormatted([InterpolatedStringHandlerArgument("")] ref InterpolatedText interpolated)
+    public void AppendFormatted(
+        [HandlesResourceDisposal] [InterpolatedStringHandlerArgument("")]
+        ref InterpolatedText interpolated)
     {
+        // take back what it took
         _charArray = interpolated._charArray;
         _chars = interpolated._chars;
         _position = interpolated._position;
+    }
+
+    public void AppendFormatted<T>(in T? value)
+    {
+        string? str;
+        if (value is IFormattable)
+        {
+#if NET6_0_OR_GREATER
+            if (value is ISpanFormattable)
+            {
+                int charsWritten;
+                while (!((ISpanFormattable)value).TryFormat(Available, out charsWritten, default, default))
+                {
+                    GrowBy(1);
+                }
+                _position += charsWritten;
+                return;
+            }
+#endif
+            str = ((IFormattable)value).ToString(default, default);
+        }
+        else
+        {
+            str = value?.ToString();
+        }
+
+        if (str is not null)
+        {
+            AppendLiteral(str);
+        }
     }
 
     [HandlesResourceDisposal]
@@ -154,5 +188,5 @@ public ref struct InterpolatedText : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly override string ToString() => _chars.ToString();
+    public readonly override string ToString() => _chars.Slice(0, _position).ToString();
 }
