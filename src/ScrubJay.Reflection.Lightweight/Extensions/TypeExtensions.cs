@@ -4,6 +4,38 @@ public static class TypeExtensions
 {
     extension(Type? type)
     {
+        public bool IsTuple
+        {
+            get
+            {
+#if !NETSTANDARD2_0
+                return typeof(ITuple).IsAssignableFrom(type);
+#else
+                if (type is null || !type.IsGenericType)
+                    return false;
+
+                var gtd = type.GetGenericTypeDefinition();
+                return
+                    gtd == typeof(ValueTuple<>) ||
+                    gtd == typeof(ValueTuple<,>) ||
+                    gtd == typeof(ValueTuple<,,>) ||
+                    gtd == typeof(ValueTuple<,,,>) ||
+                    gtd == typeof(ValueTuple<,,,,>) ||
+                    gtd == typeof(ValueTuple<,,,,,>) ||
+                    gtd == typeof(ValueTuple<,,,,,,>) ||
+                    gtd == typeof(ValueTuple<,,,,,,,>) ||
+                    gtd == typeof(Tuple<>) ||
+                    gtd == typeof(Tuple<,>) ||
+                    gtd == typeof(Tuple<,,>) ||
+                    gtd == typeof(Tuple<,,,>) ||
+                    gtd == typeof(Tuple<,,,,>) ||
+                    gtd == typeof(Tuple<,,,,,>) ||
+                    gtd == typeof(Tuple<,,,,,,>) ||
+                    gtd == typeof(Tuple<,,,,,,,>);
+#endif
+            }
+        }
+
         internal IEnumerable<Type> InvokableTypes()
         {
             while (type is not null)

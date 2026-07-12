@@ -78,7 +78,7 @@ public ref struct InterpolatedText : IDisposable
         char[] newArray = TextPool.Rent(minCapacity);
         if (_position > 0)
         {
-            TextHelper.Unsafe.CopyCharacters(_chars, newArray, _position);
+            TextHelper.Notsafe.CopyCharacters(_chars, newArray, _position);
         }
         TextPool.Return(_charArray);
         _chars = _charArray = newArray;
@@ -104,7 +104,7 @@ public ref struct InterpolatedText : IDisposable
         int newPos = _position + text.Length;
         Debug.Assert(newPos >= Capacity);
         GrowCore(newPos);
-        TextHelper.Unsafe.CopyCharacters(text, Available, text.Length);
+        TextHelper.Notsafe.CopyCharacters(text, Available, text.Length);
         _position += text.Length;
     }
 

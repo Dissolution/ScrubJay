@@ -2,6 +2,7 @@
 // ReSharper disable All
 
 using System.Reflection;
+using ScrubJay.Debugging.Destinations;
 using ScrubJay.Functional;
 using ScrubJay.Polyfills;
 using ScrubJay.Universal;
@@ -12,7 +13,7 @@ Result<object, Exception> other = new(147);
 
 var fmt = result.ToString("D");
 
-
+ConsoleColors cc = default;
 
 
 

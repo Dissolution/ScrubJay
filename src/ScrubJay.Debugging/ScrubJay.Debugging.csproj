@@ -1,6 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+        <PolyNullability>true</PolyNullability>
+    </PropertyGroup>
     
     <ItemGroup>
         <PackageReference Include="Polyfill" PrivateAssets="all"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
     </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\ScrubJay.Debugging\ScrubJay.Debugging.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Errors\ScrubJay.Errors.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Functional\ScrubJay.Functional.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />

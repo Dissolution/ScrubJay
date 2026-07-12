@@ -1,15 +1,8 @@
 namespace ScrubJay.Debugging;
 
-internal sealed record class CallerInfo
+[PublicAPI]
+public sealed record class CallerInfo
 {
-    public static CallerInfo Capture(
-        [CallerFilePath] string? filePath = null,
-        [CallerLineNumber] int? lineNumber = null,
-        [CallerMemberName] string? memberName = null)
-    {
-        return new(filePath, lineNumber, memberName);
-    }
-
     public string? FilePath { get; init; }
     public int? LineNumber { get; init; }
     public string? MemberName { get; init; }

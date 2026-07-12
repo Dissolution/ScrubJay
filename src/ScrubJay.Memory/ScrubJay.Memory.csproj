@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    
+    <!-- Global Usings -->
+    <ItemGroup>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj" />
+        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+    </ItemGroup>
+
+</Project>

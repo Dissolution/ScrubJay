@@ -1,8 +1,8 @@
 namespace ScrubJay.Debugging;
 
-internal enum LogLevel
+[PublicAPI]
+public enum LogLevel
 {
-    Debug,
     Info,
     Warn,
     Error,

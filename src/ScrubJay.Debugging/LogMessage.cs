@@ -1,46 +1,33 @@
 namespace ScrubJay.Debugging;
 
-internal sealed class LogMessage
+[PublicAPI]
+public sealed class LogMessage
 {
-    public required DateTime Timestamp { get; init; }
-
-    public required LogLevel Level { get; init; }
-
-    public required string? Message { get; init; }
-
-    public Exception? Exception { get; init; }
-
-    public CallerInfo? CallerInfo { get; init; }
+    public static implicit operator LogMessage([HandlesResourceDisposal] LogMessageBuilder interpolatedMessage) => new(interpolatedMessage);
+    
+    public string? Template { get; init; }
+    
+    public LogMessageArguments Arguments { get; init; } = [];
 
     public LogMessage()
     {
+        
     }
 
-    [SetsRequiredMembers]
-    public LogMessage(
-        LogLevel level,
-        string? message,
-        Exception? exception = null,
-        CallerInfo? callerInfo = null)
+    public LogMessage(string? message)
     {
-        Timestamp = DateTime.Now;
-        Level = level;
-        Message = message;
-        Exception = exception;
-        CallerInfo = callerInfo;
+        Template = message;
     }
 
-    [SetsRequiredMembers]
-    public LogMessage(DateTime timestamp,
-        LogLevel level,
-        string? message,
-        Exception? exception = null,
-        CallerInfo? callerInfo = null)
+    public LogMessage([HandlesResourceDisposal] LogMessageBuilder interpolatedMessage)
     {
-        Timestamp = timestamp;
-        Level = level;
-        Message = message;
-        Exception = exception;
-        CallerInfo = callerInfo;
+        // deconstruction handles disposal
+        (Template, Arguments) = interpolatedMessage;
+    }
+    
+    public override string ToString()
+    {
+        // todo
+        return $"{Template}: {Arguments}";
     }
 }

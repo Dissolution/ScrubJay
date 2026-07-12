@@ -1,12 +1,15 @@
 // ReSharper disable EntityNameCapturedOnly.Global
 
+using ScrubJay.Text.Extensions;
+
 namespace ScrubJay.Text;
 
 [PublicAPI]
 public static class TextHelper
 {
-    internal static unsafe class Unsafe
+    internal static unsafe class Notsafe
     {
+        #region CopyCharacters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyCharacters(char* source, char* dest, uint charCount)
         {
@@ -38,7 +41,9 @@ public static class TextHelper
                 ref MemoryMarshal.GetReference(dest),
                 (uint)charCount);
         }
-
+#endregion
+        
+        #region InitCharacters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InitCharacters(char* charPtr, uint charCount)
         {
@@ -60,13 +65,14 @@ public static class TextHelper
             Emit.Mul();
             Emit.Initblk();
         }
+        #endregion
     }
 
 #region Clear
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Clear(scoped Span<char> characters)
     {
-        Unsafe.InitCharacters(ref MemoryMarshal.GetReference(characters), (uint)characters.Length);
+        Notsafe.InitCharacters(ref MemoryMarshal.GetReference(characters), (uint)characters.Length);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -78,12 +84,13 @@ public static class TextHelper
             {
                 fixed (char* ptr = chars)
                 {
-                    Unsafe.InitCharacters(ptr, (uint)chars.Length);
+                    Notsafe.InitCharacters(ptr, (uint)chars.Length);
                 }
             }
         }
     }
 #endregion
+    
 #region (Try)CopyTo
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryCopyTo(scoped ReadOnlySpan<char> source, scoped Span<char> dest)
@@ -91,7 +98,7 @@ public static class TextHelper
         int len = source.Length;
         if (len <= dest.Length)
         {
-            Unsafe.CopyCharacters(source, dest, len);
+            Notsafe.CopyCharacters(source, dest, len);
             return true;
         }
         return false;
@@ -103,127 +110,41 @@ public static class TextHelper
         int len = source.Length;
         if (len <= dest.Length)
         {
-            Unsafe.CopyCharacters(source, dest, len);
+            Notsafe.CopyCharacters(source, dest, len);
             return true;
         }
         return false;
     }
 #endregion
-
-#region SelfCopy
-    public static void SelfCopy(char[] array, int sourceIndex, int destIndex, int count)
+    
+    public static bool TryUnboxText(object? obj, out text text)
     {
-#if DEBUG
-        Debug.Assert(array is not null);
-        int arrayLength = array!.Length;
+        if (obj is char)
+        {
+            ref char ch = ref Unsafe.Unbox<char>(obj);
+            text = ch.AsSpan();
+            return true;
+        }
 
-        Debug.Assert(arrayLength > 0);
-        Debug.Assert(count > 0);
+        if (obj is string str)
+        {
+            text = str.AsSpan();
+            return true;
+        }
 
-        Debug.Assert(sourceIndex >= 0 && sourceIndex <= arrayLength);
-        int sourceEnd = sourceIndex + count;
-        Debug.Assert(sourceEnd >= 0 && sourceEnd <= arrayLength);
+        if (obj is char[] chars)
+        {
+            text = chars.AsSpan();
+            return true;
+        }
 
-        Debug.Assert(destIndex >= 0 && destIndex <= arrayLength);
-        int destEnd = destIndex + count;
-        Debug.Assert(destEnd >= 0 && destEnd <= arrayLength);
-#endif
+        if (obj is ReadOnlyMemory<char> memory)
+        {
+            text = memory.Span;
+            return true;
+        }
 
-        ref char src = ref array[sourceIndex];
-        ref char dst = ref array[destIndex];
-        CopyTo(ref src, ref dst, count);
+        text = default;
+        return false;
     }
-
-    public static void SelfCopy(char[] chars, Range source, int destStart)
-    {
-        Debug.Assert(chars is not null);
-        int len = chars!.Length;
-        Debug.Assert(len > 0);
-
-        int sourceStart = source.Start.GetOffset(len);
-        Debug.Assert(sourceStart >= 0 && sourceStart <= len);
-
-        int sourceEnd = source.End.GetOffset(len);
-        Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
-
-        int sourceLength = sourceEnd - sourceStart;
-        Debug.Assert(sourceLength >= 0 && sourceLength <= len);
-
-        Debug.Assert(destStart >= 0 && destStart <= len);
-
-        int destEnd = destStart + sourceLength;
-        Debug.Assert(destEnd >= 0 && destEnd <= len);
-
-        int endLength = destEnd - destStart;
-        Debug.Assert(endLength >= 0 && endLength <= len);
-
-        Debug.Assert(endLength >= sourceLength);
-
-        ref char src = ref chars[sourceStart];
-        ref char dst = ref chars[destStart];
-        CopyTo(ref src, ref dst, sourceLength);
-    }
-
-    public static void SelfCopy(char[] chars, Range source, Index dest)
-    {
-        Debug.Assert(chars is not null);
-        int len = chars!.Length;
-        Debug.Assert(len > 0);
-
-        int sourceStart = source.Start.GetOffset(len);
-        Debug.Assert(sourceStart >= 0 && sourceStart <= len);
-
-        int sourceEnd = source.End.GetOffset(len);
-        Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
-
-        int sourceLength = sourceEnd - sourceStart;
-        Debug.Assert(sourceLength >= 0 && sourceLength <= len);
-
-        int destStart = dest.GetOffset(len);
-        Debug.Assert(destStart >= 0 && destStart <= len);
-
-        int destEnd = destStart + sourceLength;
-        Debug.Assert(destEnd >= 0 && destEnd <= len);
-
-        int endLength = destEnd - destStart;
-        Debug.Assert(endLength >= 0 && endLength <= len);
-
-        Debug.Assert(endLength >= sourceLength);
-
-        ref char src = ref chars[sourceStart];
-        ref char dst = ref chars[destStart];
-        CopyTo(ref src, ref dst, sourceLength);
-    }
-
-    public static void SelfCopy(char[] chars, Range source, Range dest)
-    {
-        Debug.Assert(chars is not null);
-        int len = chars!.Length;
-        Debug.Assert(len > 0);
-
-        int sourceStart = source.Start.GetOffset(len);
-        Debug.Assert(sourceStart >= 0 && sourceStart <= len);
-
-        int sourceEnd = source.End.GetOffset(len);
-        Debug.Assert(sourceEnd >= 0 && sourceEnd <= len);
-
-        int sourceLength = sourceEnd - sourceStart;
-        Debug.Assert(sourceLength >= 0 && sourceLength <= len);
-
-        int destStart = dest.Start.GetOffset(len);
-        Debug.Assert(destStart >= 0 && destStart <= len);
-
-        int destEnd = dest.End.GetOffset(len);
-        Debug.Assert(destEnd >= 0 && destEnd <= len);
-
-        int endLength = destEnd - destStart;
-        Debug.Assert(endLength >= 0 && endLength <= len);
-
-        Debug.Assert(endLength >= sourceLength);
-
-        ref char src = ref chars[sourceStart];
-        ref char dst = ref chars[destStart];
-        CopyTo(ref src, ref dst, sourceLength);
-    }
-#endregion
 }
