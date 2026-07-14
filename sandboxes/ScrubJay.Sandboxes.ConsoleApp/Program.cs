@@ -5,15 +5,11 @@ using System.Reflection;
 using ScrubJay.Debugging.Destinations;
 using ScrubJay.Functional;
 using ScrubJay.Polyfills;
+using ScrubJay.Polyfills.Text;
 using ScrubJay.Universal;
 
-
-Result<int, Exception> result = new(147);
-Result<object, Exception> other = new(147);
-
-var fmt = result.ToString("D");
-
-ConsoleColors cc = default;
+byte b = 147;
+using InterpolatedText it = $"{b}";
 
 
 

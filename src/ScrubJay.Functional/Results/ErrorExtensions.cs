@@ -30,7 +30,7 @@ public static class ErrorExtensions
         {
             if (!result._success)
             {
-                return Relate.Compare(result._error, other);
+                return Any.Compare(result._error, other);
             }
             return 0;
         }
@@ -40,7 +40,7 @@ public static class ErrorExtensions
         {
             if (!result._success && !other._success)
             {
-                return Relate.Compare(result._error, other._error);
+                return Any.Compare(result._error, other._error);
             }
             return 0;
         }
@@ -50,7 +50,7 @@ public static class ErrorExtensions
         {
             if (!result._success && !other._success)
             {
-                return Relate.Compare(result._error, other._error);
+                return Any.Compare(result._error, other._error);
             }
             return 0;
         }

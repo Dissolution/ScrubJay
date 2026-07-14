@@ -55,7 +55,7 @@ public partial class Any
         => !typeof(T).IsByRefLike;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static object? Box<T>(T? value) 
+    public static object? BoxOrNull<T>(T? value) 
         where T : allows ref struct
         => TryBox<T>(value, out var boxed) ? boxed : null;
 

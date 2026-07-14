@@ -1,5 +1,5 @@
-using System.ComponentModel;
 #if NET8_0_OR_GREATER
+using System.ComponentModel;
 using System.Collections.Frozen;
 #endif
 
@@ -347,7 +347,11 @@ public static class TypeName
         return nameBuilder.ToStringAndClear();
     }
 
-    public static string For<T>() => For(typeof(T));
+    public static string For<T>()
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+        => For(typeof(T));
 
     public static string For<I>(in I? instance)
     {

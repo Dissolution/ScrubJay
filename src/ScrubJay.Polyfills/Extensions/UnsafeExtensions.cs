@@ -1,3 +1,4 @@
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 namespace ScrubJay.Polyfills;
 
 [PublicAPI]
@@ -24,6 +25,43 @@ public static unsafe class UnsafeExtensions
                     Unsafe.CopyBlockUnaligned(destPtr, sourcePtr, (uint)byteCount);
                 }
             }
+        }
+
+        public static T* VoidPtrAsPtr<T>(void* pointer)
+        {
+            Emit.Ldarg(nameof(pointer));
+            return ReturnPointer<T>();
+        }
+        
+        public static ref T VoidPtrAsRef<T>(void* pointer)
+        {
+            Emit.Ldarg(nameof(pointer));
+            return ref ReturnRef<T>();
+        }
+        
+        
+        public static void* InAsVoidPtr<T>(in T value)
+        {
+            Emit.Ldarg(nameof(value));
+            return ReturnPointer();
+        }
+        
+        public static T* InAsPtr<T>(in T value)
+        {
+            Emit.Ldarg(nameof(value));
+            return ReturnPointer<T>();
+        }
+        
+        public static ref T InAsRef<T>(in T value)
+        {
+            Emit.Ldarg(nameof(value));
+            return ref ReturnRef<T>();
+        }
+        
+        public static void* RefAsVoidPtr<T>(ref T value)
+        {
+            Emit.Ldarg(nameof(value));
+            return ReturnPointer();
         }
     }
 

@@ -97,7 +97,7 @@ internal static class DictionaryExtensions
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Key is K k && Relate.Equals(k, key))
+                if (entry.Key is K k && Any.Equals(k, key))
                 {
                     value = entry.Value;
                     return true;
@@ -146,7 +146,7 @@ internal static class DictionaryExtensions
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Key is K k && Relate.Equals(k, key) && entry.Value is V v)
+                if (entry.Key is K k && Any.Equals(k, key) && entry.Value is V v)
                 {
                     value = v;
                     return true;
@@ -194,7 +194,7 @@ internal static class DictionaryExtensions
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Key is K k && Relate.Equals(k, key))
+                if (entry.Key is K k && Any.Equals(k, key))
                     return entry.Value;
             }
             dictionary.Add(key, valueToAdd);
@@ -209,7 +209,7 @@ internal static class DictionaryExtensions
 
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Key is K k && Relate.Equals(k, key))
+                if (entry.Key is K k && Any.Equals(k, key))
                     return entry.Value;
             }
             dictionary.Add(key, valueToAdd);
@@ -232,7 +232,7 @@ internal static class DictionaryExtensions
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (entry.Key is K k && Relate.Equals(k, key) && entry.Value is V v)
+                if (entry.Key is K k && Any.Equals(k, key) && entry.Value is V v)
                     return v;
             }
             dictionary.Add(key, valueToAdd);

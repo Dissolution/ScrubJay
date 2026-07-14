@@ -36,14 +36,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\tests\ScrubJay.Universal.Tests\ScrubJay.Universal.Tests.csproj" />
       <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
       <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
       <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
       <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Collections\" />
     </ItemGroup>
 </Project>

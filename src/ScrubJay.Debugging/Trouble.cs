@@ -1,4 +1,4 @@
-using Dbg = System.Diagnostics.Debug;
+using ScrubJay.Debugging.Destinations;
 
 
 namespace ScrubJay.Debugging;
@@ -6,11 +6,6 @@ namespace ScrubJay.Debugging;
 [PublicAPI]
 public static class Trouble
 {
-    private static readonly Lock _debuggerLock = new Lock();
-    private static readonly Lock _traceLock = new Lock();
-
-    private static readonly ConsoleColor _defaultForeColor;
-
     [Conditional("DEBUG")]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void Hold() { }
@@ -22,115 +17,49 @@ public static class Trouble
         Debugger.Break();
     }
 
+    public static List<LogDestination> LogDestinations { get; } =
+    [
+        new ConsoleLogDestination(),
+        new DebugLogDestination(),
+        new DebuggerLogDestination(),
+        new TraceLogDestination(),
+    ];
 
-    /*
-
-
-    public static void Log(LogEvent logMessage)
+    public static void Log(LogEvent logEvent)
     {
-        WriteToConsole(logMessage);
-        WriteToDebug(logMessage);
-        WriteToDebugger(logMessage);
-        WriteToTrace(logMessage);
+        foreach (var dest in LogDestinations)
+        {
+            dest.Write(logEvent);
+        }
     }
 
-    public static void Log(LogLevel level,
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-    {
-        var callerInfo = CallerInfo.Capture(callerFilePath, callerLineNumber, callerMemberName);
-        var log = new LogEvent(level, message, error, callerInfo);
-        Log(log);
-    }
-
-    public static void Log(LogLevel level,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-    {
-        var callerInfo = CallerInfo.Capture(callerFilePath, callerLineNumber, callerMemberName);
-        var log = new LogEvent(level, message, null, callerInfo);
-        Log(log);
-    }
-
-    public static void Debug(
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Debug, error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Debug(
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Debug, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Info(
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Info, error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Info(
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Info, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Warn(
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Warn, error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Warn(
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Warn, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Error(
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Error, error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Error(
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Fatal(
-        Exception? error,
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Fatal, error, message, callerLineNumber, callerFilePath, callerMemberName);
-
-    public static void Fatal(
-        string? message = null,
-        [CallerLineNumber] int? callerLineNumber = null,
-        [CallerFilePath] string? callerFilePath = null,
-        [CallerMemberName] string? callerMemberName = null)
-        => Log(LogLevel.Fatal, message, callerLineNumber, callerFilePath, callerMemberName);
-        
-        */
+    public static void Log(
+        LogLevel level, 
+        LogMessage? message, 
+        Exception? exception = null)
+        => Log(new LogEvent(level, message, exception));
+    
+    public static void Log(
+        LogLevel level, 
+        [HandlesResourceDisposal] LogMessageBuilder logMessage,
+        Exception? exception = null)
+        => Log(new LogEvent(level, logMessage, exception));
+    
+    public static void Log(
+        LogLevel level, 
+        Exception? exception)
+        => Log(new LogEvent(level, exception, null));
+    
+    public static void Log(
+        LogLevel level, 
+        Exception? exception,
+        LogMessage? message)
+        => Log(new LogEvent(level, exception, message));
+    
+    public static void Log(
+        LogLevel level, 
+        Exception? exception,
+        [HandlesResourceDisposal] LogMessageBuilder logMessage)
+        => Log(new LogEvent(level, exception, logMessage));
+  
 }

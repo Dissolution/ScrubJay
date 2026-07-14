@@ -30,7 +30,7 @@ public static class OkExtensions
         {
             if (result._success)
             {
-                return Relate.Compare(result._value, other);
+                return Any.Compare(result._value, other);
             }
             return 0;
         }
@@ -40,7 +40,7 @@ public static class OkExtensions
         {
             if (result._success && other._success)
             {
-                return Relate.Compare(result._value!, other._value!);
+                return Any.Compare(result._value!, other._value!);
             }
             return 0;
         }
@@ -50,7 +50,7 @@ public static class OkExtensions
         {
             if (result._success && other._success)
             {
-                return Relate.Compare(result._value!, other._value!);
+                return Any.Compare(result._value!, other._value!);
             }
             return 0;
         }

@@ -1,4 +1,5 @@
 using ScrubJay.Polyfills.Collections;
+using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
@@ -13,16 +14,15 @@ public readonly struct Option<T> :
 {
     public static implicit operator Option<T>(T value) => new Option<T>(value);
     public static implicit operator Option<T>(Impl.None _) => default;
+    public static implicit operator bool(Option<T> option) => option._some;
 
-    public static implicit operator bool(Option<T> result) => result._some;
-
-    public static bool operator true(Option<T> result) => result._some;
-    public static bool operator false(Option<T> result) => !result._some;
+    public static bool operator true(Option<T> option) => option._some;
+    public static bool operator false(Option<T> option) => !option._some;
 
     public static bool operator ==(Option<T> left, Option<T> right) => left.Equals(right);
     public static bool operator !=(Option<T> left, Option<T> right) => !left.Equals(right);
 
-    public static Option<T> Ok(T value) => new Option<T>(value);
+    public static Option<T> Some(T value) => new Option<T>(value);
     public static Option<T> None() => default;
 
     internal readonly bool _some;
@@ -78,14 +78,14 @@ public readonly struct Option<T> :
     {
         if (_some)
             return _value!;
-        throw new InvalidOperationException($"{typeof(Option<T>)} was not Some");
+        throw new InvalidOperationException($"{TypeName.For<Option<T>>()} was not Some");
     }
 
     public Result<T, Exception> TryGetSome()
     {
         if (_some)
             return new Result<T, Exception>(_value!);
-        return new InvalidOperationException($"{typeof(Option<T>)} was not Some");
+        return new InvalidOperationException($"{TypeName.For<Option<T>>()} was not Some");
     }
 
 
@@ -162,7 +162,7 @@ public readonly struct Option<T> :
         if (_some)
         {
             if (other._some)
-                return Relate.Equals(_value, other._value);
+                return Any.Equals(_value, other._value);
 
             return false;
         }
@@ -171,7 +171,7 @@ public readonly struct Option<T> :
 
     public bool Equals(T? other)
     {
-        return _some && Relate.Equals(_value, other);
+        return _some && Any.Equals(_value, other);
     }
 
     public bool Equals(Impl.None _)
@@ -229,6 +229,16 @@ public readonly struct Option<T> :
 
         return default;
     }
+    
+    public Option<N> Select<N,E>(Func<T, Result<N,E>> selector)
+    {
+        if (_some)
+        {
+            return selector(_value!);
+        }
+
+        return default;
+    }
 
     public Option<N> SelectMany<K, N>(
         Func<T, Option<K>> keySelector,
@@ -240,6 +250,22 @@ public readonly struct Option<T> :
             if (keyOption._some)
             {
                 var newValue = newSelector(_value!, keyOption._value!);
+                return new Option<N>(newValue);
+            }
+        }
+        return default;
+    }
+    
+    public Option<N> SelectMany<K, E, N>(
+        Func<T, Result<K, E>> keySelector,
+        Func<T, K, N> newSelector)
+    {
+        if (_some)
+        {
+            var keyResult = keySelector(_value!);
+            if (keyResult._success)
+            {
+                var newValue = newSelector(_value!, keyResult._value!);
                 return new Option<N>(newValue);
             }
         }

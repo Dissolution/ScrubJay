@@ -3,7 +3,8 @@ namespace ScrubJay.Debugging;
 [PublicAPI]
 public sealed class LogMessage
 {
-    public static implicit operator LogMessage([HandlesResourceDisposal] LogMessageBuilder interpolatedMessage) => new(interpolatedMessage);
+    public static implicit operator LogMessage(
+        [HandlesResourceDisposal] LogMessageBuilder interpolatedMessage) => new(interpolatedMessage);
     
     public string? Template { get; init; }
     

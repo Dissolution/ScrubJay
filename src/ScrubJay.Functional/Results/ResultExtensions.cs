@@ -34,7 +34,7 @@ public static class ResultExtensions
             {
                 if (other._success)
                 {
-                    return Relate.Compare(result._value!, other._value!);
+                    return Any.Compare(result._value!, other._value!);
                 }
                 else
                 {
@@ -51,7 +51,7 @@ public static class ResultExtensions
                 }
                 else
                 {
-                    return Relate.Compare(result._error!, other._error!);
+                    return Any.Compare(result._error!, other._error!);
                 }
             }
         }

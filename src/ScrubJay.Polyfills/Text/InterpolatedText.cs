@@ -14,25 +14,21 @@ public delegate void InterpolatedTextWrite<in T>(ref InterpolatedText text, T va
 [PublicAPI]
 public delegate void InterpolatedTextWrite<in T1, in T2>(ref InterpolatedText text, T1 arg1, T2 arg2);
 
-
-
-
 [PublicAPI]
-[MustDisposeResource(true)]
 [InterpolatedStringHandler]
+[MustDisposeResource(true)]
+[StructLayout(LayoutKind.Auto)]
 public ref struct InterpolatedText : IDisposable
 {
-    private const int GUESSED_HOLE_LENGTH = 16;
-    private const int MIN_ARRAY_LENGTH = 512;
-    private const int STRING_MAX_LENGTH = 0x3FFFFFDF;
+    private const int MIN_CAPACITY = 512;
+    private const int MAX_CAPACITY = 0x3FFFFFDF; // string.MaxLength
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int GetMinCapacity(int literalLength, int formattedCount) =>
-        Math.Max(MIN_ARRAY_LENGTH, literalLength + (formattedCount * GUESSED_HOLE_LENGTH));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int GetMinCapacity(int minCapacity) =>
-        Math.Max(MIN_ARRAY_LENGTH, minCapacity);
+    private static char[] Rent(int minCapacity)
+    {
+        minCapacity = Math.Clamp(minCapacity, MIN_CAPACITY, MAX_CAPACITY);
+        return ArrayPool<char>.Shared.Rent(minCapacity);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void Return(char[]? array, bool clearArray = true)
@@ -43,7 +39,7 @@ public ref struct InterpolatedText : IDisposable
         }
     }
 
-    private char[]? _arrayToReturnToPool;
+    private char[]? _charArray;
     private Span<char> _chars;
     private int _position;
 
@@ -65,73 +61,85 @@ public ref struct InterpolatedText : IDisposable
         get => _chars.Length;
     }
 
+    [MustDisposeResource(false)]
     public InterpolatedText()
     {
-        _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(MIN_ARRAY_LENGTH);
+        _chars = _charArray = [];
         _position = 0;
     }
 
+    [MustDisposeResource(true)]
     public InterpolatedText(int minCapacity)
     {
-        _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(GetMinCapacity(minCapacity));
+        _chars = _charArray = Rent(minCapacity);
         _position = 0;
     }
 
+    [MustDisposeResource(false)]
     public InterpolatedText(Span<char> initialBuffer)
     {
+        _charArray = null;
         _chars = initialBuffer;
-        _arrayToReturnToPool = null;
         _position = 0;
     }
 
+    [MustDisposeResource(true)]
     public InterpolatedText(int literalLength, int formattedCount)
     {
-        _chars = _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(GetMinCapacity(literalLength, formattedCount));
+        _chars = _charArray = Rent(literalLength + (formattedCount * 16));
         _position = 0;
     }
 
+    [MustDisposeResource(false)]
     public InterpolatedText(int literalLength, int formattedCount, Span<char> initialBuffer)
     {
         _chars = initialBuffer;
-        _arrayToReturnToPool = null;
+        _charArray = null;
         _position = 0;
     }
 
+    [MustDisposeResource(false)]
+    public InterpolatedText(int literalLength, int formattedCount, InterpolatedText parentText)
+    {
+        _charArray = parentText._charArray;
+        _chars = parentText._chars;
+        _position = parentText._position;
+    }
+
 #region Grow
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private void GrowBy(int additionalChars)
-    {
-        Debug.Assert(additionalChars > _chars.Length - _position);
-        GrowCore((uint)_position + (uint)additionalChars);
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private void Grow()
-    {
-        GrowCore((uint)_chars.Length + 1);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void GrowCore(uint requiredMinCapacity)
+    private void GrowCore(int minCapacity)
     {
-        uint newCapacity = Math.Max(requiredMinCapacity, Math.Min((uint)_chars.Length * 2, STRING_MAX_LENGTH));
-        int arraySize = (int)Math.Clamp(newCapacity, MIN_ARRAY_LENGTH, int.MaxValue);
+        minCapacity = Math.Max(minCapacity, _chars.Length * 2);
+        char[] newArray = Rent(minCapacity);
 
-        char[] newArray = ArrayPool<char>.Shared.Rent(arraySize);
         _chars.Slice(0, _position).CopyTo(newArray);
 
-        char[]? toReturn = _arrayToReturnToPool;
-        _chars = _arrayToReturnToPool = newArray;
+        char[]? toReturn = _charArray;
+        _chars = _charArray = newArray;
         Return(toReturn);
     }
 
-    /// <summary>Ensures <see cref="_chars"/> has the capacity to store <paramref name="additionalChars"/> beyond <see cref="_position"/>.</summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void EnsureCapacityForAdditionalChars(int additionalChars)
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void GrowBy(int additionalChars)
     {
-        if (_chars.Length - _position < additionalChars)
+        Debug.Assert(additionalChars > 0);
+        Debug.Assert(additionalChars > _chars.Length - _position);
+        GrowCore(_position + additionalChars);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void GrowABit()
+    {
+        GrowCore(_chars.Length + 1);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void EnsureCanAdd(int count)
+    {
+        if (_chars.Length - _position < count)
         {
-            GrowBy(additionalChars);
+            GrowBy(count);
         }
     }
 #endregion
@@ -154,7 +162,7 @@ public ref struct InterpolatedText : IDisposable
         int paddingNeeded = alignment - charsWritten;
         if (paddingNeeded > 0)
         {
-            EnsureCapacityForAdditionalChars(paddingNeeded);
+            EnsureCanAdd(paddingNeeded);
 
             if (leftAlign)
             {
@@ -213,6 +221,7 @@ public ref struct InterpolatedText : IDisposable
         if (_position < _chars.Length)
         {
             _chars[_position] = ch;
+            _position++;
         }
         else
         {
@@ -241,7 +250,7 @@ public ref struct InterpolatedText : IDisposable
         }
 
         // Write the value along with the appropriate padding.
-        EnsureCapacityForAdditionalChars(1 + paddingRequired);
+        EnsureCanAdd(1 + paddingRequired);
         if (leftAlign)
         {
             _chars[_position] = ch;
@@ -300,7 +309,7 @@ public ref struct InterpolatedText : IDisposable
         }
 
         // Write the value along with the appropriate padding.
-        EnsureCapacityForAdditionalChars(str.Length + paddingRequired);
+        EnsureCanAdd(str.Length + paddingRequired);
         if (leftAlign)
         {
             str.CopyTo(_chars.Slice(_position));
@@ -362,7 +371,7 @@ public ref struct InterpolatedText : IDisposable
         }
 
         // Write the value along with the appropriate padding.
-        EnsureCapacityForAdditionalChars(text.Length + paddingRequired);
+        EnsureCanAdd(text.Length + paddingRequired);
         if (leftAlign)
         {
             text.CopyTo(_chars.Slice(_position));
@@ -380,6 +389,18 @@ public ref struct InterpolatedText : IDisposable
     }
 #endregion
 
+#region AppendFormatted - nested Interpolation
+    public void AppendFormatted(
+        [HandlesResourceDisposal] [InterpolatedStringHandlerArgument("")]
+        ref InterpolatedText interpolated)
+    {
+        // take back what interpolated took and used
+        _charArray = interpolated._charArray;
+        _chars = interpolated._chars;
+        _position = interpolated._position;
+    }
+#endregion
+
 #region AppendFormatted<TEnum>(TEnum @enum, ...?)
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void AppendFormatted<TEnum>(TEnum @enum, TypeConstraints.IsEnum<TEnum> _ = default)
@@ -388,7 +409,7 @@ public ref struct InterpolatedText : IDisposable
         int charsWritten;
         while (!Enum.TryFormat<TEnum>(@enum, _chars.Slice(_position), out charsWritten, default))
         {
-            Grow();
+            GrowABit();
         }
         _position += charsWritten;
     }
@@ -401,7 +422,449 @@ public ref struct InterpolatedText : IDisposable
         int charsWritten;
         while (!Enum.TryFormat<TEnum>(@enum, _chars.Slice(_position), out charsWritten, format))
         {
-            Grow();
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+#endregion
+
+#region AppendFormatted primitives
+    public void AppendFormatted(bool boolean)
+    {
+        if (boolean)
+        {
+            AppendLiteral("true");
+        }
+        else
+        {
+            AppendLiteral("false");
+        }
+    }
+
+    public void AppendFormatted(byte u8)
+    {
+        int charsWritten;
+        while (!u8.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(byte u8,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!u8.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(sbyte i8)
+    {
+        int charsWritten;
+        while (!i8.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(sbyte i8,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!i8.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(short i16)
+    {
+        int charsWritten;
+        while (!i16.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(short i16,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!i16.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(ushort u16)
+    {
+        int charsWritten;
+        while (!u16.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(ushort u16,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!u16.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(int i32)
+    {
+        int charsWritten;
+        while (!i32.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(int i32,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!i32.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(uint u32)
+    {
+        int charsWritten;
+        while (!u32.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(uint u32,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!u32.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(long i64)
+    {
+        int charsWritten;
+        while (!i64.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(long i64,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!i64.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(ulong u64)
+    {
+        int charsWritten;
+        while (!u64.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(ulong u64,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!u64.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+#if NET7_0_OR_GREATER
+    public void AppendFormatted(Int128 i128)
+    {
+        int charsWritten;
+        while (!i128.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(Int128 i128,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!i128.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(UInt128 u128)
+    {
+        int charsWritten;
+        while (!u128.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(UInt128 u128,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!u128.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+#endif
+
+#if NET6_0_OR_GREATER
+    public void AppendFormatted(Half f16)
+    {
+        int charsWritten;
+        while (!f16.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(Half f16,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!f16.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+#endif
+
+    public void AppendFormatted(float f32)
+    {
+        int charsWritten;
+        while (!f32.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(float f32,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!f32.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(double f64)
+    {
+        int charsWritten;
+        while (!f64.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(double f64,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!f64.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(decimal dec)
+    {
+        int charsWritten;
+        while (!dec.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(decimal dec,
+        [StringSyntax("NumericFormat")] string? format)
+    {
+        int charsWritten;
+        while (!dec.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(Guid value)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(Guid value,
+        [StringSyntax("GuidFormat")] string? format)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, format))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+#if NET6_0_OR_GREATER
+    public void AppendFormatted(DateOnly date)
+    {
+        int charsWritten;
+        while (!date.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(DateOnly date,
+        [StringSyntax("DateOnlyFormat")] string? format)
+    {
+        int charsWritten;
+        while (!date.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+#endif
+
+    public void AppendFormatted(DateTime value)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(DateTime value,
+        [StringSyntax("DateTimeFormat")] string? format)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(DateTimeOffset value)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(DateTimeOffset value,
+        [StringSyntax("DateTimeFormat")] string? format)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+#if NET6_0_OR_GREATER
+    public void AppendFormatted(TimeOnly time)
+    {
+        int charsWritten;
+        while (!time.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(TimeOnly time,
+        [StringSyntax("TimeOnlyFormat")] string? format)
+    {
+        int charsWritten;
+        while (!time.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+#endif
+
+    public void AppendFormatted(TimeSpan value)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, default, default))
+        {
+            GrowABit();
+        }
+        _position += charsWritten;
+    }
+
+    public void AppendFormatted(TimeSpan value,
+        [StringSyntax("TimeSpanFormat")] string? format)
+    {
+        int charsWritten;
+        while (!value.TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+        {
+            GrowABit();
         }
         _position += charsWritten;
     }
@@ -426,7 +889,7 @@ public ref struct InterpolatedText : IDisposable
                 int charsWritten;
                 while (!((ISpanFormattable)value).TryFormat(_chars.Slice(_position), out charsWritten, default, default))
                 {
-                    Grow();
+                    GrowABit();
                 }
 
                 _position += charsWritten;
@@ -465,7 +928,7 @@ public ref struct InterpolatedText : IDisposable
                 int charsWritten;
                 while (!((ISpanFormattable)value).TryFormat(_chars.Slice(_position), out charsWritten, format, default))
                 {
-                    Grow();
+                    GrowABit();
                 }
 
                 _position += charsWritten;
@@ -521,6 +984,10 @@ public ref struct InterpolatedText : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(scoped text text) => AppendFormatted(text);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write([HandlesResourceDisposal] [InterpolatedStringHandlerArgument("")] ref InterpolatedText interpolatedText)
+        => AppendFormatted(ref interpolatedText);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write<T>(T? value) => AppendFormatted<T>(value);
@@ -552,7 +1019,7 @@ public ref struct InterpolatedText : IDisposable
     public void Fill(int count, char ch)
     {
         if (count <= 0) return;
-        EnsureCapacityForAdditionalChars(count);
+        EnsureCanAdd(count);
         _chars.Slice(_position, count).Fill(ch);
         _position += count;
     }
@@ -562,7 +1029,7 @@ public ref struct InterpolatedText : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        char[]? toReturn = _arrayToReturnToPool;
+        char[]? toReturn = _charArray;
         this = default;
         Return(toReturn);
     }

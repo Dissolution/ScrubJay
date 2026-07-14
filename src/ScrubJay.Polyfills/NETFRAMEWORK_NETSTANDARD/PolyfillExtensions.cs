@@ -22,6 +22,45 @@ public static partial class PolyfillExtensions
             return ref MemoryMarshal.GetReference(array.AsSpan());
         }
     }
+    
+    public static bool SequenceEqual<T>(this ReadOnlySpan<T> span, ReadOnlySpan<T> other, IEqualityComparer<T>? comparer = null)
+    {
+        // If the spans differ in length, they're not equal.
+        if (span.Length != other.Length)
+        {
+            return false;
+        }
+
+        if (typeof(T).IsValueType)
+        {
+            if (comparer is null || EqualityComparer<T>.Default.Equals(comparer))
+            {
+                // Compare each element using EqualityComparer<T>.Default.Equals in a way that will enable it to devirtualize.
+                for (int i = 0; i < span.Length; i++)
+                {
+                    if (!EqualityComparer<T>.Default.Equals(span[i], other[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        // Use the comparer to compare each element.
+        comparer ??= EqualityComparer<T>.Default;
+        for (int i = 0; i < span.Length; i++)
+        {
+            if (!comparer.Equals(span[i], other[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
 
 

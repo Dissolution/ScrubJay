@@ -1,5 +1,3 @@
-using ScrubJay.Polyfills.Text;
-
 namespace ScrubJay.Text;
 
 [InterpolatedStringHandler]

@@ -29,4 +29,17 @@ internal static class InternalExtensions
             span[7] = ((b & 0b10000000) != 0) ? '1' : '0';
         });
     }
+
+    extension(ReadOnlySpan<(string Key, object? Value)> data)
+    {
+        internal Dictionary<string, object?> ToDictionary()
+        {
+            Dictionary<string, object?> dict = new(capacity: data.Length);
+            foreach (var pair in data)
+            {
+                dict.Add(pair.Key, pair.Value);
+            }
+            return dict;
+        }
+    }
 }

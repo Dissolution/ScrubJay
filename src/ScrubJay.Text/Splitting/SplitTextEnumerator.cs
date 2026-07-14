@@ -64,9 +64,8 @@ public ref struct SplitTextEnumerator :
     public readonly Range CurrentRange => new(_currentStartIndex, _currentAfterEndIndex);
 
     public readonly text CurrentText => Source[_currentStartIndex.._currentAfterEndIndex];
-
-
-    readonly object? IEnumerator.Current => CurrentRange;
+    
+    readonly object IEnumerator.Current => CurrentRange;
 
     readonly Range IEnumerator<Range>.Current => CurrentRange;
 
@@ -171,7 +170,7 @@ public ref struct SplitTextEnumerator :
         return true;
     }
 
-    readonly void IEnumerator.Reset() => throw Ex.NotSupported(in this);
+    readonly void IEnumerator.Reset() => throw Ex.NotSupported(typeof(SplitTextEnumerator));
 
     readonly void IDisposable.Dispose() { } // do nothing
 }

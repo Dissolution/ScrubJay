@@ -3,12 +3,18 @@
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Universal"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj" />
         <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
         <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="ARCHIVE\ScrubJay.Memory.csproj" />
     </ItemGroup>
 
 </Project>

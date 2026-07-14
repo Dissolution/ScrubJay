@@ -1,4 +1,4 @@
-﻿namespace ScrubJay.Polyfills;
+﻿namespace ScrubJay.Universal;
 
 /// <summary>
 /// This class contains marker <see langword="struct">structs</see> that themselves carry type parameter constraints.<br/>
@@ -349,22 +349,30 @@ public static class TypeConstraints
         where T : IDisposable, new();
 #endregion
 
-#if NET9_0_OR_GREATER
-#region : ..., allows ref struct
-    /// <summary>
-    /// Type argument <typeparamref name="T"/> must be a value type that may also be a <see langword="ref struct"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
-    public readonly struct IsStructAllowsRefStruct<T>
-        where T : struct, allows ref struct;
 
-    /// <summary>
-    /// Type argument <typeparamref name="T"/> must be an <see langword="unmanaged"/> value type that may also be a <see langword="ref struct"/>.
-    /// </summary>
-    [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
-    public readonly struct IsUnmanagedAllowsRefStruct<T>
-        where T : unmanaged, allows ref struct;
-#endregion
+    public static class RefStruct
+    {
+        // ReSharper disable MemberHidesStaticFromOuterClass
+        
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        // ReSharper disable once UnusedTypeParameter
+        public readonly struct Okay<T>
+#if NET9_0_OR_GREATER
+            where T : allows ref struct
 #endif
+        ;
+        
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIEquatable<T>
+            where T : IEquatable<T>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        ;
+
+
+
+        // ReSharper restore MemberHidesStaticFromOuterClass
+    }
 #endregion / Combinations
 }
