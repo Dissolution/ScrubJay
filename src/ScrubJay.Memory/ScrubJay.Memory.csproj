@@ -5,6 +5,8 @@
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Universal"/>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
     </ItemGroup>
 
     <ItemGroup>

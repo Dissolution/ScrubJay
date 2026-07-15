@@ -10,7 +10,9 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\ScrubJay.Debugging\ScrubJay.Debugging.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Errors\ScrubJay.Errors.csproj" />
+        <ProjectReference Include="..\..\src\ScrubJay.Expressions\ScrubJay.Expressions.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Functional\ScrubJay.Functional.csproj" />
+        <ProjectReference Include="..\..\src\ScrubJay.Json\ScrubJay.Json.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Memory\ScrubJay.Memory.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />

@@ -4,6 +4,12 @@ public static class TypeExtensions
 {
     extension(Type? type)
     {
+        public bool IsStatic
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => type is { IsAbstract: true, IsSealed: true };
+        }
+        
         public bool IsTuple
         {
             get

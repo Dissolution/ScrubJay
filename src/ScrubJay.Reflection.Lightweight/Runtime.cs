@@ -15,15 +15,17 @@ public static class Runtime
 
     public static D? TryGenerateDelegate<D>(
         string? delegateName,
+        Type owner,
         Action<ILGenerator> generateBody)
         where D : Delegate
     {
         var invokeMethod = Delegate.GetInvokeMethod<D>();
 
-        var name = delegateName ?? typeof(D).Name;
+        var name = delegateName ?? TypeName.For<D>();
         var returnType = invokeMethod.ReturnType;
         var parameterTypes = invokeMethod.GetParameterTypes();
 
+        Debugger.Break();
 #if NETFRAMEWORK
         // Dynamic Method in NetFramework does not support byref-like return types
         if (returnType.IsByRef)
@@ -66,7 +68,7 @@ public static class Runtime
                 callingConvention: CallingConventions.Standard,
                 returnType: returnType,
                 parameterTypes: parameterTypes,
-                m: Module,
+                owner: owner,
                 skipVisibility: true);
             var ilGenerator = dynamicMethod.GetILGenerator();
             generateBody(ilGenerator);

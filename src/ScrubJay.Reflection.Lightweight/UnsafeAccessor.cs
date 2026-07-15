@@ -1,6 +1,4 @@
-﻿#if !NET8_0_OR_GREATER
-
-namespace ScrubJay.Reflection.Lightweight;
+﻿namespace ScrubJay.Reflection.Lightweight;
 
 public static class UnsafeAccessor
 {
@@ -42,16 +40,24 @@ public static class UnsafeAccessor
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
         where TInstance : class
     {
-        var field = typeof(TInstance)
-            .GetField(fieldName, bindingFlags);
-        if (field is null)
+        var instanceType = typeof(TInstance);
+        if (instanceType.IsStatic)
+            throw new InvalidOperationException();
+        
+        var field = typeof(TInstance).GetField(fieldName, bindingFlags);
+        if (field is null || !field.FieldType.IsAssignableTo(typeof(TValue)))
             throw new InvalidOperationException();
 
         var del = Runtime.TryGenerateDelegate<ReferenceFieldRef<TInstance, TValue>>(
-            $"ref_{typeof(TInstance)}_{field}",
+            $"access_{TypeName.For(instanceType)}_instance_field_ref_{field.Name}",
+            owner: instanceType,
             gen =>
             {
                 gen.Emit(OpCodes.Ldarg_0);
+                if (!instanceType.IsValueType)
+                {
+                    gen.Emit(OpCodes.Castclass, instanceType);
+                }
                 gen.Emit(OpCodes.Ldflda, field);
                 gen.Emit(OpCodes.Ret);
             });
@@ -84,5 +90,3 @@ public static class UnsafeAccessor
 //            });
 //    }
 }
-
-#endif

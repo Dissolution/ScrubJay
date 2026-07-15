@@ -5,6 +5,7 @@ using ScrubJay.Universal;
 namespace ScrubJay.Functional;
 
 [PublicAPI]
+[AsyncMethodBuilder(typeof(ResultAsyncMethodBuilder<>))] 
 public readonly struct Result<T> :
 #if NET7_0_OR_GREATER
     IEqualityOperators<Result<T>, Result<T>, bool>,
@@ -93,7 +94,7 @@ public readonly struct Result<T> :
     {
         if (_isOk)
             return _value!;
-        throw new InvalidOperationException($"{typeof(Result<T>)} was not Ok");
+        throw (_error ?? new InvalidOperationException($"{typeof(Result<T>)} was not Ok"));
     }
     
 

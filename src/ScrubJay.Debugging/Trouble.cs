@@ -4,18 +4,22 @@ using ScrubJay.Debugging.Destinations;
 namespace ScrubJay.Debugging;
 
 [PublicAPI]
+[StackTraceHidden]
+[DebuggerStepThrough]
 public static class Trouble
 {
     [Conditional("DEBUG")]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static void Hold() { }
 
-    [DebuggerHidden]
-    [StackTraceHidden]
-    public static void Break()
-    {
-        Debugger.Break();
-    }
+//    [DebuggerHidden]
+//    [DebuggerStepThrough]
+//    [StackTraceHidden]
+//    [MethodImpl(MethodImplOptions.NoInlining)]
+//    public static void Break()
+//    {
+//        Debugger.Break();
+//    }
 
     public static List<LogDestination> LogDestinations { get; } =
     [

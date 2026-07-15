@@ -111,6 +111,16 @@ public sealed class ParseException : FormatException, IException<ParseException>
     {
         this.InputString = inputString;
         this.DestinationType = destinationType;
-        ExceptionAccess.RefMessageField(this) = message;
+        try
+        {
+            ref string? m = ref ExceptionAccess.RefMessageField(this);
+            m = message;
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            throw;
+        }
+
     }
 }

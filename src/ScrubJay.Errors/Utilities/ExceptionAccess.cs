@@ -1,18 +1,18 @@
-#if !NET8_0_OR_GREATER
+//#if !NET8_0_OR_GREATER
 using static ScrubJay.Reflection.Lightweight.UnsafeAccessor;
-#endif
+//#endif
 
 namespace ScrubJay.Errors.Utilities;
 
 internal static class ExceptionAccess
 {
-#if NET8_0_OR_GREATER
-    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_message")]
-    public static extern ref string? RefMessageField(Exception exception);
-#else
+//#if NET8_0_OR_GREATER
+//    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_message")]
+//    public static extern ref string? RefMessageField(Exception exception);
+//#else
     public static readonly ReferenceFieldRef<Exception, string?> RefMessageField
         = GetReferenceFieldRef<Exception, string?>("_message");
-#endif
+//#endif
 
 #if NET8_0_OR_GREATER
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_innerException")]
