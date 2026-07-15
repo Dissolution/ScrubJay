@@ -8,9 +8,7 @@ using ScrubJay.Universal;
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-public readonly ref struct RSOption<T> :
-    IEquatable<RSOption<T>>,
-    IEnumerable<T>
+public readonly ref struct RSOption<T> : IEnumerable<T>
 where T : allows ref struct
 {
     public static implicit operator RSOption<T>(T value) => new RSOption<T>(value);
@@ -19,10 +17,7 @@ where T : allows ref struct
 
     public static bool operator true(RSOption<T> option) => option._some;
     public static bool operator false(RSOption<T> option) => !option._some;
-
-    public static bool operator ==(RSOption<T> left, RSOption<T> right) => left.Equals(right);
-    public static bool operator !=(RSOption<T> left, RSOption<T> right) => !left.Equals(right);
-
+    
     public static RSOption<T> Some(T value) => new RSOption<T>(value);
     public static RSOption<T> None() => default;
 
@@ -150,48 +145,6 @@ where T : allows ref struct
         }
     }
     
-    public bool Equals(RSOption<T> other)
-    {
-        if (_some)
-        {
-            if (other._some)
-                return Any.Equals(_value, other._value);
-
-            return false;
-        }
-        return !other._some;
-    }
-
-    public bool Equals(T? other)
-    {
-        return _some && Any.Equals(_value, other);
-    }
-
-    public bool Equals(Impl.None _)
-    {
-        return !_some;
-    }
-
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        if (obj is T some)
-            return Equals(some);
-        if (obj is Impl.None none)
-            return Equals(none);
-        return false;
-    }
-
-    public override int GetHashCode()
-    {
-        if (_some)
-        {
-            if (_value is not null)
-                return Any.GetHashCode(_value);
-            return 1;
-        }
-        return 0;
-    }
-
     public override string ToString()
     {
         if (_some)

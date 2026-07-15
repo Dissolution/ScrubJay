@@ -1,7 +1,5 @@
 // ReSharper disable EntityNameCapturedOnly.Global
 
-using ScrubJay.Text.Extensions;
-
 namespace ScrubJay.Text;
 
 [PublicAPI]

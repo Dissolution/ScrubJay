@@ -23,7 +23,7 @@ public sealed class OptionJsonConverter<T> : JsonConverter<Option<T>>
             throw new JsonException($"No JsonConverter found for type {typeof(T)}");
         
         var value = valueConverter.Read(ref reader, options);
-        return Some(value);
+        return Some(value!);
     }
 
     public override void Write(Utf8JsonWriter writer, Option<T> option, JsonSerializerOptions options)

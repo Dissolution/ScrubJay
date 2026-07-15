@@ -1,6 +1,5 @@
 using System.Buffers;
 using ScrubJay.Errors;
-using ScrubJay.Text.Extensions;
 
 namespace ScrubJay.Text.Splitting;
 

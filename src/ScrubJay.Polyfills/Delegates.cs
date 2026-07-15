@@ -51,12 +51,3 @@ public delegate bool TryInvoke<T>(out T value)
     where T : allows ref struct
 #endif
     ;
-    
-[PublicAPI]
-public delegate bool SpanPredicate<T>(Span<T> span);
-
-[PublicAPI]
-public delegate bool ReadOnlySpanPredicate<T>(ReadOnlySpan<T> span);
-
-[PublicAPI]
-public delegate bool ScanPredicate<T>(ReadOnlySpan<T> previous, ReadOnlySpan<T> next);

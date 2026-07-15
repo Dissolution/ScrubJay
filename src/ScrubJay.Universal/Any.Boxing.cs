@@ -40,7 +40,7 @@ public partial class Any
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNullIfNotNull(nameof(value))]
-    public static object? Box<T>(T? value) => (object?)value;
+    public static object? BoxOrNull<T>(T? value) => (object?)value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryBox<T>(T? value, [NotNullIfNotNull(nameof(value)), MaybeNullWhen(false)] out object? boxed)

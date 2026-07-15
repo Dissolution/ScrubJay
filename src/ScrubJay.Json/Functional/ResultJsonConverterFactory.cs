@@ -3,11 +3,15 @@ using System.Text.Json.Serialization;
 using ScrubJay.Functional;
 
 namespace ScrubJay.Json.Functional;
+/*
 
 /// <summary>
 /// A <see cref="JsonConverterFactory"/> that produces <see cref="ResultJsonConverter"/>,
 /// <see cref="ResultJsonConverter{T}"/>, and <see cref="ResultJsonConverter{T,E}"/> instances
 /// </summary>
+*/
+
+
 [PublicAPI]
 public sealed class ResultJsonConverterFactory : JsonConverterFactory
 {

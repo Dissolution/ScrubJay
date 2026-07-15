@@ -1,46 +1,47 @@
+using ScrubJay.Errors;
 using ScrubJay.Polyfills.Collections;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-public readonly struct Result<T, E> :
+public readonly struct Result<T> :
 #if NET7_0_OR_GREATER
-    IEqualityOperators<Result<T, E>, Result<T, E>, bool>,
+    IEqualityOperators<Result<T>, Result<T>, bool>,
 #endif
-    IEquatable<Result<T, E>>,
+    IEquatable<Result<T>>,
     IEnumerable<T>
 {
 
-    public static implicit operator Result<T, E>(T value) => new Result<T, E>(value);
-    public static implicit operator Result<T, E>(E error) => new Result<T, E>(error);
-    public static implicit operator Result<T, E>(Impl.Ok<T> ok) => new Result<T, E>(ok._value);
-    public static implicit operator Result<T, E>(Impl.Error<E> error) => new Result<T, E>(error._value);
+    public static implicit operator Result<T>(T value) => new Result<T>(value);
+    public static implicit operator Result<T>(Exception error) => new Result<T>(error);
+    public static implicit operator Result<T>(Impl.Ok<T> ok) => new Result<T>(ok._value);
+    public static implicit operator Result<T>(Impl.Error<Exception> error) => new Result<T>(error._value);
 
-    public static implicit operator bool(Result<T, E> result) => result._isOk;
-    public static implicit operator Option<T>(Result<T, E> result) => result.IsOk(out var ok) ? Some(ok) : default;
+    public static implicit operator bool(Result<T> result) => result._isOk;
+    public static implicit operator Option<T>(Result<T> result) => result.IsOk(out var ok) ? Some(ok) : default;
 
-    public static bool operator true(Result<T, E> result) => result._isOk;
-    public static bool operator false(Result<T, E> result) => !result._isOk;
+    public static bool operator true(Result<T> result) => result._isOk;
+    public static bool operator false(Result<T> result) => !result._isOk;
 
-    public static bool operator ==(Result<T, E> left, Result<T, E> right) => left.Equals(right);
-    public static bool operator !=(Result<T, E> left, Result<T, E> right) => !left.Equals(right);
+    public static bool operator ==(Result<T> left, Result<T> right) => left.Equals(right);
+    public static bool operator !=(Result<T> left, Result<T> right) => !left.Equals(right);
 
-    public static Result<T, E> Ok(T value) => new Result<T, E>(value);
-    public static Result<T, E> Error(E error) => new Result<T, E>(error);
+    public static Result<T> Ok(T value) => new Result<T>(value);
+    public static Result<T> Error(Exception error) => new Result<T>(error);
 
     internal readonly bool _isOk;
     internal readonly T? _value;
-    internal readonly E? _error;
+    internal readonly Exception? _error;
 
     public Result(T value)
     {
         _isOk = true;
         _value = value;
-        _error = default(E);
+        _error = null;
     }
 
-    public Result(E error)
+    public Result(Exception error)
     {
         _isOk = false;
         _value = default(T);
@@ -55,7 +56,7 @@ public readonly struct Result<T, E> :
         return _isOk;
     }
 
-    public bool IsOk([MaybeNullWhen(false)] out T value, [MaybeNullWhen(true)] out E error)
+    public bool IsOk([MaybeNullWhen(false)] out T value, [MaybeNullWhen(true)] out Exception error)
     {
         value = _value;
         error = _error;
@@ -92,75 +93,60 @@ public readonly struct Result<T, E> :
     {
         if (_isOk)
             return _value!;
-        throw new InvalidOperationException($"{typeof(Result<T, E>)} was not Ok");
+        throw new InvalidOperationException($"{typeof(Result<T>)} was not Ok");
     }
-
-    public Result<T, Exception> TryGetOk()
-    {
-        if (_isOk)
-            return new Result<T, Exception>(_value!);
-        return new InvalidOperationException($"{typeof(Result<T, E>)} was not Ok");
-    }
-
+    
 
     public bool IsError() => !_isOk;
 
-    public bool IsError([MaybeNullWhen(false)] out E error)
+    public bool IsError([MaybeNullWhen(false)] out Exception error)
     {
         error = _error;
         return !_isOk;
     }
 
-    public bool IsError([MaybeNullWhen(false)] out E error, [MaybeNullWhen(true)] out T value)
+    public bool IsError([MaybeNullWhen(false)] out Exception error, [MaybeNullWhen(true)] out T value)
     {
         error = _error;
         value = _value;
         return !_isOk;
     }
 
-    public bool IsErrorAnd(Func<E, bool> errorPredicate)
+    public bool IsErrorAnd(Func<Exception, bool> errorPredicate)
     {
         return !_isOk && errorPredicate(_error!);
     }
 
-    public E ErrorOr(E fallback)
+    public Exception ErrorOr(Exception fallback)
     {
         if (!_isOk)
             return _error!;
         return fallback;
     }
 
-    public E ErrorOr(Func<E> getFallback)
+    public Exception ErrorOr(Func<Exception> getFallback)
     {
         if (!_isOk)
             return _error!;
         return getFallback();
     }
 
-    public E? ErrorOrDefault()
+    public Exception? ErrorOrDefault()
     {
         if (!_isOk)
             return _error!;
-        return default(E);
+        return null;
     }
 
-    public E ErrorOrThrow()
+    public Exception ErrorOrThrow()
     {
         if (!_isOk)
             return _error!;
-        throw new InvalidOperationException($"{typeof(Result<T, E>)} was not Error");
-    }
-
-    public Result<E, Exception> TryGetError()
-    {
-        if (!_isOk)
-            return new Result<E, Exception>(_error!);
-        return new InvalidOperationException($"{typeof(Result<T, E>)} was not Error");
+        throw new InvalidOperationException($"{typeof(Result<T>)} was not Error");
     }
 
 
-
-    public void Match(Action<T>? onOk, Action<E>? onError)
+    public void Match(Action<T>? onOk, Action<Exception>? onError)
     {
         if (_isOk)
         {
@@ -172,7 +158,7 @@ public readonly struct Result<T, E> :
         }
     }
 
-    public R Match<R>(Func<T, R> onOk, Func<E, R> onError)
+    public R Match<R>(Func<T, R> onOk, Func<Exception, R> onError)
 #if NET9_0_OR_GREATER
     where R : allows ref struct
 #endif
@@ -187,7 +173,7 @@ public readonly struct Result<T, E> :
         }
     }
 
-    public bool Equals(Result<T, E> other)
+    public bool Equals(Result<T> other)
     {
         if (_isOk)
         {
@@ -219,18 +205,18 @@ public readonly struct Result<T, E> :
         return _isOk && Any.Equals(_value, other);
     }
 
-    public bool Equals(E? other)
+    public bool Equals(Exception? other)
     {
         return !_isOk && Any.Equals(_error, other);
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        if (obj is Result<T, E> result)
+        if (obj is Result<T> result)
             return Equals(result);
         if (obj is T ok)
             return Equals(ok);
-        if (obj is E error)
+        if (obj is Exception error)
             return Equals(error);
         return false;
     }
@@ -264,27 +250,27 @@ public readonly struct Result<T, E> :
     }
 
 #region LINQ + Enumerable
-    public Result<N, E> Select<N>(Func<T, N> selector)
+    public Result<N> Select<N>(Func<T, N> selector)
     {
         if (_isOk)
         {
-            return new Result<N, E>(selector(_value!));
+            return new Result<N>(selector(_value!));
         }
-        return new Result<N, E>(_error!);
+        return new Result<N>(_error!);
     }
 
-    public Result<N, E> Select<N>(Func<T, Result<N, E>> selector)
+    public Result<N> Select<N>(Func<T, Result<N>> selector)
     {
         if (_isOk)
         {
             return selector(_value!);
         }
 
-        return new Result<N, E>(_error!);
+        return new Result<N>(_error!);
     }
 
-    public Result<N, E> SelectMany<K, N>(
-        Func<T, Result<K, E>> keySelector,
+    public Result<N> SelectMany<K, N>(
+        Func<T, Result<K>> keySelector,
         Func<T, K, N> newSelector)
     {
         if (_isOk)
@@ -293,12 +279,12 @@ public readonly struct Result<T, E> :
             if (keyResult._isOk)
             {
                 var newValue = newSelector(_value!, keyResult._value!);
-                return new Result<N, E>(newValue);
+                return new Result<N>(newValue);
             }
 
-            return new Result<N, E>(keyResult._error!);
+            return new Result<N>(keyResult._error!);
         }
-        return new Result<N, E>(_error!);
+        return new Result<N>(_error!);
     }
 
 

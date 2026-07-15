@@ -263,7 +263,7 @@ public readonly struct Option<T> :
         if (_some)
         {
             var keyResult = keySelector(_value!);
-            if (keyResult._success)
+            if (keyResult._isOk)
             {
                 var newValue = newSelector(_value!, keyResult._value!);
                 return new Option<N>(newValue);

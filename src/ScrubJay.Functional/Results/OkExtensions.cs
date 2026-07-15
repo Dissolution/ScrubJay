@@ -1,4 +1,5 @@
 using ScrubJay.Polyfills;
+using ScrubJay.Polyfills.Comparison;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
@@ -28,9 +29,9 @@ public static class OkExtensions
         [OverloadResolutionPriority(75)]
         public int CompareTo(T? other)
         {
-            if (result._success)
+            if (result._isOk)
             {
-                return Any.Compare(result._value, other);
+                return Relate.Compare(result._value, other);
             }
             return 0;
         }
@@ -38,9 +39,9 @@ public static class OkExtensions
         [OverloadResolutionPriority(75)]
         public int CompareTo(Result<T, E> other, TypeConstraints.HasIComparable<T, T> _ = default)
         {
-            if (result._success && other._success)
+            if (result._isOk && other._isOk)
             {
-                return Any.Compare(result._value!, other._value!);
+                return Relate.Compare(result._value!, other._value!);
             }
             return 0;
         }
@@ -48,9 +49,9 @@ public static class OkExtensions
         [OverloadResolutionPriority(50)]
         public int CompareTo<OtherE>(Result<T, OtherE> other, TypeConstraints.HasIComparable<T, T> _ = default)
         {
-            if (result._success && other._success)
+            if (result._isOk && other._isOk)
             {
-                return Any.Compare(result._value!, other._value!);
+                return Relate.Compare(result._value!, other._value!);
             }
             return 0;
         }
@@ -62,7 +63,7 @@ public static class OkExtensions
         [OverloadResolutionPriority(75)]
         public string ToString(string? format, IFormatProvider? formatProvider = null)
         {
-            if (result._success)
+            if (result._isOk)
             {
                 return $"Ok({result._value?.ToString(format, formatProvider)})";
             }

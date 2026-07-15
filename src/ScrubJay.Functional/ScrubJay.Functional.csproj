@@ -18,6 +18,8 @@
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
     </ItemGroup>
     
     <ItemGroup>

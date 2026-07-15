@@ -38,7 +38,7 @@ public ref struct RefOption<T> :
     public RefOption(Impl.None _)
     {
         _some = false;
-        _value = default(T);
+        _value = ref Unsafe.NullRef<T>()!;
     }
 
     public bool IsSome() => _some;

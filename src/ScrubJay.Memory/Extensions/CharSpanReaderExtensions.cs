@@ -36,5 +36,28 @@ public static class CharSpanReaderExtensions
             textReader._position = index;
             return span[start..index];
         }
+        
+        public text TakeUntilMatching(
+            scoped text match,
+            StringComparison comparison = StringComparison.Ordinal,
+            bool chunk = false)
+        {
+            int matchLen = match.Length;
+            if (matchLen == 0)
+                return [];
+
+            var (span, len, start) =  textReader;
+            int index = start;
+            while (index < len && !span.Slice(index, matchLen).Equals(match, comparison))
+            {
+                if (chunk)
+                    index += matchLen;
+                else
+                    index++;
+            }
+
+            textReader._position = index;
+            return span[start..index];
+        }
     }
 }

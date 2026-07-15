@@ -5,7 +5,7 @@ using ScrubJay.Functional;
 namespace ScrubJay.Json.Functional;
 
 /// <summary>
-/// A <see cref="JsonConverter{T}"/> that works on <see cref="Unit"/>
+/// A <see cref="JsonConverter{T}"/> that works on <see cref="ScrubJay.Functional.Unit"/>
 /// </summary>
 [PublicAPI]
 public sealed class UnitJsonConverter : JsonConverter<Unit>

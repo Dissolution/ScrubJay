@@ -1,3 +1,4 @@
+using ScrubJay.Polyfills.Comparison;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
@@ -19,7 +20,7 @@ public static class SomeExtensions
         {
             if (option._some)
             {
-                return other._some && Any.Equals(option._value, other._value);
+                return other._some && Relate.Equate(option._value, other._value);
             }
             return !other._some;
         }
@@ -44,7 +45,7 @@ public static class SomeExtensions
             {
                 if (other._some)
                 {
-                    return Any.Compare(option._value, other._value);
+                    return Relate.Compare(option._value, other._value);
                 }
                 else
                 {
