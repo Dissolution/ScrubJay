@@ -41,7 +41,7 @@
     <Folder Name="/7_Memory/">
         <Project Path="src/ScrubJay.Memory/ScrubJay.Memory.csproj"/>
     </Folder>
-    
+
     <Folder Name="/8_Text/">
         <Project Path="src/ScrubJay.Text/ScrubJay.Text.csproj"/>
         <Project Path="tests/ScrubJay.Text.Tests/ScrubJay.Text.Tests.csproj"/>

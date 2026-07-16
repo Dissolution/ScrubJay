@@ -1,4 +1,5 @@
 using ScrubJay.Debugging.Destinations;
+using ScrubJay.Debugging.Logging;
 
 
 namespace ScrubJay.Debugging;

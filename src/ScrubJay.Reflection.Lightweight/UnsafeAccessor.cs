@@ -50,7 +50,6 @@ public static class UnsafeAccessor
 
         var del = Runtime.TryGenerateDelegate<ReferenceFieldRef<TInstance, TValue>>(
             $"access_{TypeName.For(instanceType)}_instance_field_ref_{field.Name}",
-            owner: instanceType,
             gen =>
             {
                 gen.Emit(OpCodes.Ldarg_0);

@@ -1,3 +1,5 @@
+using ScrubJay.Debugging.Logging;
+
 namespace ScrubJay.Debugging.Destinations;
 
 public abstract class LogDestination

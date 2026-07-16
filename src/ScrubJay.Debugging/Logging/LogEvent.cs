@@ -1,4 +1,4 @@
-namespace ScrubJay.Debugging;
+namespace ScrubJay.Debugging.Logging;
 
 [PublicAPI]
 public sealed class LogEvent : IEnumerable

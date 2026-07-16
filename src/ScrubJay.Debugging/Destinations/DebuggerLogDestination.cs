@@ -1,3 +1,4 @@
+using ScrubJay.Debugging.Logging;
 using ScrubJay.Reflection.Lightweight;
 
 namespace ScrubJay.Debugging.Destinations;
