@@ -3,23 +3,22 @@
 
 using System.Globalization;
 using System.Reflection;
+using System.Reflection.Emit;
 using ScrubJay.Debugging;
 using ScrubJay.Debugging.Destinations;
 using ScrubJay.Errors;
 using ScrubJay.Functional;
 using ScrubJay.Polyfills;
 using ScrubJay.Polyfills.Text;
+using ScrubJay.Reflection;
+using ScrubJay.Reflection.Extensions;
 using ScrubJay.Sandboxes.ConsoleApp;
 using ScrubJay.Universal;
 
-var timer = Stopwatch.StartNew();
-var r = Utils.DivideAsync("147", "13");
-timer.Stop();
+var opcodes = OpCodes.All;
 
-var e = timer.Elapsed;
+
 Debugger.Break();
-
-
 Console.WriteLine("Press any key to exit.");
 Console.ReadKey();
 return;
@@ -30,7 +29,7 @@ namespace ScrubJay.Sandboxes.ConsoleApp
     public static class Utils
     {
         public static async ValueTask<Guid> GetGuidAsync() => Guid.NewGuid();
-        
+
         public static async Result<double> ParseAsync(string? str)
         {
             if (double.TryParse(str, out var f64))
@@ -65,7 +64,7 @@ namespace ScrubJay.Sandboxes.ConsoleApp
             Console.Write("");
             return n / d;
         }
-        
+
 #if NET9_0_OR_GREATER
         [return: NotNullIfNotNull(nameof(value))]
         public static string? AnyToString<T>(in T? value)

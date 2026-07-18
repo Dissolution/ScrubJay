@@ -1,6 +1,4 @@
-using ScrubJay.Functional;
 using ScrubJay.Memory.Collections;
-using ScrubJay.Polyfills;
 
 namespace ScrubJay.Memory.Extensions;
 

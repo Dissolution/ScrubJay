@@ -1,5 +1,3 @@
-using ScrubJay.Polyfills;
-
 namespace ScrubJay.Memory;
 
 public static partial class BitHelper

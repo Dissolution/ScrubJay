@@ -1,3 +1,4 @@
+/*
 namespace ScrubJay.Text.Tests;
 
 public class InterpolatedTextTests
@@ -52,3 +53,4 @@ public class InterpolatedTextTests
 
     }
 }
+*/

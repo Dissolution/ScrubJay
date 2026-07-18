@@ -2,6 +2,7 @@
 
 using ScrubJay.Errors;
 using ScrubJay.Polyfills.Collections;
+using ScrubJay.Polyfills.Iteration;
 using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Universal;
 
@@ -225,7 +226,7 @@ where T : allows ref struct
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => throw Ex.NotSupported(typeof(RSOption<T>));
 
     [MustDisposeResource(false)]
-    public RSSingleEnumerator<T> GetEnumerator()
+    public RSSingleIteration<T> GetEnumerator()
     {
         if (_some)
             return new(_value!);

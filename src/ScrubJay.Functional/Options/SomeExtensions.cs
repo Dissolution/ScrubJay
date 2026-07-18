@@ -1,5 +1,4 @@
 using ScrubJay.Polyfills.Comparison;
-using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
 

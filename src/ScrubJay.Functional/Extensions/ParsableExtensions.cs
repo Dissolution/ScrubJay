@@ -9,7 +9,7 @@ public static class ParsableExtensions
     extension<P>(P)
         where P : IParsable<P>
     {
-        public static Result<P, Exception> TryParse([AllowNull, NotNullWhen(true)] string? str, IFormatProvider? provider = null)
+        public static Result<P> TryParse([AllowNull, NotNullWhen(true)] string? str, IFormatProvider? provider = null)
         {
             if (P.TryParse(str, provider, out var value))
                 return value;
@@ -20,7 +20,7 @@ public static class ParsableExtensions
     extension<P>(P)
         where P : ISpanParsable<P>
     {
-        public static Result<P, Exception> TryParse(text text, IFormatProvider? provider = null)
+        public static Result<P> TryParse(text text, IFormatProvider? provider = null)
         {
             if (P.TryParse(text, provider, out var value))
                 return value;

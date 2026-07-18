@@ -22,6 +22,27 @@ public delegate void RefReadonlyAction<T>(ref readonly T value)
     ;
 
 [PublicAPI]
+public delegate R InFunc<T, out R>(in T value)
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
+    ;
+
+[PublicAPI]
+public delegate R RefFunc<T, out R>(ref T value)
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
+    ;
+
+[PublicAPI]
+public delegate R RefReadonlyFunc<T, out R>(ref readonly T value)
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
+    ;
+
+[PublicAPI]
 public delegate bool InPredicate<T>(in T argument)
 #if NET9_0_OR_GREATER
     where T : allows ref struct

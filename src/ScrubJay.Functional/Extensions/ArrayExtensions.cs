@@ -5,7 +5,7 @@ public static class ArrayExtensions
 {
     extension<T>(T[]? array)
     {
-        public Result<T, Exception> TryGet(Index index)
+        public Result<T> TryGet(Index index)
         {
             if (array is null)
                 return new ArgumentNullException(nameof(array));
@@ -15,7 +15,7 @@ public static class ArrayExtensions
             return array[offset];
         }
 
-        public Result<Unit,Exception> TrySet(Index index, T item)
+        public Result<Unit> TrySet(Index index, T item)
         {
             if (array is null)
                 return new ArgumentNullException(nameof(array));

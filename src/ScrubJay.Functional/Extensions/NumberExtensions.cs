@@ -10,7 +10,7 @@ public static class NumberExtensions
     extension<N>(N)
         where N : INumberBase<N>
     {
-        public static Result<N, Exception> TryParse(
+        public static Result<N> TryParse(
             [AllowNull, NotNullWhen(true)] string? str,
             NumberStyles numberStyles = default,
             IFormatProvider? provider = null)
@@ -25,7 +25,7 @@ public static class NumberExtensions
             });
         }
         
-        public static Result<N, Exception> TryParse(
+        public static Result<N> TryParse(
             text text,
             NumberStyles numberStyles = default,
             IFormatProvider? provider = null)

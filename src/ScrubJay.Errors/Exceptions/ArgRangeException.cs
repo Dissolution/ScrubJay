@@ -72,7 +72,7 @@ public class ArgRangeException : ArgumentOutOfRangeException, IArgumentException
             builder.AppendLiteral(info!);
         }
         var message = builder.ToStringAndClear();
-        object? boxed = Any.BoxOrNull<T>(argument.Value);
+        object? boxed = Box.BoxOrNull<T>(argument.Value);
         return new ArgRangeException(argument, boxed, message, innerException);
     }
 

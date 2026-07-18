@@ -1,0 +1,125 @@
+using ScrubJay.Functional;
+using ScrubJay.Functional.Extensions;
+
+namespace ScrubJay.Reflection.Extensions;
+
+[PublicAPI]
+public static class OpCodeExtensions
+{
+    private static readonly OpCode[] _oneByteOpcodes = new OpCode[0x100];
+    private static readonly OpCode[] _twoByteOpcodes = new OpCode[0x1F];
+    private static readonly OpCode[] _allOpcodes;
+    
+    static OpCodeExtensions()
+    {
+        var opcodes = typeof(OpCodes)
+            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+            .Where(static field => field.FieldType == typeof(OpCode))
+            .SelectWhere(static field => Option.Is<OpCode>(field.GetValue(null)))
+            .ToList();
+
+        int maxonelow = int.MinValue;
+        int maxtwolow = int.MinValue;
+        
+        foreach (var opcode in opcodes)
+        {
+            var oct = opcode.OpCodeType;
+            if (oct is default(OpCodeType) /*or OpCodeType.Nternal*/ or > OpCodeType.Primitive)
+            {
+                Debugger.Break();
+            }
+
+            var size = opcode.Size;
+            ushort index = (ushort)opcode.Value;
+            byte hi = (byte)(index >> 8);
+            byte lo = (byte)(index);
+            if (size == 1)
+            {
+                if (hi > 0 || index > 255)
+                    Debugger.Break();
+                _oneByteOpcodes[lo] = opcode;
+                if (lo > maxonelow)
+                    maxonelow = lo;
+            }
+            else if (size == 2)
+            {
+                if (hi != 0XFE)
+                    Debugger.Break();
+                _twoByteOpcodes[lo] = opcode;
+                if (lo > maxtwolow)
+                    maxtwolow = lo;
+            }
+            else
+            {
+                Debugger.Break();
+                continue;
+            }
+        }
+
+        var validOneBytes = _oneByteOpcodes
+            .Where(o => o.Name is not null)
+            .ToArray();
+        var validTwoBytes = _twoByteOpcodes
+            .Where(o => o.Name is not null)
+            .ToArray();
+        
+        
+        _allOpcodes = validOneBytes.Concat(validTwoBytes).ToArray();
+    }
+
+    extension(OpCodes)
+    {
+        public static IReadOnlyList<OpCode> All => _allOpcodes;
+    }
+
+    extension(OpCode opCode)
+    {
+
+    }
+}
+// 
+//    public static OpCode ReadOpCode(ref SpanReader<byte> reader)
+//    {
+//        OpCode opCode;
+//
+//        byte u8 = reader.Take();
+//
+//        if (u8 != 0xFE)
+//        {
+//            opCode = OneByteOpCodes[u8];
+//            if (string.IsNullOrEmpty(opCode.Name))
+//                throw new InvalidOperationException($"Invalid one-byte OpCode for 0x{u8:X}");
+//        }
+//        else
+//        {
+//            u8 = reader.Take();
+//            opCode = TwoByteOpCodes[u8];
+//            if (string.IsNullOrEmpty(opCode.Name))
+//                throw new InvalidOperationException($"Invalid two-byte OpCode for 0x{u8:X}");
+//        }
+//
+//        return opCode;
+//    }
+//
+//    public static Result<OpCode> TryReadOpCode(ref SpanReader<byte> reader)
+//    {
+//        OpCode opCode;
+//        byte u8 = reader.Take();
+//
+//        if (u8 != 0xFE)
+//        {
+//            opCode = OneByteOpCodes[u8];
+//            if (string.IsNullOrEmpty(opCode.Name))
+//                return new InvalidOperationException($"Invalid one-byte OpCode for 0x{u8:X}");
+//        }
+//        else
+//        {
+//            u8 = reader.Take();
+//            opCode = TwoByteOpCodes[u8];
+//            if (string.IsNullOrEmpty(opCode.Name))
+//                return new InvalidOperationException($"Invalid two-byte OpCode for 0x{u8:X}");
+//        }
+//
+//        return Ok(opCode);
+//    }
+//}

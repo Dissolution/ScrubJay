@@ -1,4 +1,4 @@
-using ScrubJay.Polyfills.Collections;
+using ScrubJay.Polyfills.Iteration;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
@@ -309,7 +309,7 @@ public readonly struct Result<T, E> :
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
     [MustDisposeResource(false)]
-    public SingleEnumerator<T> GetEnumerator()
+    public SingleIteration<T> GetEnumerator()
     {
         if (_isOk)
         {

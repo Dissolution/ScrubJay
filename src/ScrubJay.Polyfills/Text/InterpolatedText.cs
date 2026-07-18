@@ -911,7 +911,7 @@ public ref struct InterpolatedText : IDisposable
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void AppendFormatted<T>(T? value, string? format)
+    public void AppendFormatted<T>(T? value, string? format, IFormatProvider? provider = null)
     {
         if (value is null)
         {
@@ -926,7 +926,7 @@ public ref struct InterpolatedText : IDisposable
             if (value is ISpanFormattable)
             {
                 int charsWritten;
-                while (!((ISpanFormattable)value).TryFormat(_chars.Slice(_position), out charsWritten, format, default))
+                while (!((ISpanFormattable)value).TryFormat(_chars.Slice(_position), out charsWritten, format, provider))
                 {
                     GrowABit();
                 }
@@ -936,7 +936,7 @@ public ref struct InterpolatedText : IDisposable
             }
 #endif
 
-            str = ((IFormattable)value).ToString(format, default);
+            str = ((IFormattable)value).ToString(format, provider);
         }
         else
         {
@@ -993,11 +993,17 @@ public ref struct InterpolatedText : IDisposable
     public void Write<T>(T? value) => AppendFormatted<T>(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Write<T>(scoped ReadOnlySpan<T> values) => AppendLiteral(values.ToString());
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Format<T>(T? value, string? format) => AppendFormatted<T>(value, format);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Format<T>(T? value, string? format, int alignment) => AppendFormatted<T>(value, alignment, format);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Format<T>(T? value, string? format, IFormatProvider? provider) => AppendFormatted<T>(value, format, provider);
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Align(char ch, int alignment) => AppendFormatted(ch, alignment);
 
@@ -1022,6 +1028,19 @@ public ref struct InterpolatedText : IDisposable
         EnsureCanAdd(count);
         _chars.Slice(_position, count).Fill(ch);
         _position += count;
+    }
+
+    public void Delimit<T>(scoped text delimiter, scoped ReadOnlySpan<T> items)
+    {
+        int count = items.Length;
+        if (count == 0)
+            return;
+        AppendFormatted<T>(items[0]);
+        for (var i = 1; i < count; i++)
+        {
+            AppendFormatted(delimiter);
+            AppendFormatted<T>(items[i]);
+        }
     }
 #endregion
 

@@ -1,4 +1,3 @@
-using Polyfills;
 using ScrubJay.Polyfills.Comparison;
 
 namespace ScrubJay.Memory;
@@ -134,6 +133,7 @@ public ref partial struct SpanReader<T>
     }
 #endregion
 
+#region Take While
 #region TakeWhile
     public ReadOnlySpan<T> TakeWhile(Func<T, bool> itemPredicate)
     {
@@ -304,14 +304,14 @@ public ref partial struct SpanReader<T>
 
         return TakeWhile(item => matches.Contains(item, comparer));
     }
-    
+
     public ReadOnlySpan<T> TakeWhileEqualToAny(
         scoped ReadOnlySpan<T> matches,
         IEqualityComparer<T>? itemComparer = null)
     {
         var (span, len, start) = this;
         int index = start;
-        itemComparer??=  EqualityComparer<T>.Default;
+        itemComparer ??= EqualityComparer<T>.Default;
 
         while (index < len && matches.Contains(span[index], itemComparer))
         {
@@ -321,5 +321,197 @@ public ref partial struct SpanReader<T>
         _position = index;
         return span[start..index];
     }
+#endregion
+#endregion
+
+#region Take Until
+#region TakeUntil
+    public ReadOnlySpan<T> TakeUntil(Func<T, bool> itemPredicate)
+    {
+        var (span, len, start) = this;
+        int index = start;
+        while (index < len && !itemPredicate(span[index]))
+        {
+            index++;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntil(NextItemStep<T> nextItemStep)
+    {
+        var (span, len, start) = this;
+        int index = start;
+        int step;
+
+        while (index < len && (!nextItemStep(span[index]).IsSome(out step) || step <= 0))
+        {
+            index += step;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntil(NextItemsPredicate<T> nextItemsPredicate)
+    {
+        var (span, len, start) = this;
+        int index = start;
+
+        while (index < len && !nextItemsPredicate(span[index..]))
+        {
+            index++;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntil(NextItemsStep<T> nextItemsStep)
+    {
+        var (span, len, start) = this;
+        int index = start;
+        int step;
+
+        while (index < len && (!nextItemsStep(span[index..]).IsSome(out step) || step <= 0))
+        {
+            index += step;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntil(PrevNextItemsPredicate<T> prevNextItemsPredicate)
+    {
+        var (span, len, start) = this;
+        int index = start;
+
+        while (index < len && !prevNextItemsPredicate(span[..index], span[index..]))
+        {
+            index++;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntil(PrevNextItemsStep<T> prevNextItemsStep)
+    {
+        var (span, len, start) = this;
+        int index = start;
+        int step;
+
+        while (index < len && (!prevNextItemsStep(span[..index], span[index..]).IsSome(out step) || step <= 0))
+        {
+            index++;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+#endregion
+
+#region TakeWhileEqualTo
+    public ReadOnlySpan<T> TakeUntilEqualTo(T match)
+    {
+        return TakeUntil((T item) => Relate.Equate(item, match));
+    }
+
+    public ReadOnlySpan<T> TakeUntilEqualTo(
+        T match,
+        IEqualityComparer<T>? comparer)
+    {
+        return TakeUntil((T item) => Relate.Equate<T>(item, match, comparer));
+    }
+
+    public ReadOnlySpan<T> TakeUntilEqualTo(scoped ReadOnlySpan<T> match)
+    {
+        int matchLen = match.Length;
+        if (matchLen == 0)
+            return [];
+
+        var (span, len, start) = this;
+        int index = start;
+
+        while (index < len && !Relate.Equate(span.Slice(index, matchLen), match))
+        {
+            index += matchLen;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+    public ReadOnlySpan<T> TakeUntilEqualTo(scoped ReadOnlySpan<T> match, IEqualityComparer<T>? itemComparer)
+    {
+        int matchLen = match.Length;
+        if (matchLen == 0)
+            return [];
+
+        var (span, len, start) = this;
+        int index = start;
+
+        while (index < len && !Relate.Equate(span.Slice(index, matchLen), match, itemComparer))
+        {
+            index += matchLen;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+
+#if NET9_0_OR_GREATER
+    public ReadOnlySpan<T> TakeUntilEqualTo(scoped ReadOnlySpan<T> match, IEqualityComparer<ReadOnlySpan<T>>? comparer)
+    {
+        int matchLen = match.Length;
+        if (matchLen == 0)
+            return [];
+
+        var (span, len, start) = this;
+        int index = start;
+
+        while (index < len && !Relate.Equate(span.Slice(index, matchLen), match, comparer))
+        {
+            index += matchLen;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+#endif
+#endregion
+
+#region TakeWhileEqualToAny
+    public ReadOnlySpan<T> TakeUntilEqualToAny(
+        ICollection<T> matches,
+        IEqualityComparer<T>? comparer = null)
+    {
+        if (comparer is null)
+        {
+            return TakeUntil(item => matches.Contains(item));
+        }
+
+        return TakeUntil(item => matches.Contains(item, comparer));
+    }
+
+    public ReadOnlySpan<T> TakeUntilEqualToAny(
+        scoped ReadOnlySpan<T> matches,
+        IEqualityComparer<T>? itemComparer = null)
+    {
+        var (span, len, start) = this;
+        int index = start;
+        itemComparer ??= EqualityComparer<T>.Default;
+
+        while (index < len && !matches.Contains(span[index], itemComparer))
+        {
+            index++;
+        }
+
+        _position = index;
+        return span[start..index];
+    }
+#endregion
 #endregion
 }

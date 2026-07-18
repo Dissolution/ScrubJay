@@ -1,6 +1,3 @@
-using System.Runtime.ExceptionServices;
-using ScrubJay.Debugging;
-
 namespace ScrubJay.Functional;
 
 [PublicAPI]

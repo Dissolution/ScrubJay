@@ -1,11 +1,10 @@
-namespace ScrubJay.Polyfills.Collections;
+namespace ScrubJay.Polyfills.Iteration;
 
 [PublicAPI]
+[MustDisposeResource(false)]
 [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
-public readonly struct EmptyEnumerator : IEnumerator
+public readonly struct EmptyIteration : IIterable<EmptyIteration>, IIterator
 {
-    public static readonly EmptyEnumerator Default;
-
     public object Current
     {
         [DoesNotReturn]
@@ -18,18 +17,25 @@ public readonly struct EmptyEnumerator : IEnumerator
     {
         // do nothing
     }
+
+    public IEnumerator GetEnumerator() => this;
+
+    public EmptyIteration GetIterator() => this;
+
+    void IDisposable.Dispose()
+    {
+        // do nothing
+    }
 }
 
 [PublicAPI]
 [MustDisposeResource(false)]
 [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
-public readonly struct EmptyEnumerator<T> : IEnumerator<T>, IEnumerator, IDisposable
+public readonly struct EmptyIteration<T> : IIterable<EmptyIteration<T>, T>, IIterator<T>
 #if NET9_0_OR_GREATER
 where T : allows ref struct
 #endif
 {
-    public static readonly EmptyEnumerator<T> Default;
-
     object IEnumerator.Current
     {
         [DoesNotReturn]
@@ -53,4 +59,10 @@ where T : allows ref struct
     {
         // do nothing
     }
+
+    IEnumerator IEnumerable.GetEnumerator() => this;
+
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => this;
+
+    public EmptyIteration<T> GetIterator() => this;
 }

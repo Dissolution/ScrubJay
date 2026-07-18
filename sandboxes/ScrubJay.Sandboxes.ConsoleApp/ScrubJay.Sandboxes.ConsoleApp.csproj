@@ -16,6 +16,7 @@
         <ProjectReference Include="..\..\src\ScrubJay.Memory\ScrubJay.Memory.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
+        <ProjectReference Include="..\..\src\ScrubJay.Reflection\ScrubJay.Reflection.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Testing\ScrubJay.Testing.csproj" />
         <ProjectReference Include="..\..\src\ScrubJay.Text\ScrubJay.Text.csproj" />
     </ItemGroup>

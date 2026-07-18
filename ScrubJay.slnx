@@ -1,7 +1,6 @@
 <Solution>
     <Folder Name="/0_Common_Files/">
         <File Path=".gitignore"/>
-        <File Path="ScrubJay.slnx"/>
         <File Path=".editorconfig"/>
         <File Path="Directory.Build.targets"/>
         <File Path="Directory.Build.props"/>
@@ -10,43 +9,47 @@
         <File Path="README.md"/>
     </Folder>
 
-    <Folder Name="/1_Sandboxes/">
+    <Folder Name="/0_Sandboxes/">
         <Project Path="src/ScrubJay.Debugging/ScrubJay.Debugging.csproj"/>
         <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.ConsoleApp.csproj"/>
     </Folder>
 
-    <Folder Name="/2_Reflection.Lightweight/">
+    <Folder Name="/1_Reflection.Lightweight/">
         <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj"/>
     </Folder>
 
-    <Folder Name="/3_Universal/">
+    <Folder Name="/2_Universal/">
         <Project Path="src/ScrubJay.Universal/ScrubJay.Universal.csproj"/>
         <Project Path="tests/ScrubJay.Universal.Tests/ScrubJay.Universal.Tests.csproj"/>
     </Folder>
 
-    <Folder Name="/4_Errors/">
+    <Folder Name="/3_Errors/">
         <Project Path="src/ScrubJay.Errors/ScrubJay.Errors.csproj"/>
     </Folder>
 
-    <Folder Name="/5_Polyfills/">
+    <Folder Name="/4_Polyfills/">
         <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
         <Project Path="tests/ScrubJay.Polyfills.Tests/ScrubJay.Polyfills.Tests.csproj"/>
     </Folder>
 
-    <Folder Name="/6_Functional/">
+    <Folder Name="/5_Functional/">
         <Project Path="src/ScrubJay.Functional/ScrubJay.Functional.csproj"/>
         <Project Path="tests/ScrubJay.Functional.Tests/ScrubJay.Functional.Tests.csproj"/>
     </Folder>
 
-    <Folder Name="/7_Memory/">
+    <Folder Name="/6_Memory/">
         <Project Path="src/ScrubJay.Memory/ScrubJay.Memory.csproj"/>
     </Folder>
 
-    <Folder Name="/8_Text/">
+    <Folder Name="/7_Text/">
         <Project Path="src/ScrubJay.Text/ScrubJay.Text.csproj"/>
         <Project Path="tests/ScrubJay.Text.Tests/ScrubJay.Text.Tests.csproj"/>
     </Folder>
 
+    <Folder Name="/Reflection/">
+        <Project Path="src/ScrubJay.Reflection/ScrubJay.Reflection.csproj"/>
+    </Folder>
+    
     <Folder Name="/Expressions/">
         <Project Path="src/ScrubJay.Expressions/ScrubJay.Expressions.csproj"/>
     </Folder>

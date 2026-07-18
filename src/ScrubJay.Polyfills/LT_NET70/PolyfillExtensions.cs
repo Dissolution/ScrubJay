@@ -8,6 +8,11 @@ public static partial class PolyfillExtensions
     {
         public static bool IsEvenInteger(int value) => (value & 1) == 0;
     }
+
+    extension(char)
+    {
+      
+    }
 }
 
 

@@ -29,5 +29,9 @@
         <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
         <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Utilities\" />
+    </ItemGroup>
 
 </Project>

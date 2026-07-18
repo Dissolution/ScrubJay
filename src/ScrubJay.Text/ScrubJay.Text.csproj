@@ -17,11 +17,12 @@
 
     <!-- Global Usings -->
     <ItemGroup>
-        <Using Include="Polyfills"/>
-        <Using Include="ScrubJay.Polyfills"/>
-        
         <Using Include="InlineIL.IL" Static="true"/>
         <Using Include="InlineIL"/>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
+        <Using Include="ScrubJay.Memory"/>
+        <Using Include="ScrubJay.Text.Extensions"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -37,12 +38,9 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
+      <ProjectReference Include="..\ScrubJay.Memory\ScrubJay.Memory.csproj" />
       <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
       <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
       <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Extensions\" />
     </ItemGroup>
 </Project>

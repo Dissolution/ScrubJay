@@ -4,7 +4,7 @@ public static class PolyfillExtensions
 {
     extension(Activator)
     {
-        public static Result<T, Exception> TryCreateInstance<T>(params object?[]? args)
+        public static Result<T> TryCreateInstance<T>(params object?[]? args)
         {
             try
             {
@@ -16,7 +16,7 @@ public static class PolyfillExtensions
             }
         }
 
-        public static Result<T, Exception> TryCreateInstance<T>(Type instanceType, params object?[]? args)
+        public static Result<T> TryCreateInstance<T>(Type instanceType, params object?[]? args)
         {
             try
             {
@@ -28,7 +28,7 @@ public static class PolyfillExtensions
             }
         }
 
-        public static Result<object?, Exception> TryCreateInstance(Type? instanceType, params object?[]? args)
+        public static Result<object?> TryCreateInstance(Type? instanceType, params object?[]? args)
         {
             try
             {

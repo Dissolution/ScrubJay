@@ -1,5 +1,3 @@
-using ScrubJay.Polyfills;
-
 namespace ScrubJay.Memory.Extensions;
 
 [PublicAPI]
