@@ -207,17 +207,6 @@ public static class HashCodeExtensions
     {
 #region AddMany
         /// <summary>
-        /// Adds the hashcodes of the items in a <see cref="Span{T}"/>
-        /// </summary>
-        public void AddMany<T>(scoped Span<T> values)
-        {
-            foreach (var value in values)
-            {
-                hashCode.Add<T>(value);
-            }
-        }
-
-        /// <summary>
         /// Adds the hashcodes of the items in a <see cref="ReadOnlySpan{T}"/>
         /// </summary>
         public void AddMany<T>(params ReadOnlySpan<T> values)

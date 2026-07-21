@@ -1,3 +1,4 @@
+#pragma warning disable CS1574, CS1584, CS1581, CS1580
 namespace ScrubJay.Reflection.Emission;
 
 /// <summary>
@@ -41,7 +42,7 @@ public interface IExceptionEmitter<E> : IILEmitter<E>
     /// The <see langword="catch"/> block is within a filtered exception.
     /// </exception>
     /// <exception cref="ArgumentNullException">
-    /// <see cref="exceptionType"/> is <see langword="null"/>,
+    /// <paramref name="exceptionType"/> is <see langword="null"/>,
     /// and the exception filter block has not returned a value that indicates that <see langword="finally"/> blocks should be run until this <see langword="catch"/> block is located.
     /// </exception>
     /// <exception cref="NotSupportedException">

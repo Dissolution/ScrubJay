@@ -1,6 +1,6 @@
 using ScrubJay.Errors.Collections;
 
-namespace ScrubJay.Errors.Extensions;
+namespace ScrubJay.Errors;
 
 internal static class DictionaryExtensions
 {

@@ -14,6 +14,5 @@
     
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
-        <Using Include="ScrubJay.Json.Extensions"/>
     </ItemGroup>
 </Project>

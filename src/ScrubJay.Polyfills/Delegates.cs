@@ -22,6 +22,13 @@ public delegate void RefReadonlyAction<T>(ref readonly T value)
     ;
 
 [PublicAPI]
+public delegate void SpanAction<T>(Span<T> span);
+
+[PublicAPI]
+public delegate void ReadOnlySpanAction<T>(ReadOnlySpan<T> span);
+
+
+[PublicAPI]
 public delegate R InFunc<T, out R>(in T value)
 #if NET9_0_OR_GREATER
     where T : allows ref struct
@@ -41,6 +48,14 @@ public delegate R RefReadonlyFunc<T, out R>(ref readonly T value)
     where T : allows ref struct
 #endif
     ;
+
+[PublicAPI]
+public delegate R SpanFunc<T, out R>(Span<T> span);
+
+[PublicAPI]
+public delegate R ReadOnlySpanFunc<T, out R>(ReadOnlySpan<T> span);
+
+
 
 [PublicAPI]
 public delegate bool InPredicate<T>(in T argument)

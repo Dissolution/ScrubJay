@@ -1,4 +1,4 @@
-﻿namespace ScrubJay.Functional.Extensions;
+﻿namespace ScrubJay.Functional;
 
 /// <summary>
 /// Extensions on <see cref="IEnumerable{T}"/> and similar types

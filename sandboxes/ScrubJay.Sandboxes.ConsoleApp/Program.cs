@@ -8,14 +8,16 @@ using ScrubJay.Debugging;
 using ScrubJay.Debugging.Destinations;
 using ScrubJay.Errors;
 using ScrubJay.Functional;
+using ScrubJay.Memory;
 using ScrubJay.Polyfills;
 using ScrubJay.Polyfills.Text;
 using ScrubJay.Reflection;
-using ScrubJay.Reflection.Extensions;
+using ScrubJay.Text;
 using ScrubJay.Sandboxes.ConsoleApp;
 using ScrubJay.Universal;
 
 var opcodes = OpCodes.All;
+
 
 
 Debugger.Break();
@@ -66,11 +68,10 @@ namespace ScrubJay.Sandboxes.ConsoleApp
         }
 
 #if NET9_0_OR_GREATER
-        [return: NotNullIfNotNull(nameof(value))]
-        public static string? AnyToString<T>(in T? value)
+        public static void ARSTest<T>(T? value)
             where T : allows ref struct
         {
-            return Any.ToString(in value);
+            
         }
 #endif
     }

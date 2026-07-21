@@ -1,3 +1,5 @@
+#pragma warning disable CS1574
+
 namespace ScrubJay.Reflection.Emission;
 
 /// <summary>
@@ -12,6 +14,7 @@ namespace ScrubJay.Reflection.Emission;
 /// if the <see cref="OpCode"/> requires a 2-<see cref="byte"/> argument and the caller supplies a 4-<see cref="byte"/> operand,
 /// the runtime will emit two additional <see cref="byte">bytes</see> to the instruction stream.
 /// These extra bytes will be <see cref="OpCodes.Nop"/> instructions.
+/// </i>
 /// </remarks>
 /// <seealso cref="ILGenerator"/>
 /// <seealso href="https://learn.microsoft.com/en-us/dotnet/api/system.reflection.emit.ilgenerator.emit"/>

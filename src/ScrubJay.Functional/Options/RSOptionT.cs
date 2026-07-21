@@ -2,14 +2,13 @@
 
 using ScrubJay.Errors;
 using ScrubJay.Polyfills.Collections;
-using ScrubJay.Polyfills.Iteration;
 using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-public readonly ref struct RSOption<T> : IEnumerable<T>
+public readonly ref struct RSOption<T>
 where T : allows ref struct
 {
     public static implicit operator RSOption<T>(T value) => new RSOption<T>(value);
@@ -217,21 +216,6 @@ where T : allows ref struct
 //        }
 //        return default;
 //    }
-
-
-    [MustDisposeResource(false)]
-    IEnumerator IEnumerable.GetEnumerator() => throw Ex.NotSupported(typeof(RSOption<T>));
-
-    [MustDisposeResource(false)]
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => throw Ex.NotSupported(typeof(RSOption<T>));
-
-    [MustDisposeResource(false)]
-    public RSSingleIteration<T> GetEnumerator()
-    {
-        if (_some)
-            return new(_value!);
-        return default;
-    }
 #endregion
 }
 

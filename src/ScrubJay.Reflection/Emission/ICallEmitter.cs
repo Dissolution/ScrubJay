@@ -1,3 +1,4 @@
+#pragma warning disable CS1580 // Invalid type for parameter in XML comment cref attribute
 namespace ScrubJay.Reflection.Emission;
 
 /// <summary>

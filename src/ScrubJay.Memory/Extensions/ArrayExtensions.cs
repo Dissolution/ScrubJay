@@ -1,4 +1,4 @@
-namespace ScrubJay.Memory.Extensions;
+namespace ScrubJay.Memory;
 
 [PublicAPI]
 public static class ArrayExtensions

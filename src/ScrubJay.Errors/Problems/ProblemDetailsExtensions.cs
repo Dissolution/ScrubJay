@@ -1,5 +1,4 @@
 using System.Globalization;
-using ScrubJay.Errors.Extensions;
 
 namespace ScrubJay.Errors.Problems;
 

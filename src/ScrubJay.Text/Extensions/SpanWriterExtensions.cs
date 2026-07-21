@@ -1,7 +1,7 @@
 using ScrubJay.Universal;
 // ReSharper disable MergeCastWithTypeCheck
 
-namespace ScrubJay.Text.Extensions;
+namespace ScrubJay.Text;
 
 [PublicAPI]
 public static class SpanWriterExtensions

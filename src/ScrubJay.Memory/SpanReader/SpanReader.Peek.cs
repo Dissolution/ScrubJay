@@ -483,7 +483,6 @@ public ref partial struct SpanReader<T>
         }
         
         return span[start..index];
-        return span[start..index];
     }
 #endregion
 #endregion

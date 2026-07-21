@@ -22,6 +22,14 @@ public static class Trouble
 //        Debugger.Break();
 //    }
 
+
+    public static string Dump<T>(T? value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        using var dumper = new Dumper();
+        dumper.Start<T>(value, valueName);
+        return dumper.ToString();
+    }
+
     public static List<LogDestination> LogDestinations { get; } =
     [
         new ConsoleLogDestination(),

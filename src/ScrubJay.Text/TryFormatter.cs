@@ -1,4 +1,4 @@
-using ScrubJay.Polyfills.Iteration;
+using ScrubJay.Polyfills.Collections;
 using ScrubJay.Universal;
 
 namespace ScrubJay.Text;
@@ -85,7 +85,7 @@ public ref struct TryFormatter : IEnumerable<char>, IEnumerable
         }
     }
 
-    readonly IEnumerator IEnumerable.GetEnumerator() => Iteration.Empty();
+    readonly IEnumerator IEnumerable.GetEnumerator() => Enumeration.Empty();
 
-    readonly IEnumerator<char> IEnumerable<char>.GetEnumerator() => Iteration.Empty<char>();
+    readonly IEnumerator<char> IEnumerable<char>.GetEnumerator() => Enumeration.Empty<char>();
 }

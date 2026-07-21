@@ -1,4 +1,4 @@
-namespace ScrubJay.Functional.Extensions;
+namespace ScrubJay.Functional;
 
 public static class PolyfillExtensions
 {

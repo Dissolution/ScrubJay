@@ -1,5 +1,5 @@
 #if NET6_0_OR_GREATER
-namespace ScrubJay.Functional.Extensions;
+namespace ScrubJay.Functional;
 
 public static class SpanFormattableExtensions
 {

@@ -1,4 +1,4 @@
-using ScrubJay.Polyfills.Iteration;
+using ScrubJay.Polyfills.Collections;
 using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Universal;
 
@@ -280,7 +280,7 @@ public readonly struct Option<T> :
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
     [MustDisposeResource(false)]
-    public SingleIteration<T> GetEnumerator()
+    public SingleEnumera<T> GetEnumerator()
     {
         if (_some)
             return new(_value!);

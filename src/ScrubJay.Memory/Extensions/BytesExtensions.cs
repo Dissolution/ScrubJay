@@ -1,6 +1,6 @@
 using ScrubJay.Memory.Collections;
 
-namespace ScrubJay.Memory.Extensions;
+namespace ScrubJay.Memory;
 
 [PublicAPI]
 public static class BytesExtensions

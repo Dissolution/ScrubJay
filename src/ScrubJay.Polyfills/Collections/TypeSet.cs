@@ -13,6 +13,7 @@ public class TypeSet : HashSet<Type>
     public bool Contains<T>() => base.Contains(typeof(T));
 }
 
+[PublicAPI]
 public static class TypeCollectionExtensions
 {
     extension(IEnumerable<Type>? types)

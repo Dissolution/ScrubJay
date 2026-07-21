@@ -1,5 +1,4 @@
 using ScrubJay.Errors.Collections;
-using ScrubJay.Errors.Extensions;
 using ScrubJay.Errors.Utilities;
 
 namespace ScrubJay.Errors.Exceptions;

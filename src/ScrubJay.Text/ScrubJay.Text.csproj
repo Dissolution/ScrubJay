@@ -21,8 +21,10 @@
         <Using Include="InlineIL"/>
         <Using Include="Polyfills"/>
         <Using Include="ScrubJay.Polyfills"/>
+        <Using Include="ScrubJay.Polyfills.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Memory"/>
-        <Using Include="ScrubJay.Text.Extensions"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -4,7 +4,12 @@ public static partial class BitHelper
 {
     public static class Notsafe
     {
-
+        public static U Read<U>(scoped bytesview bytes)
+            where U : unmanaged
+        {
+            ref byte b = ref MemoryMarshal.GetReference(bytes);
+            return Unsafe.ReadUnaligned<U>(ref b);
+        }
     }
 
     public static bool TrySelfCopy<U>(U[]? array, int sourceIndex, int destIndex, int count)
@@ -16,7 +21,7 @@ public static partial class BitHelper
         Unsafe.SelfCopy(array, sourceIndex, destIndex, count);
         return true;
     }
-    
+
     public static bool TrySelfCopy<U>(U[]? array, Range sourceRange, int destIndex)
         where U : unmanaged
     {
@@ -27,7 +32,7 @@ public static partial class BitHelper
         Unsafe.SelfCopy(array, sourceIndex, destIndex, count);
         return true;
     }
-    
+
     public static bool TrySelfCopy<U>(U[]? array, int sourceIndex, Range destRange)
         where U : unmanaged
     {
@@ -38,7 +43,7 @@ public static partial class BitHelper
         Unsafe.SelfCopy(array, sourceIndex, destIndex, count);
         return true;
     }
-    
+
     public static bool TrySelfCopy<U>(U[]? array, Range sourceRange, Range destRange)
         where U : unmanaged
     {

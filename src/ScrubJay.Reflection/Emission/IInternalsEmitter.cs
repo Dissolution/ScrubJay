@@ -1,3 +1,4 @@
+#pragma warning disable CS1574, CS1584, CS1581, CS1580
 namespace ScrubJay.Reflection.Emission;
 
 /// <summary>
@@ -166,7 +167,7 @@ public interface IInternalsEmitter<E> : IILEmitter<E>
     /// </returns>
     /// <remarks>
     /// This method is used to emit symbolic information.
-    /// Local variables declared after <see cref="BeginScope"/> are scoped until the corresponding <see cref="Endscope"/> is called.
+    /// Local variables declared after <see cref="BeginScope"/> are scoped until the corresponding <see cref="EndScope"/> is called.
     /// If the current Emitter is associated with a <see cref="DynamicMethod"/>, it does not support symbolic information.
     /// </remarks>
     /// <exception cref="NotSupportedException">

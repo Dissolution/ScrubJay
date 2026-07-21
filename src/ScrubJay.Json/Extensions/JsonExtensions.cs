@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ScrubJay.Json.Extensions;
+namespace ScrubJay.Json;
 
 [PublicAPI]
 public static class JsonExtensions

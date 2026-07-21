@@ -2,6 +2,8 @@
 
     <!-- Global Usings -->
     <ItemGroup>
+        <Using Include="InlineIL.IL" Static="true"/>
+        
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
         <Using Include="ScrubJay.Functional"/>
         <Using Include="ScrubJay.Universal"/>
@@ -13,6 +15,11 @@
         <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj"/>
         <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
         <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup>

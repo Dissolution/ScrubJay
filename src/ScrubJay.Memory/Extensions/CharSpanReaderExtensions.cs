@@ -1,4 +1,4 @@
-namespace ScrubJay.Memory.Extensions;
+namespace ScrubJay.Memory;
 
 public static class CharSpanReaderExtensions
 {

@@ -6,6 +6,10 @@
         <Using Include="InlineIL.IL" Static="true"/>
         <Using Include="Polyfills"/>
         <Using Include="ScrubJay.Polyfills"/>
+        <Using Include="ScrubJay.Polyfills.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
+        <Using Include="ScrubJay.Errors"/>
         <Using Include="ScrubJay.Memory"/>
         <Using Include="ScrubJay.Text"/>
     </ItemGroup>
@@ -22,13 +26,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
-      <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\ScrubJay.Memory\ScrubJay.Memory.csproj" />
-      <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" />
-      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
-      <ProjectReference Include="..\ScrubJay.Text\ScrubJay.Text.csproj" />
-      <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Functional\ScrubJay.Functional.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Memory\ScrubJay.Memory.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Text\ScrubJay.Text.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj"/>
     </ItemGroup>
 
 </Project>

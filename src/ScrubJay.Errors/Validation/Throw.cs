@@ -9,23 +9,11 @@ public static partial class Throw;
 
 partial class Throw
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void IfNull<T>(
         [AllowNull, NotNull] T? argument,
         [CallerArgumentExpression(nameof(argument))]
         string? argumentName = null)
-        where T : class
-    {
-        if (argument is null)
-        {
-            ArgNullException.Throw(in argument, null, null, argumentName);
-        }
-    }
-
-    public static void IfNull<T>(
-        [AllowNull, NotNull] in Nullable<T> argument,
-        [CallerArgumentExpression(nameof(argument))]
-        string? argumentName = null)
-        where T : struct
     {
         if (argument is null)
         {

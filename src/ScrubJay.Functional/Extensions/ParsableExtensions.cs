@@ -1,7 +1,7 @@
 #if NET7_0_OR_GREATER
 using ScrubJay.Errors.Exceptions;
 
-namespace ScrubJay.Functional.Extensions;
+namespace ScrubJay.Functional;
 
 [PublicAPI]
 public static class ParsableExtensions

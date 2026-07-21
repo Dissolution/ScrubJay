@@ -1,18 +1,24 @@
+using InlineIL;
+
 namespace ScrubJay.Polyfills;
 
 [PublicAPI]
 public static class CharExtensions
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static text AsSpan(this in char ch)
+    extension(ref readonly char ch)
     {
-#if NET7_0_OR_GREATER
-        return new text(in ch);
-#else
-        unsafe
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public text AsSpan()
         {
-            return new text(Unsafe.InAsPtr<char>(in ch), 1);
-        }
+#if NET7_0_OR_GREATER
+            return new text(in ch);
+#else
+            Emit.Ldarg(nameof(ch));
+            Emit.Ldc_I4_1();
+            Emit.Call(MethodRef.Constructor(typeof(text), [typeof(void*), typeof(int)]));
+            Emit.Ret();
+            throw Unreachable();
 #endif
+        }
     }
 }

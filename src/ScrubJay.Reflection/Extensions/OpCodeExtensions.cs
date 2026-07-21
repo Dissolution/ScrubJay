@@ -1,15 +1,27 @@
-using ScrubJay.Functional;
-using ScrubJay.Functional.Extensions;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
-namespace ScrubJay.Reflection.Extensions;
+namespace ScrubJay.Reflection;
 
 [PublicAPI]
-public static class OpCodeExtensions
+public static
+#if NET7_0_OR_GREATER
+    partial
+#endif
+    class OpCodeExtensions
 {
+#if NET7_0_OR_GREATER
+    [GeneratedRegex(@"(?:ld|st)loc[\.as]*([0123])?", RegexOptions.Compiled)]
+    private static partial Regex LocalOpCodeRegex();
+
+    [GeneratedRegex(@"(?:ld|st)arg[\.as]*([0123])?", RegexOptions.Compiled)]
+    private static partial Regex ArgumentOpCodeRegex();
+#endif
+
     private static readonly OpCode[] _oneByteOpcodes = new OpCode[0x100];
     private static readonly OpCode[] _twoByteOpcodes = new OpCode[0x1F];
     private static readonly OpCode[] _allOpcodes;
-    
+
     static OpCodeExtensions()
     {
         var opcodes = typeof(OpCodes)
@@ -20,7 +32,7 @@ public static class OpCodeExtensions
 
         int maxonelow = int.MinValue;
         int maxtwolow = int.MinValue;
-        
+
         foreach (var opcode in opcodes)
         {
             var oct = opcode.OpCodeType;
@@ -62,8 +74,8 @@ public static class OpCodeExtensions
         var validTwoBytes = _twoByteOpcodes
             .Where(o => o.Name is not null)
             .ToArray();
-        
-        
+
+
         _allOpcodes = validOneBytes.Concat(validTwoBytes).ToArray();
     }
 
@@ -72,11 +84,113 @@ public static class OpCodeExtensions
         public static IReadOnlyList<OpCode> All => _allOpcodes;
     }
 
-    extension(OpCode opCode)
+    extension(OpCode opcode)
     {
+        public bool IsPrefix
+        {
+            get
+            {
+                bool isPrefix = opcode.OpCodeType == OpCodeType.Prefix;
+                bool check = opcode == OpCodes.Unaligned ||
+                    opcode == OpCodes.Readonly ||
+                    opcode == OpCodes.Volatile ||
+                    opcode == OpCodes.Tailcall;
+                if (check != isPrefix)
+                    Debugger.Break();
+                return isPrefix;
+            }
+        }
 
+        public bool UsesLocal()
+        {
+#if NET7_0_OR_GREATER
+            var regex = LocalOpCodeRegex();
+#else
+            var regex = new Regex(@"(?:ld|st)loc[\.as]*([0123])?", RegexOptions.Compiled);
+#endif
+            var match = regex.Match(opcode.Name!);
+            return match.Success;
+        }
+
+        public bool UsesLocal(out int localIndex)
+        {
+#if NET7_0_OR_GREATER
+            var regex = LocalOpCodeRegex();
+#else
+            var regex = new Regex(@"(?:ld|st)loc[\.as]*([0123])?", RegexOptions.Compiled);
+#endif
+            var match = regex.Match(opcode.Name!);
+            if (match.Success)
+            {
+                int gc = match.Groups.Count;
+                if (gc == 1)
+                {
+                    // we use locals, but aren't sure which one
+                    localIndex = -1;
+                    return true;
+                }
+                if (gc == 2)
+                {
+                    localIndex = int.Parse(match.Groups[1].Value, NumberStyles.None);
+                    return true;
+                }
+                else
+                {
+                    Debugger.Break();
+                }
+            }
+
+            // does not use locals
+            localIndex = -1;
+            return false;
+        }
+
+        public bool UsesArgument()
+        {
+#if NET7_0_OR_GREATER
+            var regex = ArgumentOpCodeRegex();
+#else
+            var regex = new Regex(@"(?:ld|st)arg[\.as]*([0123])?", RegexOptions.Compiled);
+#endif
+            var match = regex.Match(opcode.Name!);
+            return match.Success;
+        }
+
+        public bool UsesArgument(out int argIndex)
+        {
+#if NET7_0_OR_GREATER
+            var regex = ArgumentOpCodeRegex();
+#else
+            var regex = new Regex(@"(?:ld|st)arg[\.as]*([0123])?", RegexOptions.Compiled);
+#endif
+            var match = regex.Match(opcode.Name!);
+            if (match.Success)
+            {
+                int gc = match.Groups.Count;
+                if (gc == 1)
+                {
+                    // we use an argument, but aren't sure which one
+                    argIndex = -1;
+                    return true;
+                }
+                if (gc == 2)
+                {
+                    argIndex = int.Parse(match.Groups[1].Value, NumberStyles.None);
+                    return true;
+                }
+                else
+                {
+                    Debugger.Break();
+                }
+            }
+
+            // does not use an argument
+            argIndex = -1;
+            return false;
+        }
     }
 }
+
 // 
 //    public static OpCode ReadOpCode(ref SpanReader<byte> reader)
 //    {

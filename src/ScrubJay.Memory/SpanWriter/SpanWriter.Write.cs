@@ -29,8 +29,10 @@ public ref partial struct SpanWriter<T>
         }
         return false;
     }
-
-    public bool TryWrite(params ReadOnlySpan<T> items)
+#endregion
+    
+    #region TryWriteAll
+    public bool TryWriteAll(params ReadOnlySpan<T> items)
     {
         int pos = _position;
         int newPos = pos + items.Length;
@@ -43,7 +45,7 @@ public ref partial struct SpanWriter<T>
         return false;
     }
     
-    public bool TryWrite(T[]? items)
+    public bool TryWriteAll(T[]? items)
     {
         if (items is null)
             return true;
@@ -59,7 +61,7 @@ public ref partial struct SpanWriter<T>
         return false;
     }
     
-    public bool TryWrite(IEnumerable<T>? items)
+    public bool TryWriteAll(IEnumerable<T>? items)
     {
         if (items is null)
             return true;

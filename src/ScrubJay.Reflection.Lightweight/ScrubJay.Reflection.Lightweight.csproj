@@ -28,8 +28,4 @@
         <PackageReference Include="System.Reflection.Emit.Lightweight" />
     </ItemGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="ScrubJay.Universal" />
-    </ItemGroup>
-
 </Project>

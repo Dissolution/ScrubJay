@@ -2,7 +2,7 @@
 using System.Globalization;
 using ScrubJay.Errors.Exceptions;
 
-namespace ScrubJay.Functional.Extensions;
+namespace ScrubJay.Functional;
 
 [PublicAPI]
 public static class NumberExtensions

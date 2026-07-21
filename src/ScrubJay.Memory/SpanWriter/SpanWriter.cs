@@ -1,3 +1,4 @@
+using ScrubJay.Errors.Validation;
 using ScrubJay.Polyfills.Text;
 using ScrubJay.Reflection.Lightweight;
 
@@ -8,7 +9,7 @@ namespace ScrubJay.Memory;
 [StructLayout(LayoutKind.Auto)]
 public ref partial struct SpanWriter<T>
 {
-    internal readonly Span<T> _span;
+    internal Span<T> _span;
     internal readonly int _spanLength;
     internal int _position;
 
@@ -25,12 +26,23 @@ public ref partial struct SpanWriter<T>
     public readonly Span<T> Written => _span[.._position];
 
     public readonly Span<T> Available => _span[_position..];
+    
+    public readonly ref T this[Index index] => ref _span[.._position][index];
+
+    public Span<T> this[Range range] => _span[.._position][range];
 
     public SpanWriter(Span<T> span)
     {
         _span = span;
         _spanLength = span.Length;
         _position = 0;
+    }
+    
+    public SpanWriter(Span<T> span, Index position)
+    {
+        _span = span;
+        _spanLength = span.Length;
+        _position = Demand.InRange(position.GetOffset(_spanLength), 0, _spanLength+1);
     }
 
     internal void Deconstruct(out Span<T> span, out int spanLength, out int position)
@@ -56,7 +68,22 @@ public ref partial struct SpanWriter<T>
         }
         return new InvalidOperationException(message.ToString());
     }
-    
+
+
+    public bool TryUseAvailable([NotNullWhen(true)] SpanFunc<T, int>? useAvailable)
+    {
+        if (useAvailable is not null)
+        {
+            int used = useAvailable(Available);
+            if (used >= 0 && used <= RemainingCapacity)
+            {
+                _position += used;
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
 
     public bool TrySetPosition(int index)
@@ -96,7 +123,7 @@ public ref partial struct SpanWriter<T>
         _span.Slice(0, _position).Clear();
         _position = 0;
     }
-
+    
     private readonly string Display()
     {
         using var builder = new InterpolatedText(24, 8);
