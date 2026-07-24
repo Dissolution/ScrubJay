@@ -17,7 +17,7 @@ public static class TupleExtensions
 
         public TupleEnumerator(T tuple)
         {
-            Throw.IfNull(tuple);
+            ArgumentNullException.ThrowIfNull(tuple);
             _tuple = tuple;
             _index = -1;
         }

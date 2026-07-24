@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-
+        <PolyNullability>true</PolyNullability>
     </PropertyGroup>
 
     <!-- NuGet -->
@@ -18,20 +18,19 @@
     <!-- Global Usings -->
     <ItemGroup>
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
-        <Using Include="Polyfills"/>
-        <Using Include="ScrubJay.Polyfills"/>
+        <!--        <Using Include="Polyfills"/>-->
     </ItemGroup>
-    
+
     <ItemGroup>
-        <ProjectReference Include="..\ScrubJay.Debugging\ScrubJay.Debugging.csproj" />
-        <ProjectReference Include="..\ScrubJay.Errors\ScrubJay.Errors.csproj" />
-        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj"/>
-        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
-        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" />
+        <ProjectReference Include="..\ScrubJay.Debugging\ScrubJay.Debugging.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj"/>
+
+        <PackageReference Include="Polyfill" PrivateAssets="all"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Folder Include="Utilities\" />
+        <Folder Include="Utilities\"/>
     </ItemGroup>
 
 </Project>

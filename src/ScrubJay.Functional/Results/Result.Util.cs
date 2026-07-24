@@ -1,13 +1,14 @@
-using ScrubJay.Errors.Exceptions;
+using System.Linq.Expressions;
 
 namespace ScrubJay.Functional;
 
 partial struct Result
 {
+    #region Try
     public static Result<Unit, Exception> Try(Action? action)
     {
         if (action is null)
-            return ArgNullException.Create(action);
+            return new ArgumentNullException(nameof(action));
         try
         {
             action();
@@ -25,7 +26,7 @@ partial struct Result
 #endif
     {
         if (action is null)
-            return ArgNullException.Create(action);
+            return new ArgumentNullException(nameof(action));
         try
         {
             action(state);
@@ -40,7 +41,7 @@ partial struct Result
     public static Result<R, Exception> Try<R>(Func<R>? func)
     {
         if (func is null)
-            return ArgNullException.Create(func);
+            return new ArgumentNullException(nameof(func));
         try
         {
             return func();
@@ -57,7 +58,7 @@ partial struct Result
 #endif
     {
         if (func is null)
-            return ArgNullException.Create(func);
+            return new ArgumentNullException(nameof(func));
         try
         {
             return func(state);
@@ -67,12 +68,21 @@ partial struct Result
             return ex;
         }
     }
+    #endregion
 
     public static Result<T, Exception> NotNull<T>([AllowNull, NotNullWhen(true)] T? value)
         where T : notnull
     {
         if (value is null)
-            return ArgNullException.Create(value);
+            return new ArgumentNullException(nameof(value));
         return value!;
     }
+    
+    public static Result<T> From<T>(T value) => Result<T>.Ok(value);
+    
+    public static Result<T> From<T>(Exception error) => Result<T>.Error(error);
+
+    public static Task<Result<T>> FromAsync<T>(T value) => Task.FromResult(Result<T>.Ok(value));
+    
+    public static Task<Result<T>> FromAsync<T>(Exception error) => Task.FromResult(Result<T>.Error(error));
 }
