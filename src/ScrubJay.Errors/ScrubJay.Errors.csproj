@@ -2,12 +2,15 @@
 
     <ItemGroup>
         <Using Include="ScrubJay.Universal"/>
+        <Using Include="InlineIL.IL" Static="true"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" PrivateAssets="all"/>
         <ProjectReference Include="..\ScrubJay.Universal\ScrubJay.Universal.csproj" PrivateAssets="all"/>
         <PackageReference Include="Polyfill" PrivateAssets="all"/>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
     </ItemGroup>
 
     <PropertyGroup>
