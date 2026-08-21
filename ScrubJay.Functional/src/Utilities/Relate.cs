@@ -11,9 +11,9 @@ public static class Relate
         where E : IEquatable<E>
     {
         if (left is not null)
-            return left.Equals(other: right);
+            return left.Equals(other: right!);
         if (right is not null)
-            return right.Equals(other: left);
+            return right.Equals(other: left!);
         return true;
     }
 
@@ -28,9 +28,9 @@ public static class Relate
         where C : IComparable<C>
     {
         if (left is not null)
-            return left.CompareTo(other: right);
+            return left.CompareTo(other: right!);
         if (right is not null)
-            return -(right.CompareTo(other: left));
+            return -(right.CompareTo(other: left!));
         return 0;
     }
 
@@ -45,7 +45,7 @@ public static class Relate
         where EI : IEquatable<EO>
     {
         if (instance is not null)
-            return instance.Equals(other: other);
+            return instance.Equals(other: other!);
         return other is null;
     }
 
@@ -54,7 +54,7 @@ public static class Relate
         where CI : IComparable<CO>
     {
         if (instance is not null)
-            return instance.CompareTo(other);
+            return instance.CompareTo(other!);
         if (other is null)
             return 0;
         return -1; // null sorts before non-null

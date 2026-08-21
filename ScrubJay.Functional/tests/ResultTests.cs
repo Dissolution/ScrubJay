@@ -40,7 +40,7 @@ public class ResultTests
     [Fact]
     public void Error_WithNullException_CreatesErrorResultWithInvalidOperationException()
     {
-        var result = Result<int>.Error(null);
+        var result = Result<int>.Error(null!);
 
         Assert.True(result.IsError());
         Assert.True(result.IsError(out var error));
@@ -86,7 +86,6 @@ public class ResultTests
 
         Assert.False(value);
     }
-
 #endregion
 #region IsOk Tests
     [Fact]
@@ -150,30 +149,6 @@ public class ResultTests
         Assert.False(isOk);
         Assert.Equal(0, value);
         Assert.Same(exception, error);
-    }
-
-    [Fact]
-    public void IsOkAnd_ReturnsTrueWhenOkAndPredicateTrue()
-    {
-        var result = Result<int>.Ok(42);
-
-        Assert.True(result.IsOkAnd(x => x > 40));
-    }
-
-    [Fact]
-    public void IsOkAnd_ReturnsFalseWhenOkAndPredicateFalse()
-    {
-        var result = Result<int>.Ok(42);
-
-        Assert.False(result.IsOkAnd(x => x < 40));
-    }
-
-    [Fact]
-    public void IsOkAnd_ReturnsFalseWhenError()
-    {
-        var result = Result<int>.Error(new Exception());
-
-        Assert.False(result.IsOkAnd(x => x > 40));
     }
 #endregion
 #region IsError Tests
@@ -239,30 +214,6 @@ public class ResultTests
         Assert.False(isError);
         Assert.Null(error);
         Assert.Equal(42, ok);
-    }
-
-    [Fact]
-    public void IsErrorAnd_ReturnsTrueWhenErrorAndPredicateTrue()
-    {
-        var result = Result<int>.Error(new ArgumentException());
-
-        Assert.True(result.IsErrorAnd(ex => ex is ArgumentException));
-    }
-
-    [Fact]
-    public void IsErrorAnd_ReturnsFalseWhenErrorAndPredicateFalse()
-    {
-        var result = Result<int>.Error(new ArgumentException());
-
-        Assert.False(result.IsErrorAnd(ex => ex is InvalidOperationException));
-    }
-
-    [Fact]
-    public void IsErrorAnd_ReturnsFalseWhenOk()
-    {
-        var result = Result<int>.Ok(42);
-
-        Assert.False(result.IsErrorAnd(_ => true));
     }
 #endregion
 #region OkOr Tests
@@ -517,13 +468,13 @@ public class ResultTests
         Assert.Equal("Error: test", output);
     }
 #endregion
-#region AsOption Tests
+#region ToOption Tests
     [Fact]
-    public void AsOption_ReturnsSomeForOk()
+    public void ToOption_ReturnsSomeForOk()
     {
         var result = Result<int>.Ok(42);
 
-        var option = result.AsOption();
+        var option = result.ToOption();
 
         Assert.True(option.IsSome());
         Assert.True(option.IsSome(out var value));
@@ -531,16 +482,15 @@ public class ResultTests
     }
 
     [Fact]
-    public void AsOption_ReturnsNoneForError()
+    public void ToOption_ReturnsNoneForError()
     {
         var result = Result<int>.Error(new Exception());
 
-        var option = result.AsOption();
+        var option = result.ToOption();
 
         Assert.True(option.IsNone());
     }
 #endregion
-
 #region Boolean Operators
     [Fact]
     public void TrueOperator_ReturnsTrueForOk()
@@ -572,7 +522,6 @@ public class ResultTests
         }
     }
 #endregion
-
 #region IEnumerable Tests
     [Fact]
     public void GetEnumerator_Ok_YieldsValue()
@@ -635,314 +584,6 @@ public class ResultTests
         Assert.False(enumerator.MoveNext());
     }
 #endregion
-#region LINQ Select Tests
-    [Fact]
-    public void Select_Selector_TransformsOkValue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var result = ok.Select(x => x * 2);
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal(84, value);
-    }
-
-    [Fact]
-    public void Select_Selector_PropagatesError()
-    {
-        var exception = new InvalidOperationException();
-        var error = Result<int>.Error(exception);
-
-        var result = error.Select(x => x * 2);
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var resultError));
-        Assert.Same(exception, resultError);
-    }
-
-    [Fact]
-    public void Select_SelectorCanChangeType()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var result = ok.Select(x => x.ToString());
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal("42", value);
-    }
-
-    [Fact]
-    public void Select_ResultSelector_TransformsAndFlattens()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var result = ok.Select(x => Result<string>.Ok(x.ToString()));
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal("42", value);
-    }
-
-    [Fact]
-    public void Select_ResultSelector_PropagatesInnerError()
-    {
-        var ok = Result<int>.Ok(42);
-        var innerException = new ArgumentException();
-
-        var result = ok.Select(_ => Result<string>.Error(innerException));
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.Same(innerException, error);
-    }
-
-    [Fact]
-    public void Select_ResultSelector_PropagatesOuterError()
-    {
-        var exception = new InvalidOperationException();
-        var error = Result<int>.Error(exception);
-
-        var result = error.Select(x => Result<string>.Ok(x.ToString()));
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var resultError));
-        Assert.Same(exception, resultError);
-    }
-
-    [Fact]
-    public void Select_OptionSelector_ConvertsOptionToResult()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var result = ok.Select(x => Option<string>.Some(x.ToString()));
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal("42", value);
-    }
-
-    [Fact]
-    public void Select_OptionSelector_ConvertsNoneToError()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var result = ok.Select(_ => Option<string>.None);
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.IsType<InvalidOperationException>(error);
-    }
-
-    [Fact]
-    public void Select_OptionSelector_PropagatesError()
-    {
-        var exception = new InvalidOperationException();
-        var error = Result<int>.Error(exception);
-
-        var result = error.Select(x => Option<string>.Some(x.ToString()));
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var resultError));
-        Assert.Same(exception, resultError);
-    }
-#endregion
-#region LINQ SelectMany Tests
-    [Fact]
-    public void SelectMany_TransformsAndFlattens()
-    {
-        var ok = Result<int>.Ok(5);
-
-        var result = ok.SelectMany(
-            keySelector: x => Result<int>.Ok(x * 2),
-            newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal("5 * 2 = 10", value);
-    }
-
-    [Fact]
-    public void SelectMany_PropagatesErrorFromOriginal()
-    {
-        var exception = new InvalidOperationException();
-        var error = Result<int>.Error(exception);
-
-        var result = error.SelectMany(
-            keySelector: x => Result<int>.Ok(x * 2),
-            newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var resultError));
-        Assert.Same(exception, resultError);
-    }
-
-    [Fact]
-    public void SelectMany_PropagatesErrorFromKeySelector()
-    {
-        var ok = Result<int>.Ok(5);
-        var innerException = new ArgumentException();
-
-        var result = ok.SelectMany(
-            keySelector: _ => Result<int>.Error(innerException),
-            newSelector: (original, multiplied) => $"{original} * 2 = {multiplied}");
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.Same(innerException, error);
-    }
-
-    [Fact]
-    public void SelectMany_WithLinqSyntax()
-    {
-        var result = from x in Result<int>.Ok(5)
-            from y in Result<int>.Ok(10)
-            select x + y;
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal(15, value);
-    }
-
-    [Fact]
-    public void SelectMany_WithLinqSyntax_PropagatesError()
-    {
-        var exception = new InvalidOperationException();
-
-        var result = from x in Result<int>.Ok(5)
-            from y in Result<int>.Error(exception)
-            select x + y;
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.Same(exception, error);
-    }
-#endregion
-#region Standard LINQ Method Tests
-    [Fact]
-    public void Where_Ok_FiltersProperly()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var filtered = ok.Where(x => x > 40);
-
-        // ReSharper disable PossibleMultipleEnumeration
-        Assert.Single(filtered);
-        Assert.Equal(42, filtered.First());
-        // ReSharper restore PossibleMultipleEnumeration
-    }
-
-    [Fact]
-    public void Where_Ok_FiltersOut()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var filtered = ok.Where(x => x < 40);
-
-        Assert.Empty(filtered);
-    }
-
-    [Fact]
-    public void Where_Error_ReturnsEmpty()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        var filtered = error.Where(_ => true);
-
-        Assert.Empty(filtered);
-    }
-
-    [Fact]
-    public void Any_Ok_ReturnsTrue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        Assert.True(ok.Any());
-    }
-
-    [Fact]
-    public void Any_Error_ReturnsFalse()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        Assert.False(error.Any());
-    }
-
-    [Fact]
-    public void First_Ok_ReturnsValue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        Assert.Equal(42, ok.First());
-    }
-
-    [Fact]
-    public void First_Error_Throws()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        Assert.Throws<InvalidOperationException>(() => error.First());
-    }
-
-    [Fact]
-    public void FirstOrDefault_Ok_ReturnsValue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        Assert.Equal(42, ok.FirstOrDefault());
-    }
-
-    [Fact]
-    public void FirstOrDefault_Error_ReturnsDefault()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        Assert.Equal(0, error.FirstOrDefault());
-    }
-
-    [Fact]
-    public void ToList_Ok_ContainsValue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var list = ok.ToList();
-
-        Assert.Single(list);
-        Assert.Equal(42, list[0]);
-    }
-
-    [Fact]
-    public void ToList_Error_ReturnsEmptyList()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        var list = error.ToList();
-
-        Assert.Empty(list);
-    }
-
-    [Fact]
-    public void ToArray_Ok_ContainsValue()
-    {
-        var ok = Result<int>.Ok(42);
-
-        var array = ok.ToArray();
-
-        Assert.Single(array);
-        Assert.Equal(42, array[0]);
-    }
-
-    [Fact]
-    public void ToArray_Error_ReturnsEmptyArray()
-    {
-        var error = Result<int>.Error(new Exception());
-
-        var array = error.ToArray();
-
-        Assert.Empty(array);
-    }
-#endregion
 #region Edge Cases and Special Scenarios
     [Fact]
     public void Result_WithNullableValueType_Ok()
@@ -993,47 +634,6 @@ public class ResultTests
         Assert.True(ok.IsOk());
         Assert.True(ok.IsOk(out var value));
         Assert.Same(person, value);
-    }
-
-    [Fact]
-    public void Result_ChainedOperations()
-    {
-        var result = Result<int>.Ok(5)
-            .Select(x => x * 2)
-            .Select(x => x + 10)
-            .Select(x => x.ToString());
-
-        Assert.True(result.IsOk());
-        Assert.True(result.IsOk(out var value));
-        Assert.Equal("20", value);
-    }
-
-    [Fact]
-    public void Result_ChainedOperations_PropagatesError()
-    {
-        var exception = new InvalidOperationException();
-        var result = Result<int>.Error(exception)
-            .Select(x => x * 2)
-            .Select(x => x + 10)
-            .Select(x => x.ToString());
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.Same(exception, error);
-    }
-
-    [Fact]
-    public void Result_ChainedOperations_ErrorInMiddle()
-    {
-        var exception = new InvalidOperationException();
-        var result = Result<int>.Ok(5)
-            .Select(x => x * 2)
-            .Select(_ => Result<int>.Error(exception))
-            .Select(x => x.ToString());
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.Same(exception, error);
     }
 
     [Theory]

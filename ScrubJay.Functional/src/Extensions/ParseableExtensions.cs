@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿#if NET7_0_OR_GREATER
+
+using System.Globalization;
 
 namespace ScrubJay.Functional.Extensions;
 
@@ -8,7 +10,6 @@ namespace ScrubJay.Functional.Extensions;
 [PublicAPI]
 public static class ParseableExtensions
 {
-#if NET7_0_OR_GREATER
     extension<P>(P)
         where P : ISpanParsable<P>
     {
@@ -58,6 +59,5 @@ public static class ParseableExtensions
             return new ArgumentException($"Could not parse \"{str}\" into a {typeof(N).Alias} value", nameof(str));
         }
     }
-
-#endif
 }
+#endif

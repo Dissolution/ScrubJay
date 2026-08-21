@@ -1,6 +1,4 @@
-﻿using System.Runtime.ExceptionServices;
-
-namespace ScrubJay.Functional;
+﻿namespace ScrubJay.Functional;
 
 [PublicAPI]
 [StructLayout(LayoutKind.Auto)]
@@ -163,6 +161,16 @@ public readonly struct Result<T> : IEnumerable<T>
             throw ex;
         exceptionMessage ??= $"The {TypeAlias.For<Result<T>>()} was an Ok({_value})";
         throw new InvalidOperationException(exceptionMessage);
+    }
+
+    public void ThrowIfError()
+    {
+        if (!_isOk)
+        {
+            if (_error is not null)
+                throw _error;
+            throw new InvalidOperationException($"The {TypeAlias.For<Result<T>>()} was an Ok({_value})");
+        }
     }
 #endregion
 #region Match

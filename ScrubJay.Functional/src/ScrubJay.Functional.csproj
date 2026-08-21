@@ -4,9 +4,9 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-<!--        <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>-->
-<!--        <PolyNullability>true</PolyNullability>-->
-<!--        <PolyStringInterpolation>true</PolyStringInterpolation>-->
+        <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
+        <PolyNullability>true</PolyNullability>
+        <PolyStringInterpolation>true</PolyStringInterpolation>
     </PropertyGroup>
     <!-- NuGet -->
     <PropertyGroup>
@@ -22,9 +22,9 @@
         <Using Include="ScrubJay.Functional.Utilities"/>
     </ItemGroup>
     <ItemGroup>
-        <!--        <PackageReference Include="Polyfill">-->
-        <!--            <PrivateAssets>all</PrivateAssets>-->
-        <!--        </PackageReference>-->
-        <!--        -->
+        <PackageReference Include="Polyfill">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        
     </ItemGroup>
 </Project>
