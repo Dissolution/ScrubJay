@@ -4,7 +4,6 @@
 
 #pragma warning disable CA1715, CA1000, CA1031
 
-
 namespace ScrubJay.Functional;
 
 /// <summary>
@@ -28,37 +27,13 @@ namespace ScrubJay.Functional;
 /// <seealso href="https://doc.rust-lang.org/std/result/enum.Result.html">Rust's Result Type</seealso>
 [PublicAPI]
 [StructLayout(LayoutKind.Auto)]
-public readonly struct Result<T> :
-    /* All commented out interfaces are implemented, but cannot be declared per CS0695:
-     * 'Result<T>' cannot implement both 'X' and 'Y' because they may unify for some type parameter substitutions
-     */
-#if NET7_0_OR_GREATER
-    IEqualityOperators<Result<T>, Result<T>, bool>,
-    IEqualityOperators<Result<T>, T, bool>,
-    // IEqualityOperators<Result<T>, Exception, bool>,
-    IComparisonOperators<Result<T>, Result<T>, bool>,
-    IComparisonOperators<Result<T>, T, bool>,
-#endif
-    IEquatable<Result<T>>,
-    IEquatable<T>,
-    // IEquatable<Exception>,
-    IComparable<Result<T>>,
-    IComparable<T>,
-    IEnumerable<T>,
-    IFormattable
+public readonly struct Result<T> : IEnumerable<T>
 {
 #region Operators
-
     /// <summary>
     /// Implicitly convert a <see cref="Result{T}"/> into a <c>bool</c> (Ok -> <c>true</c>, Error -> <c>false</c>) 
     /// </summary>
     public static implicit operator bool(Result<T> result) => result._isOk;
-
-    /// <summary>
-    /// Implicitly convert a <see cref="Result{T}"/> into a <see cref="Result"/> (Ok(T) -> Ok, Error -> Error) 
-    /// </summary>
-    public static implicit operator Result(Result<T> result) =>
-        result.IsError(out var error) ? Result.Error(error) : Result.Ok;
 
     /// <summary>
     /// Implicitly convert a <typeparamref name="T"/> <paramref name="value"/> into an <see cref="Ok"/> <see cref="Result{T}"/>
@@ -89,23 +64,6 @@ public readonly struct Result<T> :
     /// <see cref="Result{T}"/> evaluates to <c>false</c> if it is <see cref="Error"/>
     /// </summary>
     public static bool operator false(Result<T> result) => !result._isOk;
-
-    public static bool operator ==(Result<T> left, Result<T> right) => left.Equals(right);
-    public static bool operator !=(Result<T> left, Result<T> right) => !left.Equals(right);
-    public static bool operator ==(Result<T> result, T? value) => result.Equals(value);
-    public static bool operator !=(Result<T> result, T? value) => !result.Equals(value);
-    public static bool operator ==(Result<T> result, Exception? error) => result.Equals(error);
-    public static bool operator !=(Result<T> result, Exception? error) => !result.Equals(error);
-
-    public static bool operator >(Result<T> left, Result<T> right) => left.CompareTo(right) > 0;
-    public static bool operator >=(Result<T> left, Result<T> right) => left.CompareTo(right) >= 0;
-    public static bool operator <(Result<T> left, Result<T> right) => left.CompareTo(right) < 0;
-    public static bool operator <=(Result<T> left, Result<T> right) => left.CompareTo(right) <= 0;
-    public static bool operator >(Result<T> left, T right) => left.CompareTo(right) > 0;
-    public static bool operator >=(Result<T> left, T right) => left.CompareTo(right) >= 0;
-    public static bool operator <(Result<T> left, T right) => left.CompareTo(right) < 0;
-    public static bool operator <=(Result<T> left, T right) => left.CompareTo(right) <= 0;
-
 #endregion
 
     /// <summary>
@@ -127,8 +85,7 @@ public readonly struct Result<T> :
     private
 #endif
         readonly bool _isOk;
-    
-    
+
     // possible ok value
 #if DEBUG
     internal
@@ -144,7 +101,7 @@ public readonly struct Result<T> :
     private
 #endif
         readonly Exception? _error;
-    
+
     /// <remarks>
     /// <see cref="Result{T}"/> may only be constructed with <see cref="Ok"/>, <see cref="Error"/>,
     /// or an implicit conversion from a <typeparamref name="T"/> or <see cref="Exception"/>.
@@ -157,7 +114,6 @@ public readonly struct Result<T> :
     }
 
 #region Ok
-
     /// <summary>
     /// Is this an Ok <see cref="Result{T}"/>?
     /// </summary>
@@ -235,11 +191,8 @@ public readonly struct Result<T> :
             return _value!;
         throw _error!;
     }
-
 #endregion
-
 #region Error
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsError() => !_isOk;
 
@@ -284,11 +237,8 @@ public readonly struct Result<T> :
             throw _error!;
         }
     }
-
 #endregion
-
 #region Match
-
     public void Match(Action<T> onOk, Action<Exception> onError)
     {
         if (_isOk)
@@ -300,7 +250,6 @@ public readonly struct Result<T> :
             onError(_error!);
         }
     }
-
 
     public R Match<R>(Func<T, R> onOk, Func<Exception, R> onError)
 #if NET9_0_OR_GREATER
@@ -316,7 +265,6 @@ public readonly struct Result<T> :
             return onError(_error!);
         }
     }
-
 #endregion
 
     public Option<T> AsOption()
@@ -331,135 +279,6 @@ public readonly struct Result<T> :
         }
     }
 
-#region Comparison
-
-    public int CompareTo(Result<T> other)
-    {
-        if (_isOk)
-        {
-            if (other._isOk)
-            {
-                return Comparer<T>.Default.Compare(_value!, other._value!);
-            }
-            else
-            {
-                return -1; // Ok < Error
-            }
-        }
-        else
-        {
-            if (other._isOk)
-            {
-                return 1; // Error > Ok
-            }
-            else
-            {
-                // Exceptions are not comparable
-                return 0;
-            }
-        }
-    }
-
-    public int CompareTo(T? ok)
-    {
-        if (_isOk)
-        {
-            return Comparer<T>.Default.Compare(_value!, ok!);
-        }
-
-        return 1; // Error < Ok
-    }
-
-#endregion
-
-#region Equality
-
-    public bool Equals(Result<T> other)
-    {
-        if (_isOk)
-        {
-            if (other._isOk)
-            {
-                return EqualityComparer<T>.Default.Equals(_value!, other._value!);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (other._isOk)
-            {
-                return false;
-            }
-            else
-            {
-                // exceptions cannot be compared
-                // so we will assume the same behavior here
-                return true;
-            }
-        }
-    }
-
-    public bool Equals(T? ok)
-    {
-        if (_isOk)
-        {
-            return EqualityComparer<T>.Default.Equals(_value!, ok!);
-        }
-
-        return false;
-    }
-
-    public bool Equals(Exception? error)
-    {
-        if (!_isOk)
-        {
-            return EqualityComparer<Exception>.Default.Equals(_error!, error!);
-        }
-
-        return false;
-    }
-
-    public bool Equals(bool isOk) => isOk == _isOk;
-
-    public override bool Equals([NotNullWhen(true)] object? obj)
-        => obj switch
-        {
-            Result<T> result => Equals(result),
-            T value => Equals(value),
-            Exception ex => Equals(ex),
-            bool isOk => Equals(isOk),
-            _ => false,
-        };
-
-
-    public override int GetHashCode()
-    {
-#if NETFRAMEWORK || NETSTANDARD2_0
-        if (_isOk)
-        {
-            if (_value is not null)
-                return _value.GetHashCode();
-
-            return typeof(T).GetHashCode();
-        }
-        else
-        {
-            if (_error is not null)
-                return _error.GetHashCode();
-            return typeof(Exception).GetHashCode();
-        }
-#else
-        return HashCode.Combine(_isOk, _value, _error);
-#endif
-    }
-
-#endregion
-
-#region Formatting
-
     public override string ToString()
     {
         if (_isOk)
@@ -472,36 +291,8 @@ public readonly struct Result<T> :
         }
     }
 
-    public string ToString(string? format, IFormatProvider? provider = null)
-    {
-        string? str;
-
-        if (_isOk)
-        {
-            if (_value is IFormattable)
-            {
-                str = ((IFormattable)_value!).ToString(format, provider);
-            }
-            else
-            {
-                str = _value?.ToString();
-            }
-
-            return $"Ok({str})";
-        }
-        else
-        {
-            return $"Error({_error})";
-        }
-    }
-
-#endregion
-
-
 #region IEnumerable
-
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
     [MustDisposeResource(false)]
@@ -513,7 +304,6 @@ public readonly struct Result<T> :
     {
         private readonly Result<T> _result;
         private bool _canYield;
-
         object? IEnumerator.Current => _result.OkOrThrow();
 
         public T Current
@@ -553,11 +343,8 @@ public readonly struct Result<T> :
             _canYield = _result._isOk;
         }
     }
-
 #endregion
-
 #region Linq
-
     public Result<N> Select<N>(Func<T, N> selector)
     {
         if (_isOk)
@@ -617,6 +404,5 @@ public readonly struct Result<T> :
 
         return Result<N>.Error(_error!);
     }
-
 #endregion
 }

@@ -1,60 +1,80 @@
-﻿namespace ScrubJay.Functional;
+﻿using ScrubJay.Functional.IMPL;
 
-/// <summary>
-/// An Option represents an optional value, every Option is either:<br/>
-/// <see cref="Some"/> and contains a <typeparamref name="T"/> value
-/// or <see cref="None"/>, and does not.
-/// </summary>
-/// <typeparam name="T">
-/// The <see cref="Type"/> of value associated with a <see cref="Some"/> Option
-/// </typeparam>
-///  <seealso href="https://doc.rust-lang.org/std/option/index.html"/>
-/// <remarks>
-/// All <c>None</c> values are equal, <c>Some</c> values equate and compare the contained values,
-/// <c>None</c> compares less than <c>Some</c>.
-/// </remarks>
+namespace ScrubJay.Functional;
+
 [PublicAPI]
 [StructLayout(LayoutKind.Auto)]
-public readonly struct Option<T> : IEnumerable<T>
+public readonly ref struct RefOption<T>
+#if NET9_0_OR_GREATER
+    where T : allows ref struct
+#endif
 {
 #region Operators
-    public static implicit operator bool(Option<T> option) => option._isSome;
-    public static explicit operator T(Option<T> option) => option.SomeOrThrow();
-    public static implicit operator Option<T>(IMPL.None _) => None;
-    public static implicit operator Option<T>(T value) => Some(value);
-    public static implicit operator Option<T>(IMPL.Ok<T> ok) => Some(ok.Value);
-    public static implicit operator Option<T>(Result<T> result) => result.AsOption();
-    public static bool operator true(Option<T> option) => option._isSome;
-    public static bool operator false(Option<T> option) => !option._isSome;
-#endregion
-    /// <summary>
-    /// Gets <see cref="Option{T}"/>.None, which represents the lack of a value
-    /// </summary>
-    public static readonly Option<T> None;
 
     /// <summary>
-    /// Get an <see cref="Option{T}"/>.Some containing a <paramref name="value"/>
+    /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
     /// </summary>
-    public static Option<T> Some(T value) => new(value);
+    public static implicit operator bool(in RefOption<T> option) => option._isSome;
+    /// <summary>
+    /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
+    /// </summary>
+    public static bool operator true(RefOption<T> option) => option._isSome;
+
+    /// <summary>
+    /// Implicitly convert an <see cref="Option{T}"/> into <c>true</c> if it is Some and <c>false</c> if it is None
+    /// </summary>
+    public static bool operator false(RefOption<T> option) => !option._isSome;
+
+    /// <summary>
+    /// Implicitly convert a standalone <see cref="None"/> to an <see cref="Option{T}"/>.<see cref="Option{T}.None"/>
+    /// </summary>
+    public static implicit operator RefOption<T>(None _) => None;
+
+    public static implicit operator RefOption<T>(T value) => Some(value);
+#endregion
+
+    public static RefOption<T> None => default;
+
+    public static RefOption<T> Some(T value) => new(value);
+
+    public static RefOption<T> NotNull(T? value)
+    {
+        if (value is null)
+            return None;
+        return Some(value);
+    }
 
     // Is this Option.Some?
-    // if someone does default(Option), this will be false, so default(Option) == None
+    // if someone does default(RefOption), this will be false, so default(RefOption) == None
     private readonly bool _isSome;
 
     // If this is Option.Some, the value
     private readonly T? _value;
 
     // option can only be constructed with None(), Some(), or implicitly
-    private Option(T value)
+    private RefOption(T value)
     {
         _isSome = true;
         _value = value;
     }
 
     public bool IsNone() => !_isSome;
+
 #region Some-ness
+
     public bool IsSome() => _isSome;
 
+    /// <summary>
+    /// Does this <see cref="Option{T}"/> contain <see cref="Some"/> value?
+    /// </summary>
+    /// <param name="value">
+    /// If this is <see cref="Some"/>, this will be the contained value<br/>
+    /// if this is <see cref="None"/>, it will be <c>default(T)</c>
+    /// </param>
+    /// <returns>
+    /// <c>true</c> and fills <paramref name="value"/> if this is <see cref="Some"/><br/>
+    /// <c>false</c> if it is <see cref="None"/>
+    /// </returns>
     public bool IsSome([MaybeNullWhen(false)] out T value)
     {
         if (_isSome)
@@ -67,7 +87,15 @@ public readonly struct Option<T> : IEnumerable<T>
         return false;
     }
 
+
     public bool IsSomeAnd(Func<T, bool> predicate) => _isSome && predicate(_value!);
+
+    public T SomeOrThrow(string? errorMessage = null)
+    {
+        if (_isSome)
+            return _value!;
+        throw new InvalidOperationException(errorMessage ?? $"Option<{typeof(T)}> is None");
+    }
 
     public T SomeOr(T fallback)
     {
@@ -90,45 +118,35 @@ public readonly struct Option<T> : IEnumerable<T>
         return default;
     }
 
-    public T SomeOrThrow(string? errorMessage = null)
+#endregion
+
+#region Match
+
+    public void Match(Action<T> onSome, Action onNone)
     {
         if (_isSome)
-            return _value!;
-        throw new InvalidOperationException(errorMessage ?? $"{ToString()} is not Some");
-    }
-#endregion
-#region Match
-    public void Match(Action<T>? onSome)
-    {
-        if (_isSome && onSome is not null)
         {
             onSome(_value!);
         }
-    }
-
-    public void Match(Action<T>? onSome, Action? onNone)
-    {
-        if (_isSome)
-        {
-            onSome?.Invoke(_value!);
-        }
         else
         {
-            onNone?.Invoke();
+            onNone();
         }
     }
 
-    public void Match(Action<T>? onSome, Action<IMPL.None>? onNone)
+
+    public void Match(Action<T> onSome, Action<None> onNone)
     {
         if (_isSome)
         {
-            onSome?.Invoke(_value!);
+            onSome(_value!);
         }
         else
         {
-            onNone?.Invoke(default);
+            onNone(default);
         }
     }
+
 
     public R Match<R>(Func<T, R> some, Func<R> none)
     {
@@ -142,7 +160,8 @@ public readonly struct Option<T> : IEnumerable<T>
         }
     }
 
-    public R Match<R>(Func<T, R> some, Func<IMPL.None, R> none)
+
+    public R Match<R>(Func<T, R> some, Func<None, R> none)
     {
         if (_isSome)
         {
@@ -153,26 +172,31 @@ public readonly struct Option<T> : IEnumerable<T>
             return none(default);
         }
     }
+
 #endregion
+
 #region LINQ + IEnumerable
-    public Option<N> Select<N>(Func<T, N> selector)
+
+    public RefOption<N> Select<N>(Func<T, N> selector)
     {
         if (_isSome)
-            return Option<N>.Some(selector(_value!));
-        return default;
+            return RefOption<N>.Some(selector(_value!));
+        return RefOption<N>.None;
     }
 
-    public Option<N> SelectMany<N>(Func<T, Option<N>> newSelector)
+#if NET9_0_OR_GREATER
+    public RefOption<N> SelectMany<N>(Func<T, RefOption<N>> newSelector)
     {
         if (_isSome)
         {
             return newSelector(_value!);
         }
 
-        return default;
+        return RefOption<N>.None;
     }
+#endif
 
-    public Option<N> SelectMany<K, N>(
+    public RefOption<N> SelectMany<K, N>(
         Func<T, K> keySelector,
         Func<T, K, N> newSelector)
     {
@@ -180,14 +204,15 @@ public readonly struct Option<T> : IEnumerable<T>
         {
             var key = keySelector(_value!);
             var newValue = newSelector(_value!, key);
-            return Option<N>.Some(newValue);
+            return RefOption<N>.Some(newValue);
         }
 
-        return default;
+        return RefOption<N>.None;
     }
 
-    public Option<N> SelectMany<K, N>(
-        Func<T, Option<K>> keySelector,
+#if NET9_0_OR_GREATER
+    public RefOption<N> SelectMany<K, N>(
+        Func<T, RefOption<K>> keySelector,
         Func<T, K, N> newSelector)
     {
         if (_isSome)
@@ -196,12 +221,13 @@ public readonly struct Option<T> : IEnumerable<T>
             if (key.IsSome(out var k))
             {
                 var newValue = newSelector(_value!, k);
-                return Option<N>.Some(newValue);
+                return RefOption<N>.Some(newValue);
             }
         }
 
-        return default;
+        return RefOption<N>.None;
     }
+#endif
 
     /// <summary>
     /// Returns <see cref="None"/> if this <see cref="Option{T}"/> is <see cref="None"/>,<br/>
@@ -215,7 +241,7 @@ public readonly struct Option<T> : IEnumerable<T>
     /// <param name="predicate"></param>
     /// <returns></returns>
     /// <seealso href="https://doc.rust-lang.org/std/option/enum.Option.html#method.filter"/>
-    public Option<T> Where(Func<T, bool> predicate)
+    public RefOption<T> Where(Func<T, bool> predicate)
     {
         if (_isSome)
         {
@@ -225,11 +251,8 @@ public readonly struct Option<T> : IEnumerable<T>
             }
         }
 
-        return default;
+        return None;
     }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
     [MustDisposeResource(false)]
@@ -237,14 +260,14 @@ public readonly struct Option<T> : IEnumerable<T>
 
     [PublicAPI]
     [MustDisposeResource(false)]
-    public struct OptionEnumerator : IEnumerator<T>, IEnumerator, IDisposable
+    public ref struct OptionEnumerator
     {
-        private readonly Option<T> _option;
+        private readonly RefOption<T> _option;
         private bool _canYield;
-        readonly object? IEnumerator.Current => _option.SomeOrThrow();
+
         public readonly T Current => _option.SomeOrThrow();
 
-        public OptionEnumerator(Option<T> option)
+        public OptionEnumerator(RefOption<T> option)
         {
             _option = option;
             _canYield = option._isSome;
@@ -267,19 +290,25 @@ public readonly struct Option<T> : IEnumerable<T>
         {
             _canYield = _option._isSome;
         }
-
-        readonly void IDisposable.Dispose()
-        {
-            /* Do Nothing */
-        }
     }
+
 #endregion
+
+    public override bool Equals([NotNullWhen(true)] object? obj)
+    {
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return 0;
+    }
 
     public override string ToString()
     {
         if (_isSome)
         {
-            return $"Some({_value})";
+            return $"Some(ref {TypeAlias.For<T>()})";
         }
 
         return nameof(None);

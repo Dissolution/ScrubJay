@@ -2,8 +2,6 @@
 
 ## Result
 
-### `Result`
-
 ### `Result<T>`
 
 ### `Result<T,E>`

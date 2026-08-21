@@ -13,14 +13,6 @@ public readonly ref struct Ok<T>
     where T : allows ref struct
 #endif
 {
-    /// <summary>
-    /// Any <see cref="Ok{T}"/> is a success and implicitly converts to <see cref="Result"/> as <c>true</c>
-    /// </summary>
-    public static implicit operator Result(Ok<T> ok) => Result.Ok;
-
-    /// <summary>
-    /// The <typeparamref name="T"/> Ok value
-    /// </summary>
     public readonly T Value;
 
     public Ok(T value)

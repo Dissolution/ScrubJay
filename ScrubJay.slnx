@@ -3,11 +3,11 @@
         <File Path=".editorconfig"/>
         <File Path=".gitignore"/>
         <File Path="Directory.Build.props"/>
+        <File Path="Directory.Packages.props"/>
     </Folder>
 
     <Folder Name="/Sandboxes/">
         <Project Path="ConsoleSandbox\ScrubJay.ConsoleSandbox.csproj"/>
-        <Project Path="StandaloneSandbox/StandaloneSandbox.csproj"/>
     </Folder>
     <Folder Name="/ScrubJay.Functional/">
         <Project Path="ScrubJay.Functional/json/ScrubJay.Functional.Json.csproj"/>

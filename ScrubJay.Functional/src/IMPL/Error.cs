@@ -1,7 +1,7 @@
 ﻿namespace ScrubJay.Functional.IMPL;
 
 /// <summary>
-/// Represents the <b>Error</b> portion of a <see cref="Result"/>, <see cref="Result{T}"/>, or <see cref="Result{T,E}"/>
+/// Represents the <b>Error</b> portion of a <see cref="Result{T}"/> or <see cref="Result{T,E}"/>
 /// </summary>
 /// <remarks>
 /// This class is primarily used for implicit coercions
