@@ -19,15 +19,11 @@ public readonly struct Result<T, E> : IEnumerable<T>
     /// <summary>
     /// Creates a new Ok <see cref="Result{T,E}"/>
     /// </summary>
-    /// <param name="ok">The Ok value</param>
-    /// <returns></returns>
     public static Result<T, E> Ok(T ok) => new Result<T, E>(true, ok, default);
 
     /// <summary>
     /// Creates a new Error <see cref="Result{T,E}"/>
     /// </summary>
-    /// <param name="error">The Error value</param>
-    /// <returns></returns>
     public static Result<T, E> Error(E error) => new Result<T, E>(false, default, error);
 
     // is this Result.Ok?
@@ -203,75 +199,6 @@ public readonly struct Result<T, E> : IEnumerable<T>
         }
     }
 #endregion
-
-    public Option<T> AsOption()
-    {
-        if (_isOk)
-        {
-            return Option.Some(_value!);
-        }
-        else
-        {
-            return default;
-        }
-    }
-
-    public override string ToString()
-    {
-        if (_isOk)
-        {
-            return $"Ok({_value})";
-        }
-        else
-        {
-            return $"Error({_error})";
-        }
-    }
-
-#region Linq
-    public Result<N, E> Select<N>(Func<T, N> selector)
-    {
-        if (_isOk)
-        {
-            return Result<N, E>.Ok(selector(_value!));
-        }
-
-        return Result<N, E>.Error(_error!);
-    }
-
-    public Result<N, E> Select<N>(Func<T, Result<N, E>> selector)
-    {
-        if (_isOk)
-        {
-            return selector(_value!);
-        }
-
-        return Result<N, E>.Error(_error!);
-    }
-
-    public Result<N, E> SelectMany<K, N>(
-        Func<T, Result<K, E>> keySelector,
-        Func<T, K, N> newSelector)
-    {
-        if (IsOk(out var value, out var error))
-        {
-            var keyResult = keySelector(value!);
-            if (keyResult.IsOk(out var key, out error))
-            {
-                var newSelect = newSelector(value, key);
-                return Result<N, E>.Ok(newSelect);
-            }
-            else
-            {
-                return Result<N, E>.Error(error);
-            }
-        }
-        else
-        {
-            return Result<N, E>.Error(error);
-        }
-    }
-#endregion
 #region IEnumerable
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
@@ -315,4 +242,28 @@ public readonly struct Result<T, E> : IEnumerable<T>
         }
     }
 #endregion
+
+    public Option<T> ToOption()
+    {
+        if (_isOk)
+        {
+            return Option.Some(_value!);
+        }
+        else
+        {
+            return default;
+        }
+    }
+
+    public override string ToString()
+    {
+        if (_isOk)
+        {
+            return $"Ok({_value})";
+        }
+        else
+        {
+            return $"Error({_error})";
+        }
+    }
 }

@@ -1,111 +1,43 @@
-﻿// Prefix generic type parameter with T
-// Do not declare static methods on generic types
-// Do not catch Exception
-
-#pragma warning disable CA1715, CA1000, CA1031
+﻿using System.Runtime.ExceptionServices;
 
 namespace ScrubJay.Functional;
 
-/// <summary>
-/// A Result type holding a returned <typeparamref name="T"/> value or <see cref="Exception"/>.
-/// </summary>
-/// <typeparam name="T">
-/// The <see cref="Type"/> of value stored with an <c>Ok</c> Result
-/// </typeparam>
-/// <remarks> 
-/// This emulates a discriminated union:
-/// <code>
-/// Result
-/// {
-///     Ok(T),
-///     Error(Exception),
-/// }
-/// </code>
-/// 🦀 Heavily inspired by Rust's Result type! 🦀
-/// </remarks>
-/// <seealso href="https://en.wikipedia.org/wiki/Result_type">Result Type on Wikipedia</seealso>
-/// <seealso href="https://doc.rust-lang.org/std/result/enum.Result.html">Rust's Result Type</seealso>
 [PublicAPI]
 [StructLayout(LayoutKind.Auto)]
 public readonly struct Result<T> : IEnumerable<T>
 {
 #region Operators
-    /// <summary>
-    /// Implicitly convert a <see cref="Result{T}"/> into a <c>bool</c> (Ok -> <c>true</c>, Error -> <c>false</c>) 
-    /// </summary>
     public static implicit operator bool(Result<T> result) => result._isOk;
-
-    /// <summary>
-    /// Implicitly convert a <typeparamref name="T"/> <paramref name="value"/> into an <see cref="Ok"/> <see cref="Result{T}"/>
-    /// </summary>
-    public static implicit operator Result<T>(T value) => Ok(value);
-
-    /// <summary>
-    /// Implicitly convert an <see cref="Exception"/> into an <see cref="Error"/> <see cref="Result{T}"/>
-    /// </summary>
-    public static implicit operator Result<T>(Exception ex) => Error(ex);
-
-    /// <summary>
-    /// Implicitly convert an <see cref="IMPL.Ok{T}"/> into an <see cref="Ok"/> <see cref="Result{T}"/>
-    /// </summary>
+    public static explicit operator T(Result<T> result) => result.OkOrThrow();
+    public static explicit operator Exception(Result<T> result) => result.ErrorOrThrow();
+    public static implicit operator Result<T>(T ok) => Ok(ok);
+    public static implicit operator Result<T>(Exception error) => Error(error);
     public static implicit operator Result<T>(IMPL.Ok<T> ok) => Ok(ok.Value);
-
-    /// <summary>
-    /// Implicitly convert an <see cref="IMPL.Error{T}"/> into an <see cref="Error"/> <see cref="Result{T}"/>
-    /// </summary>
     public static implicit operator Result<T>(IMPL.Error<Exception> error) => Error(error.Value);
-
-    /// <summary>
-    /// <see cref="Result{T}"/> evaluates to <c>true</c> if it is <see cref="Ok"/>
-    /// </summary>
     public static bool operator true(Result<T> result) => result._isOk;
-
-    /// <summary>
-    /// <see cref="Result{T}"/> evaluates to <c>false</c> if it is <see cref="Error"/>
-    /// </summary>
     public static bool operator false(Result<T> result) => !result._isOk;
 #endregion
 
     /// <summary>
-    /// Creates an Ok <see cref="Result{T}"/>
+    /// Creates a new Ok <see cref="Result{T}"/>
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Result<T> Ok(T value) => new Result<T>(true, value, null);
+    public static Result<T> Ok(T ok) => new Result<T>(true, ok, default);
 
     /// <summary>
-    /// Creates <see cref="Result{T}"/>.Error(<paramref name="ex"/>)
+    /// Creates a new Error <see cref="Result{T}"/>
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Result<T> Error(Exception? ex) => new Result<T>(false, default, ex ?? new InvalidOperationException());
+    public static Result<T> Error(Exception error) => new Result<T>(false, default, error);
 
-    // is this ok or error?
-#if DEBUG
-    internal
-#else
-    private
-#endif
-        readonly bool _isOk;
+    // is this Result.Ok?
+    // default(Result) implies !_isOk, thus default(Result) == None
+    private readonly bool _isOk;
 
-    // possible ok value
-#if DEBUG
-    internal
-#else
-    private
-#endif
-        readonly T? _value;
+    // if this is Result.Ok, the Ok Value
+    private readonly T? _value;
 
-    // possible error exception
-#if DEBUG
-    internal
-#else
-    private
-#endif
-        readonly Exception? _error;
+    // if this is Result.Error, the Error Value
+    private readonly Exception? _error;
 
-    /// <remarks>
-    /// <see cref="Result{T}"/> may only be constructed with <see cref="Ok"/>, <see cref="Error"/>,
-    /// or an implicit conversion from a <typeparamref name="T"/> or <see cref="Exception"/>.
-    /// </remarks>
     private Result(bool isOk, T? value, Exception? error)
     {
         _isOk = isOk;
@@ -113,55 +45,40 @@ public readonly struct Result<T> : IEnumerable<T>
         _error = error;
     }
 
+    public Result(T value)
+    {
+        _isOk = true;
+        _value = value;
+        _error = default;
+    }
+
+    public Result(Exception error)
+    {
+        _isOk = false;
+        _value = default;
+        _error = error;
+    }
+
 #region Ok
-    /// <summary>
-    /// Is this an Ok <see cref="Result{T}"/>?
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsOk() => _isOk;
 
-    /// <summary>
-    /// Is this an Ok <see cref="Result{T}"/>?
-    /// </summary>
-    /// <param name="value">
-    /// If this is an Ok <see cref="Result{T}"/>, the Ok value;
-    /// otherwise <c>default(T)</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if this is an Ok <see cref="Result{T}"/>; otherwise <c>false</c>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsOk([MaybeNullWhen(false)] out T value)
     {
-        value = _value;
-        return _isOk;
+        if (_isOk)
+        {
+            value = _value!;
+            return true;
+        }
+
+        value = default;
+        return false;
     }
 
-    /// <summary>
-    /// Is this an Ok <see cref="Result{T}"/>?
-    /// </summary>
-    /// <param name="value">
-    /// If this is an Ok <see cref="Result{T}"/>, the Ok value;
-    /// otherwise <c>default(T)</c>.
-    /// </param>
-    /// <param name="error">
-    /// If this is an Error <see cref="Result{T}"/>, the Error <see cref="Exception"/>;
-    /// otherwise <c>null</c>.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if this is an Ok <see cref="Result{T}"/>; otherwise <c>false</c>.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsOk([MaybeNullWhen(false)] out T value, [NotNullWhen(false)] out Exception? error)
+    public bool IsOk([MaybeNullWhen(false)] out T ok, [MaybeNullWhen(true)] out Exception error)
     {
-        value = _value;
+        ok = _value;
         error = _error;
         return _isOk;
-    }
-
-    public bool IsOkAnd(Func<T, bool> okPredicate)
-    {
-        return _isOk && okPredicate(_value!);
     }
 
     public T OkOr(T fallback)
@@ -185,35 +102,36 @@ public readonly struct Result<T> : IEnumerable<T>
         return default(T);
     }
 
-    public T OkOrThrow()
+    public T OkOrThrow(string? exceptionMessage = null)
     {
         if (_isOk)
             return _value!;
-        throw _error!;
+        if (_error is not null)
+            throw _error;
+        exceptionMessage ??= $"The {TypeAlias.For<Result<T>>()} was an Error({_error})";
+        throw new InvalidOperationException(exceptionMessage);
     }
 #endregion
 #region Error
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsError() => !_isOk;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsError([NotNullWhen(true)] out Exception? error)
+    public bool IsError([MaybeNullWhen(false)] out Exception error)
     {
-        error = _error;
-        return !_isOk;
+        if (!_isOk)
+        {
+            error = _error!;
+            return true;
+        }
+
+        error = default;
+        return false;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsError([NotNullWhen(true)] out Exception? error, [MaybeNullWhen(true)] out T ok)
+    public bool IsError([MaybeNullWhen(false)] out Exception error, [MaybeNullWhen(true)] out T ok)
     {
         error = _error;
         ok = _value;
         return !_isOk;
-    }
-
-    public bool IsErrorAnd(Func<Exception, bool> errorPredicate)
-    {
-        return !_isOk && errorPredicate(_error!);
     }
 
     public Exception ErrorOr(Exception fallback)
@@ -225,29 +143,46 @@ public readonly struct Result<T> : IEnumerable<T>
 
     public Exception ErrorOr(Func<Exception> getFallback)
     {
-        if (!_isOk)
+        if (_isOk)
             return _error!;
         return getFallback();
     }
 
-    public void ThrowIfError()
+    public Exception? ErrorOrDefault()
     {
         if (!_isOk)
-        {
-            throw _error!;
-        }
+            return _error!;
+        return default(Exception);
+    }
+
+    public Exception ErrorOrThrow(string? exceptionMessage = null)
+    {
+        if (!_isOk)
+            return _error!;
+        if (_value is Exception ex)
+            throw ex;
+        exceptionMessage ??= $"The {TypeAlias.For<Result<T>>()} was an Ok({_value})";
+        throw new InvalidOperationException(exceptionMessage);
     }
 #endregion
 #region Match
-    public void Match(Action<T> onOk, Action<Exception> onError)
+    public void Match(Action<T>? onOk)
     {
-        if (_isOk)
+        if (_isOk && onOk is not null)
         {
             onOk(_value!);
         }
+    }
+
+    public void Match(Action<T>? onOk, Action<Exception>? onError)
+    {
+        if (_isOk)
+        {
+            onOk?.Invoke(_value!);
+        }
         else
         {
-            onError(_error!);
+            onError?.Invoke(_error!);
         }
     }
 
@@ -266,31 +201,6 @@ public readonly struct Result<T> : IEnumerable<T>
         }
     }
 #endregion
-
-    public Option<T> AsOption()
-    {
-        if (_isOk)
-        {
-            return Option<T>.Some(_value!);
-        }
-        else
-        {
-            return Option<T>.None;
-        }
-    }
-
-    public override string ToString()
-    {
-        if (_isOk)
-        {
-            return $"Ok({_value})";
-        }
-        else
-        {
-            return $"Error({_error})";
-        }
-    }
-
 #region IEnumerable
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
@@ -305,14 +215,8 @@ public readonly struct Result<T> : IEnumerable<T>
         private readonly Result<T> _result;
         private bool _canYield;
         object? IEnumerator.Current => _result.OkOrThrow();
+        public T Current => _result.OkOrThrow();
 
-        public T Current
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _result.OkOrThrow();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ResultEnumerator(Result<T> result)
         {
             _result = result;
@@ -324,18 +228,14 @@ public readonly struct Result<T> : IEnumerable<T>
             /* Do Nothing */
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
             if (!_canYield)
             {
                 return false;
             }
-            else
-            {
-                _canYield = false;
-                return true;
-            }
+            _canYield = false;
+            return true;
         }
 
         public void Reset()
@@ -344,65 +244,28 @@ public readonly struct Result<T> : IEnumerable<T>
         }
     }
 #endregion
-#region Linq
-    public Result<N> Select<N>(Func<T, N> selector)
+
+    public Option<T> ToOption()
     {
         if (_isOk)
         {
-            return Result<N>.Ok(selector(_value!));
+            return Option.Some(_value!);
         }
         else
         {
-            return Result<N>.Error(_error!);
+            return default;
         }
     }
 
-    public Result<N> Select<N>(Func<T, Result<N>> selector)
+    public override string ToString()
     {
         if (_isOk)
         {
-            return selector(_value!);
+            return $"Ok({_value})";
         }
         else
         {
-            return Result<N>.Error(_error!);
+            return $"Error({_error})";
         }
     }
-
-    public Result<N> Select<N>(Func<T, Option<N>> selector)
-    {
-        if (_isOk)
-        {
-            if (selector(_value!).IsSome(out var some))
-            {
-                return Result<N>.Ok(some);
-            }
-            else
-            {
-                return Result<N>.Error(new InvalidOperationException());
-            }
-        }
-        else
-        {
-            return Result<N>.Error(_error!);
-        }
-    }
-
-    public Result<N> SelectMany<K, N>(Func<T, Result<K>> keySelector, Func<T, K, N> newSelector)
-    {
-        if (_isOk)
-        {
-            var keySelectResult = keySelector(_value!);
-            if (keySelectResult._isOk)
-            {
-                var newSelectResult = newSelector(_value!, keySelectResult._value!);
-                return Result<N>.Ok(newSelectResult);
-            }
-
-            return Result<N>.Error(keySelectResult._error!);
-        }
-
-        return Result<N>.Error(_error!);
-    }
-#endregion
 }

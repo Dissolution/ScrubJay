@@ -20,10 +20,10 @@ public readonly struct Option<T> : IEnumerable<T>
 #region Operators
     public static implicit operator bool(Option<T> option) => option._isSome;
     public static explicit operator T(Option<T> option) => option.SomeOrThrow();
-    public static implicit operator Option<T>(IMPL.None _) => None;
+    public static explicit operator IMPL.None(Option<T> option) => option.NoneOrThrow();
+    public static implicit operator Option<T>(IMPL.None _) => default;
     public static implicit operator Option<T>(T value) => Some(value);
     public static implicit operator Option<T>(IMPL.Ok<T> ok) => Some(ok.Value);
-    public static implicit operator Option<T>(Result<T> result) => result.AsOption();
     public static bool operator true(Option<T> option) => option._isSome;
     public static bool operator false(Option<T> option) => !option._isSome;
 #endregion
@@ -37,21 +37,32 @@ public readonly struct Option<T> : IEnumerable<T>
     /// </summary>
     public static Option<T> Some(T value) => new(value);
 
-    // Is this Option.Some?
-    // if someone does default(Option), this will be false, so default(Option) == None
     private readonly bool _isSome;
-
-    // If this is Option.Some, the value
     private readonly T? _value;
 
-    // option can only be constructed with None(), Some(), or implicitly
     private Option(T value)
     {
         _isSome = true;
         _value = value;
     }
 
+#region None-ness
     public bool IsNone() => !_isSome;
+
+    public bool IsNone(out IMPL.None none)
+    {
+        none = default;
+        return !_isSome;
+    }
+
+    public IMPL.None NoneOrThrow(string? exceptionMessage = null)
+    {
+        if (!_isSome)
+            return default;
+        exceptionMessage ??= $"The {TypeAlias.For<Option<T>>()} was Some({_value})";
+        throw new InvalidOperationException(exceptionMessage);
+    }
+#endregion
 #region Some-ness
     public bool IsSome() => _isSome;
 
@@ -66,8 +77,6 @@ public readonly struct Option<T> : IEnumerable<T>
         value = default;
         return false;
     }
-
-    public bool IsSomeAnd(Func<T, bool> predicate) => _isSome && predicate(_value!);
 
     public T SomeOr(T fallback)
     {
@@ -86,15 +95,16 @@ public readonly struct Option<T> : IEnumerable<T>
     public T? SomeOrDefault()
     {
         if (_isSome)
-            return _value!;
+            return _value;
         return default;
     }
 
-    public T SomeOrThrow(string? errorMessage = null)
+    public T SomeOrThrow(string? exceptionMessage = null)
     {
         if (_isSome)
             return _value!;
-        throw new InvalidOperationException(errorMessage ?? $"{ToString()} is not Some");
+        exceptionMessage ??= $"The {TypeAlias.For<Option<T>>()} was None";
+        throw new InvalidOperationException(exceptionMessage);
     }
 #endregion
 #region Match
@@ -131,6 +141,9 @@ public readonly struct Option<T> : IEnumerable<T>
     }
 
     public R Match<R>(Func<T, R> some, Func<R> none)
+#if NET9_0_OR_GREATER
+        where R : allows ref struct
+#endif
     {
         if (_isSome)
         {
@@ -143,6 +156,9 @@ public readonly struct Option<T> : IEnumerable<T>
     }
 
     public R Match<R>(Func<T, R> some, Func<IMPL.None, R> none)
+#if NET9_0_OR_GREATER
+        where R : allows ref struct
+#endif
     {
         if (_isSome)
         {
@@ -154,80 +170,7 @@ public readonly struct Option<T> : IEnumerable<T>
         }
     }
 #endregion
-#region LINQ + IEnumerable
-    public Option<N> Select<N>(Func<T, N> selector)
-    {
-        if (_isSome)
-            return Option<N>.Some(selector(_value!));
-        return default;
-    }
-
-    public Option<N> SelectMany<N>(Func<T, Option<N>> newSelector)
-    {
-        if (_isSome)
-        {
-            return newSelector(_value!);
-        }
-
-        return default;
-    }
-
-    public Option<N> SelectMany<K, N>(
-        Func<T, K> keySelector,
-        Func<T, K, N> newSelector)
-    {
-        if (_isSome)
-        {
-            var key = keySelector(_value!);
-            var newValue = newSelector(_value!, key);
-            return Option<N>.Some(newValue);
-        }
-
-        return default;
-    }
-
-    public Option<N> SelectMany<K, N>(
-        Func<T, Option<K>> keySelector,
-        Func<T, K, N> newSelector)
-    {
-        if (_isSome)
-        {
-            var key = keySelector(_value!);
-            if (key.IsSome(out var k))
-            {
-                var newValue = newSelector(_value!, k);
-                return Option<N>.Some(newValue);
-            }
-        }
-
-        return default;
-    }
-
-    /// <summary>
-    /// Returns <see cref="None"/> if this <see cref="Option{T}"/> is <see cref="None"/>,<br/>
-    /// otherwise calls <paramref name="predicate"/> with the wrapped value and returns:<br/>
-    /// <see cref="Some"/> if <paramref name="predicate"/> returns <c>true</c> (with the wrapped value),<br/>
-    /// and <see cref="None"/> if <paramref name="predicate"/> returns <c>false</c><br/>
-    /// This function works similar to <c>Enumerable.Where</c><br/>
-    /// You can imagine this <see cref="Option{T}"/> being an iterator over one or zero elements<br/>
-    /// <see cref="Where"/> lets you decide which elements to keep<br/>
-    /// </summary>
-    /// <param name="predicate"></param>
-    /// <returns></returns>
-    /// <seealso href="https://doc.rust-lang.org/std/option/enum.Option.html#method.filter"/>
-    public Option<T> Where(Func<T, bool> predicate)
-    {
-        if (_isSome)
-        {
-            if (predicate(_value!))
-            {
-                return this;
-            }
-        }
-
-        return default;
-    }
-
+#region IEnumerable
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 

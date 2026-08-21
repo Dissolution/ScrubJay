@@ -1,30 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
-    <PolyNullability>true</PolyNullability>
-    <PolyStringInterpolation>true</PolyStringInterpolation>
-  </PropertyGroup>
-  <!-- NuGet -->
-  <PropertyGroup>
-    <IsPackable>true</IsPackable>
-    <PackageId>ScrubJay.Functional</PackageId>
-    <Title>ScrubJay - Functional</Title>
-    <Description>
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PolyUseEmbeddedAttribute>true</PolyUseEmbeddedAttribute>
+        <PolyNullability>true</PolyNullability>
+        <PolyStringInterpolation>true</PolyStringInterpolation>
+    </PropertyGroup>
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <PackageId>ScrubJay.Functional</PackageId>
+        <Title>ScrubJay - Functional</Title>
+        <Description>
             Functional types and extensions for C#.
         </Description>
-  </PropertyGroup>
-  <!-- Global Usings -->
-  <ItemGroup>
-    <Using Include="ScrubJay.Functional.Utilities" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Polyfill">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'" Include="System.Memory" />
-  </ItemGroup>
+    </PropertyGroup>
+    <!-- Global Usings -->
+    <ItemGroup>
+        <Using Include="ScrubJay.Functional.Utilities"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Polyfill">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'" Include="System.Memory"/>
+    </ItemGroup>
 </Project>
