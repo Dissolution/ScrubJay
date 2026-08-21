@@ -295,5 +295,3 @@ dotnet_naming_rule.parameters_must_be_camel.severity = error
 dotnet_naming_rule.other_members_must_be_pascal.symbols = other_members
 dotnet_naming_rule.other_members_must_be_pascal.style = pascal_casing
 dotnet_naming_rule.other_members_must_be_pascal.severity = error
-
-
