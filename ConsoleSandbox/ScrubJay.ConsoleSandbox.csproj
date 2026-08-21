@@ -15,23 +15,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ScrubJay.Core\src\ScrubJay.Core.csproj" />
-        <ProjectReference Include="..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj" />
-        <ProjectReference Include="..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj" />
+        <ProjectReference Include="..\ScrubJay.Functional\asp\ScrubJay.Functional.Asp.csproj"/>
+        <ProjectReference Include="..\ScrubJay.Functional\json\ScrubJay.Functional.Json.csproj"/>
         <ProjectReference Include="..\ScrubJay.Functional\src\ScrubJay.Functional.csproj"/>
-        <ProjectReference Include="..\ScrubJay.Reflection\src\ScrubJay.Reflection.csproj" />
-        <ProjectReference Include="..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="Demand*.cs" />
+        <AdditionalFiles Include="Demand*.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Polyfill" Version="9.7.3">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+        <PackageReference Include="Polyfill" Version="11.2.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

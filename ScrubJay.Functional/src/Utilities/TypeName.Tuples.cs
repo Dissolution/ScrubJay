@@ -1,8 +1,9 @@
+using System.Text;
 #if NET8_0_OR_GREATER
 using System.Collections.Frozen;
 #endif
 
-namespace ScrubJay.Universal;
+namespace ScrubJay.Functional.Utilities;
 
 partial class TypeName
 {

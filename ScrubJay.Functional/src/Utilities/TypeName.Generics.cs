@@ -1,4 +1,6 @@
-namespace ScrubJay.Universal;
+using System.Text;
+
+namespace ScrubJay.Functional.Utilities;
 
 partial class TypeName
 {

@@ -20,7 +20,7 @@
 
     <!-- NuGet -->
     <PropertyGroup>
-        <Version>0.90.3-alpha</Version>
+        <Version>0.92.0-alpha</Version>
         <Authors>Dissolution</Authors>
         <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
         <RepositoryType>git</RepositoryType>

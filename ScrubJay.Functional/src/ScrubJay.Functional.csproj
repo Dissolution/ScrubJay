@@ -23,19 +23,16 @@
     <ItemGroup>
         <!-- Consume my own Prelude -->
         <Using Include="ScrubJay.Functional.Prelude" Static="true"/>
-        <Using Include="ScrubJay.Universal"/>
+        <Using Include="ScrubJay.Functional.Utilities"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Polyfill" Version="9.7.3">
+        <PackageReference Include="Polyfill" Version="11.2.0">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory" Version="4.6.3"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\ScrubJay.Universal\src\ScrubJay.Universal.csproj"/>
+        <PackageReference Update="JetBrains.Annotations" Version="2026.2.0"/>
     </ItemGroup>
 
 </Project>

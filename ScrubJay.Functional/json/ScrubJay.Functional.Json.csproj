@@ -11,6 +11,10 @@
         <ProjectReference Include="..\src\ScrubJay.Functional.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="JetBrains.Annotations" Version="2026.2.0" />
+    </ItemGroup>
+
 
     <!-- NuGet -->
     <PropertyGroup>

@@ -32,13 +32,4 @@ public readonly ref struct Ok<T>
     {
         value = Value;
     }
-
-    public override string ToString()
-    {
-#if NET9_0_OR_GREATER
-        return $"Ok({Any.ToString(Value)})";
-#else
-        return $"Ok({Value})";
-#endif
-    }
 }

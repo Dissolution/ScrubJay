@@ -1,8 +1,9 @@
+using System.Text;
 #if NET8_0_OR_GREATER
 using System.Collections.Frozen;
 #endif
 
-namespace ScrubJay.Universal;
+namespace ScrubJay.Functional.Utilities;
 
 [PublicAPI]
 public static partial class TypeName
@@ -74,7 +75,7 @@ public static partial class TypeName
 
         if (type is { IsNested: true, IsGenericParameter: false })
         {
-            var parent = type.ParentType;
+            var parent = type!.ParentType!;
             if (parent.IsGenericType)
             {
                 return AppendComplexNestedName(builder, type, parent, genericTypes);
@@ -126,9 +127,10 @@ public static partial class TypeName
 #endif
         => For(typeof(T));
 
-    public static string For<I>(I? instance)
-#if NET9_0_OR_GREATER
-        where I : allows ref struct
-#endif
-        => For(Any.GetType<I>(instance));
+    public static string For<I>(in I? instance)
+    {
+        if (instance is null)
+            return For(typeof(I));
+        return For(instance.GetType());
+    }
 }

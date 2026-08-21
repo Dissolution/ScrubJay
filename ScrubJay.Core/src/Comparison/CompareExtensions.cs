@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InvokeAsExtensionMethod
 
-#pragma warning disable CA1822, CA1708, CA1307
+#pragma warning disable CA1822, CA1708, CA1307, IDE0022
 
 namespace ScrubJay.Comparison;
 

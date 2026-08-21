@@ -1,6 +1,4 @@
-﻿#pragma warning disable CA1716
-
-namespace ScrubJay.Functional.IMPL;
+﻿namespace ScrubJay.Functional.IMPL;
 
 /// <summary>
 /// Represents the <b>Error</b> portion of a <see cref="Result"/>, <see cref="Result{T}"/>, or <see cref="Result{T,E}"/>
@@ -25,14 +23,5 @@ public readonly ref struct Error<E>
     public void Deconstruct(out E error)
     {
         error = Value;
-    }
-
-    public override string ToString()
-    {
-        #if NET9_0_OR_GREATER
-        return $"Error({Any.ToString(Value)})";
-        #else
-        return $"Error({Value})";
-        #endif
     }
 }

@@ -1,4 +1,6 @@
-namespace ScrubJay.Universal;
+using System.Text;
+
+namespace ScrubJay.Functional.Utilities;
 
 partial class TypeName
 {
@@ -17,7 +19,7 @@ partial class TypeName
         {
             if (p.IsGenericType)
             {
-                renderNesting(p, p.ParentType);
+                renderNesting(p, p.ParentType!);
             }
             else
             {

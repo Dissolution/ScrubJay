@@ -1,4 +1,5 @@
 ﻿using ScrubJay.Functional.IMPL;
+using ScrubJay.Functional.Utilities;
 
 namespace ScrubJay.Functional;
 
@@ -308,11 +309,7 @@ public readonly ref struct RefOption<T>
     {
         if (_isSome)
         {
-#if NET9_0_OR_GREATER
-            return $"Some({Any.ToString(_value)})";
-#else
-            return $"Some({_value})";
-#endif
+            return $"Some(ref {TypeName.For<T>()})";
         }
 
         return nameof(None);
