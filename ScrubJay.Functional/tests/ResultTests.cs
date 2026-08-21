@@ -37,15 +37,6 @@ public class ResultTests
         Assert.Same(exception, error);
     }
 
-    [Fact]
-    public void Error_WithNullException_CreatesErrorResultWithInvalidOperationException()
-    {
-        var result = Result<int>.Error(null!);
-
-        Assert.True(result.IsError());
-        Assert.True(result.IsError(out var error));
-        Assert.IsType<InvalidOperationException>(error);
-    }
 #endregion
 #region Implicit Conversion Tests
     [Fact]

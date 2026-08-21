@@ -25,6 +25,5 @@
         <PackageReference Include="Polyfill">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        
     </ItemGroup>
 </Project>

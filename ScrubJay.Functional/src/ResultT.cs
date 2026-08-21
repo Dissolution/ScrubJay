@@ -141,7 +141,7 @@ public readonly struct Result<T> : IEnumerable<T>
 
     public Exception ErrorOr(Func<Exception> getFallback)
     {
-        if (_isOk)
+        if (!_isOk)
             return _error!;
         return getFallback();
     }
