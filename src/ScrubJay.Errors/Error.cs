@@ -127,20 +127,20 @@ internal static class Relate
         IReadOnlyDictionary<K, V>? left,
         IReadOnlyDictionary<K, V>? right,
         IEqualityComparer<object?>? valueComparer = null)
-    => NullEquate(left, right, (l, r) =>
-    {
-        if (l.Count != r.Count)
-            return false;
-        valueComparer ??= EqualityComparer<object?>.Default;
-        foreach (var pair in l)
+        => NullEquate(left, right, (l, r) =>
         {
-            if (!r.TryGetValue(pair.Key, out var rValue))
+            if (l.Count != r.Count)
                 return false;
-            if (!valueComparer.Equals(pair.Value, rValue))
-                return false;
-        }
-        return true;
-    })
+            valueComparer ??= EqualityComparer<object?>.Default;
+            foreach (var pair in l)
+            {
+                if (!r.TryGetValue(pair.Key, out var rValue))
+                    return false;
+                if (!valueComparer.Equals(pair.Value, rValue))
+                    return false;
+            }
+            return true;
+        });
 
     public static bool NullEquate<T>(T? left, T? right, Func<T, T, bool> nonNullEquate)
     {
