@@ -1,5 +1,5 @@
 <Solution>
-    <Folder Name="/0_Common_Files/">
+    <Folder Name="/0 - Common Files/">
         <File Path=".gitignore"/>
         <File Path=".editorconfig"/>
         <File Path="Directory.Build.targets"/>
@@ -9,7 +9,7 @@
         <File Path="README.md"/>
     </Folder>
 
-    <Folder Name="/0_Sandboxes/">
+    <Folder Name="/0 - Sandboxes/">
         <Project Path="src/ScrubJay.Debugging/ScrubJay.Debugging.csproj"/>
         <Project Path="sandboxes/ScrubJay.Sandboxes.ConsoleApp/ScrubJay.Sandboxes.ConsoleApp.csproj"/>
     </Folder>

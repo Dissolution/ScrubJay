@@ -1,6 +1,7 @@
 ﻿#pragma warning disable
 // ReSharper disable All
 
+/*
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -18,13 +19,14 @@ using ScrubJay.Universal;
 
 var opcodes = OpCodes.All;
 
-
+*/
 
 Debugger.Break();
 Console.WriteLine("Press any key to exit.");
 Console.ReadKey();
 return;
 
+/*
 
 namespace ScrubJay.Sandboxes.ConsoleApp
 {
@@ -79,3 +81,4 @@ namespace ScrubJay.Sandboxes.ConsoleApp
 
 
 }
+*/
