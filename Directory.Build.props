@@ -1,45 +1,23 @@
 <Project>
     <!-- Common to all Projects -->
     <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-        <!-- Ignore old versions -->
-        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-        <CheckEolTargetFramework>false</CheckEolTargetFramework>
-
-        <!-- Generate XML documentation -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
-        <NoWarn>$(NoWarn);
-            CS1591; <!-- undocumented members -->
-            CS8981; <!-- lower-case type names -->
-        </NoWarn>
-    </PropertyGroup>
-
-    <!-- NuGet -->
-    <PropertyGroup>
-        <!-- Each will specify PackageId, PackageVersion, Description, -->
-        <Authors>Dissolution</Authors>
-        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <!-- global packages -->
     <ItemGroup>
         <PackageReference Include="JetBrains.Annotations" PrivateAssets="all"/>
-        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or 
+        <PackageReference Condition="$(TargetFrameworkIdentifier) == '.NETStandard' or
                                      $(TargetFrameworkIdentifier) == '.NETFramework'"
                           Include="System.Memory"/>
         <PackageReference Condition="$(TargetFramework) == 'netstandard2.1'"
                           Include="System.Runtime.CompilerServices.Unsafe"
                           PrivateAssets="all"/>
+    </ItemGroup>
+
+    <!-- CodeMetrics for .editorconfig -->
+    <ItemGroup>
+      <AdditionalFiles Include="$(MSBuildThisFileDirectory)CodeMetricsConfig.txt" />
     </ItemGroup>
 
     <!-- Build Configurations -->
@@ -120,4 +98,3 @@
     </ItemGroup>
 
 </Project>
-
