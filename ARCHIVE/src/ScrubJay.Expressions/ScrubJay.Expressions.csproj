@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\ScrubJay.Polyfills\ScrubJay.Polyfills.csproj" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Polyfills"/>
+        <Using Include="ScrubJay.Polyfills"/>
+        
+        <Using Include="System.Linq.Expressions"/>
+    </ItemGroup>
+</Project>
