@@ -96,7 +96,6 @@ end_of_line = crlf
 # Language and unnecessary rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/language-rules
 
-
 # IDE0001 - Simplify name
 dotnet_diagnostic.IDE0001.severity = default
 
@@ -504,7 +503,7 @@ dotnet_diagnostic.IDE0380.severity = warning
 dotnet_diagnostic.IDE0390.severity = suggestion
 dotnet_diagnostic.IDE0391.severity = suggestion
 
-# IDE0410 - Simplify property accessor
+# IDE0410 - Use labeled jump statement
 dotnet_diagnostic.IDE0410.severity = warning
 csharp_style_prefer_labeled_jump_statements = true
 
@@ -536,7 +535,7 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 dotnet_diagnostic.IDE2005.severity = warning
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = false
 
-# IDE2006 - Blank line not allowed after conditional expression token
+# IDE2006 - Blank line not allowed after arrow expression clause token
 dotnet_diagnostic.IDE2006.severity = error
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = false
 
@@ -559,7 +558,7 @@ dotnet_diagnostic.IDE3000.severity = none
 # Formatting Rules
 # IDE0055 - Formatting rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0055
-dotnet_diagnostic.IDE0076.severity = suggestion
+dotnet_diagnostic.IDE0055.severity = suggestion
 
 
 ; !!!
@@ -606,7 +605,7 @@ csharp_space_after_keywords_in_control_flow_statements = true
 csharp_space_between_parentheses = false
 csharp_space_before_colon_in_inheritance_clause = true
 csharp_space_after_colon_in_inheritance_clause = true
-csharp_space_around_binary_operators = true
+csharp_space_around_binary_operators = before_and_after
 csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
 csharp_space_between_method_declaration_name_and_open_parenthesis = false
@@ -752,6 +751,7 @@ dotnet_naming_symbols.sg_other_members.applicable_accessibilities = public, inte
 
 ; !!!
 # Naming rules
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules
 
 dotnet_naming_rule.constants_are_upper_snake.symbols = sg_constants
 dotnet_naming_rule.constants_are_upper_snake.style = ns_upper_snake
@@ -773,9 +773,9 @@ dotnet_naming_rule.locals_must_be_camel.symbols = sg_locals
 dotnet_naming_rule.locals_must_be_camel.style = ns_camel
 dotnet_naming_rule.locals_must_be_camel.severity = error
 
-dotnet_naming_rule.generics_must_be.symbols = sg_locals
-dotnet_naming_rule.locals_must_be_camel.style = ns_camel
-dotnet_naming_rule.locals_must_be_camel.severity = error
+dotnet_naming_rule.generics_must_be.symbols = sg_generic_types
+dotnet_naming_rule.generics_must_be_camel.style = ns_camel
+dotnet_naming_rule.generics_must_be_camel.severity = error
 
 dotnet_naming_rule.asyncs_must_be_pascal_async.symbols = sg_asyncs
 dotnet_naming_rule.asyncs_must_be_pascal_async.style = ns_pascal_async
@@ -795,13 +795,13 @@ dotnet_naming_rule.other_members_must_be_pascal.severity = error
 
 
 
-; !!
+; !
 # Code Quality Rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
 
-; !!!
+; !!
 # Design Rules
--warnings
+https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/design-warnings
 
 # CA1000 - Do not declare static members on generic types
 dotnet_diagnostic.CA1000.severity = none
@@ -953,16 +953,18 @@ dotnet_diagnostic.CA1069.severity = warning
 # CA1070 - Do not declare event fields as virtual
 dotnet_diagnostic.CA1070.severity = error
 
-; !!!
+
+; !!
 # Documentation Rules
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/indentntation-warnings
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/documentation-warnings
 
 # CA1200 - Avoid using cref tags with a prefix
 dotnet_diagnostic.CA1200.severity = warning
 
-# !!!
+
+# !!
 # Globalization Rules
-# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/internization-warnings
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/globalization-warnings
 
 # CA1303 - Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
@@ -992,7 +994,7 @@ dotnet_diagnostic.CA1311.severity = suggestion
 dotnet_diagnostic.CA2101.severity = error
 
 
-; !!!
+; !!
 # Portability and interoperability rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/interoperability-warnings
 
@@ -1018,7 +1020,7 @@ dotnet_diagnostic.CA1420.severity = warning
 dotnet_diagnostic.CA1422.severity = warning
 
 
-; !!!
+; !!
 # Maintainability rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/maintainability-warnings
 # see also `CodeMetricsConfig.txt`
@@ -1064,7 +1066,8 @@ dotnet_diagnostic.CA1515.severity = suggestion
 # CA1516 - Use cross-platform intrinsics
 dotnet_diagnostic.CA1516.severity = suggestion
 
-###
+
+; !!
 # Naming rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/naming-warnings
 
@@ -1119,7 +1122,7 @@ dotnet_diagnostic.CA1725.severity = none
 dotnet_diagnostic.CA1727.severity = error
 
 
-; !!!
+; !!
 # Performance rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-warnings
 
@@ -1325,13 +1328,13 @@ dotnet_diagnostic.CA1877.severity = error
 dotnet_diagnostic.CA1878.severity = warning
 
 
-; !!!
+; !!
 # SingleFile rules
 # https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/warnings/overview
 # IL3000 - IL3005
 
 
-; !!!
+; !!
 # Reliability rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/reliability-warnings
 
@@ -1403,7 +1406,7 @@ dotnet_diagnostic.CA2025.severity = warning
 dotnet_diagnostic.CA2026.severity = error
 
 
-; !!!
+; !!
 # Security  rules
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/security-warnings
 
@@ -1521,9 +1524,22 @@ dotnet_diagnostic.CA3006.severity = error
 # dotnet_code_quality.CA3006.excluded_symbol_names = MyType
 # dotnet_code_quality.CA3006.excluded_type_names_with_derived_types = MyType
 
-# Resharper
-#
+# TODO - Finish these
 
-csharp_indent_preprocessor_if = no_indent
-csharp_indent_preprocessor_region = no_indent
-csharp_indent_preprocessor_other = no_indent
+
+; !!
+# Usage rules
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/usage-warnings
+
+# TODO - Start these
+
+
+
+
+; !
+# Resharper
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpIndentStylePageSchema.html
+
+resharper_csharp_indent_preprocessor_if = no_indent
+resharper_csharp_indent_preprocessor_region = no_indent
+resharper_csharp_indent_preprocessor_other = no_indent
