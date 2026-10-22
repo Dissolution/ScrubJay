@@ -5,16 +5,32 @@
 # MSBuild Output
 [Bb]in/
 [Oo]bj/
+artifacts/
+*.binlog
 
 # Source Generated
 .GeneratedFiles/
 
-# JetBrains Rider
+# Test results and coverage
+TestResults/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+
+# Benchmarks
+BenchmarkDotNet.Artifacts/
+
+# JetBrains Rider / ReSharper
 .idea/
 *.DotSettings.user
+_ReSharper*/
 
 # Visual Studio
 .vs/
+*.user
+*.suo
+*.rsuser
 
 # Zed
 .zed/
@@ -24,3 +40,10 @@
 
 # NuGet
 packages/
+*.nupkg
+*.snupkg
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,28 +1,26 @@
 <Project>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
 
-  <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.1;netstandard2.0;net48;net462</TargetFrameworks>
-    <!-- IDE0005 needs the XML docs -->
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.1;netstandard2.0;net48;net462</TargetFrameworks>
+        <!-- IDE0005 needs the XML docs -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
 
-  <!-- NuGet -->
-  <PropertyGroup>
-    <!-- Each project itself will specify PackageId, PackageVersion, Description, -->
-    <Authors>Dissolution</Authors>
-    <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\packages\</PackageOutputPath>
-    <EnablePackageValidation>true</EnablePackageValidation>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)..\README.md" Pack="true" PackagePath="\" Visible="false"/>
-  </ItemGroup>
+    <!-- NuGet -->
+    <PropertyGroup>
+        <!-- Each project itself will specify PackageId, PackageVersion, Description, PackageTags -->
+        <Authors>Dissolution</Authors>
+        <Copyright>Copyright 2026 T. R. Jay</Copyright>
+        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/Dissolution/ScrubJay</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageOutputPath>$(MSBuildThisFileDirectory)..\packages\</PackageOutputPath>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
 </Project>

@@ -15,7 +15,7 @@
 
   <!-- Code analysis -->
   <PropertyGroup>
-    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AnalysisLevel>10-all</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <WarningLevel>9999</WarningLevel>
     <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8602;CS8603;</WarningsAsErrors>
