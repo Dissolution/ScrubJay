@@ -1,31 +1,28 @@
 <Project>
-    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
 
-    <!-- Common to all Projects -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1;netstandard2.1;netstandard2.0;net48;net462</TargetFrameworks>
+    <!-- IDE0005 needs the XML docs -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net48;</TargetFrameworks>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  <!-- NuGet -->
+  <PropertyGroup>
+    <!-- Each project itself will specify PackageId, PackageVersion, Description, -->
+    <Authors>Dissolution</Authors>
+    <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\packages\</PackageOutputPath>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
 
-        <!-- Ignore old versions -->
-        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-        <CheckEolTargetFramework>false</CheckEolTargetFramework>
-
-        <!-- Generate XML documentation -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
-
-    <!-- NuGet -->
-    <PropertyGroup>
-        <!-- Each project itself will specify PackageId, PackageVersion, Description, -->
-        <Authors>Dissolution</Authors>
-        <RepositoryUrl>https://github.com/Dissolution/ScrubJay</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\README.md" Pack="true" PackagePath="\" Visible="false"/>
+  </ItemGroup>
 </Project>
