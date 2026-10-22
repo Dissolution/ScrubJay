@@ -1,24 +1,35 @@
 <Solution>
     <Folder Name="/0 - Common Files/">
-        <File Path=".editorconfig"/>
-        <File Path=".gitattributes"/>
-        <File Path=".gitignore"/>
-        <File Path=".globalconfig"/>
-        <File Path="CodeMetricsConfig.txt"/>
-        <File Path="Directory.Build.props"/>
-        <File Path="Directory.Build.targets"/>
-        <File Path="Directory.Packages.props"/>
-        <File Path="global.json"/>
-        <File Path="LICENSE.txt"/>
-        <File Path="README.md"/>
+        <File Path=".editorconfig" />
+        <File Path=".gitattributes" />
+        <File Path=".gitignore" />
+        <File Path=".globalconfig" />
+        <File Path="CodeMetricsConfig.txt" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Build.targets" />
+        <File Path="Directory.Packages.props" />
+        <File Path="global.json" />
+        <File Path="LICENSE.txt" />
+        <File Path="README.md" />
     </Folder>
-    <Folder Name="/1 - Documentation/">
-        <File Path="docs/utils.md"/>
+    <Folder Name="/0 - Common Files/docs/">
+        <File Path="docs/utils.md" />
+        <File Path="docs/packages.md" />
     </Folder>
-    <Folder Name="/2 - Source/">
-        <File Path="src/Directory.Build.props"/>
+    <Folder Name="/1 - Source/">
+        <File Path="src/Directory.Build.props" />
+    </Folder>
+    <Folder Name="/1 - Source/Functional/">
+        <Project Path="src/ScrubJay.Functional/ScrubJay.Functional.csproj" />
+    </Folder>
+    <Folder Name="/2 - Sandboxes/">
+        <File Path="sandboxes/Directory.Build.props" />
+        <Project Path="sandboxes/console/ScrubJay.Sandboxes.ConsoleApp.csproj" />
     </Folder>
     <Folder Name="/3 - Tests/">
-        <File Path="tests/Directory.Build.props"/>
+        <File Path="tests/Directory.Build.props" />
+    </Folder>
+    <Folder Name="/4 - Benchmarks/">
+        <File Path="tests/Directory.Build.props" />
     </Folder>
 </Solution>
