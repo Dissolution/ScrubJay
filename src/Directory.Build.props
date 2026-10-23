@@ -6,6 +6,10 @@
         <!-- IDE0005 needs the XML docs -->
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <NoWarn>$(NoWarn);CS1591;</NoWarn>
+    </PropertyGroup>
 
     <!-- NuGet -->
     <PropertyGroup>

@@ -1,4 +1,7 @@
 
+## Net 11 Unions
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/union
+
 ## Merging `Directory.Build.props`
 - https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=visualstudio#use-case-multi-level-merging
 
