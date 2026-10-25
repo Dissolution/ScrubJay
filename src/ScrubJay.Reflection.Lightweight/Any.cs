@@ -3,19 +3,13 @@ using ScrubJay.Reflection.Lightweight.Extensions;
 namespace ScrubJay.Reflection.Lightweight;
 
 [PublicAPI]
-public static class Any
+public static partial class Any
 {
     [return: NotNullIfNotNull(nameof(value))]
     public static string? ToString<T>(ref readonly T? value)
         where T : allows ref struct
     {
         return AnyToStringCache<T>.Invoke(in value);
-    }
-
-    public static Type GetType<I>(ref readonly I? instance)
-        where I : allows ref struct
-    {
-        
     }
 }
 

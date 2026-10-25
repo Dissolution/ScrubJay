@@ -364,7 +364,7 @@ public static class TypeName
     public static string For<I>(in I? instance)
         where I : allows ref struct
     {
-        return For(instanceType);
+        throw new NotImplementedException();
     }
 #endif
 }

@@ -29,6 +29,7 @@ public static partial class Option
         public static bool operator false(None none) => true;
 
         public static bool operator !(None none) => true;
+        public static bool operator ~(None none) => true;
         public static bool operator |(None left, None right) => false;
         public static bool operator &(None left, None right) => false;
         public static bool operator ^(None left, None right) => false;
