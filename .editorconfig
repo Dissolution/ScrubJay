@@ -817,7 +817,7 @@ dotnet_diagnostic.CA1002.severity = suggestion
 dotnet_diagnostic.CA1003.severity = error
 
 # CA1005 - Avoid excessive parameters on generic types
-dotnet_diagnostic.CA1005.severity = warning
+dotnet_diagnostic.CA1005.severity = suggestion
 
 # CA1008 - Enums should have zero value
 dotnet_diagnostic.CA1008.severity = error

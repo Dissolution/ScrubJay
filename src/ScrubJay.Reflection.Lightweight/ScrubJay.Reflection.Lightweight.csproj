@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>ScrubJay.Reflection.Lightweight</RootNamespace>
+        <AssemblyName>ScrubJay.Reflection.Lightweight</AssemblyName>
+        <TargetFramework>net11.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="System.Reflection" />
+        <Using Include="System.Reflection.Emit" />
+        <Using Include="InlineIL.IL" Static="true" />
+    </ItemGroup>
+
+    <!-- NuGet Packages -->
+    <ItemGroup>
+        <PackageReference Include="Fody" PrivateAssets="all" />
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Reflection.Emit" />
+        <PackageReference Include="System.Reflection.Emit.Lightweight" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>ScrubJay.Reflection.LightWeight.Tests</RootNamespace>
+        <TargetFramework>net11.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3.mtp-v2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
+    </ItemGroup>
+
+</Project>

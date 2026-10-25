@@ -20,9 +20,9 @@ public readonly struct Result<T, E> :
     public static Result<T, E> Error(E error) => new(error);
 
 
-    private readonly bool _isOk;
-    private readonly T? _value;
-    private readonly E? _error;
+    internal readonly bool _isOk;
+    internal readonly T? _value;
+    internal readonly E? _error;
 
 
     public Result(T ok)
@@ -102,6 +102,20 @@ public readonly struct Result<T, E> :
         }
     }
 
+    public T OkOr(T fallback)
+    {
+        if (_isOk)
+            return _value!;
+        return fallback!;
+    }
+
+    public T OkOr(Func<T> getFallback)
+    {
+        if (_isOk)
+            return _value!;
+        return getFallback()!;
+    }
+
     public T OkOrThrow()
     {
         if (_isOk)
@@ -169,58 +183,182 @@ public readonly struct Result<T, E> :
 
 #endregion
 
-#region Linq
+#region Match
 
-    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
-
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => throw new NotImplementedException();
-
-    public ResultRefEnumerator GetEnumerator() => new ResultRefEnumerator(this);
-
-    [StructLayout(LayoutKind.Auto)]
-    public ref struct ResultRefEnumerator
+    public void Match(Action<T>? onOk)
     {
-        private readonly bool _isOk;
-        private readonly T? _value;
-        private bool _canYield;
-
-        public readonly T? Current => _isOk ? _value : default;
-
-        public ResultRefEnumerator(Result<T, E> result)
+        if (_isOk)
         {
-            if (result._isOk)
-            {
-                _isOk = true;
-                _value = result._value;
-                _canYield = true;
-            }
-            else
-            {
-                _isOk = false;
-                _value = default;
-                _canYield = false;
-            }
-        }
-
-        public bool MoveNext()
-        {
-            if (_canYield)
-            {
-                _canYield = false;
-                return true;
-            }
-
-            return false;
-        }
-
-        public void Reset()
-        {
-            if (_isOk)
-            {
-                _canYield = true;
-            }
+            onOk?.Invoke(_value!);
         }
     }
+
+    public void Match(Action<T>? onOk, Action<E>? onError)
+    {
+        if (_isOk)
+        {
+            onOk?.Invoke(_value!);
+        }
+        else
+        {
+            onError?.Invoke(_error!);
+        }
+    }
+
+    public R Match<R>(Func<T, R> onOk, Func<E, R> onError)
+    {
+        if (_isOk)
+        {
+            ArgumentNullException.ThrowIfNull(onOk);
+            return onOk.Invoke(_value!);
+        }
+        else
+        {
+            ArgumentNullException.ThrowIfNull(onError);
+            return onError.Invoke(_error!);
+        }
+    }
+
+#endregion
+
+#region Logic
+
+    // AND, OR, XOR
+
+#endregion
+
+#region Linq
+
+    public bool Contains(T? value)
+    {
+        return _isOk && EqualityComparer<T>.Default.Equals(_value, value);
+    }
+
+    public bool Contains(T? value, IEqualityComparer<T>? comparer)
+    {
+        return _isOk && (comparer ?? EqualityComparer<T>.Default).Equals(_value, value);
+    }
+
+    public bool Any() => _isOk;
+
+    public bool Any(Func<T, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        return _isOk && predicate(_value!);
+    }
+
+
+    public Result<N, E> Select<N>(Func<T, N> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+
+        if (_isOk)
+        {
+            return selector(_value!);
+        }
+        else
+        {
+            return _error!;
+        }
+    }
+
+    public Result<N, E> Select<N>(Func<T, Result<N, E>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+
+        if (_isOk)
+        {
+            return selector(_value!);
+        }
+
+        return _error!;
+    }
+
+    public Result<N, E> Select<N>(Func<T, Option<N>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+
+        if (_isOk && selector(_value!).IsSome(out var selected))
+        {
+            return selected;
+        }
+
+        return default;
+    }
+
+
+    public Result<N, E> SelectMany<N>(Func<T, Result<N, E>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+
+        if (_isOk)
+        {
+            return selector(_value!);
+        }
+        else
+        {
+            return _error!;
+        }
+    }
+
+    public Result<N, E> SelectMany<N>(Func<T, Option<N>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        if (_isOk && selector(_value!).IsSome(out var selected))
+        {
+            return selected;
+        }
+        else
+        {
+            return _error!;
+        }
+    }
+
+    public Result<N, E> SelectMany<K, N>(Func<T, Result<K, E>> selector, Func<T, K, N> projector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        ArgumentNullException.ThrowIfNull(projector);
+        if (_isOk)
+        {
+            var selected = selector(_value!);
+            if (selected._isOk)
+            {
+                return projector(_value!, selected._value!);
+            }
+            return selected._error!;
+        }
+        return _error!;
+    }
+
+    public Result<N, E> SelectMany<K, N>(Func<T, Option<K>> selector, Func<T, K, N> projector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        ArgumentNullException.ThrowIfNull(projector);
+        if (_isOk && selector(_value!).IsSome(out var selected))
+        {
+            return projector(_value!, selected);
+        }
+        return _error!;
+    }
+
+//
+//    public Option<T> Where(Func<T, bool> predicate)
+//    {
+//        ArgumentNullException.ThrowIfNull(predicate);
+//        if (_isOk && predicate(_value!))
+//        {
+//            return _value!;
+//        }
+//        return default;
+//    }
+
+    public IEnumerable<T> ToEnumerable() => this;
+
+    IEnumerator IEnumerable.GetEnumerator() => ValueEnumerator.Create(this);
+
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => ValueEnumerator.Create(this);
+
+    public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
 
 #endregion
 

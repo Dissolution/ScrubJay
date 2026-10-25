@@ -22,12 +22,19 @@
     <Folder Name="/1 - Source/Functional/">
         <Project Path="src/ScrubJay.Functional/ScrubJay.Functional.csproj" />
     </Folder>
+    <Folder Name="/1 - Source/Reflection/">
+
+    </Folder>
+    <Folder Name="/1 - Source/Reflection/Lightweight/">
+        <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj" />
+    </Folder>
     <Folder Name="/2 - Sandboxes/">
         <File Path="sandboxes/Directory.Build.props" />
         <Project Path="sandboxes/console/ScrubJay.Sandboxes.ConsoleApp.csproj" />
     </Folder>
     <Folder Name="/3 - Tests/">
         <File Path="tests/Directory.Build.props" />
+        <Project Path="tests/ScrubJay.Reflection.LightWeight.Tests/ScrubJay.Reflection.LightWeight.Tests.csproj" />
     </Folder>
     <Folder Name="/4 - Benchmarks/">
         <File Path="tests/Directory.Build.props" />
