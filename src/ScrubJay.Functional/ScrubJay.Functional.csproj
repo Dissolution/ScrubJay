@@ -11,6 +11,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\ScrubJay.Reflection.Lightweight\ScrubJay.Reflection.Lightweight.csproj" />
       <ProjectReference Include="..\ScrubJay.Unconstrained\ScrubJay.Unconstrained.csproj" />
     </ItemGroup>
 </Project>

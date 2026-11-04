@@ -9,7 +9,7 @@ public static class TypeExtensions
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => type is { IsAbstract: true, IsSealed: true };
         }
-        
+
         public bool IsTuple
         {
             get
@@ -41,6 +41,18 @@ public static class TypeExtensions
 #endif
             }
         }
+
+        [NotNullIfNotNull(nameof(type))]
+        public string? Alias => TypeAlias.For(type);
+
+        /// <summary>
+        /// Can instances of this <see cref="Type"/> be <see langword="null"/>?
+        /// </summary>
+        /// <remarks>
+        /// A <see langword="null"/> <see cref="Type"/> will return <see langword="true"/>.
+        /// </remarks>
+        public bool CanBeNull
+            => type is null || !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
 
         internal IEnumerable<Type> InvokableTypes()
         {

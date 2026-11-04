@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.ExceptionServices;
+using ScrubJay.Reflection.Lightweight.Extensions;
 
 namespace ScrubJay.Functional;
 
@@ -12,6 +13,11 @@ public readonly struct Result<T, E> :
     IEquatable<Result<T, E>>,
     IEnumerable<T>
 {
+    public static implicit operator bool(in Result<T, E> result) => result._isOk;
+
+    public static bool operator true(Result<T, E> result) => result._isOk;
+    public static bool operator false(Result<T, E> result) => !result._isOk;
+
     public static bool operator ==(Result<T, E> left, Result<T, E> right) => left.Equals(right);
     public static bool operator !=(Result<T, E> left, Result<T, E> right) => !left.Equals(right);
 
@@ -42,13 +48,13 @@ public readonly struct Result<T, E> :
 #region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
-    private bool HasValue => _isOk ? _value is not null : _error is not null;
+    public bool HasValue => _isOk ? _value is not null : _error is not null;
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public object? Value => _isOk ? _value : _error;
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
-    private bool TryGetValue([NotNullWhen(true)] out T? value)
+    public bool TryGetValue([NotNullWhen(true)] out T? value)
     {
         if (_isOk && _value is not null)
         {
@@ -60,7 +66,7 @@ public readonly struct Result<T, E> :
     }
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
-    private bool TryGetValue([NotNullWhen(true)] out E? error)
+    public bool TryGetValue([NotNullWhen(true)] out E? error)
     {
         if (!_isOk && _error is not null)
         {
@@ -219,15 +225,108 @@ public readonly struct Result<T, E> :
         }
     }
 
+    public Option<R> Match<R>(Func<T, Option<R>>? onOk, Func<E, Option<R>>? onError)
+    {
+        if (_isOk)
+        {
+            if (onOk is not null)
+                return onOk(_value!);
+        }
+        else
+        {
+            if (onError is not null)
+                return onError(_error!);
+        }
+
+        return default;
+    }
+
+    public Result<N, E> Match<N>(
+        Func<T, Result<N, E>>? onOk,
+        Func<E, Result<N, E>>? onError)
+    {
+        if (_isOk)
+        {
+            if (onOk is not null)
+                return onOk(_value!);
+        }
+        else
+        {
+            if (onError is not null)
+                return onError(_error!);
+        }
+
+        return default;
+    }
+
 #endregion
 
 #region Logic
 
-    // AND, OR, XOR
+    public Result<T, E> Or(Result<T, E> other)
+    {
+        if (_isOk)
+            return this;
+        if (other._isOk)
+            return other;
+        return this;
+    }
 
 #endregion
 
 #region Linq
+
+    public Result<N, E> Select<N>(Func<T, N> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        if (_isOk)
+        {
+            return selector(_value!);
+        }
+        return default;
+    }
+
+    public Result<N, E> SelectMany<N>(Func<T, Result<N, E>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+        if (_isOk)
+        {
+            return selector(_value!);
+        }
+        return _error!;
+    }
+
+    public Result<N, E> SelectMany<K, N>(
+        Func<T, Result<K, E>> selector,
+        Func<T, K, N> projector)
+    {
+        if (_isOk)
+        {
+            ArgumentNullException.ThrowIfNull(selector);
+            if (selector(_value!).IsOk(out var selection, out var error))
+            {
+                ArgumentNullException.ThrowIfNull(projector);
+                return projector(_value!, selection!);
+            }
+            else
+            {
+                return error!;
+            }
+        }
+        return default;
+    }
+
+    public bool All(Func<T, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        return _isOk && predicate(_value!);
+    }
+
+    public bool Any(Func<T, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        return _isOk && predicate(_value!);
+    }
 
     public bool Contains(T? value)
     {
@@ -238,119 +337,6 @@ public readonly struct Result<T, E> :
     {
         return _isOk && (comparer ?? EqualityComparer<T>.Default).Equals(_value, value);
     }
-
-    public bool Any() => _isOk;
-
-    public bool Any(Func<T, bool> predicate)
-    {
-        ArgumentNullException.ThrowIfNull(predicate);
-        return _isOk && predicate(_value!);
-    }
-
-
-    public Result<N, E> Select<N>(Func<T, N> selector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-
-        if (_isOk)
-        {
-            return selector(_value!);
-        }
-        else
-        {
-            return _error!;
-        }
-    }
-
-    public Result<N, E> Select<N>(Func<T, Result<N, E>> selector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-
-        if (_isOk)
-        {
-            return selector(_value!);
-        }
-
-        return _error!;
-    }
-
-    public Result<N, E> Select<N>(Func<T, Option<N>> selector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-
-        if (_isOk && selector(_value!).IsSome(out var selected))
-        {
-            return selected;
-        }
-
-        return default;
-    }
-
-
-    public Result<N, E> SelectMany<N>(Func<T, Result<N, E>> selector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-
-        if (_isOk)
-        {
-            return selector(_value!);
-        }
-        else
-        {
-            return _error!;
-        }
-    }
-
-    public Result<N, E> SelectMany<N>(Func<T, Option<N>> selector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-        if (_isOk && selector(_value!).IsSome(out var selected))
-        {
-            return selected;
-        }
-        else
-        {
-            return _error!;
-        }
-    }
-
-    public Result<N, E> SelectMany<K, N>(Func<T, Result<K, E>> selector, Func<T, K, N> projector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-        ArgumentNullException.ThrowIfNull(projector);
-        if (_isOk)
-        {
-            var selected = selector(_value!);
-            if (selected._isOk)
-            {
-                return projector(_value!, selected._value!);
-            }
-            return selected._error!;
-        }
-        return _error!;
-    }
-
-    public Result<N, E> SelectMany<K, N>(Func<T, Option<K>> selector, Func<T, K, N> projector)
-    {
-        ArgumentNullException.ThrowIfNull(selector);
-        ArgumentNullException.ThrowIfNull(projector);
-        if (_isOk && selector(_value!).IsSome(out var selected))
-        {
-            return projector(_value!, selected);
-        }
-        return _error!;
-    }
-
-//
-//    public Option<T> Where(Func<T, bool> predicate)
-//    {
-//        ArgumentNullException.ThrowIfNull(predicate);
-//        if (_isOk && predicate(_value!))
-//        {
-//            return _value!;
-//        }
-//        return default;
-//    }
 
     public IEnumerable<T> ToEnumerable() => this;
 
@@ -377,15 +363,7 @@ public readonly struct Result<T, E> :
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        if (obj is Result<T, E> result)
-            return Equals(result);
-        if (obj is T value)
-            return _isOk && EqualityComparer<T>.Default.Equals(_value, value);
-        if (obj is E error)
-            return !_isOk && EqualityComparer<E>.Default.Equals(_error, error);
-        return false;
-    }
+        => obj is Result<T, E> result && Equals(result);
 
     public override int GetHashCode()
     {
@@ -407,11 +385,11 @@ public readonly struct Result<T, E> :
     {
         if (_isOk)
         {
-            return $"Result<{typeof(T)}, {typeof(E)}>.Ok({_value})";
+            return $"Result<{typeof(T).Alias}, {typeof(E).Alias}>.Ok({_value})";
         }
         else
         {
-            return $"Result<{typeof(T)}, {typeof(E)}>.Error({_error})";
+            return $"Result<{typeof(T).Alias}, {typeof(E).Alias}>.Error({_error})";
         }
     }
 

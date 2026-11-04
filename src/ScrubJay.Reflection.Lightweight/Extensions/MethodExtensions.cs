@@ -4,6 +4,16 @@ public static class MethodExtensions
 {
     extension(MethodBase? method)
     {
+        public int ParameterCount
+        {
+            get
+            {
+                if (method is null)
+                    return 0;
+                return method.GetParameters().Length;
+            }
+        }
+
         [return: NotNullIfNotNull(nameof(method))]
         public Type[]? GetParameterTypes()
         {

@@ -24,6 +24,16 @@ public static class RefValueEnumerator
         return default;
     }
 
+    public static RefValueEnumerator<T> Create<T>(RefOption<T> option)
+        where T : allows ref struct
+    {
+        if (option._isSome)
+        {
+            return new(option._value!);
+        }
+        return default;
+    }
+
     public static RefValueEnumerator<T> Create<T, E>(Result<T, E> result)
     {
         if (result._isOk)

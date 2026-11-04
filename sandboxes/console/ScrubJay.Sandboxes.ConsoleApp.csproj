@@ -7,5 +7,10 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\src\ScrubJay.Functional\ScrubJay.Functional.csproj" />
+      <ProjectReference Include="..\..\src\ScrubJay.Reflection.Emission\ScrubJay.Reflection.Emission.csproj" />
     </ItemGroup>
+    
+    <PropertyGroup>
+        <AnyGetHashCodeRefStructBehavior>Address</AnyGetHashCodeRefStructBehavior>
+    </PropertyGroup>
 </Project>

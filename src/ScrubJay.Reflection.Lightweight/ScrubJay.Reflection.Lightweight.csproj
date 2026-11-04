@@ -9,13 +9,17 @@
     <ItemGroup>
         <Using Include="System.Reflection" />
         <Using Include="System.Reflection.Emit" />
-        <Using Include="InlineIL.IL" Static="true" />
+<!--        <Using Include="InlineIL.IL" Static="true" />-->
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="buildTransitive\ScrubJay.Reflection.Lightweight.targets" Pack="true" PackagePath="buildTransitive\" />
+    </ItemGroup>
+     
     <!-- NuGet Packages -->
     <ItemGroup>
-        <PackageReference Include="Fody" PrivateAssets="all" />
-        <PackageReference Include="InlineIL.Fody" PrivateAssets="all" />
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

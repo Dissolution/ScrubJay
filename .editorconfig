@@ -248,8 +248,8 @@ dotnet_diagnostic.IDE0044.severity = error
 dotnet_style_readonly_field = true
 
 # IDE0045 - Use conditional expression for assignment
-dotnet_diagnostic.IDE0045.severity = warning
-dotnet_style_prefer_conditional_expression_over_assignment = true
+dotnet_diagnostic.IDE0045.severity = suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = false
 
 # IDE0046 - Use conditional expression for return
 dotnet_diagnostic.IDE0046.severity = suggestion
@@ -1254,6 +1254,52 @@ dotnet_diagnostic.CA2252.severity = error
 ; !
 # ReSharper
 # https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpIndentStylePageSchema.html
+
+
+; !!
+# Generalized EditorConfig properties
+# https://www.jetbrains.com/help/resharper/EditorConfig_Generalized.html
+
+resharper_csharp_brace_style = next_line
+resharper_csharp_int_align = false
+resharper_csharp_place_attribute_on_same_line = never
+resharper_csharp_space_after_unary_operator = false
+resharper_csharp_space_after_comma = true
+resharper_csharp_space_around_ternary_operator = true
+resharper_csharp_space_around_binary_operator = true
+resharper_csharp_space_around_member_access_operator = false
+resharper_csharp_space_before_open_square_brackets = false
+resharper_csharp_space_after_keywords_in_control_flow_statements = true
+resharper_csharp_space_before_comma = false
+resharper_csharp_space_between_method_call_name_and_opening_parenthesis = false
+resharper_csharp_space_between_method_declaration_name_and_open_parenthesis = false
+resharper_csharp_space_between_square_brackets = false
+resharper_csharp_space_between_parentheses_of_control_flow_statements = false
+resharper_configure_await_analysis_mode = library
+
+; !!
+# EditorConfig properties for C#: Blank lines
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_BlankLinesPageScheme.html
+
+resharper_csharp_blank_lines_around_region = 1
+resharper_csharp_blank_lines_inside_region = 1
+
+// todo
+
+; !!
+# Tabs, Indents, Alignment
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpIndentStylePageSchema.html
+
+resharper_csharp_indent_nested_usings_stmt = false
+resharper_csharp_indent_nested_fixed_stmt = false
+resharper_csharp_indent_nested_lock_stmt = false
+resharper_csharp_indent_nested_for_stmt = false
+resharper_csharp_indent_nested_foreach_stmt = false
+resharper_csharp_indent_nested_while_stmt = false
+
+resharper_csharp_indent_raw_literal_string = indent
+resharper_csharp_align_multiline_array_and_object_initializer = false
+resharper_csharp_align_multiline_list_pattern = false
 
 resharper_csharp_indent_preprocessor_if = no_indent
 resharper_csharp_indent_preprocessor_region = no_indent

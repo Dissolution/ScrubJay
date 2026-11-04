@@ -3,6 +3,17 @@ namespace ScrubJay.Functional;
 [PublicAPI]
 public static class OptionExtensions
 {
+    extension<T>(Option<T> option)
+        where T : struct
+    {
+        public Nullable<T> AsNullable()
+        {
+            if (option._isSome)
+                return option._value!;
+            return null;
+        }
+    }
+
     extension<T>(Option<T>)
         where T : IComparable<T>
     {

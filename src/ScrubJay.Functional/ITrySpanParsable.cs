@@ -1,7 +1,7 @@
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-public interface ITrySpanParsable<S> : ISpanParsable<S>
+public interface ITrySpanParsable<S> : ISpanParsable<S>, IParsable<S>
     where S : ITrySpanParsable<S>
 {
     static S IParsable<S>.Parse(string s, IFormatProvider? provider)

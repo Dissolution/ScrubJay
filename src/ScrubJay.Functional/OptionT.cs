@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CA1716 // Identifiers should not match keywords
 
 using System.ComponentModel;
+using ScrubJay.Reflection.Lightweight.Extensions;
 
 namespace ScrubJay.Functional;
 
@@ -22,28 +23,9 @@ public readonly struct Option<T> :
     public static bool operator !=(Option<T> left, Option<T> right) => !left.Equals(right);
 
 
-    public static Option<T> operator |(Option<T> left, Option<T> right)
-    {
-        if (left._isSome)
-            return left;
-        return right;
-    }
+    public static Option<T> operator |(Option<T> left, Option<T> right) => left.Or(right);
 
-    public static Option<T> operator ^(Option<T> left, Option<T> right)
-    {
-        if (left._isSome)
-        {
-            if (right._isSome)
-                return default;
-            return left;
-        }
-        else
-        {
-            if (right._isSome)
-                return right;
-            return default;
-        }
-    }
+    public static Option<T> operator ^(Option<T> left, Option<T> right) => left.Xor(right);
 
     public static Option<T> Some(T value) => new Option<T>(value);
     public static Option<T> None() => default;
@@ -345,7 +327,7 @@ public readonly struct Option<T> :
         return _isSome && (comparer ?? EqualityComparer<T>.Default).Equals(_value, value);
     }
 
-    public IEnumerable<T> AsEnumerable() => ValueEnumerator.Create(this);
+    public IEnumerable<T> ToEnumerable() => ValueEnumerator.Create(this);
 
 
     IEnumerator IEnumerable.GetEnumerator() => ValueEnumerator.Create(this);
@@ -371,7 +353,8 @@ public readonly struct Option<T> :
         }
     }
 
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Option<T> option && Equals(option);
+    public override bool Equals([NotNullWhen(true)] object? obj)
+        => obj is Option<T> option && Equals(option);
 
     public override int GetHashCode()
     {
@@ -393,11 +376,11 @@ public readonly struct Option<T> :
     {
         if (_isSome)
         {
-            return $"Option<{typeof(T)}>.Some({_value})";
+            return $"Option<{typeof(T).Alias}>.Some({_value})";
         }
         else
         {
-            return $"Option<{typeof(T)}>.None";
+            return $"Option<{typeof(T).Alias}>.None";
         }
     }
 

@@ -9,7 +9,7 @@ namespace ScrubJay.Reflection.Lightweight;
 [PublicAPI]
 public static class Accessor
 {
-    
+
     /*
     
     public delegate ref TValue ReferenceFieldRef<in TInstance, TValue>(TInstance instance)

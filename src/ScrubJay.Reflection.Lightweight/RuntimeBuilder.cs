@@ -1,7 +1,7 @@
 namespace ScrubJay.Reflection.Lightweight;
 
 [PublicAPI]
-public static class Runtime
+public static class RuntimeBuilder
 {
     public static AssemblyName AssemblyName { get; } = new("ScrubJay.Reflection.Runtime");
 
@@ -10,6 +10,6 @@ public static class Runtime
 #else
     public static AssemblyBuilder Assembly { get; } = AssemblyBuilder.DefineDynamicAssembly(AssemblyName, AssemblyBuilderAccess.Run);
 #endif
-    
+
     public static ModuleBuilder Module { get; } = Assembly.DefineDynamicModule(AssemblyName.FullName);
 }

@@ -101,19 +101,6 @@ public static class Constrain
     public readonly struct HasNew<T>
         where T : new();
 
-#if NET9_0_OR_GREATER
-    /// <summary>
-    /// This anti-constraint declares that <typeparamref name="T"/> can be a <see langword="ref struct"/> type.<br/>
-    /// The generic type or method must obey ref safety rules for any instance of <typeparamref name="T"/> because it might be a <see langword="ref struct"/>.
-    /// </summary>
-    /// <seealso href="https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters#allows-ref-struct"/>
-    [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
-    public readonly struct AllowsRefStruct<T>
-        where T : allows ref struct;
-#endif
-
-#region Implements
-
     /// <summary>
     /// This constraint limits <typeparamref name="T"/> to <see cref="Delegate"/> types.
     /// </summary>
@@ -137,6 +124,8 @@ public static class Constrain
     [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
     public readonly struct IsStructEnum<T>
         where T : struct, Enum;
+
+#region Implements
 
     /// <summary>
     /// Type argument <typeparamref name="T"/> must be or derive from the <typeparamref name="TUnderlying"/> type.
@@ -318,4 +307,34 @@ public static class Constrain
 #endregion /Interface
 
 #endregion /Implements
+
+#region Anti-Constraints
+
+#if NET9_0_OR_GREATER
+
+#region Allows Ref Struct
+
+    [PublicAPI]
+    public static class AllowsRefStruct
+    {
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIEquatable<T>
+            where T : IEquatable<T>, allows ref struct;
+    }
+
+    /// <summary>
+    /// This anti-constraint declares that <typeparamref name="T"/> can be a <see langword="ref struct"/> type.<br/>
+    /// The generic type or method must obey ref safety rules for any instance of <typeparamref name="T"/> because it might be a <see langword="ref struct"/>.
+    /// </summary>
+    /// <seealso href="https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters#allows-ref-struct"/>
+    [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+    public readonly struct AllowsRefStruct<T>
+        where T : allows ref struct;
+
+
+#endregion /Allows Ref Struct
+
+#endif
+
+#endregion /Anti-Constraints
 }
