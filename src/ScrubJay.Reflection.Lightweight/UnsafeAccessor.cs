@@ -1,6 +1,4 @@
-﻿using ScrubJay.Reflection.Lightweight.Extensions;
-
-namespace ScrubJay.Reflection.Lightweight;
+﻿namespace ScrubJay.Reflection.Lightweight;
 
 /// <summary>
 /// 

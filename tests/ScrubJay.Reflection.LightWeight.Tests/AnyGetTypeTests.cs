@@ -1,6 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
-using ScrubJay.Reflection.Lightweight;
-
 namespace ScrubJay.Reflection.LightWeight.Tests;
 
 public class AnyGetTypeTests

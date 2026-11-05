@@ -1,44 +1,23 @@
-using InlineIL;
-using static InlineIL.IL;
-// ReSharper disable MergeCastWithTypeCheck
-// ReSharper disable MethodOverloadWithOptionalParameter
 #pragma warning disable IDE0060
 
-namespace ScrubJay.Reflection.Lightweight;
+#if NET9_0_OR_GREATER
+using InlineIL;
+#endif
+using ScrubJay.Universal.Extensions;
+using static InlineIL.IL;
 
-[PublicAPI]
-public static class Box
+namespace ScrubJay.Universal;
+
+public static partial class Anything
 {
-    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // private static T UnsafeUnbox<T>(object box)
-    // {
-    //     Emit.Ldarg(nameof(box));
-    //     Emit.Unbox_Any<T>();
-    //     return Return<T>();
-    // }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ref T UnsafeUnboxRef<T>(object box)
-    {
-        Emit.Ldarg(nameof(box));
-        Emit.Unbox<T>();
-        return ref ReturnRef<T>();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static object UnsafeBox<T>(T value)
-        where T : allows ref struct //, but _never_ will be
-    {
-        Emit.Ldarg(nameof(value));
-        Emit.Box<T>();
-        return Return<object>();
-    }
-
+#region TryUnbox
 
     public static bool TryUnbox<T>(
         object? box,
         [MaybeNullWhen(false)] out T? value)
+#if NET9_0_OR_GREATER
         where T : allows ref struct
+#endif
     {
         if (box is T unboxed)
         {
@@ -50,45 +29,67 @@ public static class Box
         return false;
     }
 
+    [UsedImplicitly]
+#pragma warning disable IDE0051
+    private static ref T UnsafeUnboxRef<T>(object box)
+#pragma warning restore IDE0051
+    {
+        Emit.Ldarg(nameof(box));
+        Emit.Unbox<T>();
+        return ref ReturnRef<T>();
+    }
+
     [return: MaybeNull]
     public static ref T? TryUnboxRef<T>(object? box)
-    {
-        if (box is T)
-        {
-            return ref UnsafeUnboxRef<T>(box)!;
-        }
-        else
-        {
-            return ref Unsafe.NullRef<T?>();
-        }
-    }
-
-    public static bool IsNull(object? box) => box is null;
-
-    public static bool Contains<T>(object? box)
+#if NET9_0_OR_GREATER
         where T : allows ref struct
+#endif
     {
-        return box is T;
+        Emit.Ldarg(nameof(box));
+        Emit.Isinst<T>();
+        Emit.Ldnull();
+        Emit.Ceq();
+        Emit.Brtrue("not_a_T");
+
+        Emit.Ldarg(nameof(box));
+        Emit.Unbox<T>();
+        Emit.Ret();
+
+        MarkLabel("not_a_T");
+        Emit.Ldc_I4_0();
+        Emit.Conv_U();
+        Emit.Ret();
+
+        throw Unreachable();
     }
+
+#endregion
+
+#region CanBox
 
     public static bool CanBox(Type? type)
     {
         return type is null || !type.IsByRefLike;
     }
 
-    public static bool CanBox<T>()
-        where T : allows ref struct
+    public static bool CanBox<T>(T? instance = default)
     {
-        return !typeof(T).IsByRefLike;
+        return instance is null || !typeof(T).IsByRefLike;
     }
 
-    public static bool CanBox<T>(in T? instance)
+#if NET9_0_OR_GREATER
+    public static bool CanBox<T>(in T? instance = default)
         where T : allows ref struct
     {
-        return CanBox(Generic.GetType<T>(in instance));
+        return CanBox(GetType<T>(in instance));
     }
+#endif
 
+#endregion
 
+#region TryBox
+
+    [OverloadResolutionPriority(100)]
     public static bool TryBox<T>(
         T? value,
         [NotNullIfNotNull(nameof(value)), MaybeNullWhen(false)]
@@ -99,15 +100,34 @@ public static class Box
     }
 
 #if NET9_0_OR_GREATER
+    [UsedImplicitly]
+    private static object UnsafeBoxImpl<T>(T value)
+        where T : allows ref struct //, but _never_ will be
+    {
+        Emit.Ldarg(nameof(value));
+        Emit.Box<T>();
+        return Return<object>();
+    }
+
+    internal static object UnsafeBox<T>(T value)
+        where T : allows ref struct
+    {
+        Emit.Ldarg(nameof(value));
+        Emit.Call(new MethodRef(typeof(Anything), nameof(UnsafeBoxImpl)).MakeGenericMethod(typeof(T)));
+        return Return<object>();
+    }
+
+    [OverloadResolutionPriority(90)]
     public static bool TryBox<T>(
         T? value,
         [NotNullIfNotNull(nameof(value)), MaybeNullWhen(false)]
         out object? boxed,
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         Constrain.AllowsRefStruct<T> _ = default)
         where T : allows ref struct
     {
         // ref structs cannot be boxed
-        if (Generic.GetType<T>(in value).IsByRefLike)
+        if (GetType<T>(in value).IsByRefLike)
         {
             boxed = null;
             return false;
@@ -152,11 +172,13 @@ public static class Box
 
         Emit.Ldarg(nameof(boxed));
         Emit.Ldarg(nameof(value));
-        Emit.Call(new MethodRef(typeof(Box), nameof(UnsafeBox)).MakeGenericMethod(typeof(T)));
+        Emit.Call(new MethodRef(typeof(Anything), nameof(UnsafeBoxImpl)).MakeGenericMethod(typeof(T)));
         Emit.Stind_Ref();
         Emit.Ldc_I4_1();
         Emit.Ret();
         throw Unreachable();
     }
 #endif
+
+#endregion
 }

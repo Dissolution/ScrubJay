@@ -2,11 +2,13 @@
 
 // ReSharper disable MethodOverloadWithOptionalParameter
 
-using ScrubJay.Reflection.Lightweight.Extensions;
+using System.Reflection;
+using System.Reflection.Emit;
+using ScrubJay.Universal.Extensions;
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
-public static partial class Generic
+public static partial class Anything
 {
     [OverloadResolutionPriority(100)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -24,23 +26,23 @@ public static partial class Generic
     public static bool Equals<T>(in T? instance, object? other)
         where T : allows ref struct
     {
-        return GenericEqualsObjectCache<T>.Invoke(in instance, other);
+        return AnythingEqualsObjectCache<T>.Invoke(in instance, other);
     }
 
-    internal delegate bool GenericEqualsObject<T>(in T? value, object? other)
+    internal delegate bool AnythingEqualsObject<T>(in T? value, object? other)
         where T : allows ref struct;
 
-    internal static class GenericEqualsObjectCache<T>
+    internal static class AnythingEqualsObjectCache<T>
         where T : allows ref struct
     {
-        public static readonly GenericEqualsObject<T> Invoke = CreateDelegate();
+        public static readonly AnythingEqualsObject<T> Invoke = CreateDelegate();
 
-        private static GenericEqualsObject<T> CreateDelegate()
+        private static AnythingEqualsObject<T> CreateDelegate()
         {
             var type = typeof(T);
 
             MethodInfo? equalsObjectMethod;
-            
+
             // ref structs have to have a manual override
             if (type.IsByRefLike)
             {
@@ -58,10 +60,10 @@ public static partial class Generic
             }
             else
             {
-                equalsObjectMethod = MethodCache.Object_Equals_Object;
+                equalsObjectMethod = Reflect.Object_Equals_Object;
             }
 
-            var dynamicMethod = DynamicMethod.Create<GenericEqualsObject<T>>($"Any_{type.Alias}_Equals");
+            var dynamicMethod = Reflect.CreateDynamicMethod<AnythingEqualsObject<T>>($"Anything_Equals_{type.Alias}");
             var generator = dynamicMethod.GetILGenerator();
 
             // Do we have to emit a null check?
@@ -89,7 +91,7 @@ public static partial class Generic
             generator.Emit(OpCodes.Callvirt, equalsObjectMethod);
             generator.Emit(OpCodes.Ret);
 
-            return dynamicMethod.CreateDelegate();
+            return dynamicMethod.CreateDelegate<AnythingEqualsObject<T>>();
         }
     }
 

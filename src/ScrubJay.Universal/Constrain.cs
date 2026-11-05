@@ -1,7 +1,7 @@
 #pragma warning disable CA1034 // Nested types should not be visible
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
 /// <summary>
 /// This class contains generic marker structs that carry type parameter constraints.<br/>
@@ -330,7 +330,6 @@ public static class Constrain
     [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
     public readonly struct AllowsRefStruct<T>
         where T : allows ref struct;
-
 
 #endregion /Allows Ref Struct
 

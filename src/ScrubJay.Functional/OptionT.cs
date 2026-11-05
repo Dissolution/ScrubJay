@@ -46,7 +46,7 @@ public readonly struct Option<T> :
     }
 
 
-#region union
+    #region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public bool HasValue => _isSome && _value is not null;
@@ -73,9 +73,9 @@ public readonly struct Option<T> :
         return !_isSome;
     }
 
-#endregion
+    #endregion
 
-#region Some
+    #region Some
 
     public bool IsSome() => _isSome;
 
@@ -107,15 +107,15 @@ public readonly struct Option<T> :
         throw new InvalidOperationException($"{ToDebug()} is not Some");
     }
 
-#endregion
+    #endregion
 
-#region None
+    #region None
 
     public bool IsNone() => !_isSome;
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T>? onSome)
     {
@@ -209,9 +209,9 @@ public readonly struct Option<T> :
         return default;
     }
 
-#endregion
+    #endregion
 
-#region Logic
+    #region Logic
 
     public Option<T> Or(Option<T> other)
     {
@@ -244,9 +244,9 @@ public readonly struct Option<T> :
         return default;
     }
 
-#endregion
+    #endregion
 
-#region Linq
+    #region Linq
 
     // https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/
 
@@ -336,10 +336,10 @@ public readonly struct Option<T> :
 
     public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
 
-#endregion
+    #endregion
 
 
-#region Relation
+    #region Relation
 
     public bool Equals(Option<T> other)
     {
@@ -368,9 +368,9 @@ public readonly struct Option<T> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Display
+    #region Display
 
     internal string ToDebug()
     {
@@ -396,5 +396,5 @@ public readonly struct Option<T> :
         }
     }
 
-#endregion
+    #endregion
 }

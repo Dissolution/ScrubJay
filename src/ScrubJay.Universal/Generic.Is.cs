@@ -1,8 +1,7 @@
-using InlineIL;
 using static InlineIL.IL;
-using ScrubJay.Reflection.Lightweight.Extensions;
+using InlineIL;
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
 [PublicAPI]
 public static partial class Generic

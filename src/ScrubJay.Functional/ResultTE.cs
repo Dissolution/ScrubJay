@@ -45,7 +45,7 @@ public readonly struct Result<T, E> :
         _error = error;
     }
 
-#region union
+    #region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public bool HasValue => _isOk ? _value is not null : _error is not null;
@@ -77,9 +77,9 @@ public readonly struct Result<T, E> :
         return false;
     }
 
-#endregion
+    #endregion
 
-#region Ok
+    #region Ok
 
     public bool IsOk() => _isOk;
 
@@ -139,9 +139,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Error
+    #region Error
 
     public bool IsError() => !_isOk;
 
@@ -187,9 +187,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T>? onOk)
     {
@@ -259,9 +259,9 @@ public readonly struct Result<T, E> :
         return default;
     }
 
-#endregion
+    #endregion
 
-#region Logic
+    #region Logic
 
     public Result<T, E> Or(Result<T, E> other)
     {
@@ -272,9 +272,9 @@ public readonly struct Result<T, E> :
         return this;
     }
 
-#endregion
+    #endregion
 
-#region Linq
+    #region Linq
 
     public Result<N, E> Select<N>(Func<T, N> selector)
     {
@@ -346,9 +346,9 @@ public readonly struct Result<T, E> :
 
     public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
 
-#endregion
+    #endregion
 
-#region Relation
+    #region Relation
 
     public bool Equals(Result<T, E> other)
     {
@@ -377,9 +377,9 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Display
+    #region Display
 
     internal string ToDebug()
     {
@@ -405,5 +405,5 @@ public readonly struct Result<T, E> :
         }
     }
 
-#endregion
+    #endregion
 }

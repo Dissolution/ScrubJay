@@ -1,9 +1,10 @@
-using ScrubJay.Reflection.Lightweight.Extensions;
+
+using ScrubJay.Universal.Extensions;
 #if NET8_0_OR_GREATER
 using System.Collections.Frozen;
 #endif
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
 [PublicAPI]
 public static class TypeAlias
@@ -40,9 +41,9 @@ public static class TypeAlias
         ;
 
 
-    extension(ref DefaultInterpolatedStringHandler aliasBuilder)
+    extension(StringBuilder aliasBuilder)
     {
-        private void WriteArrayTypeAlias(Type arrayType)
+        private StringBuilder AppendArrayTypeAlias(Type arrayType)
         {
             Debug.Assert(arrayType.IsArray);
 
@@ -52,11 +53,10 @@ public static class TypeAlias
             // non-nested array is just the rank count in commas
             if (!elementType!.IsArray)
             {
-                aliasBuilder.WriteTypeAlias(elementType);
-                aliasBuilder.AppendLiteral("[");
-                aliasBuilder.AppendLiteral(new string(',', arrayType.GetArrayRank() - 1));
-                aliasBuilder.AppendLiteral("]");
-                return;
+                return aliasBuilder.AppendTypeAlias(elementType)
+                    .Append('[')
+                    .Append(',', arrayType.GetArrayRank() - 1)
+                    .Append(']');
             }
 
             // we need to print the root element type, then the array ranks in order from outmost to inmost
@@ -72,30 +72,33 @@ public static class TypeAlias
                 elementType = subElementType;
             }
 
-            aliasBuilder.WriteTypeAlias(elementType);
+            aliasBuilder.AppendTypeAlias(elementType);
+
             foreach (int rank in ranks)
             {
-                aliasBuilder.AppendFormatted("[");
-                aliasBuilder.AppendLiteral(new string(',', rank - 1));
-                aliasBuilder.AppendFormatted("]");
+                aliasBuilder.Append('[')
+                    .Append(',', rank - 1)
+                    .Append(']');
             }
+
+            return aliasBuilder;
         }
 
-        private void WriteNestedTypeAlias(Type type,
+        private StringBuilder AppendNestedTypeAlias(Type type,
             Type parent,
             Type[] genericTypes,
             ref int offset)
         {
             if (parent.IsGenericType)
             {
-                aliasBuilder.WriteNestedTypeAlias(parent, parent.ParentType!, genericTypes, ref offset);
+                aliasBuilder.AppendNestedTypeAlias(parent, parent.ParentType!, genericTypes, ref offset);
             }
             else
             {
-                aliasBuilder.AppendLiteral(parent.Name);
+                aliasBuilder.Append(parent.Name);
             }
 
-            aliasBuilder.AppendLiteral(".");
+            aliasBuilder.Append('.');
 
             if (type.IsGenericType)
             {
@@ -111,118 +114,123 @@ public static class TypeAlias
                 }
 
                 offset += count;
-                aliasBuilder.WriteNameAndGenericTypeAliases(type, slice);
+                aliasBuilder.AppendNameAndGenericTypeAliases(type, slice);
             }
             else
             {
-                aliasBuilder.AppendLiteral(type.Name);
+                aliasBuilder.Append(type.Name);
             }
+
+            return aliasBuilder;
         }
 
-        private void WriteNameAndGenericTypeAliases(Type type,
+        private StringBuilder AppendNameAndGenericTypeAliases(
+            Type type,
             scoped ReadOnlySpan<Type> genericTypes)
         {
             string name = type.Name;
-            int i = name.LastIndexOf('`', StringComparison.Ordinal);
+            int i = name.LastIndexOf('`');
             if (i >= 0)
             {
-                aliasBuilder.AppendFormatted(name.AsSpan(0, i));
+#if NETSTANDARD2_0
+                aliasBuilder.Append(name.Substring(0, i));
+#else
+                aliasBuilder.Append(name.AsSpan(0, i));
+#endif
             }
             else
             {
-                aliasBuilder.AppendLiteral(name);
+                aliasBuilder.Append(name);
             }
 
             string sep = type.IsGenericTypeDefinition ? "," : ", ";
 
             if (genericTypes.Length > 0)
             {
-                aliasBuilder.AppendLiteral("<");
-                aliasBuilder.WriteTypeAlias(genericTypes[0]);
+                aliasBuilder.Append('<');
+                aliasBuilder.AppendTypeAlias(genericTypes[0]);
                 for (i = 1; i < genericTypes.Length; i++)
                 {
-                    aliasBuilder.AppendLiteral(sep);
-                    aliasBuilder.WriteTypeAlias(genericTypes[i]);
+                    aliasBuilder.Append(sep);
+                    aliasBuilder.AppendTypeAlias(genericTypes[i]);
                 }
-                aliasBuilder.AppendLiteral(">");
+                aliasBuilder.Append('>');
             }
+
+            return aliasBuilder;
         }
 
-        private void WriteTupleTypeAlias(Type type,
+        private StringBuilder AppendTupleTypeAlias(
+            Type type,
             Type[]? genericTypes,
             bool appendParens = true)
         {
             if (appendParens)
             {
-                aliasBuilder.AppendLiteral("(");
+                aliasBuilder.Append('(');
             }
 
             genericTypes ??= type.GetGenericArguments();
 
             if (genericTypes.Length > 0)
             {
-                writeTupleItemTypeAlias(ref aliasBuilder, genericTypes[0]);
+                writeTupleItemTypeAlias(aliasBuilder, genericTypes[0]);
                 for (int i = 1; i < genericTypes.Length; i++)
                 {
-                    aliasBuilder.AppendLiteral(", ");
-                    writeTupleItemTypeAlias(ref aliasBuilder, genericTypes[i]);
+                    aliasBuilder.Append(", ");
+                    writeTupleItemTypeAlias(aliasBuilder, genericTypes[i]);
                 }
             }
 
             if (appendParens)
             {
-                aliasBuilder.AppendLiteral(")");
+                aliasBuilder.Append(')');
             }
 
-            return;
+            return aliasBuilder;
 
-            static void writeTupleItemTypeAlias(ref DefaultInterpolatedStringHandler ab, Type itemType)
+            static void writeTupleItemTypeAlias(StringBuilder ab, Type itemType)
             {
                 if (!itemType.IsTuple)
                 {
-                    ab.WriteTypeAlias(itemType);
+                    ab.AppendTypeAlias(itemType);
                 }
                 else
                 {
-                    ab.WriteTupleTypeAlias(itemType, null, false);
+                    ab.AppendTupleTypeAlias(itemType, null, false);
                 }
             }
         }
 
-        private void WriteTypeAlias(Type? type)
+        private StringBuilder AppendTypeAlias(Type? type)
         {
             if (type is null)
             {
-                aliasBuilder.AppendLiteral("typeof(null)");
-                return;
+                return aliasBuilder.Append("typeof(null)");
             }
 
             if (_cSharpSystemTypeAliases.TryGetValue(type, out var alias))
             {
-                aliasBuilder.AppendLiteral(alias);
-                return;
+                return aliasBuilder.Append(alias);
             }
 
             if (type.IsPointer)
             {
                 Debug.Assert(type.GetElementType() is not null);
-                aliasBuilder.WriteTypeAlias(type.GetElementType());
-                aliasBuilder.AppendLiteral("*");
-                return;
+                return aliasBuilder.AppendTypeAlias(type.GetElementType())
+                    .Append('*');
             }
 
             if (type.IsByRef)
             {
                 Debug.Assert(type.GetElementType() is not null);
-                aliasBuilder.WriteTypeAlias(type.GetElementType());
-                aliasBuilder.AppendLiteral("&");
-                return;
+                return aliasBuilder.AppendTypeAlias(type.GetElementType())
+                    .Append('&');
             }
 
             if (type.IsArray)
             {
-                aliasBuilder.WriteArrayTypeAlias(type);
-                return;
+                return aliasBuilder.AppendArrayTypeAlias(type);
             }
 
             Type[] genericTypes = type.GetGenericArguments();
@@ -233,36 +241,32 @@ public static class TypeAlias
                 if (parent.IsGenericType)
                 {
                     int offset = 0;
-                    aliasBuilder.WriteNestedTypeAlias(type, parent, genericTypes, ref offset);
-                    return;
+                    return aliasBuilder.AppendNestedTypeAlias(type, parent, genericTypes, ref offset);
                 }
 
-                aliasBuilder.WriteTypeAlias(parent);
-                aliasBuilder.AppendLiteral(".");
+                aliasBuilder.AppendTypeAlias(parent)
+                    .Append('.');
             }
 
             if (type.IsGenericType)
             {
                 if (type.IsTuple)
                 {
-                    aliasBuilder.WriteTupleTypeAlias(type, genericTypes);
-                    return;
+                    return aliasBuilder.AppendTupleTypeAlias(type, genericTypes);
                 }
 
                 Type? underType = Nullable.GetUnderlyingType(type);
                 if (underType is not null)
                 {
                     Debug.Assert(genericTypes.Length == 1);
-                    aliasBuilder.WriteTypeAlias(genericTypes[0]);
-                    aliasBuilder.AppendLiteral("?");
-                    return;
+                    return aliasBuilder.AppendTypeAlias(genericTypes[0])
+                        .Append('?');
                 }
 
-                aliasBuilder.WriteNameAndGenericTypeAliases(type, genericTypes);
-                return;
+                return aliasBuilder.AppendNameAndGenericTypeAliases(type, genericTypes);
             }
 
-            aliasBuilder.AppendLiteral(type.Name);
+            return aliasBuilder.Append(type.Name);
         }
     }
 
@@ -272,9 +276,7 @@ public static class TypeAlias
         if (type is null)
             return null;
 
-        DefaultInterpolatedStringHandler nameBuilder = new(64, 0);
-        nameBuilder.WriteTypeAlias(type);
-        return nameBuilder.ToStringAndClear();
+        return new StringBuilder().AppendTypeAlias(type).ToString();
     }
 
     public static string For<T>()
@@ -288,6 +290,6 @@ public static class TypeAlias
 #if NET9_0_OR_GREATER
     public static string For<I>(in I? instance)
         where I : allows ref struct
-        => For(Generic.GetType<I>(in instance));
+        => For(Anything.GetType<I>(in instance));
 #endif
 }

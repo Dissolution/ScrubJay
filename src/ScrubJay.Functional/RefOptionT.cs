@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CA1716 // Identifiers should not match keywords
 
 using System.ComponentModel;
-using ScrubJay.Reflection.Lightweight;
 using ScrubJay.Reflection.Lightweight.Extensions;
 
 namespace ScrubJay.Functional;
@@ -48,7 +47,7 @@ public readonly ref struct RefOption<T> :
     }
 
 
-#region union
+    #region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public bool HasValue => _isSome && _value is not null && Box.CanBox(_value);
@@ -87,9 +86,9 @@ public readonly ref struct RefOption<T> :
         return !_isSome;
     }
 
-#endregion
+    #endregion
 
-#region Some
+    #region Some
 
     public bool IsSome() => _isSome;
 
@@ -121,15 +120,15 @@ public readonly ref struct RefOption<T> :
         throw new InvalidOperationException($"{ToDebug()} is not Some");
     }
 
-#endregion
+    #endregion
 
-#region None
+    #region None
 
     public bool IsNone() => !_isSome;
 
-#endregion
+    #endregion
 
-#region Match
+    #region Match
 
     public void Match(Action<T>? onSome)
     {
@@ -223,9 +222,9 @@ public readonly ref struct RefOption<T> :
         return default;
     }
 
-#endregion
+    #endregion
 
-#region Logic
+    #region Logic
 
     public RefOption<T> Or(RefOption<T> other)
     {
@@ -249,9 +248,9 @@ public readonly ref struct RefOption<T> :
         return other;
     }
 
-#endregion
+    #endregion
 
-#region Linq
+    #region Linq
 
     // https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/
 
@@ -342,10 +341,10 @@ public readonly ref struct RefOption<T> :
 
     public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create<T>(this);
 
-#endregion
+    #endregion
 
 
-#region Relation
+    #region Relation
 
     public bool Equals(RefOption<T> other)
     {
@@ -375,9 +374,9 @@ public readonly ref struct RefOption<T> :
         }
     }
 
-#endregion
+    #endregion
 
-#region Display
+    #region Display
 
     internal string ToDebug()
     {
@@ -403,5 +402,5 @@ public readonly ref struct RefOption<T> :
         }
     }
 
-#endregion
+    #endregion
 }

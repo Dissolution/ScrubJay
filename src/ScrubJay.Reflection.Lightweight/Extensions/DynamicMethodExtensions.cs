@@ -43,7 +43,7 @@ public static class DynamicMethodExtensions
 
             return new(dynamicMethod);
         }
-        
+
         public static D Generate<D>(
             string methodName,
             Action<ILGenerator> generateIL,

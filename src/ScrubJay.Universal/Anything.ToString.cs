@@ -1,8 +1,10 @@
-using ScrubJay.Reflection.Lightweight.Extensions;
+using System.Reflection;
+using System.Reflection.Emit;
+using ScrubJay.Universal.Extensions;
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
-public static partial class Generic
+public static partial class Anything
 {
     [OverloadResolutionPriority(100)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -20,20 +22,18 @@ public static partial class Generic
     public static string? ToString<T>(in T? value)
         where T : allows ref struct
     {
-        return AnyToStringCache<T>.Invoke(in value);
+        return AnythingToStringCache<T>.Invoke(in value);
     }
 
-    internal delegate string? AnyToString<T>(in T? value)
+    internal delegate string? AnythingToString<T>(in T? value)
         where T : allows ref struct;
 
-    internal static class AnyToStringCache<T>
+    internal static class AnythingToStringCache<T>
         where T : allows ref struct
     {
-        private static readonly MethodInfo _objectToStringMethod = typeof(object).GetMethod(nameof(ToString), BindingFlags.Public | BindingFlags.Instance)!;
+        public static readonly AnythingToString<T> Invoke = CreateDelegate();
 
-        public static readonly AnyToString<T> Invoke = CreateDelegate();
-
-        private static AnyToString<T> CreateDelegate()
+        private static AnythingToString<T> CreateDelegate()
         {
             var type = typeof(T);
 
@@ -54,10 +54,10 @@ public static partial class Generic
             }
             else
             {
-                toStringMethod = _objectToStringMethod;
+                toStringMethod = Reflect.Object_ToString;
             }
 
-            var dynamicMethod = DynamicMethod.Create<AnyToString<T>>($"Any_{type.Alias}_ToString");
+            var dynamicMethod = Reflect.CreateDynamicMethod<AnythingToString<T>>($"Anything_ToString_{type.Alias}");
             var generator = dynamicMethod.GetILGenerator();
 
             // Do we have to emit a null check?
@@ -82,7 +82,7 @@ public static partial class Generic
             generator.Emit(OpCodes.Callvirt, toStringMethod);
             generator.Emit(OpCodes.Ret);
 
-            return dynamicMethod.CreateDelegate();
+            return dynamicMethod.CreateDelegate<AnythingToString<T>>();
         }
     }
 #endif

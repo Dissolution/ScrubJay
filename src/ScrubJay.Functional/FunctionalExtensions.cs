@@ -17,7 +17,7 @@ public static class FunctionalExtensions
             return default;
         }
     }
-    
+
     extension<E, T>(E enumerator)
         where E : class, IEnumerator<T>
     {

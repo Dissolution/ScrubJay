@@ -2,11 +2,12 @@
 
 // ReSharper disable MethodOverloadWithOptionalParameter
 
-using ScrubJay.Reflection.Lightweight.Extensions;
+using System.Reflection.Emit;
+using ScrubJay.Universal.Extensions;
 
-namespace ScrubJay.Reflection.Lightweight;
+namespace ScrubJay.Universal;
 
-public static partial class Generic
+public static partial class Anything
 {
     [OverloadResolutionPriority(100)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -24,21 +25,18 @@ public static partial class Generic
     public static Type GetType<T>(in T? value)
         where T : allows ref struct
     {
-        return AnyGetTypeCache<T>.Invoke(in value);
+        return AnythingGetTypeCache<T>.Invoke(in value);
     }
 
-    internal delegate Type AnyGetType<T>(in T? value)
+    internal delegate Type AnythingGetType<T>(in T? value)
         where T : allows ref struct;
 
-    internal static class AnyGetTypeCache<T>
+    internal static class AnythingGetTypeCache<T>
         where T : allows ref struct
     {
-        private static readonly MethodInfo _objectGetTypeMethod = typeof(object).GetMethod(nameof(GetType), BindingFlags.Public | BindingFlags.Instance)!;
-        private static readonly MethodInfo _typeGetTypeFromHandleMethod = typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), BindingFlags.Public | BindingFlags.Static)!;
+        public static readonly AnythingGetType<T> Invoke = CreateDelegate();
 
-        public static readonly AnyGetType<T> Invoke = CreateDelegate();
-
-        private static AnyGetType<T> CreateDelegate()
+        private static AnythingGetType<T> CreateDelegate()
         {
             var type = typeof(T);
 
@@ -50,7 +48,7 @@ public static partial class Generic
 
             // An instance of T may be more or less specific than T, so we have to call GetType
 
-            var dynamicMethod = DynamicMethod.Create<AnyGetType<T>>($"Any_{type.Alias}_GetType");
+            var dynamicMethod = Reflect.CreateDynamicMethod<AnythingGetType<T>>($"Anything_GetType_{type.Alias}");
             var generator = dynamicMethod.GetILGenerator();
 
             // Do we have to emit a null check?
@@ -63,7 +61,7 @@ public static partial class Generic
 
                 // instance is null, return typeof(T)
                 generator.Emit(OpCodes.Ldtoken, type);
-                generator.Emit(OpCodes.Call, _typeGetTypeFromHandleMethod);
+                generator.Emit(OpCodes.Call, Reflect.Type_GetTypeFromHandle);
                 generator.Emit(OpCodes.Ret);
 
                 // instance is not null, continue
@@ -73,10 +71,10 @@ public static partial class Generic
             // call `instance.GetType() -> Type`
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Constrained, type);
-            generator.Emit(OpCodes.Callvirt, _objectGetTypeMethod);
+            generator.Emit(OpCodes.Callvirt, Reflect.Object_GetType);
             generator.Emit(OpCodes.Ret);
 
-            return dynamicMethod.CreateDelegate();
+            return dynamicMethod.CreateDelegate<AnythingGetType<T>>();
         }
     }
 #endif

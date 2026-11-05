@@ -40,7 +40,12 @@
     <Folder Name="/1 - Source/Polyfills/">
         <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
     </Folder>
-
+    <!-- 1.5 - Universal -->
+    <Folder Name="/1 - Source/Universal/">
+        <Project Path="src/ScrubJay.Universal/ScrubJay.Universal.csproj"/>
+    </Folder>
+    
+    
     <!-- 2 - Sandboxes -->
     <Folder Name="/2 - Sandboxes/">
         <File Path="sandboxes/Directory.Build.props"/>

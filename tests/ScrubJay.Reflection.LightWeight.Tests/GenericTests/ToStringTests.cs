@@ -1,5 +1,3 @@
-using ScrubJay.Reflection.Lightweight;
-
 namespace ScrubJay.Reflection.LightWeight.Tests.GenericTests;
 
 public class ToStringTests
@@ -9,7 +7,7 @@ public class ToStringTests
     {
         string? toString;
         string? genericToString;
-        
+
         ReadOnlySpan<char> text = "TRJ";
         toString = text.ToString();
         genericToString = Generic.ToString(in text);

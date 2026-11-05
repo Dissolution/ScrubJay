@@ -3,7 +3,7 @@ namespace ScrubJay.Functional;
 [PublicAPI]
 public static partial class Result
 {
-#region Try
+    #region Try
 
     public static Result<Unit, Exception> Try(Action? action)
     {
@@ -69,6 +69,6 @@ public static partial class Result
         }
     }
 
-#endregion
+    #endregion
 
 }
