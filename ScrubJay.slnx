@@ -1,6 +1,7 @@
 <Solution>
-    <!-- 0 - Common Files -->
-    <Folder Name="/0 - Common Files/">
+    <!-- 0 - Common -->
+    <Folder Name="/0 - Common/"/>
+    <Folder Name="/0 - Common/Configuration/">
         <File Path=".editorconfig"/>
         <File Path=".gitattributes"/>
         <File Path=".gitignore"/>
@@ -13,53 +14,42 @@
         <File Path="LICENSE.txt"/>
         <File Path="README.md"/>
     </Folder>
-    <Folder Name="/0 - Common Files/docs/">
+    <Folder Name="/0 - Common/Configuration/Sources/">
+        <File Path="src/Directory.Build.props"/>
+    </Folder>
+    <Folder Name="/0 - Common/Configuration/Tests/">
+        <File Path="tests/Directory.Build.props"/>
+    </Folder>
+    <Folder Name="/0 - Common/Documentation/">
         <File Path="docs/utils.md"/>
         <File Path="docs/packages.md"/>
     </Folder>
-
-    <!-- 1 - Source -->
-    <Folder Name="/1 - Source/">
-        <File Path="src/Directory.Build.props"/>
+    <!-- 1 - Generics -->
+    <Folder Name="/1 - Generics/">
+        <Project Path="src/ScrubJay.Generics/ScrubJay.Generics.csproj"/>
+        <Project Path="tests/ScrubJay.Generics.Tests/ScrubJay.Generics.Tests.csproj"/>
     </Folder>
-    <!-- 1.1 - Reflection -->
-    <Folder Name="/1 - Source/Reflection/">
-
-    </Folder>
-    <Folder Name="/1 - Source/Reflection/Lightweight/">
-        <Project Path="src/ScrubJay.Reflection.Lightweight/ScrubJay.Reflection.Lightweight.csproj"/>
-    </Folder>
-    <Folder Name="/1 - Source/Reflection/Emission/">
-        <Project Path="src/ScrubJay.Reflection.Emission/ScrubJay.Reflection.Emission.csproj"/>
-    </Folder>
-    <!-- 1.2 - Functional -->
-    <Folder Name="/1 - Source/Functional/">
+    <!-- 2 - Functional -->
+    <Folder Name="/2 - Functional/">
         <Project Path="src/ScrubJay.Functional/ScrubJay.Functional.csproj"/>
+        <Project Path="tests/ScrubJay.Functional.Tests/ScrubJay.Functional.Tests.csproj"/>
     </Folder>
-    <!-- 1.3 - Polyfills -->
-    <Folder Name="/1 - Source/Polyfills/">
-        <Project Path="src/ScrubJay.Polyfills/ScrubJay.Polyfills.csproj"/>
+
+    <!-- 3 - Core -->
+    <Folder Name="/3 - Core/">
+        <Project Path="src/ScrubJay.Core/ScrubJay.Core.csproj"/>
+        <Project Path="tests/ScrubJay.Core.Tests/ScrubJay.Core.Tests.csproj"/>
     </Folder>
-    <!-- 1.5 - Universal -->
-    <Folder Name="/1 - Source/Universal/">
-        <Project Path="src/ScrubJay.Universal/ScrubJay.Universal.csproj"/>
+
+    <!-- 4 - Testing -->
+    <Folder Name="/4 - Testing/">
+        <Project Path="src/ScrubJay.Testing/ScrubJay.Testing.csproj"/>
+        <Project Path="tests/ScrubJay.Testing.Tests/ScrubJay.Testing.Tests.csproj"/>
     </Folder>
-    
-    
-    <!-- 2 - Sandboxes -->
-    <Folder Name="/2 - Sandboxes/">
+
+    <!-- 5 - Sandboxes -->
+    <Folder Name="/5 - Sandboxes/">
         <File Path="sandboxes/Directory.Build.props"/>
         <Project Path="sandboxes/console/ScrubJay.Sandboxes.ConsoleApp.csproj"/>
-    </Folder>
-
-    <!-- 3 - Tests -->
-    <Folder Name="/3 - Tests/">
-        <File Path="tests/Directory.Build.props"/>
-        <Project Path="tests/ScrubJay.Reflection.LightWeight.Tests/ScrubJay.Reflection.LightWeight.Tests.csproj"/>
-    </Folder>
-
-    <!-- 4 - Benchmarks -->
-    <Folder Name="/4 - Benchmarks/">
-        <File Path="tests/Directory.Build.props"/>
     </Folder>
 </Solution>

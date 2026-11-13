@@ -6,10 +6,10 @@
         <TargetFramework>net11.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\src\ScrubJay.Functional\ScrubJay.Functional.csproj" />
-      <ProjectReference Include="..\..\src\ScrubJay.Reflection.Emission\ScrubJay.Reflection.Emission.csproj" />
+        <ProjectReference Include="..\..\src\ScrubJay.Generics\ScrubJay.Generics.csproj"/>
+        <ProjectReference Include="..\..\src\ScrubJay.Functional\ScrubJay.Functional.csproj"/>
     </ItemGroup>
-    
+
     <PropertyGroup>
         <AnyGetHashCodeRefStructBehavior>Address</AnyGetHashCodeRefStructBehavior>
     </PropertyGroup>

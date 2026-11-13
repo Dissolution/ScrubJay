@@ -1,7 +1,0 @@
-<Project>
-    <ItemGroup>
-        <RuntimeHostConfigurationOption Include="ScrubJay.Reflection.Lightweight.AnyGetHashCodeRefStructBehavior"
-                                        Value="$(AnyGetHashCodeRefStructBehavior)"
-                                        Condition="'$(AnyGetHashCodeRefStructBehavior)' != ''" />
-    </ItemGroup>
-</Project>
