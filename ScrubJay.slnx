@@ -49,7 +49,6 @@
 
     <!-- 5 - Sandboxes -->
     <Folder Name="/5 - Sandboxes/">
-        <File Path="sandboxes/Directory.Build.props"/>
         <Project Path="sandboxes/console/ScrubJay.Sandboxes.ConsoleApp.csproj"/>
         <Project Path="sandboxes/scratch/ScrubJay.Sandboxes.Scratch.csproj"/>
     </Folder>
