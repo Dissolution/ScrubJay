@@ -67,7 +67,7 @@ public static partial class Anything
                 // class types we can use ReferenceEquals
                 if (!type.IsValueType)
                 {
-                    return static (in left, in right) => object.ReferenceEquals(UnsafeBox(left), UnsafeBox(right));
+                    return static (in left, in right) => object.ReferenceEquals(BoxShim(left), BoxShim(right));
                 }
 
                 // no default behavior -> use AreSame?

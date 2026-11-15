@@ -4,6 +4,10 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <Using Include="ScrubJay.Functional.Extensions"/>
+    </ItemGroup>
+    
+    <ItemGroup>
         <PackageReference Include="Nullable">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

@@ -41,7 +41,7 @@ public class AnyGetTypeTests
     public void ObjectInstanceGetTypeWorks(object? instance, Type? expectedType)
     {
         var getType = instance?.GetType();
-        var anyGetType = Generic.GetType(instance);
+        var anyGetType = Anything.GetType(instance);
         Assert.Equal(expectedType, anyGetType);
     }
 
@@ -50,7 +50,7 @@ public class AnyGetTypeTests
     public void GenericInstanceGetTypeWorks<I>(I? instance, Type? expectedType)
     {
         var getType = instance?.GetType();
-        var anyGetType = Generic.GetType(instance);
+        var anyGetType = Anything.GetType(instance);
         Assert.Equal(expectedType, anyGetType);
     }
 
@@ -75,7 +75,7 @@ public class AnyGetTypeTests
         static Type? testGetType<I>(in I? instance)
             where I : allows ref struct
         {
-            return Generic.GetType<I>(in instance);
+            return Anything.GetType<I>(in instance);
         }
     }
 }

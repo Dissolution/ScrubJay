@@ -1,12 +1,12 @@
 ﻿#pragma warning disable CA1716 // Identifiers should not match keywords
 
 using System.ComponentModel;
-using ScrubJay.Reflection.Lightweight.Extensions;
+using ScrubJay.Generics.Extensions;
 
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-[DebuggerDisplay("{ToDebug,nq}")]
+[DebuggerDisplay("{Display,nq}")]
 [Union]
 [StructLayout(LayoutKind.Auto)]
 public readonly struct Option<T> :
@@ -14,7 +14,10 @@ public readonly struct Option<T> :
     IEquatable<Option<T>>,
     IEnumerable<T>
 {
-    public static implicit operator bool(in Option<T> option) => option._isSome;
+    public static implicit operator bool(Option<T> option) => option._isSome;
+
+    public static implicit operator Option<T>(Option.None _) => default;
+    public static implicit operator Option<T>(T value) => new(value);
 
     public static bool operator true(Option<T> option) => option._isSome;
     public static bool operator false(Option<T> option) => !option._isSome;
@@ -22,9 +25,7 @@ public readonly struct Option<T> :
     public static bool operator ==(Option<T> left, Option<T> right) => left.Equals(right);
     public static bool operator !=(Option<T> left, Option<T> right) => !left.Equals(right);
 
-
     public static Option<T> operator |(Option<T> left, Option<T> right) => left.Or(right);
-
     public static Option<T> operator ^(Option<T> left, Option<T> right) => left.Xor(right);
 
     public static Option<T> Some(T value) => new Option<T>(value);
@@ -33,20 +34,24 @@ public readonly struct Option<T> :
     internal readonly bool _isSome;
     internal readonly T? _value;
 
+    public Option()
+    {
+        this = default;
+    }
+
+    public Option(Option.None _)
+    {
+        this = default;
+    }
+
     public Option(T some)
     {
         _isSome = true;
         _value = some;
     }
 
-    public Option(Option.None _)
-    {
-        _isSome = false;
-        _value = default;
-    }
 
-
-    #region union
+#region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public bool HasValue => _isSome && _value is not null;
@@ -73,9 +78,9 @@ public readonly struct Option<T> :
         return !_isSome;
     }
 
-    #endregion
+#endregion
 
-    #region Some
+#region Some
 
     public bool IsSome() => _isSome;
 
@@ -104,18 +109,18 @@ public readonly struct Option<T> :
     {
         if (_isSome)
             return _value!;
-        throw new InvalidOperationException($"{ToDebug()} is not Some");
+        throw new InvalidOperationException($"{Display()} is not Some");
     }
 
-    #endregion
+#endregion
 
-    #region None
+#region None
 
     public bool IsNone() => !_isSome;
 
-    #endregion
+#endregion
 
-    #region Match
+#region Match
 
     public void Match(Action<T>? onSome)
     {
@@ -209,9 +214,9 @@ public readonly struct Option<T> :
         return default;
     }
 
-    #endregion
+#endregion
 
-    #region Logic
+#region Logic
 
     public Option<T> Or(Option<T> other)
     {
@@ -235,18 +240,9 @@ public readonly struct Option<T> :
         return other;
     }
 
-    public Option<(T, T)> And(Option<T> other)
-    {
-        if (_isSome && other._isSome)
-        {
-            return (_value!, other._value!);
-        }
-        return default;
-    }
+#endregion
 
-    #endregion
-
-    #region Linq
+#region Linq
 
     // https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/
 
@@ -329,17 +325,16 @@ public readonly struct Option<T> :
 
     public IEnumerable<T> ToEnumerable() => ValueEnumerator.Create(this);
 
-
     IEnumerator IEnumerable.GetEnumerator() => ValueEnumerator.Create(this);
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => ValueEnumerator.Create(this);
 
     public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
 
-    #endregion
+#endregion
 
 
-    #region Relation
+#region Relation
 
     public bool Equals(Option<T> other)
     {
@@ -347,14 +342,11 @@ public readonly struct Option<T> :
         {
             return other._isSome && EqualityComparer<T>.Default.Equals(_value, other._value);
         }
-        else
-        {
-            return !other._isSome;
-        }
+        return !other._isSome;
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
-        => obj is Option<T> option && Equals(option);
+        => obj is Option<T> other && Equals(other);
 
     public override int GetHashCode()
     {
@@ -368,11 +360,11 @@ public readonly struct Option<T> :
         }
     }
 
-    #endregion
+#endregion
 
-    #region Display
+#region Display
 
-    internal string ToDebug()
+    public string Display()
     {
         if (_isSome)
         {
@@ -396,5 +388,5 @@ public readonly struct Option<T> :
         }
     }
 
-    #endregion
+#endregion
 }

@@ -6,13 +6,48 @@ public static class OptionExtensions
     extension<T>(Option<T> option)
         where T : struct
     {
-        public Nullable<T> AsNullable()
+        public Nullable<T> ToNullable()
         {
             if (option._isSome)
                 return option._value!;
             return null;
         }
     }
+
+    extension<T>(Nullable<T> nullable)
+        where T : struct
+    {
+        public Option<T> ToOption()
+        {
+            if (nullable.HasValue)
+            {
+                return nullable.GetValueOrDefault();
+            }
+            return default;
+        }
+    }
+
+#region Equatable
+
+    extension<T>(Option<T>)
+        where T : IEquatable<T>
+    {
+        public static bool operator ==(Option<T> option, T? value) => option._isSome && EqualityComparer<T>.Default.Equals(option._value, value);
+        public static bool operator !=(Option<T> option, T? value) => !option._isSome || !EqualityComparer<T>.Default.Equals(option._value, value);
+    }
+
+    extension<T>(Option<T> option)
+        where T : IEquatable<T>
+    {
+        public bool Equals(T? value)
+        {
+            return option._isSome && EqualityComparer<T>.Default.Equals(option._value, value);
+        }
+    }
+
+#endregion
+
+#region Comparision
 
     extension<T>(Option<T>)
         where T : IComparable<T>
@@ -23,7 +58,7 @@ public static class OptionExtensions
         public static bool operator <=(Option<T> left, Option<T> right) => left.CompareTo(right) <= 0;
     }
 
-    extension<T>(ref readonly Option<T> option)
+    extension<T>(Option<T> option)
         where T : IComparable<T>
     {
         public int CompareTo(Option<T> other)
@@ -53,7 +88,11 @@ public static class OptionExtensions
         }
     }
 
-    extension<T>(ref readonly Option<T> option)
+#endregion
+
+#region Formatting
+
+    extension<T>(Option<T> option)
         where T : IFormattable
     {
         public string ToString(string? format, IFormatProvider? provider = null)
@@ -65,4 +104,26 @@ public static class OptionExtensions
             return nameof(Option.None);
         }
     }
+
+    extension<T>(Option<T> option)
+        where T : ISpanFormattable
+    {
+        public bool TryFormat(Span<char> destination, out int charsWritten, text format = default, IFormatProvider? provider = null)
+        {
+            if (option._isSome)
+            {
+                if (option._value is null)
+                {
+                    charsWritten = 0;
+                    return true;
+                }
+
+                return option._value.TryFormat(destination, out charsWritten, format, provider);
+            }
+
+            return ((ISpanFormattable)default(Option.None)).TryFormat(destination, out charsWritten, format, provider);
+        }
+    }
+
+#endregion
 }

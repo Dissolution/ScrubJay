@@ -10,22 +10,22 @@ public class ToStringTests
 
         ReadOnlySpan<char> text = "TRJ";
         toString = text.ToString();
-        genericToString = Anythhing.ToString(in text);
+        genericToString = Anything.ToString(in text);
         Assert.Equal(toString, genericToString);
 
         Span<byte> bytes = [1, 4, 7, 10, 13];
         toString = bytes.ToString();
-        genericToString = Generic.ToString(in bytes);
+        genericToString = Anything.ToString(in bytes);
         Assert.Equal(toString, genericToString);
 
         DefaultInterpolatedStringHandler dish = $"Hello, {text}";
         toString = dish.ToString();
-        genericToString = Generic.ToString(in dish);
+        genericToString = Anything.ToString(in dish);
         Assert.Equal(toString, genericToString);
 
         FullTestRefStruct ftrf = new FullTestRefStruct(147, "TRJ");
         toString = ftrf.ToString();
-        genericToString = Generic.ToString(in ftrf);
+        genericToString = Anything.ToString(in ftrf);
         Assert.Equal(toString, genericToString);
     }
 }

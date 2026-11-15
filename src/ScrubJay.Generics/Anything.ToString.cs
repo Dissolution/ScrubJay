@@ -6,6 +6,11 @@ namespace ScrubJay.Generics;
 
 public static partial class Anything
 {
+
+
+
+
+
     [OverloadResolutionPriority(100)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string? ToString<T>(T? value)
@@ -17,6 +22,25 @@ public static partial class Anything
 
 #if NET9_0_OR_GREATER
 
+    [OverloadResolutionPriority(75)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string? ToString<T>(T? value, Constrain.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        if (!typeof(T).IsValueType)
+        {
+            return AsObject(ref value)?.ToString();
+        }
+
+        // Nullable<T>.ToString() returns "" when empty; null matches the reference-type and by-value overloads.
+        //if (TypeFacts<T>.IsNullable)
+        //{
+        //    return BoxNullable(ref value)?.ToString();
+        //}
+
+        return AnythingToStringCache<T>.Invoke(in value);
+    }
+    
     [OverloadResolutionPriority(90)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string? ToString<T>(in T? value)

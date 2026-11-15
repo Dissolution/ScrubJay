@@ -59,82 +59,10 @@ public static partial class Anything
     }
 
 #if NET9_0_OR_GREATER
-
-    /*
-
-     - Boxing, Unboxing, and ref-structs.
-
-     The #1 issue with boxing and the `allows ref struct` anti-constraint is how the compiler treats those `T` values - like they are radioactive.
-
-     If we want to support this signature:
-     ```csharp
-      public static bool TryBox<T>(T? instance, out object? boxed)
-        where T : allows ref struct
-     ```
-
-     We have several issues. Even after we guard on T with something like:
-     ```csharp
-     if (typeof(T).IsByRefLike)
-     {
-        boxed = null;
-        return false;
-     }
-     ```
-
-     We have failures:
-
-     - Fail #1
-
-     If we just try to use the same code as `TryBox`:
-     ```csharp
-     boxed = (object?)value;
-     return true;
-     ```
-
-     There is a compiler error: `Cannot cast expression of type 'T?' to type 'object?'`
-
-     - Fail #2
-
-     If we just try to use `InlineIL.Emit` to emit that code:
-     ```csharp
-     Emit.Ldarg(nameof(boxed));
-     Emit.Ldarg(nameof(value));
-     Emit.Box(typeof(T));
-     Emit.Stind_Ref();
-     Emit.Ldc_I4_1();
-     Emit.Ret();
-     throw Unreachable();
-     ```
-
-     There is instead a _runtime_ error whenever any `ref struct` is used as a `T`: `System.InvalidProgramException: Common Language Runtime detected an invalid program.`
-
-     - Fail #3
-
-     If we use a guard and then try to call `TryBox`:
-     ```csharp
-
-     ```
-
-         Fail 3 - Just calling the TryBox:
-         ```
-         Emit.Ldarg(nameof(value));
-         Emit.Ldarg(nameof(boxed));
-         Emit.Call(MethodRef.Method(typeof(Any), nameof(TryBox), [typeof(T), typeof(object).MakeByRefType()]).MakeGenericMethod(typeof(T)));
-         Emit.Ret();
-         throw Unreachable();
-         ```
-         - Runtime error with `ref struct`: `System.Security.VerificationException: type argument 'XXX' violates the constraint of type parameter 'T'.
-
-         After a bit of tinkering, I came up with a clever hack:
-         We can still use `Emit` - instead of boxing the value in this method, we box the value in another method.
-         That method can still have the `where T : allows ref struct` constraint, but as no instance of it with a `ref struct` T will ever
-         be used (as it is gated behind the above check), it will never complain.
-       */
-
     [UsedImplicitly]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static object UnsafeBoxImpl<T>(T value)
-        where T : allows ref struct //, but _never_ will be
+    private static object UnsafeBox<T>(T value)
+        where T : allows ref struct // same as below, but since this is never called, no version with a ref-struct T will be compiled, and thus the Box<T> will never complain!
     {
         Emit.Ldarg(nameof(value));
         Emit.Box<T>();
@@ -143,11 +71,11 @@ public static partial class Anything
 
     [UsedImplicitly]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static object UnsafeBox<T>(T value)
-        where T : allows ref struct
+    internal static object BoxShim<T>(T value)
+        where T : allows ref struct // this constraint has to exist to get past the call from TryBox, but this method will never be passed a ref-struct T value.
     {
         Emit.Ldarg(nameof(value));
-        Emit.Call(new MethodRef(typeof(Anything), nameof(UnsafeBoxImpl)).MakeGenericMethod(typeof(T)));
+        Emit.Call(new MethodRef(typeof(Anything), nameof(UnsafeBox)).MakeGenericMethod(typeof(T)));
         return Return<object>();
     }
 
@@ -167,27 +95,11 @@ public static partial class Anything
 
         Emit.Ldarg(nameof(boxed));
         Emit.Ldarg(nameof(value));
-        Emit.Box(typeof(T));
+        Emit.Call(new MethodRef(typeof(Anything), nameof(BoxShim)).MakeGenericMethod(typeof(T)));
         Emit.Stind_Ref();
         Emit.Ldc_I4_1();
         Emit.Ret();
         throw Unreachable();
-
-
-        //// ref structs cannot be boxed
-        //if (GetType<T>(in value).IsByRefLike)
-        //{
-        //    boxed = null;
-        //    return false;
-        //}
-//
-        //Emit.Ldarg(nameof(boxed));
-        //Emit.Ldarg(nameof(value));
-        //Emit.Call(new MethodRef(typeof(Anything), nameof(UnsafeBoxImpl)).MakeGenericMethod(typeof(T)));
-        //Emit.Stind_Ref();
-        //Emit.Ldc_I4_1();
-        //Emit.Ret();
-        //throw Unreachable();
     }
 #endif
 
@@ -196,6 +108,7 @@ public static partial class Anything
 #region Box
 
     // re-interpret a `ref T` into a `ref object skipping all checks (not a box, we 'know' that T is a non-value type)
+    [UsedImplicitly]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ref object? AsObject<T>(ref T value)
 #if NET9_0_OR_GREATER
@@ -205,10 +118,61 @@ public static partial class Anything
         return ref Unsafe.As<T, object?>(ref value);
     }
 
-#endregion
+#if NET9_0_OR_GREATER
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static object? BoxNullable<T>(ref T value)
+        where T : allows ref struct
+    {
+        return RuntimeHelpers.Box(ref Unsafe.As<T, byte>(ref value), typeof(T).TypeHandle);
+    }
+#endif
+
+    [OverloadResolutionPriority(100)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(instance))]
+    public static object? BoxedOrDefault<T>(T? instance)
+    {
+        return (object?)instance;
+    }
+
+#if NET9_0_OR_GREATER
+    [OverloadResolutionPriority(75)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(instance))]
+    public static object? BoxedOrDefault<T>(T? instance, Constrain.AllowsRefStruct<T> _ = default)
+        where T : allows ref struct
+    {
+        if (TryBox<T>(instance, out var boxed))
+            return boxed;
+        return null;
+    }
+
+#endif
 
 #endregion
 
+#endregion
+
+#region Unboxing
+
+#region CanUnbox
+
+    public static bool CanUnboxAs(object? boxed, Type? type)
+    {
+        if (type is null)
+            return boxed is null;
+        return type.IsInstanceOfType(boxed);
+    }
+
+    public static bool CanUnboxAs<T>(object? boxed)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    {
+        return boxed is T;
+    }
+
+#endregion
 
 #region TryUnbox
 
@@ -262,6 +226,8 @@ public static partial class Anything
 
         throw Unreachable();
     }
+
+#endregion
 
 #endregion
 }

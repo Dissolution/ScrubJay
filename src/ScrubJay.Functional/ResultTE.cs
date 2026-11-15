@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.ExceptionServices;
-using ScrubJay.Reflection.Lightweight.Extensions;
+using ScrubJay.Generics.Extensions;
 
 namespace ScrubJay.Functional;
 
 [PublicAPI]
-[DebuggerDisplay("{ToDebug,nq}")]
+[DebuggerDisplay("{Display(),nq}")]
 [Union]
 [StructLayout(LayoutKind.Auto)]
 public readonly struct Result<T, E> :
@@ -13,7 +13,10 @@ public readonly struct Result<T, E> :
     IEquatable<Result<T, E>>,
     IEnumerable<T>
 {
-    public static implicit operator bool(in Result<T, E> result) => result._isOk;
+    public static implicit operator bool(Result<T, E> result) => result._isOk;
+    public static implicit operator Result<T, E>(T value) => new(value);
+    public static implicit operator Result<T, E>(E error) => new(error);
+    public static explicit operator Option<T>(Result<T, E> result) => result.ToOption();
 
     public static bool operator true(Result<T, E> result) => result._isOk;
     public static bool operator false(Result<T, E> result) => !result._isOk;
@@ -45,7 +48,7 @@ public readonly struct Result<T, E> :
         _error = error;
     }
 
-    #region union
+#region union
 
     [DebuggerHidden, EditorBrowsable(EditorBrowsableState.Never)]
     public bool HasValue => _isOk ? _value is not null : _error is not null;
@@ -77,9 +80,9 @@ public readonly struct Result<T, E> :
         return false;
     }
 
-    #endregion
+#endregion
 
-    #region Ok
+#region Ok
 
     public bool IsOk() => _isOk;
 
@@ -122,26 +125,32 @@ public readonly struct Result<T, E> :
         return getFallback()!;
     }
 
+    public T? OkOrDefault()
+    {
+        if (_isOk)
+            return _value!;
+        return default;
+    }
+
     public T OkOrThrow()
     {
         if (_isOk)
         {
             return _value!;
         }
-        else
-        {
-            if (_error is Exception exception)
-            {
-                ExceptionDispatchInfo.Throw(exception);
-            }
 
-            throw new InvalidOperationException($"{ToDebug()} is not Ok");
+        if (_error is Exception exception)
+        {
+            ExceptionDispatchInfo.Throw(exception);
+            throw new UnreachableException();
         }
+
+        throw new InvalidOperationException($"{Display()} is not Ok");
     }
 
-    #endregion
+#endregion
 
-    #region Error
+#region Error
 
     public bool IsError() => !_isOk;
 
@@ -162,12 +171,33 @@ public readonly struct Result<T, E> :
     {
         if (!_isOk)
         {
-            return Option<E>.Some(_error!);
+            return _error!;
         }
         else
         {
             return default;
         }
+    }
+
+    public E ErrorOr(E fallback)
+    {
+        if (!_isOk)
+            return _error!;
+        return fallback!;
+    }
+
+    public E ErrorOr(Func<E> getFallback)
+    {
+        if (!_isOk)
+            return _error!;
+        return getFallback()!;
+    }
+
+    public E? ErrorOrDefault()
+    {
+        if (!_isOk)
+            return _error!;
+        return default;
     }
 
     public E ErrorOrThrow()
@@ -176,20 +206,13 @@ public readonly struct Result<T, E> :
         {
             return _error!;
         }
-        else
-        {
-            if (_value is Exception exception)
-            {
-                ExceptionDispatchInfo.Throw(exception);
-            }
 
-            throw new InvalidOperationException($"{ToDebug()} is not an Error");
-        }
+        throw new InvalidOperationException($"{Display()} is not an Error.");
     }
 
-    #endregion
+#endregion
 
-    #region Match
+#region Match
 
     public void Match(Action<T>? onOk)
     {
@@ -259,40 +282,35 @@ public readonly struct Result<T, E> :
         return default;
     }
 
-    #endregion
+#endregion
 
-    #region Logic
-
-    public Result<T, E> Or(Result<T, E> other)
-    {
-        if (_isOk)
-            return this;
-        if (other._isOk)
-            return other;
-        return this;
-    }
-
-    #endregion
-
-    #region Linq
+#region Linq
 
     public Result<N, E> Select<N>(Func<T, N> selector)
     {
         ArgumentNullException.ThrowIfNull(selector);
+
         if (_isOk)
-        {
             return selector(_value!);
-        }
-        return default;
+
+        return _error!;
+    }
+
+    public Result<N, E> Select<N>(Func<T, Result<N, E>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(selector);
+
+        if (_isOk)
+            return selector(_value!);
+
+        return _error!;
     }
 
     public Result<N, E> SelectMany<N>(Func<T, Result<N, E>> selector)
     {
         ArgumentNullException.ThrowIfNull(selector);
         if (_isOk)
-        {
             return selector(_value!);
-        }
         return _error!;
     }
 
@@ -313,7 +331,7 @@ public readonly struct Result<T, E> :
                 return error!;
             }
         }
-        return default;
+        return _error!;
     }
 
     public bool All(Func<T, bool> predicate)
@@ -346,9 +364,9 @@ public readonly struct Result<T, E> :
 
     public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
 
-    #endregion
+#endregion
 
-    #region Relation
+#region Relation
 
     public bool Equals(Result<T, E> other)
     {
@@ -377,11 +395,20 @@ public readonly struct Result<T, E> :
         }
     }
 
-    #endregion
+#endregion
 
-    #region Display
+    public Option<T> ToOption()
+    {
+        if (_isOk)
+        {
+            return _value!;
+        }
+        return default;
+    }
 
-    internal string ToDebug()
+#region Display
+
+    public string Display()
     {
         if (_isOk)
         {
@@ -405,5 +432,5 @@ public readonly struct Result<T, E> :
         }
     }
 
-    #endregion
+#endregion
 }

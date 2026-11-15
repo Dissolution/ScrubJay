@@ -199,6 +199,13 @@ public static class Constrain
         where T : IEquatable<T>;
 
     /// <summary>
+    /// Type argument <typeparamref name="T"/> must implement the <see cref="IEquatable{TOther}"/> <see langword="interface"/>.
+    /// </summary>
+    [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+    public readonly struct HasIEquatable<T, TOther>
+        where T : IEquatable<TOther>;
+
+    /// <summary>
     /// Type argument <typeparamref name="T"/> must implement the <see cref="IEquatable{T}"/> <see langword="interface"/>.
     /// </summary>
     [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
@@ -310,16 +317,65 @@ public static class Constrain
 
 #region Anti-Constraints
 
-#if NET9_0_OR_GREATER
-
 #region Allows Ref Struct
+
+    // ReSharper disable MemberHidesStaticFromOuterClass
 
     [PublicAPI]
     public static class AllowsRefStruct
     {
         [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
         public readonly struct HasIEquatable<T>
-            where T : IEquatable<T>, allows ref struct;
+            where T : IEquatable<T>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        ;
+
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIEquatable<L, R>
+            where L : IEquatable<R>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+            where R : allows ref struct
+#endif
+        ;
+
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIComparable<T>
+            where T : IComparable<T>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        ;
+
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIComparable<L, R>
+            where L : IComparable<R>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+            where R : allows ref struct
+#endif
+        ;
+
+
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasIFormattable<T>
+            where T : IFormattable
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        ;
+
+#if NET6_0_OR_GREATER
+        [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
+        public readonly struct HasISpanFormattable<T>
+            where T : ISpanFormattable
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        ;
+#endif
     }
 
     /// <summary>
@@ -329,11 +385,14 @@ public static class Constrain
     /// <seealso href="https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters#allows-ref-struct"/>
     [StructLayout(LayoutKind.Auto, Size = 0, Pack = 0)]
     public readonly struct AllowsRefStruct<T>
-        where T : allows ref struct;
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
+    ;
+
+    // ReSharper restore MemberHidesStaticFromOuterClass
 
 #endregion /Allows Ref Struct
-
-#endif
 
 #endregion /Anti-Constraints
 }
