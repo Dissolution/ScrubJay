@@ -14,6 +14,19 @@
 
     <ItemGroup>
         <PackageReference Include="Polyfill"/>
+        <PackageReference Include="Fody" PrivateAssets="all"/>
+        <PackageReference Include="InlineIL.Fody" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="ScrubJay.Generics"/>
+        <Using Include="ScrubJay.Functional"/>
+        <Using Include="ScrubJay.Functional.Extensions"/>
+        <Using Include="ScrubJay.Extensions"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="Memory\ARCHIVE\ScrubJay.Memory.csproj"/>
     </ItemGroup>
 
     <PropertyGroup>

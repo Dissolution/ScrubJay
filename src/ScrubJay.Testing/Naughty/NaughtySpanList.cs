@@ -30,7 +30,7 @@ public static class NaughtySpanList
         {
             new(c, "default", "Same as Span<T>.Empty; fixed gives a null pointer and MemoryMarshal.GetReference returns a null reference.", consumer => consumer(default)),
 #pragma warning disable IDE0301
-            new(c, "empty over an array", "Also empty, but == against default is false, because == compares the underlying reference as well as the length. Use IsEmpty.", consumer => consumer(Array.Empty<T>())),
+            new(c, "empty over an array", "Also empty, but == against default is false, because == compares the underlying reference as well as the length. Use IsEmpty.", consumer => consumer([])),
 #pragma warning restore IDE0301
             new(c, "one element over a local", "Backed by a single stack variable rather than an array, so it cannot become an array or Memory<T>.", consumer =>
             {
@@ -158,7 +158,7 @@ public static class NaughtySpanList
             new(c, "empty final input", "Read throws JsonException.", consumer =>
             {
 #pragma warning disable IDE0301
-                var reader = new Utf8JsonReader(ReadOnlySpan<byte>.Empty);
+                var reader = new Utf8JsonReader([]);
 #pragma warning restore IDE0301
                 consumer(ref reader);
             }),

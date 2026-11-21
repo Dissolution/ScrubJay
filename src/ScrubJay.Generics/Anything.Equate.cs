@@ -3,7 +3,6 @@
 // ReSharper disable MethodOverloadWithOptionalParameter
 
 using System.Reflection;
-using ScrubJay.Generics.Extensions;
 
 namespace ScrubJay.Generics;
 

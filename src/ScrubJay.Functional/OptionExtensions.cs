@@ -14,31 +14,24 @@ public static class OptionExtensions
         }
     }
 
-    extension<T>(Nullable<T> nullable)
-        where T : struct
-    {
-        public Option<T> ToOption()
-        {
-            if (nullable.HasValue)
-            {
-                return nullable.GetValueOrDefault();
-            }
-            return default;
-        }
-    }
+  
 
 #region Equatable
 
     extension<T>(Option<T>)
         where T : IEquatable<T>
     {
+        [OverloadResolutionPriority(100)]
         public static bool operator ==(Option<T> option, T? value) => option._isSome && EqualityComparer<T>.Default.Equals(option._value, value);
+        
+        [OverloadResolutionPriority(100)]
         public static bool operator !=(Option<T> option, T? value) => !option._isSome || !EqualityComparer<T>.Default.Equals(option._value, value);
     }
 
     extension<T>(Option<T> option)
         where T : IEquatable<T>
     {
+        [OverloadResolutionPriority(90)]
         public bool Equals(T? value)
         {
             return option._isSome && EqualityComparer<T>.Default.Equals(option._value, value);
@@ -52,15 +45,20 @@ public static class OptionExtensions
     extension<T>(Option<T>)
         where T : IComparable<T>
     {
+        [OverloadResolutionPriority(100)]
         public static bool operator >(Option<T> left, Option<T> right) => left.CompareTo(right) > 0;
+        [OverloadResolutionPriority(100)]
         public static bool operator >=(Option<T> left, Option<T> right) => left.CompareTo(right) >= 0;
+        [OverloadResolutionPriority(100)]
         public static bool operator <(Option<T> left, Option<T> right) => left.CompareTo(right) < 0;
+        [OverloadResolutionPriority(100)]
         public static bool operator <=(Option<T> left, Option<T> right) => left.CompareTo(right) <= 0;
     }
 
     extension<T>(Option<T> option)
         where T : IComparable<T>
     {
+        [OverloadResolutionPriority(90)]
         public int CompareTo(Option<T> other)
         {
             if (option._isSome)

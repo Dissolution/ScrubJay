@@ -1,18 +1,18 @@
+#pragma warning disable CA1066
+
 namespace ScrubJay.Debugging.Destinations.Console;
 
 [PublicAPI]
 [StructLayout(LayoutKind.Explicit, Size = 2, Pack = 0)]
 public readonly struct ConsoleColorChange :
-#if NET7_0_OR_GREATER
     IEqualityOperators<ConsoleColorChange, ConsoleColorChange, bool>,
-#endif
     IEquatable<ConsoleColorChange>
 {
     public static bool operator ==(ConsoleColorChange left, ConsoleColorChange right) => left.Equals(right);
     public static bool operator !=(ConsoleColorChange left, ConsoleColorChange right) => !left.Equals(right);
 
     public static implicit operator ConsoleColorChange(ConsoleColor? foreground) => new(foreground);
-    
+
     private const byte CC_MASK = 0b00001111;
     private const byte USED_MASK = 0b10000000;
 
@@ -31,10 +31,10 @@ public readonly struct ConsoleColorChange :
             return (byte)((byte)color.GetValueOrDefault() ^ USED_MASK);
         return 0;
     }
-    
+
     [FieldOffset(0)]
     private readonly byte _foreground;
-    
+
     [FieldOffset(1)]
     private readonly byte _background;
 
@@ -72,14 +72,14 @@ public readonly struct ConsoleColorChange :
         newForeground = fore.GetValueOrDefault();
         return fore.HasValue;
     }
-    
+
     public bool ChangesBackground(out ConsoleColor newBackground)
     {
         var back = Background;
         newBackground = back.GetValueOrDefault();
         return back.HasValue;
     }
-    
+
     public ConsoleColorChange WithForeground(ConsoleColor? foreground)
     {
         return new ConsoleColorChange(NCCToByte(foreground), _background);
@@ -90,9 +90,9 @@ public readonly struct ConsoleColorChange :
         return new ConsoleColorChange(_foreground, NCCToByte(background));
     }
 
-    public bool Equals(ConsoleColorChange other) 
+    public bool Equals(ConsoleColorChange other)
         => _foreground == other._foreground &&
-        _background == other._background;
+            _background == other._background;
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {

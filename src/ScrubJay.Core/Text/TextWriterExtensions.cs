@@ -1,22 +1,8 @@
-using ScrubJay.Generics;
-
 namespace ScrubJay.Text;
-
-public delegate void TextWrite<W>(W writer)
-    where W : ITextWriter, allows ref struct;
-
-public delegate void TextWriteValue<W, T>(W writer, T value)
-    where W : ITextWriter, allows ref struct;
-
-
-
-
 
 [PublicAPI]
 public static class TextWriterExtensions
 {
-
-
     extension<W>(W writer)
         where W : ITextWriter, allows ref struct
     {
@@ -193,6 +179,24 @@ public static class TextWriterExtensions
             {
                 writeIfNull?.Invoke(writer);
             }
+            return writer;
+        }
+
+        public W Delimit<T>(text delimiter, IEnumerable<T>? values, Action<W, T>? buildItem)
+        {
+            if (values is null || buildItem is null)
+                return writer;
+
+            using var e = values.GetEnumerator();
+            if (!e.MoveNext())
+                return writer;
+            buildItem(writer, e.Current);
+            while (e.MoveNext())
+            {
+                writer.Write(delimiter);
+                buildItem(writer, e.Current);
+            }
+
             return writer;
         }
     }

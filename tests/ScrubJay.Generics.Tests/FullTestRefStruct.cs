@@ -1,5 +1,3 @@
-using ScrubJay.Generics.Extensions;
-
 namespace ScrubJay.Generics.Tests;
 
 [UsedImplicitly]

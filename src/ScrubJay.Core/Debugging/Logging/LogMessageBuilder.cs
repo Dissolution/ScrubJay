@@ -1,64 +1,86 @@
+using ScrubJay.Comparison;
+using ScrubJay.Errors.Arguments;
+using ScrubJay.Text;
+
 namespace ScrubJay.Debugging.Logging;
 
 [PublicAPI]
 [InterpolatedStringHandler]
 [MustDisposeResource(true)]
+[StructLayout(LayoutKind.Auto)]
 public ref struct LogMessageBuilder : IDisposable
 {
-    private DefaultInterpolatedStringHandler _templateBuilder;
-    private readonly List<(string? Name, object? Value)> _arguments;
-    
+    internal Interpolator _template;
+    internal readonly List<Argument> _arguments;
+
     public LogMessageBuilder()
     {
-        _templateBuilder = new DefaultInterpolatedStringHandler(1024, 0);
+        _template = new Interpolator();
         _arguments = new(capacity: 0);
     }
 
     [HandlesResourceDisposal]
-    public void Deconstruct(out string template, out LogMessageArguments arguments)
+    internal void Deconstruct(out CompositeFormat template, out List<Argument> arguments)
     {
-        template = _templateBuilder.ToString();
-        arguments = new(_arguments);
-        Dispose();
+        template = CompositeFormat.Parse(_template.ToStringAndDispose());
+        arguments = _arguments;
     }
 
     public void AppendLiteral(string str)
     {
-        _templateBuilder.AppendLiteral(str);
+        _template.Write(str);
     }
 
-    public void AppendFormatted(scoped text argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
+    public void AppendFormatted<T>(T? value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+#if NET9_0_OR_GREATER
+        where T : allows ref struct
+#endif
     {
-        _templateBuilder.AppendLiteral("{");
-        _templateBuilder.AppendFormatted(_arguments.Count);
-        _templateBuilder.AppendLiteral("}");
-        _arguments.Add((Name: argumentName, Value: (object?)argument.ToString()));
-    }
+        int argIndex = -1;
 
-    public void AppendFormatted<T>(T? argument, [CallerArgumentExpression(nameof(argument))] string? argumentName = null)
-    {
-        _templateBuilder.AppendLiteral("{");
-        _templateBuilder.AppendFormatted(_arguments.Count);
-        _templateBuilder.AppendLiteral("}");
-        _arguments.Add((Name: argumentName, Value: (object?)argument));
+        if (valueName is null)
+        {
+            argIndex = _arguments.Count;
+            valueName = $"Arg{argIndex}";
+            _arguments.Add(Argument.Capture(value, valueName));
+        }
+        else
+        {
+            valueName = valueName.Replace('{', '[').Replace('}', ']');
+
+            for (var i = 0; i < _arguments.Count; i++)
+            {
+                var arg = _arguments[i];
+                if (arg.Name == valueName && Relate.Equate(value, arg.Value))
+                {
+                    argIndex = i;
+                    break;
+                }
+            }
+
+            if (argIndex == -1)
+            {
+                argIndex = _arguments.Count;
+                _arguments.Add(Argument.Capture(value, valueName));
+            }
+        }
+
+        _template.Write('{');
+        _template.Write(argIndex);
+        _template.Write('}');
     }
 
     [HandlesResourceDisposal]
     public void Dispose()
     {
-        _templateBuilder.Clear();
+        _template.Dispose();
         _arguments.Clear();
     }
 
     public override string ToString()
     {
-        var arguments = _arguments;
-        var count = arguments.Count;
-        object?[] args = new object?[count];
-        for (var i = 0; i < count; i++)
-        {
-            args[i] = arguments[i].Value;
-        }
-        return string.Format(_templateBuilder.ToString(), args);
+        //var template = _template.Written;
+        // todo
+        return _template.ToString();
     }
 }

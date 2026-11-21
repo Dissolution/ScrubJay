@@ -1,3 +1,5 @@
+#pragma warning disable CA1066
+
 using ScrubJay.Extensions;
 
 namespace ScrubJay.Debugging.Destinations.Console;
@@ -15,12 +17,11 @@ public readonly struct ConsoleColors :
     IFormattable
 {
     public static implicit operator ConsoleColors(ConsoleColor foreground) => new(foreground);
-    
+
     public static bool operator ==(ConsoleColors left, ConsoleColors right) => left.Equals(right);
     public static bool operator !=(ConsoleColors left, ConsoleColors right) => !left.Equals(right);
 
-    
-    
+
     private const byte FORE_MASK = 0b00001111; // low 4 bits
     private const byte BACK_MASK = 0b11110000; // high 4 bits
     private const int BACK_OFFSET = 4;

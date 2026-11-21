@@ -1,5 +1,3 @@
-using ScrubJay.Testing.Things;
-
 namespace ScrubJay.Testing.Naughty;
 
 [PublicAPI]

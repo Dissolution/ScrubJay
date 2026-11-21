@@ -1,4 +1,5 @@
 #pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1066
 
 namespace ScrubJay.Functional;
 

@@ -1,5 +1,4 @@
 #pragma warning disable CA5394
-using System.Globalization;
 using ScrubJay.Extensions;
 
 namespace ScrubJay.Testing.Things;

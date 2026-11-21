@@ -1,7 +1,8 @@
 ﻿#pragma warning disable CA1716 // Identifiers should not match keywords
+#pragma warning disable CA1066
 
 using System.ComponentModel;
-using ScrubJay.Generics.Extensions;
+using ScrubJay.Generics;
 
 namespace ScrubJay.Functional;
 
@@ -22,12 +23,13 @@ public readonly struct Option<T> :
     public static bool operator true(Option<T> option) => option._isSome;
     public static bool operator false(Option<T> option) => !option._isSome;
 
+    [OverloadResolutionPriority(50)]
     public static bool operator ==(Option<T> left, Option<T> right) => left.Equals(right);
+    
+    [OverloadResolutionPriority(50)]
     public static bool operator !=(Option<T> left, Option<T> right) => !left.Equals(right);
-
-    public static Option<T> operator |(Option<T> left, Option<T> right) => left.Or(right);
-    public static Option<T> operator ^(Option<T> left, Option<T> right) => left.Xor(right);
-
+    
+    
     public static Option<T> Some(T value) => new Option<T>(value);
     public static Option<T> None() => default;
 
@@ -323,13 +325,13 @@ public readonly struct Option<T> :
         return _isSome && (comparer ?? EqualityComparer<T>.Default).Equals(_value, value);
     }
 
-    public IEnumerable<T> ToEnumerable() => ValueEnumerator.Create(this);
+    public IEnumerable<T> ToEnumerable() => OptionIterable.Create(this);
 
-    IEnumerator IEnumerable.GetEnumerator() => ValueEnumerator.Create(this);
+    IEnumerator IEnumerable.GetEnumerator() => OptionIterable.Create(this);
 
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => ValueEnumerator.Create(this);
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => OptionIterable.Create(this);
 
-    public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
+    public RefOptionIterable<T> GetEnumerator() => RefOptionIterable.Create(this);
 
 #endregion
 

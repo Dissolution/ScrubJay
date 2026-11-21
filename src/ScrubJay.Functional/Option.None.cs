@@ -1,5 +1,6 @@
 #pragma warning disable CA1034 // Nested types should not be visible
 #pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1066 
 
 namespace ScrubJay.Functional;
 

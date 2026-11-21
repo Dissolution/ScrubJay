@@ -1,8 +1,52 @@
+using System.Collections.Immutable;
 using System.Reflection;
-using ScrubJay.Generics;
-using ScrubJay.Generics.Extensions;
+using System.Reflection.Emit;
+using ScrubJay.Collections;
+using ScrubJay.Reflection;
+using ImmutableArray = ScrubJay.Collections.ImmutableArray;
 
 namespace ScrubJay.Debugging;
+
+public sealed record class DumpNode
+{
+    public DumpNode? Parent { get; init; }
+    public View<DumpNode> Children { get; init; }
+
+    public string? Name { get; init; }
+    public Type? Type { get; init; }
+    public string? Display { get; init; }
+}
+
+public static class Dump
+{
+
+
+    private sealed class Dumper
+    {
+        // keep track of already dumped objects so we don't infinitely cycle.
+        private readonly HashSet<object> _dumped = new();
+    }
+    
+  
+}
+
+public sealed class DeepObjectEqualityComparer : IEqualityComparer<object>, IEqualityComparer
+{
+    private static readonly ConcurrentTypeDictionary<Func<object?, object?, bool>> _cache = [];
+
+    private static Func<object?, object?, bool> CreateEquate(Type type)
+    {
+        // see if Type has a Equals(self) method
+        var method = 
+    }
+    
+    private static Func<object?, object?, bool> GetEquate(Type type)
+    {
+        return _cache.GetOrAdd(type, CreateEquate);
+    }
+}
+
+
 
 [PublicAPI]
 public ref struct Dumper : IDisposable
@@ -60,7 +104,6 @@ public ref struct Dumper : IDisposable
 
     public Dumper()
     {
-
     }
 
     private void DumpArray(Array array)
@@ -108,7 +151,7 @@ public ref struct Dumper : IDisposable
             // do not dump again - prevents infinite recursion
             _builder.AppendLiteral("<already dumped>");
         }
-        
+
         if (value is bool boolean)
         {
             _builder.AppendLiteral(boolean ? "true" : "false");
@@ -270,7 +313,7 @@ public ref struct Dumper : IDisposable
         _builder.AppendLiteral(Environment.NewLine);
 
         // indent
-        _builder.AppendFormatted(new string(' ', _indent*2));
+        _builder.AppendFormatted(new string(' ', _indent * 2));
 
         // name : type = value
         _builder.AppendLiteral(property.Name);
@@ -319,7 +362,7 @@ public ref struct Dumper : IDisposable
         this.Dispose();
         return str;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString() => _builder.ToString();
 }

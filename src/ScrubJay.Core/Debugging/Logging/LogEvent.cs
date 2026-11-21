@@ -25,19 +25,19 @@ public sealed class LogEvent : IEnumerable
     }
 
     public LogEvent(
-        LogLevel level, 
-        LogMessage? message, 
+        LogLevel level,
+        LogMessage? message,
         Exception? exception = null)
     {
         Timestamp = DateTime.Now;
         Level = level;
         Message = message;
         Exception = exception;
-        Data = new(capacity:0);
+        Data = new(capacity: 0);
     }
-    
+
     public LogEvent(
-        LogLevel level, 
+        LogLevel level,
         [HandlesResourceDisposal] LogMessageBuilder logMessage,
         Exception? exception = null)
     {
@@ -45,11 +45,11 @@ public sealed class LogEvent : IEnumerable
         Level = level;
         Message = logMessage;
         Exception = exception;
-        Data = new(capacity:0);
+        Data = new(capacity: 0);
     }
-    
+
     public LogEvent(
-        LogLevel level, 
+        LogLevel level,
         Exception? exception,
         LogMessage? message = null)
     {
@@ -57,11 +57,11 @@ public sealed class LogEvent : IEnumerable
         Level = level;
         Message = message;
         Exception = exception;
-        Data = new(capacity:0);
+        Data = new(capacity: 0);
     }
-    
+
     public LogEvent(
-        LogLevel level, 
+        LogLevel level,
         Exception? exception,
         [HandlesResourceDisposal] LogMessageBuilder logMessage = default)
     {
@@ -69,20 +69,20 @@ public sealed class LogEvent : IEnumerable
         Level = level;
         Message = logMessage;
         Exception = exception;
-        Data = new(capacity:0);
+        Data = new(capacity: 0);
     }
-    
+
 
     public void Add(string key, object? value)
     {
-        this.Data.Add(key,value);
+        this.Data.Add(key, value);
     }
-    
+
     public void Add((string Key, object? Value) tuple)
     {
         this.Data.Add(tuple.Key, tuple.Value);
     }
-    
+
     public void Add(KeyValuePair<string, object?> kvp)
     {
         this.Data.Add(kvp.Key, kvp.Value);

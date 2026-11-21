@@ -1,6 +1,4 @@
 
-using ScrubJay.Generics;
-
 namespace ScrubJay.Comparison;
 
 public static partial class Relate

@@ -1,4 +1,5 @@
-﻿using TextCopy;
+﻿using System.Text;
+using TextCopy;
 
 var builder = new StringBuilder();
 

@@ -340,7 +340,7 @@ dotnet_diagnostic.IDE0071.severity = error
 dotnet_style_prefer_simplified_interpolation = true
 
 # IDE0072 - Add missing cases to `switch` expression
-dotnet_diagnostic.IDE0072.severity = error
+dotnet_diagnostic.IDE0072.severity = suggestion
 
 # IDE0073 - Require file header
 dotnet_diagnostic.IDE0073.severity = none
@@ -856,6 +856,10 @@ dotnet_diagnostic.CA1040.severity = suggestion
 # CA1041 - Provide `ObsoleteAttribute` message
 dotnet_diagnostic.CA1041.severity = error
 
+# CA1043 - use int or string for indexers
+; this catches Index and Range
+dotnet_diagnostic.CA1041.severity = none
+
 # CA1044 - Properties should not be write only
 dotnet_diagnostic.CA1044.severity = error
 
@@ -1003,7 +1007,8 @@ dotnet_diagnostic.CA1708.severity = error
 dotnet_diagnostic.CA1710.severity = none
 
 # CA1711 - Identifiers should not have incorrect suffix
-dotnet_diagnostic.CA1711.severity = error
+; this falsely flags a lot of okay names
+dotnet_diagnostic.CA1711.severity = none
 
 # CA1712 - Do not prefix enum values with type name
 dotnet_diagnostic.CA1712.severity = error
@@ -1250,6 +1255,11 @@ dotnet_diagnostic.CA2243.severity = none
 dotnet_diagnostic.CA2252.severity = error
 
 
+; !
+
+# CA5394 - 
+; I'm not doing anything cryptographically secure
+dotnet_diagnostic.CA5394.severity = none
 
 ; !
 # ReSharper

@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿#pragma warning disable CA1066
+
+using System.ComponentModel;
 using System.Runtime.ExceptionServices;
-using ScrubJay.Generics.Extensions;
+using ScrubJay.Generics;
 
 namespace ScrubJay.Functional;
 
@@ -358,11 +360,11 @@ public readonly struct Result<T, E> :
 
     public IEnumerable<T> ToEnumerable() => this;
 
-    IEnumerator IEnumerable.GetEnumerator() => ValueEnumerator.Create(this);
+    IEnumerator IEnumerable.GetEnumerator() => OptionIterable.Create(this);
 
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => ValueEnumerator.Create(this);
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => OptionIterable.Create(this);
 
-    public RefValueEnumerator<T> GetEnumerator() => RefValueEnumerator.Create(this);
+    public RefOptionIterable<T> GetEnumerator() => RefOptionIterable.Create(this);
 
 #endregion
 
